@@ -18,7 +18,7 @@ status: "active"
 
 - [x] Install & enable Alchemy Craft from Community Plugins ✅ 2026-11-03
 - [x] Toggle the Swiss Bento UI mode via the bottom dock button `[UI]`
-- [ ] Test the **Sentence Focus** feature by hovering and clicking any sentence below
+- [ ] Test the **Sentence Focus** feature by hovering and clicking any sentence below ✓2026-11-03
 - [ ] Right-click the **Pomodoro Timer** in the floating dock to try a 15m sprint or break
 - [ ] Press `[Laser]` in the dock to test the smooth glowing laser pointer (Esc to exit)
 - [ ] Test the `[AI Clean]` button on the sample AI text block at the bottom

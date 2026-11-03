@@ -61,6 +61,22 @@ class AlchemyFlowPlugin extends Plugin {
     // 2. Live Preview (CM6) Observer
     this.setupLivePreviewObserver();
 
+    this.registerEvent(
+      this.app.workspace.on("file-open", () => {
+        setTimeout(() => this.updateTaskProgressBar(), 100);
+      })
+    );
+    this.registerEvent(
+      this.app.metadataCache.on("changed", () => {
+        this.updateTaskProgressBar();
+      })
+    );
+    this.registerDomEvent(document, "click", (e) => {
+      if (e.target && e.target.classList && e.target.classList.contains("task-list-item-checkbox")) {
+        setTimeout(() => this.updateTaskProgressBar(), 120);
+      }
+    });
+
     this.addRibbonIcon("wand", "Alchemy Craft — Bento Reader & Focus", () => {
       this.toggleMode(this.mode === "none" ? "laser" : "none");
     });
@@ -374,22 +390,38 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   updateTaskProgressBar() {
+    const obsidian = require("obsidian");
+    const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!activeView || !activeView.file) {
+      document.querySelectorAll(".artcraft-task-progress-wrap").forEach((el) => {
+        el.style.display = "none";
+      });
+      return;
+    }
+
+    const cache = this.app.metadataCache.getFileCache(activeView.file);
+    let total = 0;
+    let done = 0;
+
+    if (cache && cache.listItems) {
+      cache.listItems.forEach((li) => {
+        if (li.task !== undefined) {
+          total++;
+          if (li.task === "x" || li.task === "X") done++;
+        }
+      });
+    }
+
     document
       .querySelectorAll('.workspace-leaf-content[data-type="markdown"]')
       .forEach((leaf) => {
-        const checkboxes = leaf.querySelectorAll('input[type="checkbox"].task-list-item-checkbox');
         let barWrap = leaf.querySelector(".artcraft-task-progress-wrap");
 
-        if (!checkboxes || checkboxes.length === 0) {
-          if (barWrap) barWrap.remove();
+        if (total === 0) {
+          if (barWrap) barWrap.style.display = "none";
           return;
         }
 
-        const total = checkboxes.length;
-        let done = 0;
-        checkboxes.forEach((cb) => {
-          if (cb.checked || cb.getAttribute("data-task") === "x") done++;
-        });
         const pct = Math.round((done / total) * 100);
 
         if (!barWrap) {
@@ -407,6 +439,7 @@ class AlchemyFlowPlugin extends Plugin {
           titleEl.parentNode.insertBefore(barWrap, titleEl.nextSibling);
         }
 
+        barWrap.style.display = "flex";
         const labelEl = barWrap.querySelector(".artcraft-task-progress-label");
         const fillEl = barWrap.querySelector(".artcraft-task-progress-bar-fill");
         const pctEl = barWrap.querySelector(".artcraft-task-progress-pct");
@@ -523,7 +556,6 @@ class AlchemyFlowPlugin extends Plugin {
         });
       });
 
-      this.updateTaskProgressBar();
     };
 
     styleLivePreviewNodes();
@@ -531,6 +563,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   enhanceMarkdownElement(rootEl) {
+    this.updateTaskProgressBar();
     const blocks = rootEl.querySelectorAll("p, li, td, h1, h2, h3, h4, blockquote p");
     blocks.forEach((block) => {
       if (block.dataset.artcraftProcessed === "true") return;
