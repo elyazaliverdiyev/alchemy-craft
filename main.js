@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS = {
   sentenceFocus: true,
   colorizeNumbers: true,
   showFloatingDock: true,
+  showTaskProgress: true,
   strokeColor: "#2563EB",
   activeColorKey: "blue",
   timerMode: "pomodoro", // "pomodoro" | "stopwatch"
@@ -390,6 +391,18 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   updateTaskProgressBar() {
+    // 1. Remove any legacy or orphaned bars stuck inside CodeMirror scroller
+    document.querySelectorAll(".cm-sizer .artcraft-task-progress-wrap, .cm-content .artcraft-task-progress-wrap, .inline-title + .artcraft-task-progress-wrap").forEach((el) => {
+      el.remove();
+    });
+
+    if (this.settings.showTaskProgress === false) {
+      document.querySelectorAll(".artcraft-task-progress-wrap").forEach((el) => {
+        el.style.display = "none";
+      });
+      return;
+    }
+
     const obsidian = require("obsidian");
     const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
     if (!activeView || !activeView.file) {
@@ -415,7 +428,10 @@ class AlchemyFlowPlugin extends Plugin {
     document
       .querySelectorAll('.workspace-leaf-content[data-type="markdown"]')
       .forEach((leaf) => {
-        let barWrap = leaf.querySelector(".artcraft-task-progress-wrap");
+        const viewContent = leaf.querySelector(".view-content");
+        if (!viewContent) return;
+
+        let barWrap = viewContent.querySelector(":scope > .artcraft-task-progress-wrap");
 
         if (total === 0) {
           if (barWrap) barWrap.style.display = "none";
@@ -425,8 +441,6 @@ class AlchemyFlowPlugin extends Plugin {
         const pct = Math.round((done / total) * 100);
 
         if (!barWrap) {
-          const titleEl = leaf.querySelector(".inline-title");
-          if (!titleEl || !titleEl.parentNode) return;
           barWrap = document.createElement("div");
           barWrap.className = "artcraft-task-progress-wrap";
           barWrap.innerHTML = `
@@ -436,7 +450,8 @@ class AlchemyFlowPlugin extends Plugin {
             </div>
             <span class="artcraft-task-progress-pct"></span>
           `;
-          titleEl.parentNode.insertBefore(barWrap, titleEl.nextSibling);
+          // Insert at the very top of .view-content, completely outside CodeMirror 6!
+          viewContent.insertBefore(barWrap, viewContent.firstChild);
         }
 
         barWrap.style.display = "flex";
@@ -495,6 +510,7 @@ class AlchemyFlowPlugin extends Plugin {
     const styleLivePreviewNodes = () => {
       if (!this.settings.artcraftTheme || !this.settings.colorizeNumbers) return;
 
+      // Colorize only static list numbers without touching text nodes
       document.querySelectorAll(".HyperMD-list-line .cm-formatting-list-ol").forEach((el) => {
         const txt = (el.textContent || "").trim();
         const num = parseInt(txt, 10);
@@ -504,62 +520,10 @@ class AlchemyFlowPlugin extends Plugin {
           el.style.setProperty("background-color", c, "important");
         }
       });
-
-      document
-        .querySelectorAll(".cm-embed-block table td, .cm-embed-block blockquote p")
-        .forEach((cell) => {
-          if (cell.dataset.artcraftProcessed !== "true") {
-            this.enhanceSingleBlock(cell, true);
-          }
-        });
-
-      document.querySelectorAll(".HyperMD-header").forEach((hdr) => {
-        if (hdr.classList.contains("cm-active")) return;
-        const walker = document.createTreeWalker(hdr, NodeFilter.SHOW_TEXT, null);
-        const nodes = [];
-        let n;
-        while ((n = walker.nextNode())) {
-          if (
-            n.parentElement &&
-            !n.parentElement.classList.contains("artcraft-step-badge") &&
-            /\b0[1-4]\s*\/\//.test(n.nodeValue || "")
-          ) {
-            nodes.push(n);
-          }
-        }
-        nodes.forEach((textNode) => {
-          const frag = document.createDocumentFragment();
-          this.appendWithColorizedTokens(frag, textNode.nodeValue);
-          textNode.parentNode.replaceChild(frag, textNode);
-        });
-      });
-
-      document.querySelectorAll(".HyperMD-task-line").forEach((line) => {
-        if (line.classList.contains("cm-active")) return;
-        const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT, null);
-        const nodes = [];
-        let n;
-        while ((n = walker.nextNode())) {
-          if (
-            n.parentElement &&
-            !n.parentElement.classList.contains("artcraft-check-circle") &&
-            !n.parentElement.classList.contains("artcraft-task-date") &&
-            (n.nodeValue || "").includes("✅")
-          ) {
-            nodes.push(n);
-          }
-        }
-        nodes.forEach((textNode) => {
-          const frag = document.createDocumentFragment();
-          this.appendWithColorizedTokens(frag, textNode.nodeValue);
-          textNode.parentNode.replaceChild(frag, textNode);
-        });
-      });
-
     };
 
     styleLivePreviewNodes();
-    this.lpInterval = setInterval(styleLivePreviewNodes, 450);
+    this.lpInterval = setInterval(styleLivePreviewNodes, 1000);
   }
 
   enhanceMarkdownElement(rootEl) {
@@ -1417,6 +1381,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
           this.plugin.applyBodyClasses();
           this.plugin.updateDockUI();
+        })
+      );
+
+    // 2.0 Task Progress Bar
+    new Setting(containerEl)
+      .setName(isEn ? "Task Progress Bar" : "Полоса прогресса задач")
+      .setDesc(
+        isEn
+          ? "Show sticky top progress bar in notes with task checklists."
+          : "Показывать аккуратную полосу прогресса вверху заметок с чек-листами."
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.showTaskProgress !== false).onChange(async (val) => {
+          this.plugin.settings.showTaskProgress = val;
+          await this.plugin.saveSettings();
+          this.plugin.updateTaskProgressBar();
         })
       );
 
