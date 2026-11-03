@@ -65,8 +65,8 @@ body.artcraft-theme-active .inline-title {
 }
 
 body.artcraft-theme-active .inline-title::before {
-  content: "STRATALCHEMY // KNOWLEDGE BRIEF";
-  display: block;
+  content: var(--artcraft-header-tag, "STRATALCHEMY // KNOWLEDGE BRIEF");
+  display: var(--artcraft-header-tag-display, block);
   font-family: var(--font-monospace) !important;
   font-size: 0.68rem !important;
   font-weight: 700 !important;

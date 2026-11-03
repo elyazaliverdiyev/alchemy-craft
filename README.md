@@ -22,6 +22,20 @@
 
 ---
 
+## 📖 Interactive Showcase Note
+
+Want to test all visual features, Excel tables, laser pointer, and thought pinning in action?
+Download or preview our ready-to-use demo note: **[`Alchemy Craft — Interactive Showcase.md`](./demo/Alchemy%20Craft%20—%20Interactive%20Showcase.md)**.
+
+Simply drop this `.md` file into your Obsidian vault to explore:
+- Live updating task progress bar
+- Auto-transformed Swiss square badges (`01`–`04`)
+- Excel-style `#69BD28` financial tables
+- Thought pinning with 4 color channels
+- Interactive AI Cleaner test block with invisible zero-width characters
+
+---
+
 ## 🚀 Quickstart & Installation
 
 ### Option 1: Via Obsidian Community Plugins (Recommended)

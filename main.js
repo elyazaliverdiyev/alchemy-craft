@@ -3,6 +3,8 @@ const { Plugin, PluginSettingTab, Setting, Notice, Modal, Menu } = require("obsi
 const DEFAULT_SETTINGS = {
   uiLanguage: "en", // "en" (default for Western launch) | "ru"
   artcraftTheme: true,
+  headerTagText: "STRATALCHEMY // KNOWLEDGE BRIEF",
+  showHeaderTag: true,
   hoverCards: true,
   sentenceFocus: true,
   colorizeNumbers: true,
@@ -360,6 +362,15 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-sentence-focus", this.settings.sentenceFocus);
     document.body.classList.toggle("artcraft-zen-mode", !!this.zenMode);
     document.body.classList.toggle("artcraft-dark-craft", !!this.settings.darkCraftTheme && !!this.settings.isPro);
+
+    const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
+    const show = (this.settings.showHeaderTag !== false) && tag.length > 0;
+    if (show) {
+      document.documentElement.style.setProperty('--artcraft-header-tag', `"${tag.replace(/"/g, '\\"')}"`);
+      document.documentElement.style.setProperty('--artcraft-header-tag-display', 'block');
+    } else {
+      document.documentElement.style.setProperty('--artcraft-header-tag-display', 'none');
+    }
   }
 
   updateTaskProgressBar() {
@@ -1374,6 +1385,25 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           this.plugin.applyBodyClasses();
           this.plugin.updateDockUI();
         })
+      );
+
+    // 2.1 Header Badge Tag
+    new Setting(containerEl)
+      .setName(isEn ? "Note Header Badge" : "Верхний бейдж заметки")
+      .setDesc(
+        isEn
+          ? "Text badge above note title (e.g. 'STRATALCHEMY // KNOWLEDGE BRIEF' or 'READING MODE'). Clear text to hide."
+          : "Текст бейджа над заголовком заметки (например, 'STRATALCHEMY // KNOWLEDGE BRIEF' или 'READING MODE'). Очистите поле, чтобы скрыть."
+      )
+      .addText((text) =>
+        text
+          .setPlaceholder("STRATALCHEMY // KNOWLEDGE BRIEF")
+          .setValue(this.plugin.settings.headerTagText !== undefined ? this.plugin.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF")
+          .onChange(async (val) => {
+            this.plugin.settings.headerTagText = val;
+            await this.plugin.saveSettings();
+            this.plugin.applyBodyClasses();
+          })
       );
 
     // 3. Timer Mode
