@@ -1,0 +1,1346 @@
+/* ==========================================================================
+   ArtCraft Studio & Pointer v3.0 for Obsidian (@StratAlchemy Edition)
+   Full Live Preview (CM6) + Reading Mode Support:
+   - Giant Squared Colored Number Badges (01 Blue, 02 Orange, 03 Green, 04 Purple)
+   - Hero Editorial Banner Title & Styled Frontmatter Properties
+   - AFFiNE / Notion / Craft Left File Explorer Sidebar Redesign
+   - Excel Green Table Headers (#69BD28) & Crisp Orange Code Capsules
+   ========================================================================== */
+
+body.artcraft-theme-active {
+  --artcraft-bg-canvas: #F4F3EF;
+  --artcraft-bg-card: #F9F8F5;
+  --artcraft-bg-hover: #EFECE6;
+  --artcraft-bg-sidebar: #EDEBE4;
+  --artcraft-ink-primary: #111111;
+  --artcraft-ink-secondary: #374151;
+  --artcraft-ink-muted: #6B7280;
+  --artcraft-border-hairline: #D5D3CC;
+  --artcraft-border-strong: #111111;
+
+  /* Светло-зеленый как в Excel */
+  --artcraft-excel-green: #69BD28;
+  --artcraft-excel-green-border: #559E1D;
+
+  /* 4 фирменных цвета квадратных бейджей из наших генераций M2/M3 */
+  --artcraft-badge-blue: #2563EB;
+  --artcraft-badge-orange: #F59E0B;
+  --artcraft-badge-green: #10B981;
+  --artcraft-badge-purple: #8B5CF6;
+
+  /* Override Obsidian native variables */
+  --background-primary: var(--artcraft-bg-canvas) !important;
+  --background-primary-alt: var(--artcraft-bg-card) !important;
+  --background-secondary: var(--artcraft-bg-sidebar) !important;
+  --background-secondary-alt: var(--artcraft-bg-sidebar) !important;
+  --background-modifier-border: var(--artcraft-border-hairline) !important;
+  --text-normal: var(--artcraft-ink-primary) !important;
+  --text-muted: var(--artcraft-ink-muted) !important;
+  --font-text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  --font-monospace: "JetBrains Mono", "IBM Plex Mono", Consolas, monospace !important;
+  --line-width: 52rem !important;
+}
+
+/* ==========================================================================
+   1. ГЛАВНЫЙ ЗАГОЛОВОК ЗАМЕТКИ (Inline Title) — ВМЕСТО "ГРУСТНОГО И ПРОСТОГО"
+   Делаем мощный швейцарский баннер как шапка на наших постерах!
+   ========================================================================== */
+body.artcraft-theme-active .inline-title {
+  font-family: "Inter", sans-serif !important;
+  font-size: 2.15rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.035em !important;
+  line-height: 1.15 !important;
+  color: #111111 !important;
+  background-color: #FFFFFF !important;
+  border: 1.5px solid #111111 !important;
+  border-left: 8px solid var(--artcraft-excel-green) !important;
+  border-radius: 10px !important;
+  padding: 18px 22px !important;
+  margin-top: 10px !important;
+  margin-bottom: 18px !important;
+  box-shadow: 0 4px 0 #111111 !important;
+  text-decoration: none !important;
+  position: relative;
+}
+
+body.artcraft-theme-active .inline-title::before {
+  content: "STRATALCHEMY // KNOWLEDGE BRIEF";
+  display: block;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #FFFFFF !important;
+  background-color: #111111 !important;
+  padding: 3px 9px !important;
+  border-radius: 4px !important;
+  width: fit-content !important;
+  margin-bottom: 8px !important;
+}
+
+/* Красивая карточка для YAML Frontmatter / Свойств */
+body.artcraft-theme-active .metadata-container,
+body.artcraft-theme-active .cm-line.HyperMD-frontmatter {
+  background-color: #F9F8F5 !important;
+  border-color: #D5D3CC !important;
+  font-family: var(--font-monospace) !important;
+}
+
+body.artcraft-theme-active .metadata-container {
+  border: 1px solid #D5D3CC !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  margin-bottom: 20px !important;
+}
+
+/* ==========================================================================
+   2. КВАДРАТНЫЕ ЦВЕТНЫЕ БЕЙДЖИ ЦИФР (01, 02, 03, 04) КАК НА ПОСТЕРАХ M2/M3!
+   Работает и для списков 1. 2. 3. 4., и для бейджей [01]..[04] в любом режиме!
+   ========================================================================== */
+
+/* А) Автоматическое превращение нумерованных списков (1. 2. 3. 4.) в Live Preview в цветные квадраты! */
+body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 28px !important;
+  height: 26px !important;
+  padding: 0 7px !important;
+  margin-right: 8px !important;
+  border-radius: 6px !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.85rem !important;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14) !important;
+  vertical-align: middle !important;
+}
+
+/* Раскрашиваем 1, 2, 3, 4 в фирменные цвета наших постеров: Синий, Оранжевый, Зеленый, Фиолетовый */
+body.artcraft-theme-active .HyperMD-list-line-1:nth-of-type(4n+1) .cm-formatting-list-ol,
+body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol {
+  background-color: var(--artcraft-badge-blue) !important;
+}
+
+/* Б) Нумерованные списки в режиме Чтения (Reading View <ol><li>) */
+body.artcraft-theme-active .markdown-rendered ol {
+  counter-reset: artcraft-counter !important;
+  list-style: none !important;
+  padding-left: 6px !important;
+}
+
+body.artcraft-theme-active .markdown-rendered ol > li {
+  counter-increment: artcraft-counter !important;
+  position: relative !important;
+  padding-left: 44px !important;
+  margin-bottom: 12px !important;
+}
+
+body.artcraft-theme-active .markdown-rendered ol > li::before {
+  content: "0" counter(artcraft-counter) !important;
+  position: absolute !important;
+  left: 4px !important;
+  top: 2px !important;
+  width: 30px !important;
+  height: 28px !important;
+  border-radius: 7px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.84rem !important;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+  background-color: var(--artcraft-badge-blue) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+1)::before {
+  background-color: var(--artcraft-badge-blue) !important; /* 01 Синий */
+}
+body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+2)::before {
+  background-color: var(--artcraft-badge-orange) !important; /* 02 Оранжевый */
+}
+body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+3)::before {
+  background-color: var(--artcraft-badge-green) !important; /* 03 Изумрудный */
+}
+body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+4)::before {
+  background-color: var(--artcraft-badge-purple) !important; /* 04 Фиолетовый */
+}
+
+/* В) Крупные квадратные бейджи [01], [02], [03], [04] (в таблицах, заголовках и тексте в обоих режимах!) */
+.artcraft-step-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+  height: 28px !important;
+  padding: 0 8px !important;
+  border-radius: 7px !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+  margin-right: 7px !important;
+  vertical-align: middle !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16) !important;
+  letter-spacing: 0.02em !important;
+}
+
+.artcraft-step-1 { background-color: var(--artcraft-badge-blue) !important; }
+.artcraft-step-2 { background-color: var(--artcraft-badge-orange) !important; }
+.artcraft-step-3 { background-color: var(--artcraft-badge-green) !important; }
+.artcraft-step-4 { background-color: var(--artcraft-badge-purple) !important; }
+
+/* Капсулы для сумм ($) и метрик (%, x, ms) */
+.artcraft-num-money {
+  display: inline-block !important;
+  background-color: #10B981 !important;
+  color: #FFFFFF !important;
+  border-radius: 6px !important;
+  padding: 1px 8px !important;
+  margin: 0 2px !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.88em !important;
+  font-weight: 800 !important;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.25) !important;
+}
+
+.artcraft-num-metric {
+  display: inline-block !important;
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+  border-radius: 6px !important;
+  padding: 1px 7px !important;
+  margin: 0 2px !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.86em !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   3. ЛЕВАЯ ПАНЕЛЬ ПАПОК И ФАЙЛОВ (File Explorer) — FIXED ARROWS & BENTO UI
+   Идеальное отображение стрелочки раскрытия (collapse-indicator) и в корневых,
+   и во вложенных папках без наложения на цветной бордер!
+   ========================================================================== */
+body.artcraft-theme-active .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
+body.artcraft-theme-active .nav-files-container {
+  background-color: #EDEBE4 !important;
+}
+
+body.artcraft-theme-active .nav-folder-children {
+  padding-left: 12px !important;
+  margin-left: 6px !important;
+  border-left: 1.5px solid #D5D3CC !important;
+}
+
+/* Папки — flex-выравнивание, чтобы стрелка всегда стояла ВНУТРИ карточки справа от цветной полосы! */
+body.artcraft-theme-active .nav-folder-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  color: #1F2937 !important;
+  padding: 5px 10px 5px 10px !important;
+  margin: 3px 4px !important;
+  padding-inline-start: 10px !important;
+  margin-inline-start: 4px !important;
+  border-radius: 7px !important;
+  background-color: #F9F8F5 !important;
+  border: 1px solid #DFDDD4 !important;
+  transform: none !important;
+  transition: background-color 0.12s ease, border-color 0.12s ease !important;
+}
+
+/* Сама стрелочка (collapse-indicator) — отменяем отрицательный отступ темы Minimal! */
+body.artcraft-theme-active .nav-folder-title .nav-folder-collapse-indicator,
+body.artcraft-theme-active .nav-folder-title .collapse-icon {
+  position: static !important;
+  margin-left: 0 !important;
+  margin-inline-start: 0 !important;
+  padding: 0 !important;
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #4B5563 !important;
+  opacity: 0.9 !important;
+}
+
+body.artcraft-theme-active .nav-folder-title:hover .nav-folder-collapse-indicator,
+body.artcraft-theme-active .nav-folder-title:hover .collapse-icon {
+  color: #111111 !important;
+  opacity: 1 !important;
+}
+
+body.artcraft-theme-active .nav-folder-title:hover {
+  background-color: #FFFFFF !important;
+  border-color: #111111 !important;
+  transform: none !important;
+}
+
+/* Файлы заметок в сайдбаре — без прыгающих отступов */
+body.artcraft-theme-active .nav-file-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 0.83rem !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  padding: 5px 10px !important;
+  margin: 2px 4px !important;
+  padding-inline-start: 10px !important;
+  margin-inline-start: 4px !important;
+  border-radius: 6px !important;
+  border: 1px solid transparent !important;
+  transform: none !important;
+  transition: background-color 0.12s ease, border-color 0.12s ease !important;
+}
+
+body.artcraft-theme-active .nav-file-title:hover {
+  background-color: #F9F8F5 !important;
+  border-color: #D5D3CC !important;
+  color: #111111 !important;
+  transform: none !important;
+}
+
+/* Активная открытая заметка в сайдбаре */
+body.artcraft-theme-active .nav-file-title.is-active {
+  background-color: #FFFFFF !important;
+  color: #111111 !important;
+  font-weight: 700 !important;
+  border: 1px solid #111111 !important;
+  border-left: 5px solid var(--artcraft-excel-green) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Цветная полоска для разных папок слева (4 цвета по циклу) */
+body.artcraft-theme-active .nav-folder:nth-of-type(4n+1) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-blue) !important;
+}
+body.artcraft-theme-active .nav-folder:nth-of-type(4n+2) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-orange) !important;
+}
+body.artcraft-theme-active .nav-folder:nth-of-type(4n+3) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-green) !important;
+}
+body.artcraft-theme-active .nav-folder:nth-of-type(4n+4) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-purple) !important;
+}
+
+/* ==========================================================================
+   3.2. КРУГЛЫЕ СВЕТЛО-ЗЕЛЕНЫЕ ЧЕКБОКСЫ ЗАДАЧ (#69BD28 + БЕЛАЯ ПТИЧКА)
+   И КРУГЛЫЙ БЕЙДЖ ДЛЯ ЭМОДЗИ ГАЛОЧКИ (✅ -> круглый светло-зеленый!)
+   ========================================================================== */
+body.artcraft-theme-active {
+  --checkbox-color: #69BD28 !important;
+  --checkbox-color-hover: #559E1D !important;
+  --checkbox-marker-color: #FFFFFF !important;
+  --checkbox-border-color: #94A3B8 !important;
+  --checkbox-border-color-hover: #69BD28 !important;
+  --checklist-done-Color: #374151 !important;
+  --checklist-done-decoration: none !important;
+}
+
+body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox,
+body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"] {
+  border-radius: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  border: 1.8px solid #94A3B8 !important;
+  cursor: pointer !important;
+  transition: all 0.14s ease !important;
+}
+
+body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox:checked,
+body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked,
+body.artcraft-theme-active input[type="checkbox"][data-task="x"] {
+  background-color: #69BD28 !important;
+  border-color: #559E1D !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 4px rgba(105, 189, 40, 0.28) !important;
+}
+
+/* Убираем бледность и зачеркивание у выполненных задач, чтобы текст оставался четким */
+body.artcraft-theme-active .HyperMD-task-line[data-task="x"],
+body.artcraft-theme-active li.task-list-item.is-checked {
+  color: #1F2937 !important;
+  text-decoration: none !important;
+}
+
+/* Круглый светло-зеленый бейдж с белой галочкой вместо квадратного эмодзи ✅ */
+.artcraft-check-circle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background-color: #69BD28 !important;
+  border: 1px solid #559E1D !important;
+  color: #FFFFFF !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  margin: 0 4px !important;
+  vertical-align: middle !important;
+  box-shadow: 0 1px 3px rgba(105, 189, 40, 0.3) !important;
+}
+
+/* Бежево-зеленая капсула для даты выполнения задачи (📅 2026-10-25) */
+.artcraft-task-date {
+  display: inline-block !important;
+  background-color: #ECFDF5 !important;
+  color: #065F46 !important;
+  border: 1px solid #A7F3D0 !important;
+  border-radius: 999px !important;
+  padding: 1px 8px !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  margin-left: 2px !important;
+  vertical-align: middle !important;
+}
+
+/* Плавная полоса прогресса задач (Task Progress Bar) вверху заметки */
+.artcraft-task-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 0 #111111;
+  font-family: var(--font-monospace);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.artcraft-task-progress-bar-bg {
+  flex: 1;
+  height: 9px;
+  background: #EDEBE4;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid #D5D3CC;
+}
+
+.artcraft-task-progress-bar-fill {
+  height: 100%;
+  background: #69BD28;
+  border-radius: 999px;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   3.5. КРАСИВЫЕ ТЕПЛЫЕ КАРТОЧКИ CALLOUTS (> [!NOTE], > [!TIP], > [!IMPORTANT])
+   Никакого кислотно-желтого цвета! Теплый крафтовый крем и мягкие акценты.
+   ========================================================================== */
+body.artcraft-theme-active .callout,
+body.artcraft-theme-active .markdown-rendered .callout,
+body.artcraft-theme-active .cm-embed-block .callout {
+  background-color: #FAF8F5 !important;
+  color: #111111 !important;
+  border: 1.5px solid #D5D3CC !important;
+  border-left: 6px solid var(--artcraft-badge-blue) !important;
+  border-radius: 9px !important;
+  padding: 14px 18px !important;
+  margin: 14px 0 !important;
+  box-shadow: 0 2px 8px rgba(17, 17, 17, 0.04) !important;
+}
+
+body.artcraft-theme-active .callout[data-callout="note"],
+body.artcraft-theme-active .callout[data-callout="info"] {
+  background-color: #F4F7FB !important;
+  border-color: #BFDBFE !important;
+  border-left: 6px solid #2563EB !important;
+}
+
+body.artcraft-theme-active .callout[data-callout="note"] .callout-title,
+body.artcraft-theme-active .callout[data-callout="info"] .callout-title {
+  color: #1E3A8A !important;
+  font-weight: 800 !important;
+  font-size: 0.96rem !important;
+  margin-bottom: 6px !important;
+}
+
+body.artcraft-theme-active .callout[data-callout="tip"],
+body.artcraft-theme-active .callout[data-callout="success"],
+body.artcraft-theme-active .callout[data-callout="check"] {
+  background-color: #F2FBF6 !important;
+  border-color: #A7F3D0 !important;
+  border-left: 6px solid #10B981 !important;
+}
+
+body.artcraft-theme-active .callout[data-callout="tip"] .callout-title,
+body.artcraft-theme-active .callout[data-callout="success"] .callout-title {
+  color: #065F46 !important;
+  font-weight: 800 !important;
+}
+
+body.artcraft-theme-active .callout[data-callout="warning"],
+body.artcraft-theme-active .callout[data-callout="important"],
+body.artcraft-theme-active .callout[data-callout="question"] {
+  background-color: #FFFBEB !important;
+  border-color: #FDE68A !important;
+  border-left: 6px solid #D97706 !important;
+}
+
+body.artcraft-theme-active .callout[data-callout="warning"] .callout-title,
+body.artcraft-theme-active .callout[data-callout="important"] .callout-title {
+  color: #92400E !important;
+  font-weight: 800 !important;
+}
+
+body.artcraft-theme-active .callout-content,
+body.artcraft-theme-active .callout-content p {
+  color: #1F2937 !important;
+  line-height: 1.7 !important;
+}
+
+/* ==========================================================================
+   4. ЗАГОЛОВКИ ВНУТРИ ЗАМЕТКИ (H1, H2, H3, H4)
+   ========================================================================== */
+body.artcraft-theme-active .markdown-rendered h1,
+body.artcraft-theme-active .HyperMD-header-1 {
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  color: var(--artcraft-ink-primary) !important;
+  background: linear-gradient(90deg, rgba(105, 189, 40, 0.16) 0%, rgba(244, 243, 239, 0) 100%);
+  border-left: 6px solid var(--artcraft-excel-green) !important;
+  border-bottom: 2px solid var(--artcraft-ink-primary) !important;
+  padding: 8px 14px !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+
+body.artcraft-theme-active .markdown-rendered h2,
+body.artcraft-theme-active .HyperMD-header-2 {
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: #1E3A8A !important;
+  background-color: #EEF4FF !important;
+  border: 1px solid #BFDBFE !important;
+  border-left: 6px solid var(--artcraft-badge-blue) !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+}
+
+body.artcraft-theme-active .markdown-rendered h3,
+body.artcraft-theme-active .HyperMD-header-3 {
+  font-weight: 700 !important;
+  color: #9A3412 !important;
+  background-color: #FFF7ED !important;
+  border: 1px solid #FED7AA !important;
+  border-left: 6px solid var(--artcraft-badge-orange) !important;
+  padding: 6px 12px !important;
+  border-radius: 7px !important;
+}
+
+body.artcraft-theme-active .markdown-rendered h4,
+body.artcraft-theme-active .HyperMD-header-4 {
+  font-weight: 700 !important;
+  color: #5B21B6 !important;
+  background-color: #F5F3FF !important;
+  border-left: 5px solid var(--artcraft-badge-purple) !important;
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
+}
+
+/* ==========================================================================
+   5. КАПСУЛЫ КОДА `code` И ТАБЛИЦЫ EXCEL GREEN (#69BD28)
+   ========================================================================== */
+body.artcraft-theme-active .markdown-rendered code:not(pre code),
+body.artcraft-theme-active .cm-s-obsidian span.cm-inline-code {
+  background-color: #FFF1E6 !important;
+  color: #C2410C !important;
+  border: 1px solid #FDBA74 !important;
+  border-bottom: 2px solid #FB923C !important;
+  border-radius: 6px !important;
+  padding: 2px 7px !important;
+  margin: 0 2px !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.88em !important;
+  font-weight: 700 !important;
+}
+
+body.artcraft-theme-active .markdown-rendered table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 9px !important;
+  overflow: hidden !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 3px 0 #111111 !important;
+  margin: 1.2em 0 !important;
+}
+
+body.artcraft-theme-active .markdown-rendered th {
+  background-color: var(--artcraft-excel-green) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-text) !important;
+  font-size: 0.92em !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  padding: 12px 15px !important;
+  border-bottom: 2px solid var(--artcraft-excel-green-border) !important;
+  border-right: 1px solid var(--artcraft-excel-green-border) !important;
+}
+
+body.artcraft-theme-active .markdown-rendered td {
+  padding: 11px 15px !important;
+  border-bottom: 1px solid #CBD5E1 !important;
+  border-right: 1px solid #CBD5E1 !important;
+  color: #111111 !important;
+}
+
+body.artcraft-theme-active .markdown-rendered tbody tr:nth-child(odd) td {
+  background-color: #EDF5FF !important;
+}
+
+body.artcraft-theme-active .markdown-rendered tbody tr:nth-child(even) td {
+  background-color: #FFFFFF !important;
+}
+
+body.artcraft-theme-active .markdown-rendered tbody tr:hover td {
+  background-color: #FEF3C7 !important;
+}
+
+/* ==========================================================================
+   6. HOVER КАРТОЧЕК, ПРЕДЛОЖЕНИЙ И ПЛАВАЮЩИЙ ДОК ARTCRAFT
+   ========================================================================== */
+body.artcraft-hover-cards .markdown-rendered p:hover,
+body.artcraft-hover-cards .cm-line:hover {
+  background-color: var(--artcraft-bg-hover) !important;
+  border-radius: 6px;
+}
+
+.artcraft-sentence {
+  border-radius: 4px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+  transition: background-color 0.12s ease;
+  cursor: pointer;
+}
+
+body.artcraft-sentence-focus .artcraft-sentence:hover {
+  background-color: rgba(253, 230, 138, 0.7) !important;
+  color: #111111 !important;
+}
+
+.artcraft-sentence.artcraft-pinned-blue {
+  background-color: #DBEAFE !important;
+  color: #1E3A8A !important;
+  border-bottom: 2px solid #2563EB;
+}
+.artcraft-sentence.artcraft-pinned-orange {
+  background-color: #FFEDD5 !important;
+  color: #9A3412 !important;
+  border-bottom: 2px solid #EA580C;
+}
+.artcraft-sentence.artcraft-pinned-green {
+  background-color: #DCFCE7 !important;
+  color: #065F46 !important;
+  border-bottom: 2px solid #10B981;
+}
+.artcraft-sentence.artcraft-pinned-purple {
+  background-color: #EDE9FE !important;
+  color: #5B21B6 !important;
+  border-bottom: 2px solid #7C3AED;
+}
+
+.artcraft-floating-dock {
+  position: fixed;
+  bottom: 22px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #F4F3EF;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 6px 9px;
+  box-shadow: 0 4px 0 #111111, 0 8px 24px rgba(17, 17, 17, 0.16);
+  font-family: "JetBrains Mono", monospace;
+  user-select: none;
+}
+
+.artcraft-dock-badge {
+  background: #111111;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 5px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-right: 2px;
+}
+
+/* Компактный таймер работы / Pomodoro прямо в панели */
+.artcraft-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFFFFF;
+  color: #111111;
+  border: 1.5px solid #111111;
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  margin-right: 2px;
+}
+
+.artcraft-timer-pill:hover {
+  background: #EFECE6;
+}
+
+.artcraft-timer-pill.is-running {
+  background: var(--artcraft-excel-green, #69BD28) !important;
+  color: #FFFFFF !important;
+  border-color: #559E1D !important;
+}
+
+.artcraft-timer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9CA3AF;
+}
+
+.artcraft-timer-pill.is-running .artcraft-timer-dot {
+  background: #FFFFFF;
+  box-shadow: 0 0 6px #FFFFFF;
+}
+
+.artcraft-timer-pill.is-break.is-running {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+  border-color: #1D4ED8 !important;
+}
+
+.artcraft-timer-pill.is-break .artcraft-timer-dot {
+  background: #60A5FA;
+}
+
+.artcraft-dock-btn {
+  background: #FFFFFF;
+  color: #111111;
+  border: 1px solid #CBD5E1;
+  border-radius: 5px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.14s ease;
+}
+
+.artcraft-dock-btn:hover {
+  background: #EFECE6;
+  border-color: #111111;
+}
+
+.artcraft-dock-btn.is-active {
+  background: var(--artcraft-excel-green, #69BD28) !important;
+  color: #FFFFFF !important;
+  border-color: #559E1D !important;
+}
+
+.artcraft-color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.artcraft-color-dot:hover,
+.artcraft-color-dot.is-active {
+  transform: scale(1.22);
+  border: 2px solid #111111;
+}
+
+.artcraft-overlay-canvas {
+  position: fixed;
+  /* Start BELOW the Obsidian title bar (~32px) so drag region is never blocked */
+  top: 32px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 32px);
+  z-index: 9990;
+  pointer-events: none;
+  -webkit-app-region: no-drag;
+}
+
+.artcraft-overlay-canvas.is-interactive {
+  pointer-events: auto;
+}
+
+/* Mode-specific cursor handling:
+   - Laser mode: completely hide the OS cursor so only the smooth glowing laser head is visible
+   - Draw mode: crosshair starting exactly at the cursor point
+*/
+.artcraft-overlay-canvas.mode-laser {
+  cursor: none !important;
+}
+
+.artcraft-overlay-canvas.mode-draw {
+  cursor: crosshair !important;
+}
+
+/* ==========================================================================
+   7. РЕЖИМ ДЗЕН (ZEN FOCUS MODE) — СКРЫВАЕТ САЙДБАРЫ И ЛИШНИЙ ИНТЕРФЕЙС
+   ========================================================================== */
+body.artcraft-zen-mode .workspace-split.mod-left-split,
+body.artcraft-zen-mode .workspace-split.mod-right-split,
+body.artcraft-zen-mode .workspace-ribbon,
+body.artcraft-zen-mode .status-bar {
+  display: none !important;
+}
+
+body.artcraft-zen-mode .workspace-tab-header-container {
+  opacity: 0.15;
+  transition: opacity 0.2s ease;
+}
+
+body.artcraft-zen-mode .workspace-tab-header-container:hover {
+  opacity: 1;
+}
+
+.artcraft-version-row {
+  padding: 8px 0 16px 0;
+  font-size: 12px;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.artcraft-update-btn {
+  background: #111111;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+}
+.artcraft-update-btn:hover {
+  background: #374151;
+}
+
+.artcraft-pro-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #FFFBEB;
+  border: 1.5px solid #F59E0B;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.artcraft-pro-badge {
+  background: #F59E0B;
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-family: "JetBrains Mono", monospace;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.artcraft-pro-hint a {
+  color: #D97706;
+  font-weight: 600;
+}
+
+
+/* ==========================================================================
+   8. ALCHEMY CRAFT PRO — REFINED SWISS BENTO MODAL & CHECKOUT
+   ========================================================================== */
+
+/* Pro card in settings tab */
+.artcraft-pro-buy-card {
+  background: #FFFDF9;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 14px 0 20px 0;
+  box-shadow: 0 4px 0 #111111;
+}
+
+.artcraft-pro-buy-card .buy-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.artcraft-pro-buy-card .buy-badge {
+  background: #111111;
+  color: #FFFFFF;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.artcraft-pro-buy-card .buy-price {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 16px;
+  font-weight: 800;
+  color: #16A34A;
+}
+
+.artcraft-pro-buy-card h4 {
+  margin: 4px 0 8px 0;
+  font-size: 15px;
+  color: #111111;
+}
+
+.artcraft-pro-buy-card .buy-perks {
+  margin: 0 0 16px 18px;
+  padding: 0;
+  font-size: 12.5px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.artcraft-open-modal-btn {
+  background: var(--artcraft-excel-green, #69BD28) !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #559E1D !important;
+  border-radius: 6px !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  padding: 8px 18px !important;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #3E7912;
+}
+
+.artcraft-open-modal-btn:hover {
+  filter: brightness(1.05);
+}
+
+.artcraft-pro-active-box {
+  background: #F0FDF4;
+  border: 1.5px solid #16A34A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 12px 0 16px 0;
+  box-shadow: 0 3px 0 #16A34A;
+}
+
+.artcraft-pro-active-box .pro-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #166534;
+}
+
+.artcraft-pro-active-box .pro-tag {
+  background: #16A34A;
+  color: #FFFFFF;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 800;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.artcraft-pro-active-box .pro-tx {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #4B5563;
+}
+
+.artcraft-pro-active-box .pro-tx code {
+  background: #DCFCE7;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+/* ==========================================================================
+   MODAL DIALOG (ULTRA-CLEAN BENTO DESIGN)
+   ========================================================================== */
+
+.modal.artcraft-pro-modal-root {
+  max-width: 540px !important;
+  padding: 22px 24px !important;
+  background: #F9F8F6 !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 0 #111111, 0 20px 40px rgba(0,0,0,0.15) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif !important;
+  color: #111111 !important;
+}
+
+.artcraft-modal-header-card {
+  margin-bottom: 16px;
+}
+
+.artcraft-bento-pill {
+  display: inline-block;
+  background: #111111;
+  color: #FFFFFF;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.artcraft-modal-title {
+  margin: 0 0 4px 0 !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  color: #111111 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.artcraft-modal-desc {
+  margin: 0 !important;
+  font-size: 12.5px !important;
+  color: #4B5563 !important;
+  line-height: 1.45 !important;
+}
+
+.artcraft-section-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #6B7280;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* 2x2 Network Bento Grid */
+.artcraft-net-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.artcraft-net-tile {
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.artcraft-net-tile:hover {
+  border-color: #111111;
+  background: #FAF9F5;
+}
+
+.artcraft-net-tile.is-selected {
+  background: #111111 !important;
+  border-color: #111111 !important;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+}
+
+.artcraft-net-tile .tile-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.artcraft-net-tile.is-selected .tile-top {
+  color: #FFFFFF !important;
+}
+
+.artcraft-net-tile .tile-hint {
+  font-size: 10.5px;
+  color: #6B7280;
+  margin-top: 3px;
+}
+
+.artcraft-net-tile.is-selected .tile-hint {
+  color: #9CA3AF !important;
+}
+
+/* Active Payment Card (Clean & Focused) */
+.artcraft-active-payment-card {
+  background: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 0 rgba(17, 17, 17, 0.06);
+}
+
+.card-meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #D5D3CC;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.card-amount-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta-amount-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4B5563;
+  letter-spacing: 0.03em;
+}
+
+.meta-amount-pill {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.card-copy-amount {
+  padding: 3px 8px !important;
+  font-size: 10.5px !important;
+  background: #F3F4F6 !important;
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 4px !important;
+}
+
+.card-copy-amount:hover {
+  background: #E5E7EB !important;
+}
+
+.meta-gas-tag {
+  background: #DCFCE7;
+  color: #15803D;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+.card-field-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #6B7280;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.card-address-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.card-address-input {
+  flex: 1;
+  background: #F3F4F6 !important;
+  border: 1px solid #D1D5DB !important;
+  border-radius: 6px !important;
+  padding: 7px 10px !important;
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 11px !important;
+  color: #111111 !important;
+  user-select: all !important;
+}
+
+.card-copy-btn {
+  background: #111111 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 7px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background 0.12s ease !important;
+}
+
+.card-copy-btn:hover {
+  background: #374151 !important;
+}
+
+.card-note-text {
+  font-size: 11px;
+  color: #6B7280;
+  line-height: 1.4;
+}
+
+/* Direct Developer Support Banner */
+.artcraft-support-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 11.5px;
+  color: #111111;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.support-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.support-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.support-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.support-text-col strong {
+  font-weight: 800;
+  color: #111111;
+  font-size: 11.5px;
+}
+
+.support-text-col span {
+  color: #4B5563;
+  font-size: 11px;
+}
+
+.support-tg-btn {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 6px !important;
+  padding: 6px 14px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: all 0.12s ease !important;
+}
+
+.support-tg-btn:hover {
+  background: #1D4ED8 !important;
+  transform: translateY(-1px);
+}
+
+/* Step 2 Verification Bento Card */
+.artcraft-verify-bento-card {
+  background: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.verify-step-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #111111;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.verify-action-row {
+  display: flex;
+  gap: 6px;
+}
+
+.verify-tx-input {
+  flex: 1;
+  background: #F9FAFB !important;
+  border: 1.5px solid #D1D5DB !important;
+  border-radius: 6px !important;
+  padding: 8px 10px !important;
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 11px !important;
+}
+
+.verify-tx-input:focus {
+  border-color: #111111 !important;
+  background: #FFFFFF !important;
+}
+
+.verify-activate-button {
+  background: #111111 !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 6px !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  padding: 8px 14px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+.verify-activate-button:hover {
+  background: #374151 !important;
+}
+
+.verify-status-msg {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Midnight Dark Craft Mode */
+body.artcraft-dark-craft {
+  --background-primary: #121212 !important;
+  --background-secondary: #1A1A1A !important;
+  --text-normal: #E5E7EB !important;
+  --text-muted: #9CA3AF !important;
+}
+body.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] {
+  background-color: #121212 !important;
+}
