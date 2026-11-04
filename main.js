@@ -139,6 +139,30 @@ class AlchemyFlowPlugin extends Plugin {
     });
 
     this.addCommand({
+      id: "toggle-eraser",
+      name: isEn ? "Toggle Eraser Mode" : "Включить/выключить режим Ластика",
+      callback: () => {
+        this.toggleMode(this.mode === "eraser" ? "none" : "eraser");
+      },
+    });
+
+    this.addCommand({
+      id: "undo-drawing",
+      name: isEn ? "Undo Drawing / Annotation" : "Отменить последнее действие рисования",
+      callback: () => {
+        this.undo();
+      },
+    });
+
+    this.addCommand({
+      id: "redo-drawing",
+      name: isEn ? "Redo Drawing / Annotation" : "Повторить отмененное действие рисования",
+      callback: () => {
+        this.redo();
+      },
+    });
+
+    this.addCommand({
       id: "clean-ai-watermarks",
       name: isEn ? "Clean AI Watermarks & Zero-Width Characters" : "Очистить невидимые ИИ-символы и водяные знаки",
       callback: () => {
@@ -163,6 +187,17 @@ class AlchemyFlowPlugin extends Plugin {
             ? "Alchemy Craft: Pointer / Marker deactivated"
             : "Alchemy Craft: Режим указки/рисования выключен"
         );
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z") && !e.shiftKey) {
+        if (this.mode !== "none" || (this.history && this.history.length > 0)) {
+          this.undo();
+        }
+      } else if (
+        (e.ctrlKey || e.metaKey) &&
+        (e.key === "y" || e.key === "Y" || ((e.key === "z" || e.key === "Z") && e.shiftKey))
+      ) {
+        if (this.mode !== "none" || (this.redoHistory && this.redoHistory.length > 0)) {
+          this.redo();
+        }
       }
     });
 
@@ -681,10 +716,10 @@ class AlchemyFlowPlugin extends Plugin {
     const dock = document.createElement("div");
     dock.className = "artcraft-floating-dock";
 
-    // Brand badge: ALCHEMY CRAFT
+    // Brand badge: ALCHEMY CRAFT (Responsive: full on desktop, ⚗️ icon on mobile)
     const badge = document.createElement("span");
     badge.className = "artcraft-dock-badge";
-    badge.textContent = "ALCHEMY CRAFT";
+    badge.innerHTML = '<span class="artcraft-dock-badge-full">ALCHEMY CRAFT</span><span class="artcraft-dock-badge-short">⚗️</span>';
     dock.appendChild(badge);
 
     // 0. Compact Pomodoro / Work Timer Pill
@@ -784,6 +819,38 @@ class AlchemyFlowPlugin extends Plugin {
     });
     dock.appendChild(this.btnDraw);
 
+    // 4.1. Eraser button
+    this.btnEraser = document.createElement("button");
+    this.btnEraser.className = "artcraft-dock-btn";
+    this.btnEraser.title = isEn
+      ? "Eraser — erase drawings under cursor or finger (Esc to exit)"
+      : "Ластик — стирать рисунки касанием или мышью (Esc для выхода)";
+    this.btnEraser.textContent = isEn ? "Eraser" : "Ластик";
+    this.btnEraser.addEventListener("click", () => {
+      this.toggleMode(this.mode === "eraser" ? "none" : "eraser");
+    });
+    dock.appendChild(this.btnEraser);
+
+    // 4.2. Undo button
+    this.btnUndo = document.createElement("button");
+    this.btnUndo.className = "artcraft-dock-btn artcraft-dock-icon-btn";
+    this.btnUndo.title = isEn ? "Undo last stroke (Ctrl+Z)" : "Отменить последний штрих (Ctrl+Z)";
+    this.btnUndo.textContent = "↶";
+    this.btnUndo.addEventListener("click", () => {
+      this.undo();
+    });
+    dock.appendChild(this.btnUndo);
+
+    // 4.3. Redo button
+    this.btnRedo = document.createElement("button");
+    this.btnRedo.className = "artcraft-dock-btn artcraft-dock-icon-btn";
+    this.btnRedo.title = isEn ? "Redo stroke (Ctrl+Y)" : "Повторить отмененный штрих (Ctrl+Y)";
+    this.btnRedo.textContent = "↷";
+    this.btnRedo.addEventListener("click", () => {
+      this.redo();
+    });
+    dock.appendChild(this.btnRedo);
+
     // 5. Palette dots (01 Blue, 02 Orange, 03 Green, 04 Purple)
     this.colorDots = [];
     PALETTE.forEach((p) => {
@@ -841,25 +908,52 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnSentence?.classList.toggle("is-active", this.settings.sentenceFocus);
     this.btnLaser?.classList.toggle("is-active", this.mode === "laser");
     this.btnDraw?.classList.toggle("is-active", this.mode === "draw");
+    this.btnEraser?.classList.toggle("is-active", this.mode === "eraser");
     if (this.colorDots) {
       this.colorDots.forEach((d) => {
         d.el.classList.toggle("is-active", d.key === this.settings.activeColorKey);
       });
+    }
+    this.updateUndoRedoUI();
+  }
+
+  updateUndoRedoUI() {
+    if (this.btnUndo) {
+      const canUndo = this.history && this.history.length > 0;
+      this.btnUndo.style.opacity = canUndo ? "1" : "0.35";
+      this.btnUndo.style.pointerEvents = canUndo ? "auto" : "none";
+    }
+    if (this.btnRedo) {
+      const canRedo = this.redoHistory && this.redoHistory.length > 0;
+      this.btnRedo.style.opacity = canRedo ? "1" : "0.35";
+      this.btnRedo.style.pointerEvents = canRedo ? "auto" : "none";
     }
   }
 
   toggleMode(newMode) {
     this.mode = newMode;
     if (this.canvasEl) {
-      this.canvasEl.classList.toggle("is-interactive", this.mode !== "none");
+      const active = this.mode !== "none";
+      this.canvasEl.classList.toggle("is-interactive", active);
       this.canvasEl.classList.toggle("mode-laser", this.mode === "laser");
       this.canvasEl.classList.toggle("mode-draw", this.mode === "draw");
-      this.canvasEl.style.pointerEvents = this.mode === "none" ? "none" : "auto";
+      this.canvasEl.classList.toggle("mode-eraser", this.mode === "eraser");
+      this.canvasEl.style.pointerEvents = active ? "auto" : "none";
+      this.canvasEl.style.touchAction = active ? "none" : "auto";
+      if (active && this.resizeCanvas) {
+        this.resizeCanvas();
+      }
     }
     this.updateDockUI();
   }
 
   clearAllAnnotations() {
+    if (this.strokes && this.strokes.length > 0) {
+      if (!this.history) this.history = [];
+      this.history.push({ type: "erase", strokes: [...this.strokes] });
+      this.redoHistory = [];
+      this.updateUndoRedoUI();
+    }
     this.strokes = [];
     this.laserTrail = [];
     PALETTE.forEach((p) => {
@@ -871,12 +965,87 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   getCanvasCoords(e) {
-    if (!this.canvasEl) return { x: e.clientX, y: e.clientY };
+    if (!this.canvasEl) return { x: 0, y: 0 };
     const rect = this.canvasEl.getBoundingClientRect();
+    let cx = 0;
+    let cy = 0;
+    if (e.touches && e.touches.length > 0) {
+      cx = e.touches[0].clientX;
+      cy = e.touches[0].clientY;
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      cx = e.changedTouches[0].clientX;
+      cy = e.changedTouches[0].clientY;
+    } else if (e.clientX !== undefined) {
+      cx = e.clientX;
+      cy = e.clientY;
+    }
     return {
-      x: Math.round(e.clientX - rect.left),
-      y: Math.round(e.clientY - rect.top),
+      x: Math.round(cx - rect.left),
+      y: Math.round(cy - rect.top),
     };
+  }
+
+  eraseAt(pt) {
+    const ERASE_RADIUS = 24; // px
+    const remaining = [];
+    const removed = [];
+    for (const stroke of this.strokes) {
+      const hit =
+        stroke.points &&
+        stroke.points.some((p) => {
+          const dx = p.x - pt.x;
+          const dy = p.y - pt.y;
+          return dx * dx + dy * dy <= ERASE_RADIUS * ERASE_RADIUS;
+        });
+      if (hit) {
+        removed.push(stroke);
+      } else {
+        remaining.push(stroke);
+      }
+    }
+    if (removed.length > 0) {
+      if (!this.currentErasedStrokes) this.currentErasedStrokes = [];
+      removed.forEach((s) => {
+        if (!this.currentErasedStrokes.includes(s)) {
+          this.currentErasedStrokes.push(s);
+        }
+      });
+      this.strokes = remaining;
+    }
+  }
+
+  undo() {
+    if (!this.history || this.history.length === 0) return;
+    const action = this.history.pop();
+    if (action.type === "stroke") {
+      const idx = this.strokes.indexOf(action.stroke);
+      if (idx !== -1) {
+        this.strokes.splice(idx, 1);
+      }
+      this.redoHistory.push(action);
+    } else if (action.type === "erase") {
+      action.strokes.forEach((s) => {
+        if (!this.strokes.includes(s)) this.strokes.push(s);
+      });
+      this.redoHistory.push(action);
+    }
+    this.updateUndoRedoUI();
+  }
+
+  redo() {
+    if (!this.redoHistory || this.redoHistory.length === 0) return;
+    const action = this.redoHistory.pop();
+    if (action.type === "stroke") {
+      this.strokes.push(action.stroke);
+      this.history.push(action);
+    } else if (action.type === "erase") {
+      action.strokes.forEach((s) => {
+        const idx = this.strokes.indexOf(s);
+        if (idx !== -1) this.strokes.splice(idx, 1);
+      });
+      this.history.push(action);
+    }
+    this.updateUndoRedoUI();
   }
 
   createOverlayCanvas() {
@@ -886,43 +1055,99 @@ class AlchemyFlowPlugin extends Plugin {
     this.canvasEl = canvas;
     this.ctx = canvas.getContext("2d");
 
-    const TITLEBAR_H = 32; // px — leave Obsidian title bar drag region free
+    this.history = [];
+    this.redoHistory = [];
+    this.currentErasedStrokes = null;
+    this.eraserPos = null;
+
     const resize = () => {
+      const isMobile =
+        document.body.classList.contains("is-phone") ||
+        document.body.classList.contains("is-mobile");
+      const topOffset = isMobile ? 0 : 32;
+      canvas.style.top = `${topOffset}px`;
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight - TITLEBAR_H;
+      canvas.height = Math.max(100, window.innerHeight - topOffset);
     };
+    this.resizeCanvas = resize;
     resize();
     this.registerDomEvent(window, "resize", resize);
 
-    this.registerDomEvent(canvas, "mousedown", (e) => {
+    let isInteracting = false;
+
+    const onStart = (e) => {
       if (this.mode === "none") return;
+      if (e.cancelable) e.preventDefault();
+      isInteracting = true;
       this.isDrawing = true;
       const pt = this.getCanvasCoords(e);
+
       if (this.mode === "draw") {
         this.currentStroke = {
           color: this.settings.strokeColor,
           points: [pt],
         };
         this.strokes.push(this.currentStroke);
+      } else if (this.mode === "eraser") {
+        this.currentErasedStrokes = [];
+        this.eraserPos = pt;
+        this.eraseAt(pt);
       } else if (this.mode === "laser") {
         this.laserTrail.push({ ...pt, t: Date.now() });
       }
-    });
+    };
 
-    this.registerDomEvent(window, "mousemove", (e) => {
+    const onMove = (e) => {
       if (this.mode === "none") return;
       const pt = this.getCanvasCoords(e);
-      if (this.mode === "laser") {
-        this.laserTrail.push({ ...pt, t: Date.now() });
-      } else if (this.mode === "draw" && this.isDrawing && this.currentStroke) {
-        this.currentStroke.points.push(pt);
-      }
-    });
 
-    this.registerDomEvent(window, "mouseup", () => {
+      if (this.mode === "laser") {
+        if (e.cancelable && (e.type.startsWith("touch") || isInteracting)) e.preventDefault();
+        this.laserTrail.push({ ...pt, t: Date.now() });
+      } else if (this.mode === "draw") {
+        if (isInteracting && this.isDrawing && this.currentStroke) {
+          if (e.cancelable) e.preventDefault();
+          this.currentStroke.points.push(pt);
+        }
+      } else if (this.mode === "eraser") {
+        this.eraserPos = pt;
+        if (isInteracting && this.isDrawing) {
+          if (e.cancelable) e.preventDefault();
+          this.eraseAt(pt);
+        }
+      }
+    };
+
+    const onEnd = (e) => {
+      if (!isInteracting) return;
+      isInteracting = false;
       this.isDrawing = false;
+
+      if (this.mode === "draw" && this.currentStroke) {
+        this.history.push({ type: "stroke", stroke: this.currentStroke });
+        this.redoHistory = [];
+        this.updateUndoRedoUI();
+      } else if (this.mode === "eraser") {
+        if (this.currentErasedStrokes && this.currentErasedStrokes.length > 0) {
+          this.history.push({ type: "erase", strokes: this.currentErasedStrokes });
+          this.redoHistory = [];
+          this.updateUndoRedoUI();
+        }
+        this.currentErasedStrokes = null;
+      }
       this.currentStroke = null;
-    });
+    };
+
+    // Touch events for iOS / Android with passive: false to prevent scrolling
+    canvas.addEventListener("touchstart", onStart, { passive: false });
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onEnd, { passive: true });
+    window.addEventListener("touchcancel", onEnd, { passive: true });
+
+    // Mouse events for Desktop
+    canvas.addEventListener("mousedown", onStart);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onEnd);
 
     const renderLoop = () => {
       this.renderCanvas();
@@ -937,19 +1162,26 @@ class AlchemyFlowPlugin extends Plugin {
     ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
 
     this.strokes.forEach((stroke) => {
-      if (stroke.points.length < 2) return;
+      if (!stroke.points || stroke.points.length === 0) return;
       ctx.save();
       ctx.beginPath();
-      ctx.strokeStyle = stroke.color;
+      ctx.strokeStyle = stroke.color || "#2563EB";
       ctx.lineWidth = 4;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      ctx.globalAlpha = 0.85;
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-      for (let i = 1; i < stroke.points.length; i++) {
-        ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+      ctx.globalAlpha = 0.88;
+
+      if (stroke.points.length === 1) {
+        ctx.arc(stroke.points[0].x, stroke.points[0].y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = stroke.color || "#2563EB";
+        ctx.fill();
+      } else {
+        ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+        for (let i = 1; i < stroke.points.length; i++) {
+          ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
       ctx.restore();
     });
 
@@ -977,6 +1209,19 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.globalAlpha = 0.95;
       ctx.arc(head.x, head.y, 6, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
+    }
+
+    if (this.mode === "eraser" && this.eraserPos) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(this.eraserPos.x, this.eraserPos.y, 22, 0, Math.PI * 2);
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 1.5;
+      ctx.fillStyle = "rgba(239, 68, 68, 0.15)";
+      ctx.fill();
+      ctx.setLineDash([4, 3]);
+      ctx.stroke();
       ctx.restore();
     }
   }
@@ -1326,16 +1571,16 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     containerEl.createEl("h2", {
       text: isEn
-        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.4)"
-        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.4)",
+        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.0)"
+        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.0)",
     });
 
     // Version & Update check
     const versionDiv = containerEl.createDiv({ cls: "artcraft-version-row" });
     versionDiv.createSpan({
       text: isEn
-        ? "Version: v3.4.0  |  Author: Elyas Aliverdiyev  |  "
-        : "Версия: v3.4.0  |  Автор: Elyas Aliverdiyev  |  ",
+        ? "Version: v3.5.0  |  Author: Elyas Aliverdiyev  |  "
+        : "Версия: v3.5.0  |  Автор: Elyas Aliverdiyev  |  ",
     });
     const updateBtn = versionDiv.createEl("button", {
       text: isEn ? "🔄 Check Updates" : "🔄 Проверить обновления",

@@ -424,6 +424,17 @@ body.artcraft-theme-active li.task-list-item.is-checked {
   flex-shrink: 0;
 }
 
+body.is-phone .artcraft-task-progress-wrap,
+body.is-mobile .artcraft-task-progress-wrap,
+@media (max-width: 680px) {
+  .artcraft-task-progress-wrap {
+    margin-top: calc(var(--header-height, 48px) + env(safe-area-inset-top, 0px)) !important;
+    padding: 6px 12px !important;
+    font-size: 0.72rem !important;
+    gap: 8px !important;
+  }
+}
+
 .artcraft-task-progress-bar-bg {
   flex: 1;
   height: 9px;
@@ -685,6 +696,66 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   border-radius: 4px;
   text-transform: uppercase;
   margin-right: 2px;
+  white-space: nowrap;
+}
+
+.artcraft-dock-badge-short {
+  display: none;
+}
+
+/* Мобильная адаптация Floating Dock (iPhone 12 Pro / iOS / Android) */
+body.is-phone .artcraft-floating-dock,
+body.is-mobile .artcraft-floating-dock,
+@media (max-width: 680px) {
+  .artcraft-floating-dock {
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 12px)) !important;
+    max-width: calc(100vw - 16px) !important;
+    width: max-content;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 5px 7px !important;
+    gap: 4px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 14px rgba(17, 17, 17, 0.22), 0 2px 0 #111111 !important;
+  }
+
+  .artcraft-floating-dock::-webkit-scrollbar {
+    display: none;
+  }
+
+  .artcraft-dock-badge-full {
+    display: none !important;
+  }
+
+  .artcraft-dock-badge-short {
+    display: inline-block !important;
+  }
+
+  .artcraft-dock-badge {
+    padding: 4px 6px !important;
+  }
+
+  .artcraft-dock-btn {
+    padding: 5px 7px !important;
+    font-size: 10.5px !important;
+    flex-shrink: 0;
+  }
+
+  .artcraft-timer-pill {
+    padding: 4px 7px !important;
+    font-size: 10px !important;
+    flex-shrink: 0;
+  }
+
+  .artcraft-color-dot {
+    width: 14px !important;
+    height: 14px !important;
+    flex-shrink: 0;
+  }
 }
 
 /* Компактный таймер работы / Pomodoro прямо в панели */
@@ -753,6 +824,14 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   transition: all 0.14s ease;
 }
 
+.artcraft-dock-icon-btn {
+  padding: 5px 8px !important;
+  font-size: 13px !important;
+  font-weight: 700;
+  min-width: 26px;
+  justify-content: center;
+}
+
 .artcraft-dock-btn:hover {
   background: #EFECE6;
   border-color: #111111;
@@ -788,22 +867,34 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   height: calc(100vh - 32px);
   z-index: 9990;
   pointer-events: none;
+  touch-action: none;
   -webkit-app-region: no-drag;
+}
+
+body.is-phone .artcraft-overlay-canvas,
+body.is-mobile .artcraft-overlay-canvas,
+@media (max-width: 680px) {
+  .artcraft-overlay-canvas {
+    top: 0 !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+  }
 }
 
 .artcraft-overlay-canvas.is-interactive {
   pointer-events: auto;
 }
 
-/* Mode-specific cursor handling:
-   - Laser mode: completely hide the OS cursor so only the smooth glowing laser head is visible
-   - Draw mode: crosshair starting exactly at the cursor point
-*/
+/* Mode-specific cursor handling */
 .artcraft-overlay-canvas.mode-laser {
   cursor: none !important;
 }
 
 .artcraft-overlay-canvas.mode-draw {
+  cursor: crosshair !important;
+}
+
+.artcraft-overlay-canvas.mode-eraser {
   cursor: crosshair !important;
 }
 
