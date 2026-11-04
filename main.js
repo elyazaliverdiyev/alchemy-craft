@@ -33,6 +33,15 @@ const PALETTE = [
   { key: "purple", name: "04 Amethyst (Purple)", color: "#8B5CF6", pinClass: "artcraft-pinned-purple" },
 ];
 
+const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+  <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
+  <path class="artcraft-flask-liquid" d="M6.2 16.5C8 15 10 17 12 16C14 15 16 17 17.8 16.5L17.9 20H6.1L6.2 16.5Z" fill="#69BD28" opacity="0.9" />
+  <circle class="artcraft-flask-bubble b1" cx="10" cy="14" r="1" fill="#FFFFFF" />
+  <circle class="artcraft-flask-bubble b2" cx="13.5" cy="12" r="0.75" fill="#FFFFFF" />
+  <circle class="artcraft-flask-spark" cx="12" cy="7" r="0.8" fill="#F59E0B" />
+</svg>`;
+
 class AlchemyFlowPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
@@ -725,15 +734,6 @@ class AlchemyFlowPlugin extends Plugin {
       parent.appendChild(document.createTextNode(text.slice(lastIdx)));
     }
   }
-
-const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-  <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
-  <path class="artcraft-flask-liquid" d="M6.2 16.5C8 15 10 17 12 16C14 15 16 17 17.8 16.5L17.9 20H6.1L6.2 16.5Z" fill="#69BD28" opacity="0.9" />
-  <circle class="artcraft-flask-bubble b1" cx="10" cy="14" r="1" fill="#FFFFFF" />
-  <circle class="artcraft-flask-bubble b2" cx="13.5" cy="12" r="0.75" fill="#FFFFFF" />
-  <circle class="artcraft-flask-spark" cx="12" cy="7" r="0.8" fill="#F59E0B" />
-</svg>`;
 
   // --- FLOATING DOCK & OVERLAY CANVAS ---
   createFloatingDock() {
@@ -1657,16 +1657,16 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     containerEl.createEl("h2", {
       text: isEn
-        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.3)"
-        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.3)",
+        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.4)"
+        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.4)",
     });
 
     // Version & Update check
     const versionDiv = containerEl.createDiv({ cls: "artcraft-version-row" });
     versionDiv.createSpan({
       text: isEn
-        ? "Version: v3.5.3  |  Author: Elyas Aliverdiyev  |  "
-        : "Версия: v3.5.3  |  Автор: Elyas Aliverdiyev  |  ",
+        ? "Version: v3.5.4  |  Author: Elyas Aliverdiyev  |  "
+        : "Версия: v3.5.4  |  Автор: Elyas Aliverdiyev  |  ",
     });
     const updateBtn = versionDiv.createEl("button", {
       text: isEn ? "🔄 Check Updates" : "🔄 Проверить обновления",
