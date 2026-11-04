@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS = {
   sentenceFocus: true,
   colorizeNumbers: true,
   showFloatingDock: true,
+  dockCollapsed: false,
   showTaskProgress: true,
   strokeColor: "#2563EB",
   activeColorKey: "blue",
@@ -83,6 +84,14 @@ class AlchemyFlowPlugin extends Plugin {
     });
 
     const isEn = this.settings.uiLanguage !== "ru";
+
+    this.addCommand({
+      id: "toggle-dock-collapse",
+      name: isEn ? "Collapse / Expand Alchemy Dock" : "Свернуть / Развернуть панель управления",
+      callback: () => {
+        this.toggleDockCollapse();
+      },
+    });
 
     this.addCommand({
       id: "toggle-artcraft-theme",
@@ -715,12 +724,24 @@ class AlchemyFlowPlugin extends Plugin {
 
     const dock = document.createElement("div");
     dock.className = "artcraft-floating-dock";
+    if (this.settings.dockCollapsed) {
+      dock.classList.add("is-collapsed");
+    }
 
-    // Brand badge: ALCHEMY CRAFT (Responsive: full on desktop, ⚗️ icon on mobile)
+    // Brand badge & Collapse trigger: ALCHEMY CRAFT (Responsive: full on desktop, ⚗️ icon on mobile)
     const badge = document.createElement("span");
     badge.className = "artcraft-dock-badge";
+    badge.title = isEn ? "Click to collapse/expand Alchemy Dock" : "Клик для сворачивания/разворачивания панели";
     badge.innerHTML = '<span class="artcraft-dock-badge-full">ALCHEMY CRAFT</span><span class="artcraft-dock-badge-short">⚗️</span>';
+    badge.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleDockCollapse();
+    });
     dock.appendChild(badge);
+
+    // Inner content wrapper (allows smooth morphing animation without stretching buttons)
+    const contentWrap = document.createElement("div");
+    contentWrap.className = "artcraft-dock-content";
 
     // 0. Compact Pomodoro / Work Timer Pill
     this.timerEl = document.createElement("div");
@@ -748,7 +769,7 @@ class AlchemyFlowPlugin extends Plugin {
       e.preventDefault();
       this.showTimerMenu(e);
     });
-    dock.appendChild(this.timerEl);
+    contentWrap.appendChild(this.timerEl);
     this.updateTimerDisplay();
 
     // 1. Theme toggle button
@@ -764,7 +785,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.applyBodyClasses();
       this.updateDockUI();
     });
-    dock.appendChild(this.btnTheme);
+    contentWrap.appendChild(this.btnTheme);
 
     // 1.5. Zen Mode button
     this.btnZen = document.createElement("button");
@@ -778,7 +799,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.applyBodyClasses();
       this.updateDockUI();
     });
-    dock.appendChild(this.btnZen);
+    contentWrap.appendChild(this.btnZen);
 
     // 2. Sentence Focus button
     this.btnSentence = document.createElement("button");
@@ -793,7 +814,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.applyBodyClasses();
       this.updateDockUI();
     });
-    dock.appendChild(this.btnSentence);
+    contentWrap.appendChild(this.btnSentence);
 
     // 3. Laser Pointer button
     this.btnLaser = document.createElement("button");
@@ -805,7 +826,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnLaser.addEventListener("click", () => {
       this.toggleMode(this.mode === "laser" ? "none" : "laser");
     });
-    dock.appendChild(this.btnLaser);
+    contentWrap.appendChild(this.btnLaser);
 
     // 4. Draw Marker button
     this.btnDraw = document.createElement("button");
@@ -817,7 +838,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnDraw.addEventListener("click", () => {
       this.toggleMode(this.mode === "draw" ? "none" : "draw");
     });
-    dock.appendChild(this.btnDraw);
+    contentWrap.appendChild(this.btnDraw);
 
     // 4.1. Eraser button
     this.btnEraser = document.createElement("button");
@@ -829,7 +850,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnEraser.addEventListener("click", () => {
       this.toggleMode(this.mode === "eraser" ? "none" : "eraser");
     });
-    dock.appendChild(this.btnEraser);
+    contentWrap.appendChild(this.btnEraser);
 
     // 4.2. Undo button
     this.btnUndo = document.createElement("button");
@@ -839,7 +860,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnUndo.addEventListener("click", () => {
       this.undo();
     });
-    dock.appendChild(this.btnUndo);
+    contentWrap.appendChild(this.btnUndo);
 
     // 4.3. Redo button
     this.btnRedo = document.createElement("button");
@@ -849,7 +870,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnRedo.addEventListener("click", () => {
       this.redo();
     });
-    dock.appendChild(this.btnRedo);
+    contentWrap.appendChild(this.btnRedo);
 
     // 5. Palette dots (01 Blue, 02 Orange, 03 Green, 04 Purple)
     this.colorDots = [];
@@ -867,7 +888,7 @@ class AlchemyFlowPlugin extends Plugin {
         this.updateDockUI();
       });
       this.colorDots.push({ el: dot, color: p.color, key: p.key });
-      dock.appendChild(dot);
+      contentWrap.appendChild(dot);
     });
 
     // 6. AI Text Cleaner button (Shown ONLY if enableAiCleaner is true!)
@@ -881,7 +902,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.btnCleanAI.addEventListener("click", () => {
         this.cleanCurrentNoteAIWatermarks();
       });
-      dock.appendChild(this.btnCleanAI);
+      contentWrap.appendChild(this.btnCleanAI);
     }
 
     // 7. Clear button
@@ -894,13 +915,41 @@ class AlchemyFlowPlugin extends Plugin {
     btnClear.addEventListener("click", () => {
       this.clearAllAnnotations();
     });
-    dock.appendChild(btnClear);
+    contentWrap.appendChild(btnClear);
+
+    // 8. Collapse / Minimize button
+    const btnCollapse = document.createElement("button");
+    btnCollapse.className = "artcraft-dock-btn artcraft-dock-icon-btn artcraft-dock-collapse-btn";
+    btnCollapse.title = isEn ? "Collapse into floating orb" : "Свернуть панель в плавающую сферу";
+    btnCollapse.textContent = "—";
+    btnCollapse.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleDockCollapse();
+    });
+    contentWrap.appendChild(btnCollapse);
+
+    dock.appendChild(contentWrap);
+
+    // Expand when clicking the collapsed orb anywhere
+    dock.addEventListener("click", (e) => {
+      if (dock.classList.contains("is-collapsed")) {
+        e.stopPropagation();
+        this.toggleDockCollapse();
+      }
+    });
 
     document.body.appendChild(dock);
     this.dockEl = dock;
     this.updateDockUI();
   }
 
+  async toggleDockCollapse() {
+    this.settings.dockCollapsed = !this.settings.dockCollapsed;
+    await this.saveSettings();
+    if (this.dockEl) {
+      this.dockEl.classList.toggle("is-collapsed", this.settings.dockCollapsed);
+    }
+  }
   updateDockUI() {
     if (!this.dockEl) return;
     this.btnTheme?.classList.toggle("is-active", this.settings.artcraftTheme);
@@ -1571,16 +1620,16 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     containerEl.createEl("h2", {
       text: isEn
-        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.0)"
-        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.0)",
+        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.1)"
+        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.1)",
     });
 
     // Version & Update check
     const versionDiv = containerEl.createDiv({ cls: "artcraft-version-row" });
     versionDiv.createSpan({
       text: isEn
-        ? "Version: v3.5.0  |  Author: Elyas Aliverdiyev  |  "
-        : "Версия: v3.5.0  |  Автор: Elyas Aliverdiyev  |  ",
+        ? "Version: v3.5.1  |  Author: Elyas Aliverdiyev  |  "
+        : "Версия: v3.5.1  |  Автор: Elyas Aliverdiyev  |  ",
     });
     const updateBtn = versionDiv.createEl("button", {
       text: isEn ? "🔄 Check Updates" : "🔄 Проверить обновления",
