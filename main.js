@@ -42,6 +42,79 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
   <circle class="artcraft-flask-spark" cx="12" cy="7" r="0.8" fill="#F59E0B" />
 </svg>`;
 
+class CustomPomodoroModal extends Modal {
+  constructor(app, currentMins, onSave) {
+    super(app);
+    this.currentMins = currentMins;
+    this.onSave = onSave;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.addClass("artcraft-pro-modal-root");
+
+    const header = contentEl.createDiv({ cls: "artcraft-modal-header-card" });
+    header.createEl("h3", { cls: "artcraft-modal-title", text: "⏱ Настройка времени фокуса" });
+    header.createEl("p", {
+      cls: "artcraft-modal-desc",
+      text: "Задайте свою длительность Pomodoro-спринта в минутах (например: 5, 20, 50, 75, 90, 120):",
+    });
+
+    const wrap = contentEl.createDiv({ cls: "artcraft-modal-input-wrap" });
+    wrap.style.display = "flex";
+    wrap.style.gap = "10px";
+    wrap.style.margin = "16px 0 10px 0";
+
+    const input = wrap.createEl("input", {
+      type: "number",
+      value: String(this.currentMins || 25),
+    });
+    input.min = "1";
+    input.max = "360";
+    input.style.padding = "8px 12px";
+    input.style.border = "1.5px solid #111111";
+    input.style.borderRadius = "6px";
+    input.style.fontSize = "16px";
+    input.style.fontWeight = "bold";
+    input.style.width = "100px";
+
+    const btnSave = wrap.createEl("button", {
+      text: "Запустить спринт",
+      cls: "artcraft-open-modal-btn",
+    });
+    btnSave.style.background = "#111111";
+    btnSave.style.color = "#FFFFFF";
+    btnSave.style.border = "1.5px solid #111111";
+    btnSave.style.borderRadius = "6px";
+    btnSave.style.padding = "8px 16px";
+    btnSave.style.fontWeight = "bold";
+    btnSave.style.cursor = "pointer";
+
+    const submit = () => {
+      const val = parseInt(input.value, 10);
+      if (val && val > 0 && val <= 360) {
+        this.onSave(val);
+        this.close();
+      } else {
+        new Notice("Пожалуйста, введите число от 1 до 360 минут.");
+      }
+    };
+
+    btnSave.onclick = submit;
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") submit();
+    };
+
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 50);
+  }
+  onClose() {
+    this.contentEl.empty();
+  }
+}
+
 class AlchemyFlowPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
@@ -283,42 +356,57 @@ class AlchemyFlowPlugin extends Plugin {
   startTimer() {
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerRunning = true;
+    const now = Date.now();
+    if (this.settings.timerMode === "pomodoro") {
+      this.timerTargetTimestamp = now + (this.timerSeconds * 1000);
+    } else {
+      this.timerStartTimestamp = now - (this.timerSeconds * 1000);
+    }
     this.timerInterval = setInterval(() => {
-      if (this.settings.timerMode === "pomodoro") {
-        if (this.timerSeconds > 0) {
-          this.timerSeconds--;
-        } else {
-          this.timerRunning = false;
-          clearInterval(this.timerInterval);
-          this.playTimerChime();
-          const isEn = this.settings.uiLanguage !== "ru";
-          if (this.timerState === "work") {
-            new Notice(
-              isEn
-                ? "⚡ Alchemy Craft: Focus sprint completed! Great job, take a short break."
-                : "⚡ Alchemy Craft: Фокус-сессия завершена! Отличная работа, время для перерыва."
-            );
-            this.timerState = "break";
-            this.timerSeconds = (this.settings.breakMinutes || 5) * 60;
-          } else {
-            new Notice(
-              isEn
-                ? "☕ Alchemy Craft: Break finished! Ready for the next focus sprint?"
-                : "☕ Alchemy Craft: Перерыв окончен! Готовы к следующему фокус-спринту?"
-            );
-            this.timerState = "work";
-            this.timerSeconds = (this.settings.pomodoroMinutes || 25) * 60;
-          }
-        }
-      } else {
-        this.timerSeconds++;
-      }
-      this.updateTimerDisplay();
+      this.tickTimer();
     }, 1000);
     this.updateTimerDisplay();
   }
 
+  tickTimer() {
+    if (!this.timerRunning) return;
+    const now = Date.now();
+    if (this.settings.timerMode === "pomodoro") {
+      const remaining = Math.max(0, Math.round((this.timerTargetTimestamp - now) / 1000));
+      this.timerSeconds = remaining;
+      if (remaining <= 0) {
+        this.timerRunning = false;
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.playTimerChime();
+        const isEn = this.settings.uiLanguage !== "ru";
+        if (this.timerState === "work") {
+          new Notice(
+            isEn
+              ? "⚡ Alchemy Craft: Focus sprint completed! Great job, take a short break."
+              : "⚡ Alchemy Craft: Фокус-сессия завершена! Отличная работа, время для перерыва."
+          );
+          this.timerState = "break";
+          this.timerSeconds = (this.settings.breakMinutes || 5) * 60;
+        } else {
+          new Notice(
+            isEn
+              ? "☕ Alchemy Craft: Break finished! Ready for the next focus sprint?"
+              : "☕ Alchemy Craft: Перерыв окончен! Готовы к следующему фокус-спринту?"
+          );
+          this.timerState = "work";
+          this.timerSeconds = (this.settings.pomodoroMinutes || 25) * 60;
+        }
+      }
+    } else {
+      this.timerSeconds = Math.max(0, Math.round((now - this.timerStartTimestamp) / 1000));
+    }
+    this.updateTimerDisplay();
+  }
+
   pauseTimer() {
+    if (this.timerRunning) {
+      this.tickTimer();
+    }
     this.timerRunning = false;
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.updateTimerDisplay();
@@ -978,6 +1066,20 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.appendChild(dock);
     this.dockEl = dock;
     this.updateDockUI();
+  }
+
+    async toggleDockOrientation() {
+    this.settings.dockVertical = !this.settings.dockVertical;
+    await this.saveSettings();
+    if (this.dockEl) {
+      this.dockEl.classList.toggle("is-vertical", this.settings.dockVertical);
+    }
+    const isEn = this.settings.uiLanguage !== "ru";
+    new Notice(
+      this.settings.dockVertical
+        ? (isEn ? "Dock: Vertical Pillar (Right side)" : "Панель: Вертикальная стойка справа")
+        : (isEn ? "Dock: Horizontal Bar (Bottom)" : "Панель: Горизонтальная панель снизу")
+    );
   }
 
   async toggleDockCollapse() {
