@@ -1624,3 +1624,64 @@ body.artcraft-dark-craft {
 body.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] {
   background-color: #121212 !important;
 }
+
+/* ==========================================================================
+   ВЕРТИКАЛЬНАЯ БОКОВАЯ ПАНЕЛЬ СПРАВА (RIGHT SIDE PILLAR DOCK)
+   ========================================================================== */
+.artcraft-color-dots-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  flex-direction: column !important;
+  right: 14px !important;
+  left: auto !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  max-width: 48px !important;
+  width: 48px !important;
+  padding: 8px 5px !important;
+  border-radius: 12px !important;
+  gap: 5px !important;
+  box-shadow: 4px 4px 0 #111111, 8px 12px 28px rgba(17, 17, 17, 0.2) !important;
+}
+
+.artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+  align-items: center !important;
+}
+
+.artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-full {
+  display: none !important;
+}
+
+.artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-short {
+  display: inline-block !important;
+}
+
+.artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 36px !important;
+  padding: 5px 2px !important;
+  font-size: 10px !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill {
+  width: 36px !important;
+  padding: 4px 2px !important;
+  font-size: 9px !important;
+  justify-content: center !important;
+}
+
+.artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 4px !important;
+  padding: 2px 0 !important;
+}

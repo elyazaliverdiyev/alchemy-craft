@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = {
   colorizeNumbers: true,
   showFloatingDock: true,
   dockCollapsed: false,
+  dockVertical: false,
   showTaskProgress: true,
   strokeColor: "#2563EB",
   activeColorKey: "blue",
@@ -84,6 +85,14 @@ class AlchemyFlowPlugin extends Plugin {
     });
 
     const isEn = this.settings.uiLanguage !== "ru";
+
+    this.addCommand({
+      id: "toggle-dock-orientation",
+      name: isEn ? "Toggle Dock Orientation (Bottom / Right Side Pillar)" : "Переключить ориентацию панели (Снизу / Справа у края)",
+      callback: () => {
+        this.toggleDockOrientation();
+      },
+    });
 
     this.addCommand({
       id: "toggle-dock-collapse",
@@ -736,6 +745,9 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
     if (this.settings.dockCollapsed) {
       dock.classList.add("is-collapsed");
     }
+    if (this.settings.dockVertical) {
+      dock.classList.add("is-vertical");
+    }
 
     // Brand badge & Collapse trigger: ALCHEMY CRAFT (Responsive: full on desktop, ⚗️ icon on mobile)
     const badge = document.createElement("span");
@@ -882,6 +894,8 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
     contentWrap.appendChild(this.btnRedo);
 
     // 5. Palette dots (01 Blue, 02 Orange, 03 Green, 04 Purple)
+    const dotsWrap = document.createElement("div");
+    dotsWrap.className = "artcraft-color-dots-wrap";
     this.colorDots = [];
     PALETTE.forEach((p) => {
       const dot = document.createElement("div");
@@ -897,8 +911,9 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
         this.updateDockUI();
       });
       this.colorDots.push({ el: dot, color: p.color, key: p.key });
-      contentWrap.appendChild(dot);
+      dotsWrap.appendChild(dot);
     });
+    contentWrap.appendChild(dotsWrap);
 
     // 6. AI Text Cleaner button (Shown ONLY if enableAiCleaner is true!)
     if (this.settings.enableAiCleaner) {
@@ -925,6 +940,19 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
       this.clearAllAnnotations();
     });
     contentWrap.appendChild(btnClear);
+
+    // 7.5. Orientation Toggle button (Bottom Bar / Right Side Pillar)
+    const btnOrient = document.createElement("button");
+    btnOrient.className = "artcraft-dock-btn artcraft-dock-icon-btn";
+    btnOrient.title = isEn
+      ? "Toggle Orientation (Bottom Bar / Right Side Pillar)"
+      : "Сменить расположение: Снизу / Справа у края";
+    btnOrient.textContent = "⇄";
+    btnOrient.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleDockOrientation();
+    });
+    contentWrap.appendChild(btnOrient);
 
     // 8. Collapse / Minimize button
     const btnCollapse = document.createElement("button");
@@ -1629,16 +1657,16 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     containerEl.createEl("h2", {
       text: isEn
-        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.2)"
-        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.2)",
+        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.3)"
+        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.3)",
     });
 
     // Version & Update check
     const versionDiv = containerEl.createDiv({ cls: "artcraft-version-row" });
     versionDiv.createSpan({
       text: isEn
-        ? "Version: v3.5.2  |  Author: Elyas Aliverdiyev  |  "
-        : "Версия: v3.5.2  |  Автор: Elyas Aliverdiyev  |  ",
+        ? "Version: v3.5.3  |  Author: Elyas Aliverdiyev  |  "
+        : "Версия: v3.5.3  |  Автор: Elyas Aliverdiyev  |  ",
     });
     const updateBtn = versionDiv.createEl("button", {
       text: isEn ? "🔄 Check Updates" : "🔄 Проверить обновления",
