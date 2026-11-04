@@ -709,21 +709,101 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.06em;
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: 5px;
   text-transform: uppercase;
   margin-right: 2px;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .artcraft-dock-badge:hover {
-  transform: scale(1.05);
+  transform: scale(1.06);
+  background: #222222;
+}
+
+.artcraft-dock-badge-full {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .artcraft-dock-badge-short {
   display: none;
+}
+
+/* ==========================================================================
+   УНИКАЛЬНАЯ АНИМИРОВАННАЯ ВЕКТОРНАЯ ИКОНКА ALCHEMY FLASK
+   ========================================================================== */
+.artcraft-svg-flask {
+  width: 17px;
+  height: 17px;
+  display: inline-block;
+  vertical-align: middle;
+  color: inherit;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+}
+
+.artcraft-dock-badge:hover .artcraft-svg-flask {
+  transform: rotate(15deg) scale(1.12);
+}
+
+/* Поднимающиеся алхимические микро-пузырьки */
+@keyframes flaskBubble1 {
+  0% { transform: translateY(0) scale(0.7); opacity: 0; }
+  35% { opacity: 0.95; }
+  100% { transform: translateY(-5px) scale(1.15); opacity: 0; }
+}
+
+@keyframes flaskBubble2 {
+  0% { transform: translateY(0) scale(0.65); opacity: 0; }
+  45% { opacity: 0.9; }
+  100% { transform: translateY(-7px) scale(1.1); opacity: 0; }
+}
+
+.artcraft-flask-bubble.b1 {
+  animation: flaskBubble1 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.artcraft-flask-bubble.b2 {
+  animation: flaskBubble2 2.8s ease-in-out infinite 0.7s;
+  transform-origin: center;
+}
+
+/* Волновое покачивание жидкости */
+@keyframes flaskLiquidSway {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-0.5px) rotate(1.2deg); }
+}
+
+.artcraft-flask-liquid {
+  animation: flaskLiquidSway 3.2s ease-in-out infinite;
+  transform-origin: 12px 18px;
+}
+
+/* Мерцающая искра кристаллизации */
+@keyframes flaskSparkGlow {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.25); filter: drop-shadow(0 0 3px #F59E0B); }
+}
+
+.artcraft-flask-spark {
+  animation: flaskSparkGlow 2.4s ease-in-out infinite;
+  transform-origin: 12px 7px;
+}
+
+/* Пульсирующая изумрудная аура для свернутой сферы */
+@keyframes alchemyOrbAura {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(17, 17, 17, 0.22), 0 0 0 1.5px #111111, 0 0 10px rgba(105, 189, 40, 0.35);
+  }
+  50% {
+    box-shadow: 0 6px 22px rgba(17, 17, 17, 0.28), 0 0 0 2px #69BD28, 0 0 22px rgba(105, 189, 40, 0.7);
+  }
 }
 
 .artcraft-dock-collapse-btn {
@@ -751,8 +831,15 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   cursor: pointer;
   justify-content: center !important;
   background: #FFFFFF !important;
-  box-shadow: 0 4px 18px rgba(17, 17, 17, 0.24), 0 0 0 2px rgba(105, 189, 40, 0.35) !important;
+  animation: alchemyOrbAura 3.6s ease-in-out infinite;
   transform: scale(1);
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-svg-flask {
+  width: 22px !important;
+  height: 22px !important;
+  transform: rotate(360deg) scale(1.15);
+  filter: drop-shadow(0 2px 5px rgba(105, 189, 40, 0.45));
 }
 
 .artcraft-floating-dock.is-collapsed:hover {
