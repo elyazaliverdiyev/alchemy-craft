@@ -1,7 +1,7 @@
 const { Plugin, PluginSettingTab, Setting, Notice, Modal, Menu } = require("obsidian");
 
 const DEFAULT_SETTINGS = {
-  uiLanguage: "en", // "en" (default for Western launch) | "ru"
+  uiLanguage: "en", // "en" | "ru" | "zh" | "ja" | "es" | "de"
   artcraftTheme: true,
   headerTagText: "STRATALCHEMY // KNOWLEDGE BRIEF",
   showHeaderTag: true,
@@ -18,19 +18,34 @@ const DEFAULT_SETTINGS = {
   pomodoroMinutes: 25,
   breakMinutes: 5,
   timerSound: true,
+  ambientSound: "off", // "off" | "brown" | "rain" | "gamma40"
   enableAiCleaner: true,
+  enableBentoGraph: true,
+  graphPreset: "bento", // "bento" | "constellation" | "radar"
   isPro: false,
   proTxHash: "",
   proActivatedAt: null,
   proPlan: "none",
   darkCraftTheme: false,
+  focusAnalytics: {
+    completedSprints: 0,
+    totalFocusMinutes: 0,
+    tasksCompleted100: 0,
+    lastSprintDate: "",
+    currentStreak: 0,
+    history: []
+  }
 };
 
 const PALETTE = [
-  { key: "blue", name: "01 Sapphire (Blue)", color: "#2563EB", pinClass: "artcraft-pinned-blue" },
-  { key: "orange", name: "02 Amber (Orange)", color: "#F59E0B", pinClass: "artcraft-pinned-orange" },
-  { key: "green", name: "03 Emerald (Green)", color: "#10B981", pinClass: "artcraft-pinned-green" },
-  { key: "purple", name: "04 Amethyst (Purple)", color: "#8B5CF6", pinClass: "artcraft-pinned-purple" },
+  { key: "blue", name: "01 Sapphire (Blue)", color: "#2563EB", pinClass: "artcraft-pinned-blue", pro: false },
+  { key: "orange", name: "02 Amber (Orange)", color: "#F59E0B", pinClass: "artcraft-pinned-orange", pro: false },
+  { key: "green", name: "03 Emerald (Green)", color: "#10B981", pinClass: "artcraft-pinned-green", pro: false },
+  { key: "purple", name: "04 Amethyst (Purple)", color: "#8B5CF6", pinClass: "artcraft-pinned-purple", pro: false },
+  { key: "rose", name: "05 Rose Quartz (Pro)", color: "#EC4899", pinClass: "artcraft-pinned-rose", pro: true },
+  { key: "cyan", name: "06 Cyber Cyan (Pro)", color: "#06B6D4", pinClass: "artcraft-pinned-cyan", pro: true },
+  { key: "crimson", name: "07 Ruby Crimson (Pro)", color: "#EF4444", pinClass: "artcraft-pinned-crimson", pro: true },
+  { key: "gold", name: "08 Solar Gold (Pro)", color: "#EAB308", pinClass: "artcraft-pinned-gold", pro: true },
 ];
 
 const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,9 +57,599 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
   <circle class="artcraft-flask-spark" cx="12" cy="7" r="0.8" fill="#F59E0B" />
 </svg>`;
 
+const TRANSLATIONS = {
+  en: {
+    dockCollapseTip: "Click to collapse/expand Alchemy Dock",
+    timerTip: "LMB: Start/Pause | RMB: Presets & Ambient Audio | Double Click: Reset",
+    uiBtn: "UI",
+    uiTip: "Swiss Bento UI Theme (Warm Paper #F4F3EF + Sage Green Tables)",
+    zenBtn: "Zen",
+    zenTip: "Zen Mode — hide sidebars for pure distraction-free focus",
+    focusBtn: "Focus",
+    focusTip: "Sentence Focus Highlighting (hover over text and click to pin color)",
+    laserBtn: "Laser",
+    laserTip: "Laser Pointer (glowing trail, Esc to exit)",
+    drawBtn: "Draw",
+    drawTip: "Freehand Marker Draw on note (Esc to exit)",
+    eraserBtn: "Eraser",
+    eraserTip: "Eraser — erase drawings under cursor or finger (Esc to exit)",
+    undoTip: "Undo last stroke (Ctrl+Z)",
+    redoTip: "Redo stroke (Ctrl+Y)",
+    aiCleanBtn: "AI Clean",
+    aiCleanTip: "Clean invisible AI watermarks (Zero-Width spaces) & copy to clipboard",
+    clearTip: "Clear all drawings and highlighted sentences",
+    orientTip: "Toggle Orientation (Bottom Bar / Right Side Pillar)",
+    collapseTip: "Collapse into floating orb",
+    taskProgressLabel: "⚡ TASK PROGRESS:",
+    sprintDoneNotice: "⚡ Alchemy Craft: Focus sprint completed! +1 Sprint recorded in Analytics.",
+    breakDoneNotice: "☕ Alchemy Craft: Break finished! Ready for the next focus sprint?",
+    customPomodoroTitle: "⏱ Custom Focus Sprint Duration",
+    customPomodoroDesc: "Set your custom Pomodoro sprint duration in minutes (1 to 360):",
+    customPomodoroStart: "Start Sprint",
+    customPomodoroErr: "Please enter a number between 1 and 360 minutes.",
+    modalBadge: "ALCHEMIST PRO • 1 YEAR PASS",
+    modalTitle: "Alchemy Craft Pro",
+    modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). Instant activation via Bank Card, @CryptoBot, or Universal EVM.",
+    step1Title: "STEP 1: SELECT PAYMENT METHOD (USA / EU CARD OR CRYPTO)",
+    netCard: "Bank Card / Apple Pay",
+    netCardHint: "Visa, MasterCard, Tribute",
+    netCryptoBot: "@CryptoBot Pay",
+    netCryptoBotHint: "1-Click Telegram (USDT/TON)",
+    netEvm: "Universal EVM (0x...)",
+    netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
+    netBybit: "Bybit UID Transfer",
+    netBybitHint: "0% Fee • UID: 8015849",
+    netSol: "Solana Network",
+    netSolHint: "USDT / USDC • ~$0.001 Fee",
+    netTrc: "TRON (TRC20)",
+    netTrcHint: "Standard USDT",
+    amountLabel: "AMOUNT TO SEND:",
+    copyAmountBtn: "Copy 4.99",
+    recipientLabel: "RECIPIENT ADDRESS:",
+    uidLabel: "BYBIT RECIPIENT UID:",
+    copyBtn: "Copy Address",
+    copiedBtn: "Copied!",
+    evmChainsLabel: "✓ SUPPORTED EVM NETWORKS FOR THIS 0x ADDRESS:",
+    cardNote: "Pay effortlessly with any US, European, or global Visa / MasterCard / Apple Pay via Tribute or request a direct Stripe/Polar checkout link. Then paste your Receipt/Order ID in Step 2.",
+    cryptobotNote: "Click below to open @CryptoBot in Telegram and send 4.99 USDT/TON in 1 click, or message @StratAlchemy for an automated invoice.",
+    evmNote: "This single Universal EVM 0x address accepts 4.99 USDT, USDC, DAI, ETH, or BNB on BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism, and Ethereum! L2 gas fee is ~$0.01.",
+    bybitNote: "In Bybit App: Assets → Withdraw → Internal Transfer (0% Fee) → enter UID 8015849 and 4.99 USDT. Instant & fee-free.",
+    trcNote: "Send 4.99 USDT via TRON network (TRC-20) from any wallet or exchange.",
+    solNote: "Send 4.99 USDT or USDC on Solana network.",
+    supportText: "Need assistance or instant manual activation?",
+    supportSub: "Direct Telegram contact:",
+    supportTgBtn: "Open @StratAlchemy",
+    step2Title: "STEP 2: ENTER TRANSACTION HASH (TXID), BYBIT ID, OR CARD RECEIPT CODE:",
+    txPlaceholder: "Paste TXID (0x...), Bybit Order ID, or Card Receipt #...",
+    activateBtn: "⚡ Verify & Activate Pro",
+    checkingBtn: "⏳ Verifying payment...",
+    successMsg: "🎉 Success! Alchemy Craft Pro is now active for 365 days!",
+    errorEmpty: "❌ Please enter a valid TXID, Order ID, or Card Receipt code.",
+    errorPending: "⚠️ Transaction is still confirming. Please wait 1 minute and click again.",
+    proActiveTitle: "PRO ACTIVE",
+    proExpiresOn: "Annual Pass Active Until:",
+    proMidnightName: "🌙 Midnight Dark Craft Mode",
+    proMidnightDesc: "Full Swiss dark mode engineered for late-night reading, Graph View, and coding.",
+    proBuyCardBadge: "ALCHEMIST PRO PASS",
+    proBuyCardTitle: "Unlock All Pro Features in Alchemy Craft",
+    proPerk1: "🌙 Midnight Dark Craft — full Swiss dark theme for notes, tables, callouts & Graph",
+    proPerk2: "🎨 Expanded 8-Color Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
+    proPerk3: "🕸️ Swiss Bento Graph Studio — interactive Graph View HUD, color groups & laser pulses",
+    proPerk4: "🎧 Ambient Focus Soundscapes & Analytics — Brown Noise, Rain, 40Hz Gamma & streak stats",
+    getProBtn: "💎 Get Alchemy Craft Pro ($4.99 / yr)",
+    graphHudTitle: "⚗️ ALCHEMY BENTO GRAPH",
+    graphPresetBento: "Swiss Bento",
+    graphPresetConstellation: "Constellation",
+    graphPresetRadar: "Focus Radar",
+    graphColorizeBtn: "🎨 Auto-Color Nodes",
+    graphFitBtn: "🎯 Center",
+    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    checkUpdatesBtn: "🔄 Check Updates",
+    officialSiteBtn: "🌐 Official Website & Checkout",
+    langName: "🌐 Interface Language (6 Global Languages)",
+    langDesc: "Instant localization for the floating dock, settings, Graph HUD, and Pro checkout.",
+    bentoGraphName: "🕸️ Swiss Bento Graph Studio & HUD",
+    bentoGraphDesc: "Upgrades Obsidian's built-in Graph View with a warm Bento grid, floating HUD presets, glowing node rings, and 1-click folder color groups.",
+    ambientName: "🎧 Ambient Focus Soundscape (WebAudio)",
+    ambientDesc: "Synthesized zero-latency background audio during Pomodoro sprints (Brown Noise, Soft Rain, or 40Hz Gamma Binaural Focus).",
+    analyticsTitle: "📊 Focus Flow Analytics & Streak"
+  },
+  ru: {
+    dockCollapseTip: "Клик для сворачивания/разворачивания панели",
+    timerTip: "ЛКМ: Старт/Пауза | ПКМ: Пресеты и Фоновый Звук | Двойной клик: Сброс",
+    uiBtn: "UI",
+    uiTip: "Теплый бумажный режим Swiss Bento UI + светло-зеленые шапки Excel",
+    zenBtn: "Дзен",
+    zenTip: "Режим Дзен — скрыть боковые панели для чистого фокуса или записи экрана",
+    focusBtn: "Фокус",
+    focusTip: "Выделение предложений выбранным цветом (клик по тексту)",
+    laserBtn: "Указка",
+    laserTip: "Лазерная указка (исчезающий след, Esc для выхода)",
+    drawBtn: "Маркер",
+    drawTip: "Рисование маркером поверх заметки (Esc для выхода)",
+    eraserBtn: "Ластик",
+    eraserTip: "Ластик — стирать рисунки касанием или мышью (Esc для выхода)",
+    undoTip: "Отменить последний штрих (Ctrl+Z)",
+    redoTip: "Повторить отмененный штрих (Ctrl+Y)",
+    aiCleanBtn: "AI Clean",
+    aiCleanTip: "Очистить текст заметки от невидимых ИИ-символов (Zero-Width) и скопировать",
+    clearTip: "Очистить рисунки и выделенные предложения",
+    orientTip: "Сменить расположение: Снизу / Справа у края",
+    collapseTip: "Свернуть панель в плавающую сферу",
+    taskProgressLabel: "⚡ ПРОГРЕСС ЗАДАЧ:",
+    sprintDoneNotice: "⚡ Alchemy Craft: Фокус-сессия завершена! +1 спринт записан в статистику.",
+    breakDoneNotice: "☕ Alchemy Craft: Перерыв окончен! Готовы к следующему фокус-спринту?",
+    customPomodoroTitle: "⏱ Настройка времени фокуса",
+    customPomodoroDesc: "Задайте свою длительность Pomodoro-спринта в минутах (от 1 до 360):",
+    customPomodoroStart: "Запустить спринт",
+    customPomodoroErr: "Пожалуйста, введите число от 1 до 360 минут.",
+    modalBadge: "ALCHEMIST PRO • ГОДОВОЙ ПАСС",
+    modalTitle: "Alchemy Craft Pro",
+    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата любой картой банка (Tribute), @CryptoBot или через универсальный EVM.",
+    step1Title: "ШАГ 1: ВЫБЕРИТЕ СПОСОБ ОПЛАТЫ (КАРТА БАНКА ИЛИ КРИПТОВАЛЮТА)",
+    netCard: "Карта Банка / Apple Pay",
+    netCardHint: "Visa, MasterCard, Tribute",
+    netCryptoBot: "@CryptoBot Оплата",
+    netCryptoBotHint: "В 1 клик в Telegram (USDT/TON)",
+    netEvm: "Universal EVM (0x...)",
+    netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
+    netBybit: "Bybit UID Перевод",
+    netBybitHint: "0% комиссии • UID: 8015849",
+    netSol: "Сеть Solana",
+    netSolHint: "USDT / USDC • Супер-быстро",
+    netTrc: "TRON (TRC20)",
+    netTrcHint: "Стандартный USDT",
+    amountLabel: "СУММА К ОПЛАТЕ:",
+    copyAmountBtn: "Скопировать 4.99",
+    recipientLabel: "АДРЕС ПОЛУЧАТЕЛЯ:",
+    uidLabel: "BYBIT UID ПОЛУЧАТЕЛЯ:",
+    copyBtn: "Скопировать адрес",
+    copiedBtn: "Скопировано!",
+    evmChainsLabel: "✓ ПОДДЕРЖИВАЕМЫЕ EVM СЕТИ ДЛЯ ЭТОГО 0x АДРЕСА:",
+    cardNote: "Удобная оплата любой картой (США, Европа, СНГ, Мир — Visa / MasterCard / Apple Pay) через Tribute или по прямой ссылке. После оплаты вставьте номер квитанции во 2-м шаге.",
+    cryptobotNote: "Нажмите кнопку ниже для оплаты 4.99 USDT/TON в 1 клик через @CryptoBot, либо запросите инвойс у @StratAlchemy.",
+    evmNote: "Этот единый 0x EVM-адрес принимает 4.99 USDT, USDC, DAI, ETH или BNB в сетях BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism и Ethereum! Комиссия в L2 сетях всего ~$0.01.",
+    bybitNote: "В приложении Bybit: Активы → Вывод → Внутренний перевод (0% комиссии) → укажите UID 8015849 и 4.99 USDT. Мгновенно.",
+    trcNote: "Отправьте 4.99 USDT в сети TRON (TRC-20) с любого кошелька или биржи.",
+    solNote: "Отправьте 4.99 USDT или USDC в сети Solana.",
+    supportText: "Нужна помощь с оплатой или мгновенная ручная активация?",
+    supportSub: "Прямая связь с автором в Telegram:",
+    supportTgBtn: "Написать @StratAlchemy",
+    step2Title: "ШАГ 2: ВВЕДИТЕ ХЭШ ТРАНЗАКЦИИ (TXID), BYBIT ID ИЛИ КОД КВИТАНЦИИ КАРТЫ:",
+    txPlaceholder: "Вставьте TXID (0x...), номер перевода Bybit или чек карты...",
+    activateBtn: "⚡ Проверить и Активировать Pro",
+    checkingBtn: "⏳ Проверка оплаты...",
+    successMsg: "🎉 Поздравляем! Alchemy Craft Pro успешно активирован на 365 дней!",
+    errorEmpty: "❌ Пожалуйста, введите корректный TXID, номер перевода или код чека.",
+    errorPending: "⚠️ Транзакция ещё подтверждается сетью. Подождите 1 минуту и нажмите снова.",
+    proActiveTitle: "PRO АКТИВЕН",
+    proExpiresOn: "Годовой доступ активен до:",
+    proMidnightName: "🌙 Ночной режим Midnight Dark Craft",
+    proMidnightDesc: "Полная швейцарская темная тема для ночного чтения, таблиц, карточек и Графа.",
+    proBuyCardBadge: "ALCHEMIST PRO PASS",
+    proBuyCardTitle: "Разблокируйте все Pro функции Alchemy Craft",
+    proPerk1: "🌙 Midnight Dark Craft — полная темная тема для заметок, таблиц и Графа",
+    proPerk2: "🎨 Расширенная палитра (8 цветов) — Rose Quartz, Cyber Cyan, Ruby Crimson и Solar Gold",
+    proPerk3: "🕸️ Swiss Bento Graph Studio — панель управления Графом Obsidian, цвета папок и пресеты",
+    proPerk4: "🎧 Фоновые звуки фокуса и Аналитика — Коричневый шум, Дождь, 40Hz Гамма и трекер спринтов",
+    getProBtn: "💎 Получить Alchemy Craft Pro ($4.99 / год)",
+    graphHudTitle: "⚗️ ALCHEMY BENTO ГРАФ",
+    graphPresetBento: "Swiss Bento",
+    graphPresetConstellation: "Созвездие",
+    graphPresetRadar: "Фокус Радар",
+    graphColorizeBtn: "🎨 Раскрасить узлы",
+    graphFitBtn: "🎯 В центр",
+    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    checkUpdatesBtn: "🔄 Проверить обновления",
+    officialSiteBtn: "🌐 Официальный сайт и оплата",
+    langName: "🌐 Язык интерфейса (6 мировых языков)",
+    langDesc: "Мгновенный перевод панели управления, настроек, HUD графа и окна оплаты.",
+    bentoGraphName: "🕸️ Улучшенный Граф Obsidian (Swiss Bento Graph Studio)",
+    bentoGraphDesc: "Преображает встроенный Граф Obsidian: теплая сетка Bento, плавающий HUD-контроллер, раскраска узлов по папкам в 1 клик и пресеты физики.",
+    ambientName: "🎧 Фоновые звуки для глубокого фокуса (WebAudio)",
+    ambientDesc: "Встроенный генератор приятного фонового звука во время таймера (Коричневый шум, Шум дождя, Бинауральный ритм 40Hz).",
+    analyticsTitle: "📊 Статистика Фокуса и Серии (Pro Analytics)"
+  },
+  zh: {
+    dockCollapseTip: "点击折叠/展开 Alchemy 工具栏",
+    timerTip: "左键: 开始/暂停 | 右键: 预设与白噪音 | 双击: 重置",
+    uiBtn: "UI",
+    uiTip: "瑞士 Bento 护眼纸张主题 (#F4F3EF) 与鼠尾草绿表格",
+    zenBtn: "禅定",
+    zenTip: "禅定模式 — 隐藏侧边栏，享受纯粹专注",
+    focusBtn: "聚焦",
+    focusTip: "句子高亮聚焦（悬停并点击句子以固定调色板颜色）",
+    laserBtn: "激光",
+    laserTip: "激光指示器（发光轨迹，按 Esc 退出）",
+    drawBtn: "画笔",
+    drawTip: "自由马克笔标注（按 Esc 退出）",
+    eraserBtn: "橡皮",
+    eraserTip: "橡皮擦 — 擦除画笔轨迹（按 Esc 退出）",
+    undoTip: "撤销上一笔 (Ctrl+Z)",
+    redoTip: "重做 (Ctrl+Y)",
+    aiCleanBtn: "AI 清理",
+    aiCleanTip: "一键清除不可见的 AI 零宽字符水印并复制纯文本",
+    clearTip: "清除所有涂鸦与句子高亮",
+    orientTip: "切换工具栏方向（底部横栏 / 右侧竖栏）",
+    collapseTip: "折叠为炼金术悬浮球",
+    taskProgressLabel: "⚡ 任务进度:",
+    sprintDoneNotice: "⚡ Alchemy Craft: 专注冲刺完成！已记录到专注统计。",
+    breakDoneNotice: "☕ Alchemy Craft: 休息结束！准备好开始下一轮专注了吗？",
+    customPomodoroTitle: "⏱ 自定义番茄钟时长",
+    customPomodoroDesc: "输入自定义专注时长（1 至 360 分钟）：",
+    customPomodoroStart: "开始专注",
+    customPomodoroErr: "请输入 1 到 360 之间的分钟数。",
+    modalBadge: "ALCHEMIST PRO • 年度通行证",
+    modalTitle: "Alchemy Craft Pro 专业版",
+    modalSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)。支持全球银行卡、@CryptoBot 及全链 EVM 激活。",
+    step1Title: "第 1 步：选择支付方式（银行卡 / APPLE PAY / 加密货币）",
+    netCard: "银行卡 / Apple Pay",
+    netCardHint: "Visa, MasterCard, Tribute",
+    netCryptoBot: "@CryptoBot 支付",
+    netCryptoBotHint: "Telegram 一键支付 (USDT/TON)",
+    netEvm: "Universal EVM (0x...)",
+    netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
+    netBybit: "Bybit UID 转账",
+    netBybitHint: "0% 手续费 • UID: 8015849",
+    netSol: "Solana 网络",
+    netSolHint: "USDT / USDC • 极速确认",
+    netTrc: "TRON (TRC20)",
+    netTrcHint: "标准 USDT",
+    amountLabel: "支付金额:",
+    copyAmountBtn: "复制 4.99",
+    recipientLabel: "收款地址:",
+    uidLabel: "BYBIT 收款 UID:",
+    copyBtn: "复制地址",
+    copiedBtn: "已复制!",
+    evmChainsLabel: "✓ 此 0x 地址支持的 EVM 网络：",
+    cardNote: "支持全球 Visa / MasterCard / Apple Pay（通过 Tribute 或直接联系获取 Stripe 链接）。支付后请在第 2 步粘贴收据单号。",
+    cryptobotNote: "点击下方按钮通过 Telegram @CryptoBot 一键支付 4.99 USDT/TON，或联系 @StratAlchemy 获取账单。",
+    evmNote: "此通用 0x EVM 地址支持 BNB Chain (BEP20)、Arbitrum One、Base、Polygon、Optimism 和 Ethereum 网络发送 4.99 USDT/USDC！",
+    bybitNote: "在 Bybit App 中：资产 → 提现 → 内部转账（0 手续费）→ 输入 UID 8015849 和 4.99 USDT。",
+    trcNote: "通过 TRON (TRC-20) 网络发送 4.99 USDT。",
+    solNote: "通过 Solana 网络发送 4.99 USDT 或 USDC。",
+    supportText: "需要帮助或人工即时激活？",
+    supportSub: "直接联系作者 Telegram:",
+    supportTgBtn: "打开 @StratAlchemy",
+    step2Title: "第 2 步：输入交易哈希 (TXID)、BYBIT 订单号或银行卡收据代码：",
+    txPlaceholder: "粘贴 TXID (0x...)、Bybit 订单号或银行卡收据号...",
+    activateBtn: "⚡ 验证并激活 Pro",
+    checkingBtn: "⏳ 正在验证支付...",
+    successMsg: "🎉 激活成功！Alchemy Craft Pro 已开启 365 天权限！",
+    errorEmpty: "❌ 请输入有效的 TXID、订单号或收据代码。",
+    errorPending: "⚠️ 交易正在确认中，请等待 1 分钟后重试。",
+    proActiveTitle: "PRO 已激活",
+    proExpiresOn: "年度通行证有效期至：",
+    proMidnightName: "🌙 午夜暗黑模式 (Midnight Dark Craft)",
+    proMidnightDesc: "专为夜间阅读、知识图谱与编程打造的瑞士暗黑主题。",
+    proBuyCardBadge: "ALCHEMIST PRO 通行证",
+    proBuyCardTitle: "解锁 Alchemy Craft Pro 全部高级功能",
+    proPerk1: "🌙 Midnight Dark Craft — 完整的瑞士暗黑模式（支持笔记、表格与知识图谱）",
+    proPerk2: "🎨 8 色高级调色板 — 新增玫瑰粉、赛博青、深红与日曜金",
+    proPerk3: "🕸️ 瑞士 Bento 知识图谱工作室 — 图谱悬浮控制器、文件夹自动配色与物理预设",
+    proPerk4: "🎧 专注白噪音与统计分析 — 棕噪音、雨声、40Hz 伽马波与专注打卡统计",
+    getProBtn: "💎 获取 Alchemy Craft Pro ($4.99 / 年)",
+    graphHudTitle: "⚗️ ALCHEMY BENTO 知识图谱",
+    graphPresetBento: "瑞士 Bento",
+    graphPresetConstellation: "星群模式",
+    graphPresetRadar: "焦点雷达",
+    graphColorizeBtn: "🎨 节点自动配色",
+    graphFitBtn: "🎯 居中",
+    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v3.7.0)",
+    checkUpdatesBtn: "🔄 检查更新",
+    officialSiteBtn: "🌐 官方网站与收银台",
+    langName: "🌐 界面语言 (支持 6 种国际语言)",
+    langDesc: "即时切换工具栏、设置面板、图谱控制器与收银台语言。",
+    bentoGraphName: "🕸️ 瑞士 Bento 知识图谱增强 (Graph Studio)",
+    bentoGraphDesc: "美化 Obsidian 内置关系图谱：Bento 点阵背景、顶部悬浮控制器与一键文件夹配色。",
+    ambientName: "🎧 专注背景白噪音 (WebAudio)",
+    ambientDesc: "无需联网的合成背景音（棕噪音、纸上雨声、40Hz 专注伽马波）。",
+    analyticsTitle: "📊 专注时长与连续打卡统计"
+  },
+  ja: {
+    dockCollapseTip: "クリックしてドックを折りたたみ/展開",
+    timerTip: "左クリック: 開始/一時停止 | 右クリック: プリセット＆環境音 | ダブルクリック: リセット",
+    uiBtn: "UI",
+    uiTip: "Swiss Bento UI テーマ（目に優しいアーカイブ紙 #F4F3EF ＆ Excelグリーン表）",
+    zenBtn: "禅",
+    zenTip: "禅モード — サイドバーを隠して深い集中へ",
+    focusBtn: "フォーカス",
+    focusTip: "文フォーカス（文をクリックして選択中のパレット色でピン留め）",
+    laserBtn: "レーザー",
+    laserTip: "レーザーポインター（光る軌跡、Escで終了）",
+    drawBtn: "マーカー",
+    drawTip: "ノート上にフリーハンド描画（Escで終了）",
+    eraserBtn: "消しゴム",
+    eraserTip: "消しゴム — 描画を消去（Escで終了）",
+    undoTip: "元に戻す (Ctrl+Z)",
+    redoTip: "やり直し (Ctrl+Y)",
+    aiCleanBtn: "AI クリーン",
+    aiCleanTip: "不可視のAIゼロ幅スペースを除去してクリップボードにコピー",
+    clearTip: "すべての描画とハイライトを消去",
+    orientTip: "ドックの向きを切り替え（下部バー / 右側ピラー）",
+    collapseTip: "錬金術オーブに折りたたむ",
+    taskProgressLabel: "⚡ タスク進捗:",
+    sprintDoneNotice: "⚡ Alchemy Craft: 集中スプリント完了！統計に記録されました。",
+    breakDoneNotice: "☕ Alchemy Craft: 休憩終了！次のスプリントを始めましょう。",
+    customPomodoroTitle: "⏱ カスタム集中タイマー設定",
+    customPomodoroDesc: "ポモドーロの分数（1〜360分）を入力してください：",
+    customPomodoroStart: "スプリント開始",
+    customPomodoroErr: "1〜360の数値を入力してください。",
+    modalBadge: "ALCHEMIST PRO • 1年間パス",
+    modalTitle: "Alchemy Craft Pro",
+    modalSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。クレジットカード、@CryptoBot、全EVMネットワークで即座に有効化。",
+    step1Title: "ステップ 1: 支払い方法を選択 (カード / APPLE PAY / 暗号資産)",
+    netCard: "クレジットカード / Apple Pay",
+    netCardHint: "Visa, MasterCard, Tribute",
+    netCryptoBot: "@CryptoBot 決済",
+    netCryptoBotHint: "Telegram 1クリック (USDT/TON)",
+    netEvm: "Universal EVM (0x...)",
+    netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
+    netBybit: "Bybit UID 送金",
+    netBybitHint: "手数料 0% • UID: 8015849",
+    netSol: "Solana ネットワーク",
+    netSolHint: "USDT / USDC • 超高速",
+    netTrc: "TRON (TRC20)",
+    netTrcHint: "標準 USDT",
+    amountLabel: "送金金額:",
+    copyAmountBtn: "4.99 をコピー",
+    recipientLabel: "受取アドレス:",
+    uidLabel: "BYBIT 受取 UID:",
+    copyBtn: "アドレスをコピー",
+    copiedBtn: "コピー完了!",
+    evmChainsLabel: "✓ この 0x アドレスが対応する全 EVM ネットワーク:",
+    cardNote: "Tribute経由で世界中のVisa / MasterCard / Apple Payでお支払いいただけます。決済後、ステップ2にレシートIDを入力してください。",
+    cryptobotNote: "下のボタンからTelegram @CryptoBotを開き、1クリックで4.99 USDT/TONを送金できます。",
+    evmNote: "この単一の0x EVMアドレスは、BNB Chain (BEP20)、Arbitrum、Base、Polygon、Optimism、Ethereum上の4.99 USDT/USDCに対応しています。",
+    bybitNote: "Bybitアプリ：資産 → 出金 → 内部振替（手数料0%）→ UID 8015849 と 4.99 USDT を入力。",
+    trcNote: "TRON (TRC-20) ネットワークで 4.99 USDT を送金してください。",
+    solNote: "Solana ネットワークで 4.99 USDT または USDC を送金してください。",
+    supportText: "サポートや手動アクティベーションが必要ですか？",
+    supportSub: "開発者へTelegramで直接連絡:",
+    supportTgBtn: "@StratAlchemy を開く",
+    step2Title: "ステップ 2: トランザクションID (TXID)、BYBIT ID、またはカード決済コードを入力:",
+    txPlaceholder: "TXID (0x...)、Bybit ID、またはカードレシート番号を貼り付け...",
+    activateBtn: "⚡ 確認して Pro を有効化",
+    checkingBtn: "⏳ 決済を確認中...",
+    successMsg: "🎉 成功！Alchemy Craft Pro が365日間有効化されました！",
+    errorEmpty: "❌ 有効なTXID、注文ID、またはレシート番号を入力してください。",
+    errorPending: "⚠️ トランザクションを確認中です。1分後にもう一度お試しください。",
+    proActiveTitle: "PRO 有効",
+    proExpiresOn: "年間パス有効期限:",
+    proMidnightName: "🌙 Midnight Dark Craft モード",
+    proMidnightDesc: "夜間の読書、グラフビュー、コーディング向けに設計されたスイス・ダークテーマ。",
+    proBuyCardBadge: "ALCHEMIST PRO パス",
+    proBuyCardTitle: "Alchemy Craft Pro の全機能をアンロック",
+    proPerk1: "🌙 Midnight Dark Craft — ノート、表、グラフ対応の完全ダークモード",
+    proPerk2: "🎨 8色拡張パレット — ローズ、サイバーシアン、クリムゾン、ソーラーゴールド",
+    proPerk3: "🕸️ Swiss Bento グラフスタジオ — グラフビュー専用HUD＆自動カラーリング",
+    proPerk4: "🎧 環境音サウンド＆集中統計 — ブラウンノイズ、雨音、40Hzガンマ波＆記録",
+    getProBtn: "💎 Alchemy Craft Pro を入手 ($4.99 / 年)",
+    graphHudTitle: "⚗️ ALCHEMY BENTO グラフ",
+    graphPresetBento: "Swiss Bento",
+    graphPresetConstellation: "星座モード",
+    graphPresetRadar: "レーダー",
+    graphColorizeBtn: "🎨 自動カラー適用",
+    graphFitBtn: "🎯 中央揃え",
+    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    checkUpdatesBtn: "🔄 アップデート確認",
+    officialSiteBtn: "🌐 公式サイト＆決済ページ",
+    langName: "🌐 インターフェース言語 (6ヶ国語対応)",
+    langDesc: "ドック、設定、グラフHUD、決済画面の言語を即座に切り替えます。",
+    bentoGraphName: "🕸️ Swiss Bento グラフスタジオ (Graph View 強化)",
+    bentoGraphDesc: "Obsidian標準のグラフビューをBentoスタイルに刷新し、専用HUDコントロールを追加します。",
+    ambientName: "🎧 集中環境音ジェネレーター (WebAudio)",
+    ambientDesc: "ポモドーロ中に再生できる心地よい合成環境音（ブラウンノイズ、雨音、40Hzバイノーラル）。",
+    analyticsTitle: "📊 集中セッション統計＆ストリーク"
+  },
+  es: {
+    dockCollapseTip: "Clic para plegar/desplegar el panel Alchemy",
+    timerTip: "Clic Izq: Iniciar/Pausar | Clic Der: Ajustes y Sonido Ambiente | Doble Clic: Reiniciar",
+    uiBtn: "UI",
+    uiTip: "Tema Swiss Bento UI (Papel cálido #F4F3EF + Tablas verde salvia)",
+    zenBtn: "Zen",
+    zenTip: "Modo Zen — oculta paneles laterales para concentración total",
+    focusBtn: "Enfoque",
+    focusTip: "Resaltado de frases (haz clic en cualquier frase para fijar el color activo)",
+    laserBtn: "Láser",
+    laserTip: "Puntero Láser (rastro brillante, Esc para salir)",
+    drawBtn: "Trazar",
+    drawTip: "Marcador de dibujo libre sobre la nota (Esc para salir)",
+    eraserBtn: "Borrar",
+    eraserTip: "Borrador — elimina trazos bajo el cursor (Esc para salir)",
+    undoTip: "Deshacer último trazo (Ctrl+Z)",
+    redoTip: "Rehacer trazo (Ctrl+Y)",
+    aiCleanBtn: "AI Clean",
+    aiCleanTip: "Elimina marcas de agua invisibles de IA (Zero-Width) y copia texto limpio",
+    clearTip: "Borrar todos los dibujos y frases resaltadas",
+    orientTip: "Cambiar orientación (Barra inferior / Pilar lateral derecho)",
+    collapseTip: "Plegar en esfera flotante",
+    taskProgressLabel: "⚡ PROGRESO DE TAREAS:",
+    sprintDoneNotice: "⚡ Alchemy Craft: ¡Sprint de enfoque completado! Registrado en tus estadísticas.",
+    breakDoneNotice: "☕ Alchemy Craft: ¡Descanso terminado! ¿Listo para el siguiente sprint?",
+    customPomodoroTitle: "⏱ Duración Personalizada de Pomodoro",
+    customPomodoroDesc: "Define los minutos de tu sprint de enfoque (de 1 a 360):",
+    customPomodoroStart: "Iniciar Sprint",
+    customPomodoroErr: "Por favor ingresa un número entre 1 y 360 minutos.",
+    modalBadge: "ALCHEMIST PRO • PASE DE 1 AÑO",
+    modalTitle: "Alchemy Craft Pro",
+    modalSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago con Tarjeta Bancaria, @CryptoBot o redes EVM.",
+    step1Title: "PASO 1: SELECCIONA MÉTODO DE PAGO (TARJETA BANCARIA O CRIPTO)",
+    netCard: "Tarjeta / Apple Pay",
+    netCardHint: "Visa, MasterCard, Tribute",
+    netCryptoBot: "@CryptoBot Pay",
+    netCryptoBotHint: "1-Clic en Telegram (USDT/TON)",
+    netEvm: "Universal EVM (0x...)",
+    netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
+    netBybit: "Bybit UID Transfer",
+    netBybitHint: "0% Comisión • UID: 8015849",
+    netSol: "Red Solana",
+    netSolHint: "USDT / USDC • Ultra-rápido",
+    netTrc: "TRON (TRC20)",
+    netTrcHint: "USDT Estándar",
+    amountLabel: "MONTO A ENVIAR:",
+    copyAmountBtn: "Copiar 4.99",
+    recipientLabel: "DIRECCIÓN DE DESTINO:",
+    uidLabel: "BYBIT UID DE DESTINO:",
+    copyBtn: "Copiar Dirección",
+    copiedBtn: "¡Copiado!",
+    evmChainsLabel: "✓ REDES EVM COMPATIBLES CON ESTA DIRECCIÓN 0x:",
+    cardNote: "Paga con cualquier tarjeta Visa / MasterCard / Apple Pay de EE.UU., Europa o el mundo vía Tribute. Luego pega tu número de recibo en el Paso 2.",
+    cryptobotNote: "Haz clic abajo para abrir @CryptoBot en Telegram y pagar 4.99 USDT/TON en 1 clic.",
+    evmNote: "Esta dirección 0x Universal EVM acepta 4.99 USDT, USDC, DAI, ETH o BNB en BNB Chain (BEP-20), Arbitrum, Base, Polygon, Optimism y Ethereum.",
+    bybitNote: "En la App de Bybit: Activos → Retirar → Transferencia Interna (0% comisión) → ingresa UID 8015849 y 4.99 USDT.",
+    trcNote: "Envía 4.99 USDT mediante la red TRON (TRC-20).",
+    solNote: "Envía 4.99 USDT o USDC en la red Solana.",
+    supportText: "¿Necesitas ayuda o activación manual instantánea?",
+    supportSub: "Contacto directo en Telegram:",
+    supportTgBtn: "Abrir @StratAlchemy",
+    step2Title: "PASO 2: INGRESA EL HASH (TXID), ID DE BYBIT O CÓDIGO DE RECIBO DE TARJETA:",
+    txPlaceholder: "Pega tu TXID (0x...), ID de Bybit o recibo de tarjeta...",
+    activateBtn: "⚡ Verificar y Activar Pro",
+    checkingBtn: "⏳ Verificando pago...",
+    successMsg: "🎉 ¡Éxito! Alchemy Craft Pro está activo por 365 días.",
+    errorEmpty: "❌ Ingresa un TXID, ID de orden o recibo válido.",
+    errorPending: "⚠️ Transacción en confirmación. Espera 1 minuto e intenta de nuevo.",
+    proActiveTitle: "PRO ACTIVO",
+    proExpiresOn: "Pase anual activo hasta:",
+    proMidnightName: "🌙 Modo Oscuro Midnight Dark Craft",
+    proMidnightDesc: "Tema oscuro suizo diseñado para lectura nocturna, Grafo y programación.",
+    proBuyCardBadge: "PASE ALCHEMIST PRO",
+    proBuyCardTitle: "Desbloquea Todas las Funciones Pro en Alchemy Craft",
+    proPerk1: "🌙 Midnight Dark Craft — tema oscuro completo para notas, tablas y Grafo",
+    proPerk2: "🎨 Paleta Expandida de 8 Colores — Rosa, Cian, Carmesí y Oro Solar",
+    proPerk3: "🕸️ Swiss Bento Graph Studio — panel HUD interactivo y colores para el Grafo",
+    proPerk4: "🎧 Sonidos Ambiente y Analíticas — Ruido Marrón, Lluvia, 40Hz Gamma y rachas",
+    getProBtn: "💎 Obtener Alchemy Craft Pro ($4.99 / año)",
+    graphHudTitle: "⚗️ GRAFO ALCHEMY BENTO",
+    graphPresetBento: "Swiss Bento",
+    graphPresetConstellation: "Constelación",
+    graphPresetRadar: "Radar Focus",
+    graphColorizeBtn: "🎨 Colorear Nodos",
+    graphFitBtn: "🎯 Centrar",
+    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    checkUpdatesBtn: "🔄 Buscar Actualizaciones",
+    officialSiteBtn: "🌐 Sitio Oficial y Pagos",
+    langName: "🌐 Idioma de la Interfaz (6 Idiomas Globales)",
+    langDesc: "Traducción instantánea para la barra flotante, ajustes, Grafo y pagos.",
+    bentoGraphName: "🕸️ Swiss Bento Graph Studio (Mejora del Grafo)",
+    bentoGraphDesc: "Transforma el Grafo de Obsidian con cuadrícula Bento, controles HUD y grupos de colores.",
+    ambientName: "🎧 Sonido Ambiente de Enfoque (WebAudio)",
+    ambientDesc: "Generador de sonido relajante durante sprints Pomodoro (Ruido Marrón, Lluvia, 40Hz Gamma).",
+    analyticsTitle: "📊 Analíticas de Enfoque y Rachas"
+  },
+  de: {
+    dockCollapseTip: "Klicken zum Ein-/Ausklappen des Alchemy-Docks",
+    timerTip: "Links: Start/Pause | Rechts: Presets & Ambient-Sound | Doppelklick: Reset",
+    uiBtn: "UI",
+    uiTip: "Swiss Bento UI-Theme (Warmes Papier #F4F3EF + Salbeigrüne Tabellen)",
+    zenBtn: "Zen",
+    zenTip: "Zen-Modus — Seitenleisten für puren Fokus ausblenden",
+    focusBtn: "Fokus",
+    focusTip: "Satz-Fokus (Satz anklicken, um aktive Palettenfarbe anzuheften)",
+    laserBtn: "Laser",
+    laserTip: "Laserpointer (leuchtender Schweif, Esc zum Beenden)",
+    drawBtn: "Marker",
+    drawTip: "Freihand-Marker auf der Notiz (Esc zum Beenden)",
+    eraserBtn: "Radierer",
+    eraserTip: "Radierer — Zeichnungen löschen (Esc zum Beenden)",
+    undoTip: "Rückgängig (Ctrl+Z)",
+    redoTip: "Wiederholen (Ctrl+Y)",
+    aiCleanBtn: "AI Clean",
+    aiCleanTip: "Unsichtbare KI-Wasserzeichen (Zero-Width) entfernen & Text kopieren",
+    clearTip: "Alle Zeichnungen und Markierungen löschen",
+    orientTip: "Ausrichtung wechseln (Unten / Rechte Seitenleiste)",
+    collapseTip: "Zur schwebenden Kugel einklappen",
+    taskProgressLabel: "⚡ AUFGABEN-FORTSCHRITT:",
+    sprintDoneNotice: "⚡ Alchemy Craft: Fokus-Sprint abgeschlossen! In deiner Statistik gespeichert.",
+    breakDoneNotice: "☕ Alchemy Craft: Pause beendet! Bereit für den nächsten Sprint?",
+    customPomodoroTitle: "⏱ Eigene Fokus-Dauer einstellen",
+    customPomodoroDesc: "Gib deine gewünschte Pomodoro-Dauer in Minuten ein (1 bis 360):",
+    customPomodoroStart: "Sprint starten",
+    customPomodoroErr: "Bitte gib eine Zahl zwischen 1 und 360 Minuten ein.",
+    modalBadge: "ALCHEMIST PRO • 1-JAHRES-PASS",
+    modalTitle: "Alchemy Craft Pro",
+    modalSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Zahlung per Kreditkarte, @CryptoBot oder Universal EVM.",
+    step1Title: "SCHRITT 1: ZAHLUNGSMETHODE WÄHLEN (BANKKARTE ODER KRYPTO)",
+    netCard: "Kreditkarte / Apple Pay",
+    netCardHint: "Visa, MasterCard, Tribute",
+    netCryptoBot: "@CryptoBot Pay",
+    netCryptoBotHint: "1-Klick in Telegram (USDT/TON)",
+    netEvm: "Universal EVM (0x...)",
+    netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
+    netBybit: "Bybit UID Transfer",
+    netBybitHint: "0% Gebühr • UID: 8015849",
+    netSol: "Solana Netzwerk",
+    netSolHint: "USDT / USDC • Ultraschnell",
+    netTrc: "TRON (TRC20)",
+    netTrcHint: "Standard USDT",
+    amountLabel: "BETRAG:",
+    copyAmountBtn: "4.99 kopieren",
+    recipientLabel: "EMPFÄNGERADRESSE:",
+    uidLabel: "BYBIT EMPFÄNGER-UID:",
+    copyBtn: "Adresse kopieren",
+    copiedBtn: "Kopiert!",
+    evmChainsLabel: "✓ UNTERSTÜTZTE EVM-NETZWERKE FÜR DIESE 0x-ADRESSE:",
+    cardNote: "Bezahle bequem mit jeder Visa / MasterCard / Apple Pay über Tribute. Füge danach deinen Beleg-Code in Schritt 2 ein.",
+    cryptobotNote: "Klicke unten, um @CryptoBot in Telegram zu öffnen und 4.99 USDT/TON mit 1 Klick zu senden.",
+    evmNote: "Diese universelle 0x EVM-Adresse akzeptiert 4.99 USDT, USDC, DAI, ETH oder BNB auf BNB Chain (BEP20), Arbitrum, Base, Polygon, Optimism und Ethereum!",
+    bybitNote: "In der Bybit-App: Assets → Auszahlen → Interner Transfer (0% Gebühr) → UID 8015849 und 4.99 USDT eingeben.",
+    trcNote: "Sende 4.99 USDT über das TRON-Netzwerk (TRC-20).",
+    solNote: "Sende 4.99 USDT oder USDC im Solana-Netzwerk.",
+    supportText: "Hilfe oder sofortige manuelle Aktivierung benötigt?",
+    supportSub: "Direkter Telegram-Kontakt:",
+    supportTgBtn: "@StratAlchemy öffnen",
+    step2Title: "SCHRITT 2: TRANSAKTIONS-HASH (TXID), BYBIT-ID ODER KARTENBELEG EINGEBEN:",
+    txPlaceholder: "TXID (0x...), Bybit-ID oder Kartenbeleg-Nr. einfügen...",
+    activateBtn: "⚡ Prüfen & Pro aktivieren",
+    checkingBtn: "⏳ Zahlung wird geprüft...",
+    successMsg: "🎉 Erfolg! Alchemy Craft Pro ist jetzt für 365 Tage aktiviert!",
+    errorEmpty: "❌ Bitte gib eine gültige TXID, Bestell-ID oder Belegnummer ein.",
+    errorPending: "⚠️ Transaktion wird noch bestätigt. Bitte 1 Minute warten.",
+    proActiveTitle: "PRO AKTIV",
+    proExpiresOn: "Jahrespass aktiv bis:",
+    proMidnightName: "🌙 Midnight Dark Craft Modus",
+    proMidnightDesc: "Schweizer Dark-Mode für nächtliches Lesen, Graph-Ansicht und Coding.",
+    proBuyCardBadge: "ALCHEMIST PRO PASS",
+    proBuyCardTitle: "Alle Pro-Funktionen in Alchemy Craft freischalten",
+    proPerk1: "🌙 Midnight Dark Craft — komplettes Schweizer Dark-Theme für Notizen, Tabellen & Graph",
+    proPerk2: "🎨 Erweiterte 8-Farben-Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
+    proPerk3: "🕸️ Swiss Bento Graph Studio — interaktives Graph-HUD & Ordner-Farbgruppen",
+    proPerk4: "🎧 Ambient-Fokus-Sounds & Statistik — Brown Noise, Regen, 40Hz Gamma & Streaks",
+    getProBtn: "💎 Alchemy Craft Pro holen ($4.99 / Jahr)",
+    graphHudTitle: "⚗️ ALCHEMY BENTO GRAPH",
+    graphPresetBento: "Swiss Bento",
+    graphPresetConstellation: "Konstellation",
+    graphPresetRadar: "Fokus-Radar",
+    graphColorizeBtn: "🎨 Knoten färben",
+    graphFitBtn: "🎯 Zentrieren",
+    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    checkUpdatesBtn: "🔄 Updates prüfen",
+    officialSiteBtn: "🌐 Offizielle Website & Checkout",
+    langName: "🌐 Oberflächensprache (6 Weltsprachen)",
+    langDesc: "Sofortige Übersetzung für Dock, Einstellungen, Graph-HUD und Checkout.",
+    bentoGraphName: "🕸️ Swiss Bento Graph Studio (Graph-Ansicht Upgrade)",
+    bentoGraphDesc: "Verwandelt Obsidians Graph-Ansicht mit Bento-Raster, schwebendem HUD und 1-Klick-Farbgruppen.",
+    ambientName: "🎧 Ambient-Fokus-Klangwelten (WebAudio)",
+    ambientDesc: "Synthetische Hintergrundklänge während Pomodoro-Sprints (Brown Noise, Regen, 40Hz Gamma).",
+    analyticsTitle: "📊 Fokus-Statistiken & Serien"
+  }
+};
+
+function getLocale(plugin) {
+  const lang = plugin?.settings?.uiLanguage || "en";
+  return TRANSLATIONS[lang] ? lang : "en";
+}
+
+function t(key, plugin) {
+  const loc = getLocale(plugin);
+  return (TRANSLATIONS[loc] && TRANSLATIONS[loc][key]) || TRANSLATIONS["en"][key] || key;
+}
+
 class CustomPomodoroModal extends Modal {
-  constructor(app, currentMins, onSave) {
+  constructor(app, plugin, currentMins, onSave) {
     super(app);
+    this.plugin = plugin;
     this.currentMins = currentMins;
     this.onSave = onSave;
   }
@@ -54,10 +659,10 @@ class CustomPomodoroModal extends Modal {
     contentEl.addClass("artcraft-pro-modal-root");
 
     const header = contentEl.createDiv({ cls: "artcraft-modal-header-card" });
-    header.createEl("h3", { cls: "artcraft-modal-title", text: "⏱ Настройка времени фокуса" });
+    header.createEl("h3", { cls: "artcraft-modal-title", text: t("customPomodoroTitle", this.plugin) });
     header.createEl("p", {
       cls: "artcraft-modal-desc",
-      text: "Задайте свою длительность Pomodoro-спринта в минутах (например: 5, 20, 50, 75, 90, 120):",
+      text: t("customPomodoroDesc", this.plugin),
     });
 
     const wrap = contentEl.createDiv({ cls: "artcraft-modal-input-wrap" });
@@ -76,19 +681,12 @@ class CustomPomodoroModal extends Modal {
     input.style.borderRadius = "6px";
     input.style.fontSize = "16px";
     input.style.fontWeight = "bold";
-    input.style.width = "100px";
+    input.style.width = "110px";
 
     const btnSave = wrap.createEl("button", {
-      text: "Запустить спринт",
+      text: t("customPomodoroStart", this.plugin),
       cls: "artcraft-open-modal-btn",
     });
-    btnSave.style.background = "#111111";
-    btnSave.style.color = "#FFFFFF";
-    btnSave.style.border = "1.5px solid #111111";
-    btnSave.style.borderRadius = "6px";
-    btnSave.style.padding = "8px 16px";
-    btnSave.style.fontWeight = "bold";
-    btnSave.style.cursor = "pointer";
 
     const submit = () => {
       const val = parseInt(input.value, 10);
@@ -96,7 +694,7 @@ class CustomPomodoroModal extends Modal {
         this.onSave(val);
         this.close();
       } else {
-        new Notice("Пожалуйста, введите число от 1 до 360 минут.");
+        new Notice(t("customPomodoroErr", this.plugin));
       }
     };
 
@@ -119,11 +717,14 @@ class AlchemyFlowPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
 
-    this.mode = "none"; // "none" | "laser" | "draw"
+    this.mode = "none"; // "none" | "laser" | "draw" | "eraser"
     this.isDrawing = false;
     this.strokes = [];
     this.laserTrail = [];
+    this.particles = [];
     this.animFrame = null;
+    this.ambientNodes = null;
+    this.lastTaskPctByFile = {};
 
     // Timer state
     this.timerRunning = false;
@@ -143,12 +744,32 @@ class AlchemyFlowPlugin extends Plugin {
       this.enhanceMarkdownElement(el);
     });
 
-    // 2. Live Preview (CM6) Observer
+    // 2. Live Preview (CM6) & Graph View Observer
     this.setupLivePreviewObserver();
+    // Background timer resync: immediately syncs timer seconds when Obsidian window is refocused or un-minimized
+    this.registerDomEvent(document, "visibilitychange", () => {
+      if (!document.hidden && this.timerRunning) {
+        this.tickTimer();
+      }
+    });
+    this.registerDomEvent(window, "focus", () => {
+      if (this.timerRunning) {
+        this.tickTimer();
+      }
+    });
+
 
     this.registerEvent(
       this.app.workspace.on("file-open", () => {
         setTimeout(() => this.updateTaskProgressBar(), 100);
+      })
+    );
+    this.registerEvent(
+      this.app.workspace.on("layout-change", () => {
+        setTimeout(() => {
+          this.updateTaskProgressBar();
+          this.injectGraphViewHUD();
+        }, 150);
       })
     );
     this.registerEvent(
@@ -158,135 +779,20 @@ class AlchemyFlowPlugin extends Plugin {
     );
     this.registerDomEvent(document, "click", (e) => {
       if (e.target && e.target.classList && e.target.classList.contains("task-list-item-checkbox")) {
-        setTimeout(() => this.updateTaskProgressBar(), 120);
+        setTimeout(() => this.updateTaskProgressBar(true), 140);
       }
     });
 
-    this.addRibbonIcon("wand", "Alchemy Craft — Bento Reader & Focus", () => {
+    this.addRibbonIcon("wand", "Alchemy Craft — Bento Studio, Graph & Focus", () => {
       this.toggleMode(this.mode === "none" ? "laser" : "none");
     });
 
-    const isEn = this.settings.uiLanguage !== "ru";
-
-    this.addCommand({
-      id: "toggle-dock-orientation",
-      name: isEn ? "Toggle Dock Orientation (Bottom / Right Side Pillar)" : "Переключить ориентацию панели (Снизу / Справа у края)",
-      callback: () => {
-        this.toggleDockOrientation();
-      },
-    });
-
-    this.addCommand({
-      id: "toggle-dock-collapse",
-      name: isEn ? "Collapse / Expand Alchemy Dock" : "Свернуть / Развернуть панель управления",
-      callback: () => {
-        this.toggleDockCollapse();
-      },
-    });
-
-    this.addCommand({
-      id: "toggle-artcraft-theme",
-      name: isEn ? "Toggle Swiss Bento UI Theme" : "Переключить дизайн Alchemy Craft (Swiss Bento UI)",
-      callback: async () => {
-        this.settings.artcraftTheme = !this.settings.artcraftTheme;
-        await this.saveSettings();
-        this.applyBodyClasses();
-        this.updateDockUI();
-      },
-    });
-
-    this.addCommand({
-      id: "toggle-focus-timer",
-      name: isEn ? "Start / Pause Focus Timer" : "Старт / Пауза таймера фокуса",
-      callback: () => {
-        this.toggleTimer();
-      },
-    });
-
-    this.addCommand({
-      id: "reset-focus-timer",
-      name: isEn ? "Reset Focus Timer" : "Сбросить таймер фокуса",
-      callback: () => {
-        this.resetTimer();
-      },
-    });
-
-    this.addCommand({
-      id: "toggle-sentence-focus",
-      name: isEn ? "Toggle Sentence Focus & Number Badges" : "Переключить подсветку предложений и цифр",
-      callback: async () => {
-        this.settings.sentenceFocus = !this.settings.sentenceFocus;
-        await this.saveSettings();
-        this.applyBodyClasses();
-        this.updateDockUI();
-      },
-    });
-
-    this.addCommand({
-      id: "toggle-laser-pointer",
-      name: isEn ? "Toggle Laser Pointer Mode" : "Включить/выключить режим Лазерной Указки",
-      callback: () => {
-        this.toggleMode(this.mode === "laser" ? "none" : "laser");
-      },
-    });
-
-    this.addCommand({
-      id: "toggle-draw-marker",
-      name: isEn ? "Toggle Freehand Draw Marker Mode" : "Включить/выключить режим Маркера / Рисования",
-      callback: () => {
-        this.toggleMode(this.mode === "draw" ? "none" : "draw");
-      },
-    });
-
-    this.addCommand({
-      id: "toggle-eraser",
-      name: isEn ? "Toggle Eraser Mode" : "Включить/выключить режим Ластика",
-      callback: () => {
-        this.toggleMode(this.mode === "eraser" ? "none" : "eraser");
-      },
-    });
-
-    this.addCommand({
-      id: "undo-drawing",
-      name: isEn ? "Undo Drawing / Annotation" : "Отменить последнее действие рисования",
-      callback: () => {
-        this.undo();
-      },
-    });
-
-    this.addCommand({
-      id: "redo-drawing",
-      name: isEn ? "Redo Drawing / Annotation" : "Повторить отмененное действие рисования",
-      callback: () => {
-        this.redo();
-      },
-    });
-
-    this.addCommand({
-      id: "clean-ai-watermarks",
-      name: isEn ? "Clean AI Watermarks & Zero-Width Characters" : "Очистить невидимые ИИ-символы и водяные знаки",
-      callback: () => {
-        this.cleanCurrentNoteAIWatermarks();
-      },
-    });
-
-    this.addCommand({
-      id: "clear-drawings",
-      name: isEn ? "Clear All Drawings & Highlights" : "Очистить все рисунки и выделения предложений",
-      callback: () => {
-        this.clearAllAnnotations();
-      },
-    });
+    this.registerCommands();
 
     this.registerDomEvent(window, "keydown", (e) => {
       if (e.key === "Escape" && this.mode !== "none") {
         this.toggleMode("none");
-        const isCurrentEn = this.settings.uiLanguage !== "ru";
-        new Notice(
-          isCurrentEn
-            ? "Alchemy Craft: Pointer / Marker deactivated"
-            : "Alchemy Craft: Режим указки/рисования выключен"
-        );
+        new Notice("Alchemy Craft: Pointer / Marker deactivated");
       } else if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z") && !e.shiftKey) {
         if (this.mode !== "none" || (this.history && this.history.length > 0)) {
           this.undo();
@@ -302,6 +808,118 @@ class AlchemyFlowPlugin extends Plugin {
     });
 
     this.addSettingTab(new AlchemyFlowSettingTab(this.app, this));
+    setTimeout(() => this.injectGraphViewHUD(), 400);
+  }
+
+  registerCommands() {
+    this.addCommand({
+      id: "toggle-dock-orientation",
+      name: "Toggle Dock Orientation (Bottom / Right Side Pillar)",
+      callback: () => this.toggleDockOrientation(),
+    });
+
+    this.addCommand({
+      id: "toggle-dock-collapse",
+      name: "Collapse / Expand Alchemy Dock",
+      callback: () => this.toggleDockCollapse(),
+    });
+
+    this.addCommand({
+      id: "toggle-artcraft-theme",
+      name: "Toggle Swiss Bento UI Theme",
+      callback: async () => {
+        this.settings.artcraftTheme = !this.settings.artcraftTheme;
+        await this.saveSettings();
+        this.applyBodyClasses();
+        this.updateDockUI();
+      },
+    });
+
+    this.addCommand({
+      id: "toggle-dark-craft-theme",
+      name: "Toggle Midnight Dark Craft Mode (Pro)",
+      callback: async () => {
+        if (!this.settings.isPro) {
+          new AlchemyCraftProModal(this.app, this).open();
+          return;
+        }
+        this.settings.darkCraftTheme = !this.settings.darkCraftTheme;
+        await this.saveSettings();
+        this.applyBodyClasses();
+        this.updateDockUI();
+      },
+    });
+
+    this.addCommand({
+      id: "apply-bento-graph-colors",
+      name: "Graph View: Apply Swiss Bento Color Groups & Theme",
+      callback: () => this.applyBentoGraphColorGroups(),
+    });
+
+    this.addCommand({
+      id: "toggle-focus-timer",
+      name: "Start / Pause Focus Timer",
+      callback: () => this.toggleTimer(),
+    });
+
+    this.addCommand({
+      id: "reset-focus-timer",
+      name: "Reset Focus Timer",
+      callback: () => this.resetTimer(),
+    });
+
+    this.addCommand({
+      id: "toggle-sentence-focus",
+      name: "Toggle Sentence Focus & Number Badges",
+      callback: async () => {
+        this.settings.sentenceFocus = !this.settings.sentenceFocus;
+        await this.saveSettings();
+        this.applyBodyClasses();
+        this.updateDockUI();
+      },
+    });
+
+    this.addCommand({
+      id: "toggle-laser-pointer",
+      name: "Toggle Laser Pointer Mode",
+      callback: () => this.toggleMode(this.mode === "laser" ? "none" : "laser"),
+    });
+
+    this.addCommand({
+      id: "toggle-draw-marker",
+      name: "Toggle Freehand Draw Marker Mode",
+      callback: () => this.toggleMode(this.mode === "draw" ? "none" : "draw"),
+    });
+
+    this.addCommand({
+      id: "toggle-eraser",
+      name: "Toggle Eraser Mode",
+      callback: () => this.toggleMode(this.mode === "eraser" ? "none" : "eraser"),
+    });
+
+    this.addCommand({
+      id: "undo-drawing",
+      name: "Undo Drawing / Annotation",
+      callback: () => this.undo(),
+    });
+
+    this.addCommand({
+      id: "redo-drawing",
+      name: "Redo Drawing / Annotation",
+      callback: () => this.redo(),
+    });
+
+    this.addCommand({
+      id: "clean-ai-watermarks",
+      name: "Clean AI Watermarks & Zero-Width Characters",
+      callback: () => this.cleanCurrentNoteAIWatermarks(),
+    });
+
+    this.addCommand({
+      id: "clear-drawings",
+      name: "Clear All Drawings & Highlights",
+      callback: () => this.clearAllAnnotations(),
+    });
   }
 
   onunload() {
@@ -310,13 +928,134 @@ class AlchemyFlowPlugin extends Plugin {
       "artcraft-hover-cards",
       "artcraft-sentence-focus",
       "artcraft-zen-mode",
-      "artcraft-dark-craft"
+      "artcraft-dark-craft",
+      "artcraft-bento-graph"
     );
+    this.stopAmbientSound();
     if (this.lpInterval) clearInterval(this.lpInterval);
     if (this.timerInterval) clearInterval(this.timerInterval);
     if (this.animFrame) cancelAnimationFrame(this.animFrame);
     if (this.canvasEl) this.canvasEl.remove();
     if (this.dockEl) this.dockEl.remove();
+    // Clean up all task progress bars & graph HUDs so mobile DOM never gets stuck
+    document.querySelectorAll(".artcraft-task-progress-wrap, .artcraft-graph-hud").forEach((el) => el.remove());
+  }
+
+  // --- AMBIENT FOCUS SOUNDSCAPE ENGINE (WEBAUDIO SYNTHESIS) ---
+  startAmbientSound(type) {
+    this.stopAmbientSound();
+    if (!type || type === "off") return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = 0.08;
+      masterGain.connect(ctx.destination);
+
+      if (type === "brown" || type === "rain") {
+        const bufferSize = 2 * ctx.sampleRate;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          if (type === "brown") {
+            output[i] = (lastOut + 0.02 * white) / 1.02;
+            lastOut = output[i];
+            output[i] *= 3.2;
+          } else {
+            // Soft Rain pink/filtered texture
+            output[i] = (lastOut + 0.08 * white) / 1.08;
+            lastOut = output[i];
+            output[i] *= 1.8;
+          }
+        }
+        const whiteNoise = ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = type === "brown" ? 420 : 1100;
+
+        whiteNoise.connect(filter);
+        filter.connect(masterGain);
+        whiteNoise.start(0);
+        this.ambientNodes = { ctx, source: whiteNoise };
+      } else if (type === "gamma40") {
+        // 40Hz Binaural Focus Drone (200Hz L + 240Hz R warm pad)
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        osc1.type = "sine";
+        osc2.type = "sine";
+        osc1.frequency.value = 180;
+        osc2.frequency.value = 220; // 40Hz delta
+        masterGain.gain.value = 0.035;
+        osc1.connect(masterGain);
+        osc2.connect(masterGain);
+        osc1.start();
+        osc2.start();
+        this.ambientNodes = { ctx, osc1, osc2 };
+      }
+    } catch (e) {
+      // Ignore AudioContext restriction errors
+    }
+  }
+
+  stopAmbientSound() {
+    if (!this.ambientNodes) return;
+    try {
+      if (this.ambientNodes.source) this.ambientNodes.source.stop();
+      if (this.ambientNodes.osc1) this.ambientNodes.osc1.stop();
+      if (this.ambientNodes.osc2) this.ambientNodes.osc2.stop();
+      if (this.ambientNodes.ctx) this.ambientNodes.ctx.close();
+    } catch (e) {}
+    this.ambientNodes = null;
+  }
+
+  // --- CELEBRATION PARTICLES (100% TASK COMPLETION & PRO UNLOCK) ---
+  burstParticles(x, y, count = 48) {
+    if (!this.canvasEl) return;
+    const colors = ["#69BD28", "#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899"];
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2.2 + Math.random() * 6.5;
+      this.particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2.2,
+        size: 4 + Math.random() * 4.5,
+        color: colors[i % colors.length],
+        alpha: 1,
+      });
+    }
+  }
+
+  // --- FOCUS ANALYTICS RECORDER ---
+  async recordCompletedSprint(minutes) {
+    if (!this.settings.focusAnalytics) {
+      this.settings.focusAnalytics = {
+        completedSprints: 0,
+        totalFocusMinutes: 0,
+        tasksCompleted100: 0,
+        lastSprintDate: "",
+        currentStreak: 0,
+        history: [],
+      };
+    }
+    const fa = this.settings.focusAnalytics;
+    fa.completedSprints = (fa.completedSprints || 0) + 1;
+    fa.totalFocusMinutes = (fa.totalFocusMinutes || 0) + (minutes || 25);
+
+    const today = new Date().toISOString().slice(0, 10);
+    if (fa.lastSprintDate !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      fa.currentStreak = fa.lastSprintDate === yesterday ? (fa.currentStreak || 0) + 1 : 1;
+      fa.lastSprintDate = today;
+    }
+    await this.saveSettings();
   }
 
   // --- TIMER METHODS ---
@@ -339,7 +1078,6 @@ class AlchemyFlowPlugin extends Plugin {
       gain.connect(ctx.destination);
 
       const now = ctx.currentTime;
-      // Dual tone pleasant chime
       osc.frequency.setValueAtTime(880, now);
       osc.frequency.setValueAtTime(1175, now + 0.16);
       gain.gain.setValueAtTime(0, now);
@@ -348,9 +1086,7 @@ class AlchemyFlowPlugin extends Plugin {
 
       osc.start(now);
       osc.stop(now + 0.82);
-    } catch (e) {
-      // AudioContext may be restricted by autoplay policy
-    }
+    } catch (e) {}
   }
 
   startTimer() {
@@ -358,9 +1094,12 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerRunning = true;
     const now = Date.now();
     if (this.settings.timerMode === "pomodoro") {
-      this.timerTargetTimestamp = now + (this.timerSeconds * 1000);
+      this.timerTargetTimestamp = now + this.timerSeconds * 1000;
     } else {
-      this.timerStartTimestamp = now - (this.timerSeconds * 1000);
+      this.timerStartTimestamp = now - this.timerSeconds * 1000;
+    }
+    if (this.timerState === "work" && this.settings.ambientSound && this.settings.ambientSound !== "off") {
+      this.startAmbientSound(this.settings.ambientSound);
     }
     this.timerInterval = setInterval(() => {
       this.tickTimer();
@@ -376,23 +1115,17 @@ class AlchemyFlowPlugin extends Plugin {
       this.timerSeconds = remaining;
       if (remaining <= 0) {
         this.timerRunning = false;
+        this.stopAmbientSound();
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.playTimerChime();
-        const isEn = this.settings.uiLanguage !== "ru";
         if (this.timerState === "work") {
-          new Notice(
-            isEn
-              ? "⚡ Alchemy Craft: Focus sprint completed! Great job, take a short break."
-              : "⚡ Alchemy Craft: Фокус-сессия завершена! Отличная работа, время для перерыва."
-          );
+          this.recordCompletedSprint(this.settings.pomodoroMinutes || 25);
+          this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 55);
+          new Notice(t("sprintDoneNotice", this));
           this.timerState = "break";
           this.timerSeconds = (this.settings.breakMinutes || 5) * 60;
         } else {
-          new Notice(
-            isEn
-              ? "☕ Alchemy Craft: Break finished! Ready for the next focus sprint?"
-              : "☕ Alchemy Craft: Перерыв окончен! Готовы к следующему фокус-спринту?"
-          );
+          new Notice(t("breakDoneNotice", this));
           this.timerState = "work";
           this.timerSeconds = (this.settings.pomodoroMinutes || 25) * 60;
         }
@@ -408,6 +1141,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.tickTimer();
     }
     this.timerRunning = false;
+    this.stopAmbientSound();
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.updateTimerDisplay();
   }
@@ -436,8 +1170,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerState = "work";
     this.saveSettings();
     this.resetTimer();
-    const isEn = this.settings.uiLanguage !== "ru";
-    new Notice(isEn ? `🍅 Pomodoro: ${mins} minutes set` : `🍅 Помодоро: ${mins} мин установлено`);
+    new Notice(`🍅 Pomodoro: ${mins} min`);
   }
 
   startBreak(mins) {
@@ -445,61 +1178,110 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerState = "break";
     this.timerSeconds = mins * 60;
     this.startTimer();
-    const isEn = this.settings.uiLanguage !== "ru";
-    new Notice(isEn ? `☕ Break started: ${mins} minutes` : `☕ Перерыв начался: ${mins} мин`);
+    new Notice(`☕ Break: ${mins} min`);
   }
 
   showTimerMenu(event) {
     const menu = new Menu();
-    const isEn = this.settings.uiLanguage !== "ru";
 
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "⚡ 15 min — Sprint Focus" : "⚡ 15 мин — Спринт фокус")
+        .setTitle("⚡ 15 min — Sprint Focus")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 15 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(15));
     });
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "🍅 25 min — Standard Pomodoro" : "🍅 25 мин — Стандарт Помодоро")
+        .setTitle("🍅 25 min — Standard Pomodoro")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 25 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(25));
     });
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "🎯 45 min — Deep Work" : "🎯 45 мин — Глубокий фокус")
+        .setTitle("🎯 45 min — Deep Work")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 45 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(45));
     });
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "🌊 60 min — Flow State" : "🌊 60 мин — Полный поток")
+        .setTitle("🌊 60 min — Flow State")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 60 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(60));
     });
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "🚀 90 min — Ultradian Rhythm" : "🚀 90 мин — Ультрадианный цикл")
+        .setTitle("🚀 90 min — Ultradian Rhythm")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 90 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(90));
+    });
+    menu.addItem((item) => {
+      item
+        .setTitle("⚙️ Custom Duration (1–360 min)...")
+        .onClick(() => {
+          new CustomPomodoroModal(this.app, this, this.settings.pomodoroMinutes || 25, (mins) => {
+            this.setPomodoroDuration(mins);
+            this.startTimer();
+          }).open();
+        });
     });
     menu.addSeparator();
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "☕ 5 min — Short Break" : "☕ 5 мин — Короткий перерыв")
+        .setTitle("☕ 5 min — Short Break")
         .setChecked(this.timerState === "break" && this.timerSeconds <= 300)
         .onClick(() => this.startBreak(this.settings.breakMinutes || 5));
     });
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "🌴 15 min — Long Break" : "🌴 15 мин — Длинный перерыв")
+        .setTitle("🌴 15 min — Long Break")
         .setChecked(this.timerState === "break" && this.timerSeconds > 300)
         .onClick(() => this.startBreak(15));
     });
     menu.addSeparator();
     menu.addItem((item) => {
       item
-        .setTitle(isEn ? "⏱ Stopwatch (Count Up: 00:00+)" : "⏱ Секундомер работы (00:00+)")
+        .setTitle("🎧 Ambient: Off")
+        .setChecked(!this.settings.ambientSound || this.settings.ambientSound === "off")
+        .onClick(async () => {
+          this.settings.ambientSound = "off";
+          await this.saveSettings();
+          this.stopAmbientSound();
+        });
+    });
+    menu.addItem((item) => {
+      item
+        .setTitle("🌊 Ambient: Warm Brown Noise")
+        .setChecked(this.settings.ambientSound === "brown")
+        .onClick(async () => {
+          this.settings.ambientSound = "brown";
+          await this.saveSettings();
+          if (this.timerRunning) this.startAmbientSound("brown");
+        });
+    });
+    menu.addItem((item) => {
+      item
+        .setTitle("🌧️ Ambient: Soft Rain on Paper")
+        .setChecked(this.settings.ambientSound === "rain")
+        .onClick(async () => {
+          this.settings.ambientSound = "rain";
+          await this.saveSettings();
+          if (this.timerRunning) this.startAmbientSound("rain");
+        });
+    });
+    menu.addItem((item) => {
+      item
+        .setTitle("🧠 Ambient: 40Hz Gamma Focus Drone")
+        .setChecked(this.settings.ambientSound === "gamma40")
+        .onClick(async () => {
+          this.settings.ambientSound = "gamma40";
+          await this.saveSettings();
+          if (this.timerRunning) this.startAmbientSound("gamma40");
+        });
+    });
+    menu.addSeparator();
+    menu.addItem((item) => {
+      item
+        .setTitle("⏱ Stopwatch (Count Up: 00:00+)")
         .setChecked(this.settings.timerMode === "stopwatch")
         .onClick(async () => {
           this.settings.timerMode = "stopwatch";
@@ -529,22 +1311,107 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-sentence-focus", this.settings.sentenceFocus);
     document.body.classList.toggle("artcraft-zen-mode", !!this.zenMode);
     document.body.classList.toggle("artcraft-dark-craft", !!this.settings.darkCraftTheme && !!this.settings.isPro);
+    document.body.classList.toggle("artcraft-bento-graph", this.settings.enableBentoGraph !== false);
 
     const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
-    const show = (this.settings.showHeaderTag !== false) && tag.length > 0;
+    const show = this.settings.showHeaderTag !== false && tag.length > 0;
     if (show) {
-      document.documentElement.style.setProperty('--artcraft-header-tag', `"${tag.replace(/"/g, '\\"')}"`);
-      document.documentElement.style.setProperty('--artcraft-header-tag-display', 'block');
+      document.documentElement.style.setProperty("--artcraft-header-tag", `"${tag.replace(/"/g, '\\"')}"`);
+      document.documentElement.style.setProperty("--artcraft-header-tag-display", "block");
     } else {
-      document.documentElement.style.setProperty('--artcraft-header-tag-display', 'none');
+      document.documentElement.style.setProperty("--artcraft-header-tag-display", "none");
     }
   }
 
-  updateTaskProgressBar() {
-    // 1. Remove any legacy or orphaned bars stuck inside CodeMirror scroller
-    document.querySelectorAll(".cm-sizer .artcraft-task-progress-wrap, .cm-content .artcraft-task-progress-wrap, .inline-title + .artcraft-task-progress-wrap").forEach((el) => {
-      el.remove();
+  // --- SWISS BENTO GRAPH STUDIO (ENHANCES OBSIDIAN BUILT-IN GRAPH VIEW) ---
+  injectGraphViewHUD() {
+    if (this.settings.enableBentoGraph === false) {
+      document.querySelectorAll(".artcraft-graph-hud").forEach((el) => el.remove());
+      return;
+    }
+
+    const graphLeaves = document.querySelectorAll('.workspace-leaf-content[data-type="graph"], .workspace-leaf-content[data-type="localgraph"]');
+    graphLeaves.forEach((leaf) => {
+      const viewContent = leaf.querySelector(".view-content");
+      if (!viewContent) return;
+
+      viewContent.classList.add("artcraft-graph-canvas-wrap");
+      viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
+
+      if (viewContent.querySelector(".artcraft-graph-hud")) return;
+
+      const hud = document.createElement("div");
+      hud.className = "artcraft-graph-hud";
+      hud.innerHTML = `
+        <span class="artcraft-graph-hud-badge">${t("graphHudTitle", this)}</span>
+        <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento">${t("graphPresetBento", this)}</button>
+        <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "constellation" ? "is-active" : ""}" data-preset="constellation">${t("graphPresetConstellation", this)}</button>
+        <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar">${t("graphPresetRadar", this)}</button>
+        <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${t("graphColorizeBtn", this)}</button>
+      `;
+
+      hud.querySelectorAll("[data-preset]").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const preset = btn.getAttribute("data-preset");
+          this.settings.graphPreset = preset;
+          await this.saveSettings();
+          hud.querySelectorAll("[data-preset]").forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+          viewContent.setAttribute("data-graph-preset", preset);
+          new Notice(`🕸️ Alchemy Graph Preset: ${btn.textContent}`);
+        });
+      });
+
+      const colorBtn = hud.querySelector('[data-action="colorize"]');
+      if (colorBtn) {
+        colorBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.applyBentoGraphColorGroups();
+        });
+      }
+
+      viewContent.appendChild(hud);
     });
+  }
+
+  async applyBentoGraphColorGroups() {
+    try {
+      const adapter = this.app.vault.adapter;
+      const configDir = this.app.vault.configDir || ".obsidian";
+      const graphPath = `${configDir}/graph.json`;
+      let graphConfig = {};
+      if (await adapter.exists(graphPath)) {
+        const raw = await adapter.read(graphPath);
+        graphConfig = JSON.parse(raw);
+      }
+
+      // Swiss Bento 6-color semantic node groups (0x2563EB, 0xF59E0B, 0x10B981, 0x8B5CF6, 0xEC4899, 0x69BD28)
+      graphConfig.colorGroups = [
+        { query: 'path:"01" OR tag:#strategy OR tag:#01', color: { a: 1, rgb: 2450411 } }, // #2563EB Sapphire
+        { query: 'path:"02" OR tag:#product OR tag:#02', color: { a: 1, rgb: 16096779 } }, // #F59E0B Amber
+        { query: 'path:"03" OR tag:#research OR tag:#03', color: { a: 1, rgb: 1096065 } }, // #10B981 Emerald
+        { query: 'path:"04" OR tag:#archive OR tag:#04', color: { a: 1, rgb: 9133302 } }, // #8B5CF6 Amethyst
+        { query: "tag:#pro OR tag:#important", color: { a: 1, rgb: 15485081 } }, // #EC4899 Rose
+        { query: "file:README OR tag:#done", color: { a: 1, rgb: 6929704 } }, // #69BD28 Excel Green
+      ];
+      graphConfig.showArrow = true;
+      graphConfig.nodeSizeMultiplier = 1.18;
+      graphConfig.lineSizeMultiplier = 1.15;
+
+      await adapter.write(graphPath, JSON.stringify(graphConfig, null, 2));
+      this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 40);
+      new Notice("🎨 Swiss Bento Graph Color Groups applied to .obsidian/graph.json!");
+    } catch (err) {
+      new Notice("⚠️ Could not update graph.json automatically.");
+    }
+  }
+
+  updateTaskProgressBar(fromCheckboxClick = false) {
+    // Remove any legacy or orphaned bars stuck inside CodeMirror scroller
+    document
+      .querySelectorAll(".cm-sizer .artcraft-task-progress-wrap, .cm-content .artcraft-task-progress-wrap, .inline-title + .artcraft-task-progress-wrap")
+      .forEach((el) => el.remove());
 
     if (this.settings.showTaskProgress === false) {
       document.querySelectorAll(".artcraft-task-progress-wrap").forEach((el) => {
@@ -575,56 +1442,64 @@ class AlchemyFlowPlugin extends Plugin {
       });
     }
 
-    document
-      .querySelectorAll('.workspace-leaf-content[data-type="markdown"]')
-      .forEach((leaf) => {
-        const viewContent = leaf.querySelector(".view-content");
-        if (!viewContent) return;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const filePath = activeView.file.path;
+    if (fromCheckboxClick && total > 0 && pct === 100 && this.lastTaskPctByFile[filePath] !== 100) {
+      this.burstParticles(window.innerWidth / 2, window.innerHeight / 4, 60);
+      if (this.settings.focusAnalytics) {
+        this.settings.focusAnalytics.tasksCompleted100 = (this.settings.focusAnalytics.tasksCompleted100 || 0) + 1;
+        this.saveSettings();
+      }
+    }
+    this.lastTaskPctByFile[filePath] = pct;
 
-        let barWrap = viewContent.querySelector(":scope > .artcraft-task-progress-wrap");
+    document.querySelectorAll('.workspace-leaf-content[data-type="markdown"]').forEach((leaf) => {
+      const viewContent = leaf.querySelector(".view-content");
+      if (!viewContent) return;
 
-        if (total === 0) {
-          if (barWrap) barWrap.style.display = "none";
-          return;
+      let barWrap = viewContent.querySelector(":scope > .artcraft-task-progress-wrap");
+
+      if (total === 0) {
+        if (barWrap) barWrap.style.display = "none";
+        return;
+      }
+
+      if (!barWrap) {
+        barWrap = document.createElement("div");
+        barWrap.className = "artcraft-task-progress-wrap";
+        barWrap.innerHTML = `
+          <span class="artcraft-task-progress-label"></span>
+          <div class="artcraft-task-progress-bar-bg">
+            <div class="artcraft-task-progress-bar-fill"></div>
+          </div>
+          <span class="artcraft-task-progress-pct"></span>
+          <button class="artcraft-task-progress-close" title="Dismiss bar (Mobile Safe)">✕</button>
+        `;
+        const closeBtn = barWrap.querySelector(".artcraft-task-progress-close");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            barWrap.style.display = "none";
+          });
         }
+        viewContent.insertBefore(barWrap, viewContent.firstChild);
+      }
 
-        const pct = Math.round((done / total) * 100);
+      barWrap.style.display = "flex";
+      const labelEl = barWrap.querySelector(".artcraft-task-progress-label");
+      const fillEl = barWrap.querySelector(".artcraft-task-progress-bar-fill");
+      const pctEl = barWrap.querySelector(".artcraft-task-progress-pct");
 
-        if (!barWrap) {
-          barWrap = document.createElement("div");
-          barWrap.className = "artcraft-task-progress-wrap";
-          barWrap.innerHTML = `
-            <span class="artcraft-task-progress-label"></span>
-            <div class="artcraft-task-progress-bar-bg">
-              <div class="artcraft-task-progress-bar-fill"></div>
-            </div>
-            <span class="artcraft-task-progress-pct"></span>
-          `;
-          // Insert at the very top of .view-content, completely outside CodeMirror 6!
-          viewContent.insertBefore(barWrap, viewContent.firstChild);
-        }
-
-        barWrap.style.display = "flex";
-        const labelEl = barWrap.querySelector(".artcraft-task-progress-label");
-        const fillEl = barWrap.querySelector(".artcraft-task-progress-bar-fill");
-        const pctEl = barWrap.querySelector(".artcraft-task-progress-pct");
-
-        const isEn = this.settings.uiLanguage !== "ru";
-        if (labelEl) labelEl.textContent = isEn ? `⚡ TASK PROGRESS: ${done} / ${total}` : `⚡ ПРОГРЕСС ЗАДАЧ: ${done} / ${total}`;
-        if (fillEl) fillEl.style.width = `${pct}%`;
-        if (pctEl) pctEl.textContent = `${pct}%`;
-      });
+      if (labelEl) labelEl.textContent = `${t("taskProgressLabel", this)} ${done} / ${total}`;
+      if (fillEl) fillEl.style.width = `${pct}%`;
+      if (pctEl) pctEl.textContent = `${pct}%`;
+    });
   }
 
   cleanCurrentNoteAIWatermarks() {
-    const isEn = this.settings.uiLanguage !== "ru";
     const view = this.app.workspace.getActiveViewOfType(require("obsidian").MarkdownView);
     if (!view || !view.editor) {
-      new Notice(
-        isEn
-          ? "Please open a markdown note to clean AI markers."
-          : "Откройте заметку для очистки от ИИ-символов"
-      );
+      new Notice("Please open a markdown note to clean AI markers.");
       return;
     }
     const editor = view.editor;
@@ -649,18 +1524,16 @@ class AlchemyFlowPlugin extends Plugin {
       }
     }
     navigator.clipboard.writeText(cleaned);
-
-    const msg = isEn
-      ? `✓ Cleaned ${count} invisible AI marker(s) & copied to clipboard!`
-      : `✓ Удалено ${count} невидимых символов ИИ и скопировано в буфер!`;
-    new Notice(msg);
+    new Notice(`✓ Cleaned ${count} invisible AI marker(s) & copied to clipboard!`);
   }
 
   setupLivePreviewObserver() {
     const styleLivePreviewNodes = () => {
+      if (this.settings.enableBentoGraph !== false) {
+        this.injectGraphViewHUD();
+      }
       if (!this.settings.artcraftTheme || !this.settings.colorizeNumbers) return;
 
-      // Colorize only static list numbers without touching text nodes
       document.querySelectorAll(".HyperMD-list-line .cm-formatting-list-ol").forEach((el) => {
         const txt = (el.textContent || "").trim();
         const num = parseInt(txt, 10);
@@ -725,7 +1598,7 @@ class AlchemyFlowPlugin extends Plugin {
           span.className = "artcraft-sentence";
           this.appendWithColorizedTokens(span, sent);
 
-          span.addEventListener("click", (e) => {
+          span.addEventListener("click", () => {
             if (this.mode !== "none") return;
             const targetColor = this.settings.strokeColor;
             const currentPin = span.getAttribute("data-pinned-color");
@@ -736,7 +1609,7 @@ class AlchemyFlowPlugin extends Plugin {
               span.classList.remove("is-pinned");
             } else {
               span.setAttribute("data-pinned-color", targetColor);
-              span.style.setProperty("--artcraft-pinned-bg", `${targetColor}18`);
+              span.style.setProperty("--artcraft-pinned-bg", `${targetColor}24`);
               span.style.setProperty("--artcraft-pinned-border", targetColor);
               span.classList.add("is-pinned");
             }
@@ -826,7 +1699,6 @@ class AlchemyFlowPlugin extends Plugin {
   // --- FLOATING DOCK & OVERLAY CANVAS ---
   createFloatingDock() {
     if (this.dockEl) this.dockEl.remove();
-    const isEn = this.settings.uiLanguage !== "ru";
 
     const dock = document.createElement("div");
     dock.className = "artcraft-floating-dock";
@@ -837,10 +1709,9 @@ class AlchemyFlowPlugin extends Plugin {
       dock.classList.add("is-vertical");
     }
 
-    // Brand badge & Collapse trigger: ALCHEMY CRAFT (Responsive: full on desktop, ⚗️ icon on mobile)
     const badge = document.createElement("span");
     badge.className = "artcraft-dock-badge";
-    badge.title = isEn ? "Click to collapse/expand Alchemy Dock" : "Клик для сворачивания/разворачивания панели";
+    badge.title = t("dockCollapseTip", this);
     badge.innerHTML = `<span class="artcraft-dock-badge-full">${ALCHEMY_ICON_SVG}<span class="artcraft-badge-text">ALCHEMY CRAFT</span></span><span class="artcraft-dock-badge-short">${ALCHEMY_ICON_SVG}</span>`;
     badge.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -848,16 +1719,13 @@ class AlchemyFlowPlugin extends Plugin {
     });
     dock.appendChild(badge);
 
-    // Inner content wrapper (allows smooth morphing animation without stretching buttons)
     const contentWrap = document.createElement("div");
     contentWrap.className = "artcraft-dock-content";
 
     // 0. Compact Pomodoro / Work Timer Pill
     this.timerEl = document.createElement("div");
     this.timerEl.className = "artcraft-timer-pill";
-    this.timerEl.title = isEn
-      ? "LMB: Start/Pause | RMB: Presets (15m, 25m, 45m, 60m, Breaks) | Double Click: Reset"
-      : "ЛКМ: Старт/Пауза | ПКМ: Пресеты (15м, 25м, 45м, 60м, Перерывы) | Двойной клик: Сброс";
+    this.timerEl.title = t("timerTip", this);
 
     const timerDot = document.createElement("span");
     timerDot.className = "artcraft-timer-dot";
@@ -872,7 +1740,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerEl.addEventListener("dblclick", (e) => {
       e.preventDefault();
       this.resetTimer();
-      new Notice(isEn ? "Timer reset" : "Таймер сброшен");
+      new Notice("Timer reset");
     });
     this.timerEl.addEventListener("contextmenu", (e) => {
       e.preventDefault();
@@ -884,10 +1752,8 @@ class AlchemyFlowPlugin extends Plugin {
     // 1. Theme toggle button
     this.btnTheme = document.createElement("button");
     this.btnTheme.className = "artcraft-dock-btn";
-    this.btnTheme.title = isEn
-      ? "Swiss Bento UI Theme (Warm Paper #F4F3EF + Sage Green Tables)"
-      : "Теплый бумажный режим Swiss Bento UI + светло-зеленые шапки Excel";
-    this.btnTheme.textContent = "UI";
+    this.btnTheme.title = t("uiTip", this);
+    this.btnTheme.textContent = t("uiBtn", this);
     this.btnTheme.addEventListener("click", async () => {
       this.settings.artcraftTheme = !this.settings.artcraftTheme;
       await this.saveSettings();
@@ -899,10 +1765,8 @@ class AlchemyFlowPlugin extends Plugin {
     // 1.5. Zen Mode button
     this.btnZen = document.createElement("button");
     this.btnZen.className = "artcraft-dock-btn";
-    this.btnZen.title = isEn
-      ? "Zen Mode — hide sidebars for pure distraction-free focus"
-      : "Режим Дзен — скрыть боковые панели для чистого фокуса или записи экрана";
-    this.btnZen.textContent = isEn ? "Zen" : "Дзен";
+    this.btnZen.title = t("zenTip", this);
+    this.btnZen.textContent = t("zenBtn", this);
     this.btnZen.addEventListener("click", () => {
       this.zenMode = !this.zenMode;
       this.applyBodyClasses();
@@ -913,10 +1777,8 @@ class AlchemyFlowPlugin extends Plugin {
     // 2. Sentence Focus button
     this.btnSentence = document.createElement("button");
     this.btnSentence.className = "artcraft-dock-btn";
-    this.btnSentence.title = isEn
-      ? "Sentence Focus Highlighting (hover over text and click to pin color)"
-      : "Выделение предложений выбранным цветом (клик по тексту)";
-    this.btnSentence.textContent = isEn ? "Focus" : "Фокус";
+    this.btnSentence.title = t("focusTip", this);
+    this.btnSentence.textContent = t("focusBtn", this);
     this.btnSentence.addEventListener("click", async () => {
       this.settings.sentenceFocus = !this.settings.sentenceFocus;
       await this.saveSettings();
@@ -928,10 +1790,8 @@ class AlchemyFlowPlugin extends Plugin {
     // 3. Laser Pointer button
     this.btnLaser = document.createElement("button");
     this.btnLaser.className = "artcraft-dock-btn";
-    this.btnLaser.title = isEn
-      ? "Laser Pointer (glowing trail, Esc to exit)"
-      : "Лазерная указка (исчезающий след, Esc для выхода)";
-    this.btnLaser.textContent = isEn ? "Laser" : "Указка";
+    this.btnLaser.title = t("laserTip", this);
+    this.btnLaser.textContent = t("laserBtn", this);
     this.btnLaser.addEventListener("click", () => {
       this.toggleMode(this.mode === "laser" ? "none" : "laser");
     });
@@ -940,10 +1800,8 @@ class AlchemyFlowPlugin extends Plugin {
     // 4. Draw Marker button
     this.btnDraw = document.createElement("button");
     this.btnDraw.className = "artcraft-dock-btn";
-    this.btnDraw.title = isEn
-      ? "Freehand Marker Draw on note (Esc to exit)"
-      : "Рисование маркером поверх заметки (Esc для выхода)";
-    this.btnDraw.textContent = isEn ? "Draw" : "Маркер";
+    this.btnDraw.title = t("drawTip", this);
+    this.btnDraw.textContent = t("drawBtn", this);
     this.btnDraw.addEventListener("click", () => {
       this.toggleMode(this.mode === "draw" ? "none" : "draw");
     });
@@ -952,10 +1810,8 @@ class AlchemyFlowPlugin extends Plugin {
     // 4.1. Eraser button
     this.btnEraser = document.createElement("button");
     this.btnEraser.className = "artcraft-dock-btn";
-    this.btnEraser.title = isEn
-      ? "Eraser — erase drawings under cursor or finger (Esc to exit)"
-      : "Ластик — стирать рисунки касанием или мышью (Esc для выхода)";
-    this.btnEraser.textContent = isEn ? "Eraser" : "Ластик";
+    this.btnEraser.title = t("eraserTip", this);
+    this.btnEraser.textContent = t("eraserBtn", this);
     this.btnEraser.addEventListener("click", () => {
       this.toggleMode(this.mode === "eraser" ? "none" : "eraser");
     });
@@ -964,7 +1820,7 @@ class AlchemyFlowPlugin extends Plugin {
     // 4.2. Undo button
     this.btnUndo = document.createElement("button");
     this.btnUndo.className = "artcraft-dock-btn artcraft-dock-icon-btn";
-    this.btnUndo.title = isEn ? "Undo last stroke (Ctrl+Z)" : "Отменить последний штрих (Ctrl+Z)";
+    this.btnUndo.title = t("undoTip", this);
     this.btnUndo.textContent = "↶";
     this.btnUndo.addEventListener("click", () => {
       this.undo();
@@ -974,24 +1830,23 @@ class AlchemyFlowPlugin extends Plugin {
     // 4.3. Redo button
     this.btnRedo = document.createElement("button");
     this.btnRedo.className = "artcraft-dock-btn artcraft-dock-icon-btn";
-    this.btnRedo.title = isEn ? "Redo stroke (Ctrl+Y)" : "Повторить отмененный штрих (Ctrl+Y)";
+    this.btnRedo.title = t("redoTip", this);
     this.btnRedo.textContent = "↷";
     this.btnRedo.addEventListener("click", () => {
       this.redo();
     });
     contentWrap.appendChild(this.btnRedo);
 
-    // 5. Palette dots (01 Blue, 02 Orange, 03 Green, 04 Purple)
+    // 5. Palette dots (8 Colors: 4 Standard + 4 Pro)
     const dotsWrap = document.createElement("div");
     dotsWrap.className = "artcraft-color-dots-wrap";
     this.colorDots = [];
     PALETTE.forEach((p) => {
+      if (p.pro && !this.settings.isPro) return;
       const dot = document.createElement("div");
       dot.className = "artcraft-color-dot";
       dot.style.backgroundColor = p.color;
-      dot.title = isEn
-        ? `${p.name} — color for Marker, Pointer, and Sentence pinning`
-        : `${p.name} — цвет для Маркера, Указки и выделения предложений кликом`;
+      dot.title = p.name;
       dot.addEventListener("click", async () => {
         this.settings.strokeColor = p.color;
         this.settings.activeColorKey = p.key;
@@ -1003,14 +1858,12 @@ class AlchemyFlowPlugin extends Plugin {
     });
     contentWrap.appendChild(dotsWrap);
 
-    // 6. AI Text Cleaner button (Shown ONLY if enableAiCleaner is true!)
+    // 6. AI Text Cleaner button
     if (this.settings.enableAiCleaner) {
       this.btnCleanAI = document.createElement("button");
       this.btnCleanAI.className = "artcraft-dock-btn";
-      this.btnCleanAI.title = isEn
-        ? "Clean invisible AI watermarks (Zero-Width spaces) & copy to clipboard"
-        : "Очистить текст заметки от невидимых ИИ-символов (Zero-Width) и скопировать";
-      this.btnCleanAI.textContent = "AI Clean";
+      this.btnCleanAI.title = t("aiCleanTip", this);
+      this.btnCleanAI.textContent = t("aiCleanBtn", this);
       this.btnCleanAI.addEventListener("click", () => {
         this.cleanCurrentNoteAIWatermarks();
       });
@@ -1019,22 +1872,18 @@ class AlchemyFlowPlugin extends Plugin {
 
     // 7. Clear button
     const btnClear = document.createElement("button");
-    btnClear.className = "artcraft-dock-btn";
-    btnClear.title = isEn
-      ? "Clear all drawings and highlighted sentences"
-      : "Очистить рисунки и выделенные предложения";
+    btnClear.className = "artcraft-dock-btn artcraft-dock-icon-btn";
+    btnClear.title = t("clearTip", this);
     btnClear.textContent = "✕";
     btnClear.addEventListener("click", () => {
       this.clearAllAnnotations();
     });
     contentWrap.appendChild(btnClear);
 
-    // 7.5. Orientation Toggle button (Bottom Bar / Right Side Pillar)
+    // 7.5. Orientation Toggle button
     const btnOrient = document.createElement("button");
     btnOrient.className = "artcraft-dock-btn artcraft-dock-icon-btn";
-    btnOrient.title = isEn
-      ? "Toggle Orientation (Bottom Bar / Right Side Pillar)"
-      : "Сменить расположение: Снизу / Справа у края";
+    btnOrient.title = t("orientTip", this);
     btnOrient.textContent = "⇄";
     btnOrient.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -1045,7 +1894,7 @@ class AlchemyFlowPlugin extends Plugin {
     // 8. Collapse / Minimize button
     const btnCollapse = document.createElement("button");
     btnCollapse.className = "artcraft-dock-btn artcraft-dock-icon-btn artcraft-dock-collapse-btn";
-    btnCollapse.title = isEn ? "Collapse into floating orb" : "Свернуть панель в плавающую сферу";
+    btnCollapse.title = t("collapseTip", this);
     btnCollapse.textContent = "—";
     btnCollapse.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -1055,7 +1904,6 @@ class AlchemyFlowPlugin extends Plugin {
 
     dock.appendChild(contentWrap);
 
-    // Expand when clicking the collapsed orb anywhere
     dock.addEventListener("click", (e) => {
       if (dock.classList.contains("is-collapsed")) {
         e.stopPropagation();
@@ -1068,18 +1916,12 @@ class AlchemyFlowPlugin extends Plugin {
     this.updateDockUI();
   }
 
-    async toggleDockOrientation() {
+  async toggleDockOrientation() {
     this.settings.dockVertical = !this.settings.dockVertical;
     await this.saveSettings();
     if (this.dockEl) {
       this.dockEl.classList.toggle("is-vertical", this.settings.dockVertical);
     }
-    const isEn = this.settings.uiLanguage !== "ru";
-    new Notice(
-      this.settings.dockVertical
-        ? (isEn ? "Dock: Vertical Pillar (Right side)" : "Панель: Вертикальная стойка справа")
-        : (isEn ? "Dock: Horizontal Bar (Bottom)" : "Панель: Горизонтальная панель снизу")
-    );
   }
 
   async toggleDockCollapse() {
@@ -1089,6 +1931,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.dockEl.classList.toggle("is-collapsed", this.settings.dockCollapsed);
     }
   }
+
   updateDockUI() {
     if (!this.dockEl) return;
     this.btnTheme?.classList.toggle("is-active", this.settings.artcraftTheme);
@@ -1144,6 +1987,14 @@ class AlchemyFlowPlugin extends Plugin {
     }
     this.strokes = [];
     this.laserTrail = [];
+
+    // Fixed bug: remove all inline pinned sentence styles & classes properly
+    document.querySelectorAll(".artcraft-sentence.is-pinned, [data-pinned-color]").forEach((el) => {
+      el.removeAttribute("data-pinned-color");
+      el.style.removeProperty("--artcraft-pinned-bg");
+      el.style.removeProperty("--artcraft-pinned-border");
+      el.classList.remove("is-pinned");
+    });
     PALETTE.forEach((p) => {
       document.querySelectorAll(`.${p.pinClass}`).forEach((el) => {
         el.classList.remove(p.pinClass);
@@ -1174,7 +2025,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   eraseAt(pt) {
-    const ERASE_RADIUS = 24; // px
+    const ERASE_RADIUS = 24;
     const remaining = [];
     const removed = [];
     for (const stroke of this.strokes) {
@@ -1306,7 +2157,7 @@ class AlchemyFlowPlugin extends Plugin {
       }
     };
 
-    const onEnd = (e) => {
+    const onEnd = () => {
       if (!isInteracting) return;
       isInteracting = false;
       this.isDrawing = false;
@@ -1326,13 +2177,11 @@ class AlchemyFlowPlugin extends Plugin {
       this.currentStroke = null;
     };
 
-    // Touch events for iOS / Android with passive: false to prevent scrolling
     canvas.addEventListener("touchstart", onStart, { passive: false });
     window.addEventListener("touchmove", onMove, { passive: false });
     window.addEventListener("touchend", onEnd, { passive: true });
     window.addEventListener("touchcancel", onEnd, { passive: true });
 
-    // Mouse events for Desktop
     canvas.addEventListener("mousedown", onStart);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onEnd);
@@ -1349,6 +2198,7 @@ class AlchemyFlowPlugin extends Plugin {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
 
+    // 1. Render saved marker strokes
     this.strokes.forEach((stroke) => {
       if (!stroke.points || stroke.points.length === 0) return;
       ctx.save();
@@ -1373,6 +2223,7 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.restore();
     });
 
+    // 2. Render glowing laser trail
     const now = Date.now();
     this.laserTrail = this.laserTrail.filter((p) => now - p.t < 650);
     if (this.laserTrail.length > 1) {
@@ -1400,6 +2251,7 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.restore();
     }
 
+    // 3. Render eraser cursor
     if (this.mode === "eraser" && this.eraserPos) {
       ctx.save();
       ctx.beginPath();
@@ -1412,6 +2264,26 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.stroke();
       ctx.restore();
     }
+
+    // 4. Render Alchemy Celebration Confetti Particles
+    if (this.particles && this.particles.length > 0) {
+      for (let i = this.particles.length - 1; i >= 0; i--) {
+        const p = this.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.18;
+        p.alpha -= 0.018;
+        if (p.alpha <= 0) {
+          this.particles.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.restore();
+      }
+    }
   }
 
   async loadSettings() {
@@ -1423,114 +2295,11 @@ class AlchemyFlowPlugin extends Plugin {
   }
 }
 
-const TRANSLATIONS = {
-  en: {
-    modalBadge: "ALCHEMIST PRO • 1 YEAR PASS",
-    modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). 100% direct crypto payment with zero middleman fees.",
-    netBsc: "BNB Chain (BEP20)",
-    netBscHint: "Fee ~$0.03 • Recommended",
-    netBybit: "Bybit Transfer",
-    netBybitHint: "0% Fee • UID Instant",
-    netTrc: "TRON (TRC20)",
-    netTrcHint: "Standard USDT",
-    netSol: "Solana Network",
-    netSolHint: "USDT / USDC • Ultra-fast",
-    tgCardHint: "Need to pay with a credit/debit card? Use Telegram @CryptoBot P2P →",
-    amountLabel: "AMOUNT TO SEND:",
-    copyAmountBtn: "Copy 4.99",
-    recipientLabel: "RECIPIENT ADDRESS:",
-    uidLabel: "BYBIT RECIPIENT UID:",
-    copyBtn: "Copy Address",
-    copiedBtn: "Copied!",
-    supportText: "Need assistance or instant manual activation?",
-    supportTgBtn: "Open @StratAlchemy",
-    bscNote: "Send 4.99 USDT via BNB Smart Chain (BEP-20) from any wallet or exchange. Network gas is only ~$0.03.",
-    bybitNote: "In Bybit App: Assets → Withdraw → Internal Transfer → enter UID 8015849 and 4.99 USDT. Zero fees, instant.",
-    trcNote: "Send 4.99 USDT via TRON network (TRC-20).",
-    solNote: "Send 4.99 USDT or USDC on Solana network.",
-    step2Title: "Step 2: Enter Transaction Hash (TXID) or Bybit Order ID:",
-    txPlaceholder: "Paste TXID (0x... or Bybit internal transfer ID)",
-    activateBtn: "⚡ Verify & Activate Pro",
-    checkingBtn: "⏳ Verifying on-chain...",
-    successMsg: "🎉 Success! Alchemy Craft Pro is now active for 365 days!",
-    errorEmpty: "❌ Please enter a valid TXID or Order ID.",
-    errorPending: "⚠️ Transaction is still confirming on-chain. Please wait 1 minute and click again.",
-    proActiveTitle: "PRO ACTIVE",
-    proExpiresOn: "Annual access active until:",
-    proMidnightName: "🌙 Midnight Dark Craft Mode",
-    proMidnightDesc: "Swiss dark mode designed specifically for night focus, reading and coding.",
-    proBuyCardBadge: "PREMIUM PASS",
-    proBuyCardTitle: "Unlock Alchemy Craft Pro",
-    proPerk1: "🌙 Midnight Dark Craft — exclusive dark theme for late-night focus",
-    proPerk2: "🎨 Expanded Palette — 4 extra highlighter colors (Amber, Crimson, Cyan, Rose)",
-    proPerk3: "📊 Pro Focus Analytics — deep work & Pomodoro flow tracking",
-    proPerk4: "⚡ 100% Direct Support — zero aggregator cut, directly funding ongoing development",
-    getProBtn: "💎 Get Alchemy Craft Pro ($4.99 / yr)"
-  },
-  ru: {
-    modalBadge: "ALCHEMIST PRO • ГОДОВОЙ ПАСС",
-    modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). 100% перевод напрямую автору без посредников и комиссий.",
-    netBsc: "BNB Chain (BEP20)",
-    netBscHint: "Газ ~$0.03 • Рекомендуется",
-    netBybit: "Bybit Перевод",
-    netBybitHint: "0% комиссии • UID перевод",
-    netTrc: "TRON (TRC20)",
-    netTrcHint: "Стандартный USDT",
-    netSol: "Сеть Solana",
-    netSolHint: "USDT / USDC • Супер-быстро",
-    tgCardHint: "Хотите оплатить обычной картой банка? Используйте Telegram @CryptoBot P2P →",
-    amountLabel: "СУММА К ОПЛАТЕ:",
-    copyAmountBtn: "Скопировать 4.99",
-    recipientLabel: "АДРЕС ПОЛУЧАТЕЛЯ:",
-    uidLabel: "BYBIT UID ПОЛУЧАТЕЛЯ:",
-    copyBtn: "Скопировать адрес",
-    copiedBtn: "Скопировано!",
-    supportText: "Нужна помощь с оплатой или мгновенная ручная активация?",
-    supportTgBtn: "Написать в @StratAlchemy",
-    bscNote: "Отправьте 4.99 USDT в сети BNB Smart Chain (BEP-20) с любого кошелька или биржи. Комиссия сети всего ~$0.03.",
-    bybitNote: "В приложении Bybit: Активы → Вывод → Внутренний перевод → укажите UID 8015849 и 4.99 USDT. Доходит за секунду без комиссий.",
-    trcNote: "Отправьте 4.99 USDT в сети TRON (TRC-20).",
-    solNote: "Отправьте 4.99 USDT или USDC в сети Solana.",
-    step2Title: "Шаг 2: Введите TXID транзакции или номер Bybit перевода:",
-    txPlaceholder: "Вставьте хэш (0x... или номер перевода Bybit)",
-    activateBtn: "⚡ Проверить и Активировать Pro",
-    checkingBtn: "⏳ Проверка в сети...",
-    successMsg: "🎉 Поздравляем! Alchemy Craft Pro успешно активирован на 365 дней!",
-    errorEmpty: "❌ Пожалуйста, введите корректный TXID транзакции или номер перевода.",
-    errorPending: "⚠️ Транзакция ещё подтверждается сетью. Подождите 1 минуту и нажмите снова.",
-    proActiveTitle: "PRO АКТИВЕН",
-    proExpiresOn: "Годовой доступ активен до:",
-    proMidnightName: "🌙 Ночной режим Midnight Dark Craft",
-    proMidnightDesc: "Швейцарский темный режим для ночного чтения, фокусировки и кодинга.",
-    proBuyCardBadge: "ПРЕМИУМ ДОСТУП",
-    proBuyCardTitle: "Разблокируйте все Pro функции Alchemy Craft",
-    proPerk1: "🌙 Midnight Dark Craft — эксклюзивная темная тема для ночной работы",
-    proPerk2: "🎨 Расширенная палитра — 4 премиум цвета хайлайтера (Gold, Crimson, Cyan, Rose)",
-    proPerk3: "📊 Pro Focus Analytics — трекинг глубоких сессий Pomodoro",
-    proPerk4: "⚡ 100% перевод автору — без посредников и грабительских комиссий платформ",
-    getProBtn: "💎 Получить Alchemy Craft Pro ($4.99 / год)"
-  }
-};
-
-function getLocale(plugin) {
-  if (plugin && plugin.settings && plugin.settings.uiLanguage) {
-    return plugin.settings.uiLanguage === "ru" ? "ru" : "en";
-  }
-  return "en";
-}
-
-function t(key, plugin) {
-  const loc = getLocale(plugin);
-  return (TRANSLATIONS[loc] && TRANSLATIONS[loc][key]) || TRANSLATIONS["en"][key] || key;
-}
-
 class AlchemyCraftProModal extends Modal {
-  constructor(app, plugin) {
+  constructor(app, plugin, initialMethod = "card") {
     super(app);
     this.plugin = plugin;
-    this.selectedNetwork = "bsc";
+    this.selectedNetwork = initialMethod;
   }
 
   onOpen() {
@@ -1538,7 +2307,6 @@ class AlchemyCraftProModal extends Modal {
     contentEl.empty();
     contentEl.addClass("artcraft-pro-modal-root");
 
-    // Header Bento Card
     const header = contentEl.createDiv({ cls: "artcraft-modal-header-card" });
     header.innerHTML = `
       <div class="artcraft-bento-pill">${t("modalBadge", this.plugin)}</div>
@@ -1546,17 +2314,18 @@ class AlchemyCraftProModal extends Modal {
       <p class="artcraft-modal-desc">${t("modalSubtitle", this.plugin)}</p>
     `;
 
-    // 2x2 Network Grid
-    const isEn = this.plugin.settings.uiLanguage !== "ru";
     const gridLabel = contentEl.createDiv({ cls: "artcraft-section-label" });
-    gridLabel.setText(isEn ? "STEP 1: SELECT PAYMENT METHOD" : "ШАГ 1: ВЫБЕРИТЕ УДОБНЫЙ СПОСОБ ОПЛАТЫ");
+    gridLabel.setText(t("step1Title", this.plugin));
 
-    const netGrid = contentEl.createDiv({ cls: "artcraft-net-bento-grid" });
+    // 6-Tile Global Payment Hub (Card/Tribute, @CryptoBot, Universal EVM, Bybit UID, Solana, TRON)
+    const netGrid = contentEl.createDiv({ cls: "artcraft-net-bento-grid artcraft-net-grid-6" });
     const networks = [
-      { id: "bsc", name: t("netBsc", this.plugin), hint: t("netBscHint", this.plugin), icon: "🔵" },
-      { id: "bybit", name: t("netBybit", this.plugin), hint: t("netBybitHint", this.plugin), icon: "🟡" },
-      { id: "trc20", name: t("netTrc", this.plugin), hint: t("netTrcHint", this.plugin), icon: "🟢" },
-      { id: "solana", name: t("netSol", this.plugin), hint: t("netSolHint", this.plugin), icon: "🟣" }
+      { id: "card", name: t("netCard", this.plugin), hint: t("netCardHint", this.plugin), icon: "💳", tag: "USA / GLOBAL" },
+      { id: "cryptobot", name: t("netCryptoBot", this.plugin), hint: t("netCryptoBotHint", this.plugin), icon: "✈️", tag: "1-CLICK TG" },
+      { id: "evm", name: t("netEvm", this.plugin), hint: t("netEvmHint", this.plugin), icon: "🌐", tag: "ALL EVM NETS" },
+      { id: "bybit", name: t("netBybit", this.plugin), hint: t("netBybitHint", this.plugin), icon: "🟡", tag: "0% FEE" },
+      { id: "solana", name: t("netSol", this.plugin), hint: t("netSolHint", this.plugin), icon: "🟣", tag: "SOLANA" },
+      { id: "trc20", name: t("netTrc", this.plugin), hint: t("netTrcHint", this.plugin), icon: "🟢", tag: "TRC-20" },
     ];
 
     const cardBox = contentEl.createDiv({ cls: "artcraft-active-payment-card" });
@@ -1567,12 +2336,39 @@ class AlchemyCraftProModal extends Modal {
 
       let labelText = t("recipientLabel", this.plugin);
       let addrValue = "0x5df707dda91477fc7c7563f683030da9d6cde7e2";
-      let noteText = t("bscNote", this.plugin);
+      let noteText = t("evmNote", this.plugin);
+      let evmBadgesHtml = "";
+      let customActionsHtml = "";
 
-      if (netId === "bsc") {
-        labelText = t("recipientLabel", this.plugin) + " (BNB Smart Chain BEP-20)";
+      if (netId === "card") {
+        noteText = t("cardNote", this.plugin);
+        customActionsHtml = `
+          <div class="artcraft-pay-cta-row">
+            <button class="artcraft-pay-action-btn is-green" id="pro-open-tribute">💳 Pay $4.99 by Card (Tribute / Apple Pay)</button>
+            <button class="artcraft-pay-action-btn is-blue" id="pro-open-card-tg">⚡ Request Direct Stripe / Card Link</button>
+          </div>
+        `;
+      } else if (netId === "cryptobot") {
+        noteText = t("cryptobotNote", this.plugin);
+        customActionsHtml = `
+          <div class="artcraft-pay-cta-row">
+            <button class="artcraft-pay-action-btn is-blue" id="pro-open-cryptobot">✈️ Open @CryptoBot ($4.99 USDT/TON)</button>
+            <button class="artcraft-pay-action-btn is-dark" id="pro-open-cb-tg">💬 Get Instant Invoice via @StratAlchemy</button>
+          </div>
+        `;
+      } else if (netId === "evm") {
+        labelText = t("recipientLabel", this.plugin) + " (Universal EVM 0x...)";
         addrValue = "0x5df707dda91477fc7c7563f683030da9d6cde7e2";
-        noteText = t("bscNote", this.plugin);
+        noteText = t("evmNote", this.plugin);
+        const chains = ["BNB Chain (BEP20)", "Arbitrum One", "Base", "Polygon (POS)", "Optimism", "Ethereum (ERC20)", "Avalanche C-Chain"];
+        evmBadgesHtml = `
+          <div class="artcraft-evm-chains-box">
+            <div class="artcraft-evm-chains-title">${t("evmChainsLabel", this.plugin)}</div>
+            <div class="artcraft-evm-badges-wrap">
+              ${chains.map((c) => `<span class="artcraft-evm-chain-pill">${c}</span>`).join("")}
+            </div>
+          </div>
+        `;
       } else if (netId === "bybit") {
         labelText = t("uidLabel", this.plugin);
         addrValue = "8015849";
@@ -1582,25 +2378,32 @@ class AlchemyCraftProModal extends Modal {
         addrValue = "TLR1QhncMJghepCyPPNDZodUxWtEjs8Qjy";
         noteText = t("trcNote", this.plugin);
       } else if (netId === "solana") {
-        labelText = t("recipientLabel", this.plugin) + " (Solana)";
+        labelText = t("recipientLabel", this.plugin) + " (Solana SPL)";
         addrValue = "7vffsVxUZbBj3iLhagyaP8qCE7pKybYrxmnHX9xdCKCs";
         noteText = t("solNote", this.plugin);
       }
+
+      const addressBlockHtml = customActionsHtml
+        ? customActionsHtml
+        : `
+          <div class="card-field-label">${labelText}</div>
+          <div class="card-address-group">
+            <input type="text" readonly class="card-address-input" id="pro-addr-val" value="${addrValue}" />
+            <button class="card-copy-btn" id="pro-copy-btn">📋 ${t("copyBtn", this.plugin)}</button>
+          </div>
+        `;
 
       cardBox.innerHTML = `
         <div class="card-meta-bar">
           <div class="card-amount-group">
             <span class="meta-amount-label">${t("amountLabel", this.plugin)}</span>
-            <span class="meta-amount-pill"><strong>4.99 USDT</strong></span>
+            <span class="meta-amount-pill"><strong>4.99 USD / USDT</strong></span>
             <button class="card-copy-btn card-copy-amount" id="pro-copy-amount-btn">📋 ${t("copyAmountBtn", this.plugin)}</button>
           </div>
           <span class="meta-gas-tag">100% DIRECT</span>
         </div>
-        <div class="card-field-label">${labelText}</div>
-        <div class="card-address-group">
-          <input type="text" readonly class="card-address-input" id="pro-addr-val" value="${addrValue}" />
-          <button class="card-copy-btn" id="pro-copy-btn">📋 ${t("copyBtn", this.plugin)}</button>
-        </div>
+        ${evmBadgesHtml}
+        ${addressBlockHtml}
         <div class="card-note-text">${noteText}</div>
       `;
 
@@ -1609,7 +2412,9 @@ class AlchemyCraftProModal extends Modal {
         copyBtn.onclick = () => {
           navigator.clipboard.writeText(addrValue);
           copyBtn.innerHTML = `✅ ${t("copiedBtn", this.plugin)}`;
-          setTimeout(() => { copyBtn.innerHTML = `📋 ${t("copyBtn", this.plugin)}`; }, 2000);
+          setTimeout(() => {
+            copyBtn.innerHTML = `📋 ${t("copyBtn", this.plugin)}`;
+          }, 2000);
         };
       }
 
@@ -1618,26 +2423,33 @@ class AlchemyCraftProModal extends Modal {
         copyAmountBtn.onclick = () => {
           navigator.clipboard.writeText("4.99");
           copyAmountBtn.innerHTML = `✅ ${t("copiedBtn", this.plugin)}`;
-          setTimeout(() => { copyAmountBtn.innerHTML = `📋 ${t("copyAmountBtn", this.plugin)}`; }, 2000);
+          setTimeout(() => {
+            copyAmountBtn.innerHTML = `📋 ${t("copyAmountBtn", this.plugin)}`;
+          }, 2000);
         };
       }
+
+      cardBox.querySelector("#pro-open-tribute")?.addEventListener("click", () => window.open("https://t.me/tribute", "_blank"));
+      cardBox.querySelector("#pro-open-card-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
+      cardBox.querySelector("#pro-open-cryptobot")?.addEventListener("click", () => window.open("https://t.me/CryptoBot", "_blank"));
+      cardBox.querySelector("#pro-open-cb-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
     };
 
-    networks.forEach(net => {
+    networks.forEach((net) => {
       const tile = netGrid.createDiv({ cls: "artcraft-net-tile" });
       tile.innerHTML = `
         <div class="tile-top"><span class="tile-icon">${net.icon}</span> <strong>${net.name}</strong></div>
         <div class="tile-hint">${net.hint}</div>
       `;
       tile.onclick = () => {
-        netGrid.querySelectorAll(".artcraft-net-tile").forEach(x => x.removeClass("is-selected"));
+        netGrid.querySelectorAll(".artcraft-net-tile").forEach((x) => x.removeClass("is-selected"));
         tile.addClass("is-selected");
         renderCard(net.id);
       };
-      if (net.id === "bsc") tile.addClass("is-selected");
+      if (net.id === this.selectedNetwork) tile.addClass("is-selected");
     });
 
-    renderCard("bsc");
+    renderCard(this.selectedNetwork);
 
     // Direct Developer Support Banner
     const supportBanner = contentEl.createDiv({ cls: "artcraft-support-banner" });
@@ -1646,15 +2458,14 @@ class AlchemyCraftProModal extends Modal {
         <span class="support-icon">💬</span>
         <div class="support-text-col">
           <strong>${t("supportText", this.plugin)}</strong>
-          <span>${isEn ? "Direct Telegram contact:" : "Прямая связь с автором в Telegram:"} <strong>@StratAlchemy</strong></span>
+          <span>${t("supportSub", this.plugin)} <strong>@StratAlchemy</strong></span>
         </div>
       </div>
       <button class="support-tg-btn" id="pro-support-open">${t("supportTgBtn", this.plugin)}</button>
     `;
-    const supportBtn = supportBanner.querySelector("#pro-support-open");
-    if (supportBtn) {
-      supportBtn.onclick = () => window.open("https://t.me/StratAlchemy", "_blank");
-    }
+    supportBanner.querySelector("#pro-support-open")?.addEventListener("click", () => {
+      window.open("https://t.me/StratAlchemy", "_blank");
+    });
 
     // Verification Step
     const verifySection = contentEl.createDiv({ cls: "artcraft-verify-bento-card" });
@@ -1666,12 +2477,12 @@ class AlchemyCraftProModal extends Modal {
     const txInput = inputRow.createEl("input", {
       type: "text",
       placeholder: t("txPlaceholder", this.plugin),
-      cls: "verify-tx-input"
+      cls: "verify-tx-input",
     });
 
     const actBtn = inputRow.createEl("button", {
       text: t("activateBtn", this.plugin),
-      cls: "verify-activate-button"
+      cls: "verify-activate-button",
     });
 
     const statusMsg = verifySection.createDiv({ cls: "verify-status-msg" });
@@ -1686,7 +2497,7 @@ class AlchemyCraftProModal extends Modal {
 
       actBtn.disabled = true;
       actBtn.setText(t("checkingBtn", this.plugin));
-      statusMsg.setText(isEn ? "Querying blockchain for verification..." : "Связываемся с сетью для проверки...");
+      statusMsg.setText(t("checkingBtn", this.plugin));
       statusMsg.style.color = "#2563EB";
 
       const verified = await this.verifyOnChain(val, this.selectedNetwork);
@@ -1697,13 +2508,14 @@ class AlchemyCraftProModal extends Modal {
         this.plugin.settings.proPlan = "1_year";
         await this.plugin.saveSettings();
         this.plugin.applyBodyClasses();
-        this.plugin.updateDockUI();
+        this.plugin.createFloatingDock();
+        this.plugin.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 75);
 
         statusMsg.setText(t("successMsg", this.plugin));
         statusMsg.style.color = "#16A34A";
         new Notice(t("successMsg", this.plugin));
 
-        setTimeout(() => this.close(), 1600);
+        setTimeout(() => this.close(), 1500);
       } else {
         actBtn.disabled = false;
         actBtn.setText(t("activateBtn", this.plugin));
@@ -1721,11 +2533,11 @@ class AlchemyCraftProModal extends Modal {
           const d = await res.json();
           if (d.confirmed) {
             const transfers = d.trc20TransferInfo || [];
-            if (transfers.some(tr => tr.to_address === "TLR1QhncMJghepCyPPNDZodUxWtEjs8Qjy")) return true;
+            if (transfers.some((tr) => tr.to_address === "TLR1QhncMJghepCyPPNDZodUxWtEjs8Qjy")) return true;
           }
         }
       }
-      if (network === "bsc") {
+      if (network === "evm") {
         const res = await fetch(`https://api.bscscan.com/api?module=proxy&action=eth_getTransactionReceipt&txhash=${txHash}`);
         if (res.ok) {
           const d = await res.json();
@@ -1734,8 +2546,8 @@ class AlchemyCraftProModal extends Modal {
       }
       if (txHash.length >= 6) return true;
       return false;
-    } catch(e) {
-      if (txHash.length >= 8) return true;
+    } catch (e) {
+      if (txHash.length >= 6) return true;
       return false;
     }
   }
@@ -1755,59 +2567,51 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    const isEn = this.plugin.settings.uiLanguage !== "ru";
-
-    containerEl.createEl("h2", {
-      text: isEn
-        ? "Alchemy Craft — Swiss Bento Reader, Focus & Pointer (v3.5.4)"
-        : "Alchemy Craft — Bento Reader, Focus & Pointer (v3.5.4)",
-    });
-
-    // Version & Update check
-    const versionDiv = containerEl.createDiv({ cls: "artcraft-version-row" });
-    versionDiv.createSpan({
-      text: isEn
-        ? "Version: v3.5.4  |  Author: Elyas Aliverdiyev  |  "
-        : "Версия: v3.5.4  |  Автор: Elyas Aliverdiyev  |  ",
-    });
-    const updateBtn = versionDiv.createEl("button", {
-      text: isEn ? "🔄 Check Updates" : "🔄 Проверить обновления",
-      cls: "artcraft-update-btn",
-    });
-    updateBtn.onclick = () => {
+    // Top Swiss Bento Studio Banner inside Settings
+    const heroBanner = containerEl.createDiv({ cls: "artcraft-settings-bento-hero" });
+    heroBanner.innerHTML = `
+      <div class="artcraft-settings-hero-left">
+        <div class="artcraft-settings-flask-box">${ALCHEMY_ICON_SVG}</div>
+        <div>
+          <div class="artcraft-settings-hero-title">${t("settingsTitle", this.plugin)}</div>
+          <div class="artcraft-settings-hero-sub">Author: Elyas Aliverdiyev (@StratAlchemy) • Swiss Bento System</div>
+        </div>
+      </div>
+      <div class="artcraft-settings-hero-actions">
+        <button class="artcraft-update-btn" id="artcraft-check-rel-btn">${t("checkUpdatesBtn", this.plugin)}</button>
+      </div>
+    `;
+    heroBanner.querySelector("#artcraft-check-rel-btn")?.addEventListener("click", () => {
       window.open("https://github.com/elyazaliverdiyev/alchemy-craft/releases", "_blank");
-      new Notice(isEn ? "Opening releases page..." : "Открываем страницу обновлений...");
-    };
+    });
 
-    // 1. Language selector
+    // 1. 6-Language Global Selector
     new Setting(containerEl)
-      .setName(isEn ? "Interface Language" : "Язык интерфейса")
-      .setDesc(
-        isEn
-          ? "Choose default UI language for the dock, settings, and notices."
-          : "Выберите язык интерфейса для дока, настроек и всплывающих окон."
-      )
+      .setName(t("langName", this.plugin))
+      .setDesc(t("langDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("en", "English (Default)")
-          .addOption("ru", "Русский")
+          .addOption("en", "🇺🇸 English (Default)")
+          .addOption("ru", "🇷🇺 Русский")
+          .addOption("zh", "🇨🇳 中文 (Chinese)")
+          .addOption("ja", "🇯🇵 日本語 (Japanese)")
+          .addOption("es", "🇪🇸 Español")
+          .addOption("de", "🇩🇪 Deutsch")
           .setValue(this.plugin.settings.uiLanguage || "en")
           .onChange(async (val) => {
             this.plugin.settings.uiLanguage = val;
             await this.plugin.saveSettings();
             this.plugin.createFloatingDock();
+            this.plugin.updateTaskProgressBar();
+            this.plugin.injectGraphViewHUD();
             this.display();
           })
       );
 
-    // 2. Theme Toggle
+    // 2. Swiss Bento Theme Toggle
     new Setting(containerEl)
-      .setName(isEn ? "Swiss Bento UI Theme" : "Стиль Alchemy Craft (Swiss Bento UI)")
-      .setDesc(
-        isEn
-          ? "Warm paper canvas (#F4F3EF), sage green table headers (#69BD28), editorial banner, and bento styling."
-          : "Теплый бумажный фон (#F4F3EF), светло-зеленые шапки таблиц (#69BD28), баннер заголовка и дерево папок."
-      )
+      .setName("Swiss Bento UI Theme (#F4F3EF + #69BD28 Tables)")
+      .setDesc(t("uiTip", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.artcraftTheme).onChange(async (value) => {
           this.plugin.settings.artcraftTheme = value;
@@ -1817,14 +2621,28 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 2.0 Task Progress Bar
+    // 2.1 Swiss Bento Graph Studio Toggle + Auto-Color Button
     new Setting(containerEl)
-      .setName(isEn ? "Task Progress Bar" : "Полоса прогресса задач")
-      .setDesc(
-        isEn
-          ? "Show sticky top progress bar in notes with task checklists."
-          : "Показывать аккуратную полосу прогресса вверху заметок с чек-листами."
+      .setName(t("bentoGraphName", this.plugin))
+      .setDesc(t("bentoGraphDesc", this.plugin))
+      .addButton((btn) =>
+        btn.setButtonText(t("graphColorizeBtn", this.plugin)).onClick(() => {
+          this.plugin.applyBentoGraphColorGroups();
+        })
       )
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.enableBentoGraph !== false).onChange(async (val) => {
+          this.plugin.settings.enableBentoGraph = val;
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
+          this.plugin.injectGraphViewHUD();
+        })
+      );
+
+    // 2.2 Task Progress Bar (Mobile Safe + Dismiss Button)
+    new Setting(containerEl)
+      .setName("📊 Sticky Task Progress Bar (Mobile Safe + ✕ Dismiss)")
+      .setDesc("Shows task completion % at the top of checklist notes with a tap-to-close '✕' button and 100% confetti.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.showTaskProgress !== false).onChange(async (val) => {
           this.plugin.settings.showTaskProgress = val;
@@ -1833,18 +2651,18 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 2.1 Header Badge Tag
+    // 2.3 Note Header Badge Tag
     new Setting(containerEl)
-      .setName(isEn ? "Note Header Badge" : "Верхний бейдж заметки")
-      .setDesc(
-        isEn
-          ? "Text badge above note title (e.g. 'STRATALCHEMY // KNOWLEDGE BRIEF' or 'READING MODE'). Clear text to hide."
-          : "Текст бейджа над заголовком заметки (например, 'STRATALCHEMY // KNOWLEDGE BRIEF' или 'READING MODE'). Очистите поле, чтобы скрыть."
-      )
+      .setName("🏷️ Note Header Badge Text")
+      .setDesc("Editorial pill above the note title (e.g. 'STRATALCHEMY // KNOWLEDGE BRIEF'). Clear text to hide.")
       .addText((text) =>
         text
           .setPlaceholder("STRATALCHEMY // KNOWLEDGE BRIEF")
-          .setValue(this.plugin.settings.headerTagText !== undefined ? this.plugin.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF")
+          .setValue(
+            this.plugin.settings.headerTagText !== undefined
+              ? this.plugin.settings.headerTagText
+              : "STRATALCHEMY // KNOWLEDGE BRIEF"
+          )
           .onChange(async (val) => {
             this.plugin.settings.headerTagText = val;
             await this.plugin.saveSettings();
@@ -1852,41 +2670,39 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       );
 
-    // 3. Timer Mode
+    // 3. Ambient Focus Soundscape
     new Setting(containerEl)
-      .setName(isEn ? "Focus Timer Mode" : "Режим таймера в нижней панели")
-      .setDesc(
-        isEn
-          ? "Choose Pomodoro countdown or count-up Stopwatch. Right-click the timer in the dock for quick presets."
-          : "Выберите: Pomodoro (обратный отсчет) или Секундомер работы. Также правый клик по таймеру открывает меню пресетов."
-      )
+      .setName(t("ambientName", this.plugin))
+      .setDesc(t("ambientDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("pomodoro", isEn ? "🍅 Pomodoro (Countdown)" : "🍅 Pomodoro (Обратный отсчет)")
-          .addOption("stopwatch", isEn ? "⏱ Stopwatch (Count Up: 00:00+)" : "⏱ Секундомер работы (00:00+)")
-          .setValue(this.plugin.settings.timerMode)
+          .addOption("off", "🔇 Off")
+          .addOption("brown", "🌊 Warm Brown Noise")
+          .addOption("rain", "🌧️ Soft Rain on Paper")
+          .addOption("gamma40", "🧠 40Hz Gamma Focus Drone")
+          .setValue(this.plugin.settings.ambientSound || "off")
           .onChange(async (val) => {
-            this.plugin.settings.timerMode = val;
+            this.plugin.settings.ambientSound = val;
             await this.plugin.saveSettings();
-            this.plugin.resetTimer();
+            if (val === "off") {
+              this.plugin.stopAmbientSound();
+            } else if (this.plugin.timerRunning) {
+              this.plugin.startAmbientSound(val);
+            }
           })
       );
 
     // 4. Pomodoro Focus Duration
     new Setting(containerEl)
-      .setName(isEn ? "Default Pomodoro Duration (Minutes)" : "Длительность Pomodoro фокуса (минут)")
-      .setDesc(
-        isEn
-          ? "Sprint focus interval: 15, 25, 45, 60 or 90 minutes."
-          : "Интервал глубокого фокуса: 15, 25, 45, 60 или 90 минут."
-      )
+      .setName("🍅 Default Pomodoro Duration (Minutes)")
+      .setDesc("Right-click the timer in the dock anytime for 15m, 25m, 45m, 60m, 90m, or custom duration.")
       .addDropdown((drop) =>
         drop
-          .addOption("15", isEn ? "15 minutes (Quick Sprint)" : "15 минут (Быстрый спринт)")
-          .addOption("25", isEn ? "25 minutes (Standard Pomodoro)" : "25 минут (Стандарт)")
-          .addOption("45", isEn ? "45 minutes (Deep Work)" : "45 минут (Глубокий фокус)")
-          .addOption("60", isEn ? "60 minutes (Flow State)" : "60 минут (Полный поток)")
-          .addOption("90", isEn ? "90 minutes (Ultradian Rhythm)" : "90 минут (Ультрадианный цикл)")
+          .addOption("15", "15 min (Sprint Focus)")
+          .addOption("25", "25 min (Standard Pomodoro)")
+          .addOption("45", "45 min (Deep Work)")
+          .addOption("60", "60 min (Flow State)")
+          .addOption("90", "90 min (Ultradian Cycle)")
           .setValue(String(this.plugin.settings.pomodoroMinutes || 25))
           .onChange(async (val) => {
             this.plugin.settings.pomodoroMinutes = parseInt(val, 10);
@@ -1895,46 +2711,10 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       );
 
-    // 5. Short Break Duration
+    // 5. AI Cleaner Toggle
     new Setting(containerEl)
-      .setName(isEn ? "Short Break Duration (Minutes)" : "Длительность короткого перерыва (минут)")
-      .setDesc(isEn ? "Rest interval between focus sessions." : "Интервал отдыха между сессиями.")
-      .addDropdown((drop) =>
-        drop
-          .addOption("3", "3 minutes")
-          .addOption("5", isEn ? "5 minutes (Recommended)" : "5 минут (Рекомендуется)")
-          .addOption("10", "10 minutes")
-          .addOption("15", "15 minutes")
-          .setValue(String(this.plugin.settings.breakMinutes || 5))
-          .onChange(async (val) => {
-            this.plugin.settings.breakMinutes = parseInt(val, 10);
-            await this.plugin.saveSettings();
-          })
-      );
-
-    // 6. Sound Chime
-    new Setting(containerEl)
-      .setName(isEn ? "Chime Sound Notification" : "Звуковое оповещение таймера")
-      .setDesc(
-        isEn
-          ? "Play a gentle synthetic chime when focus or break interval completes."
-          : "Воспроизводить мягкий звуковой сигнал по окончании спринта фокуса или перерыва."
-      )
-      .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.timerSound).onChange(async (val) => {
-          this.plugin.settings.timerSound = val;
-          await this.plugin.saveSettings();
-        })
-      );
-
-    // 7. AI Cleaner Toggle
-    new Setting(containerEl)
-      .setName(isEn ? "Show AI Watermark Cleaner in Dock" : "Кнопка AI Clean в нижней панели")
-      .setDesc(
-        isEn
-          ? "Enable or disable the AI Clean button in the dock. Strips invisible zero-width characters (\\u200B-\\u200D, \\uFEFF), soft hyphens, and robotic markers on demand."
-          : "Включить или отключить кнопку AI Clean в доке. Удаляет невидимые скрытые символы ИИ (\\u200B-\\u200D, \\uFEFF, мягкие переносы) из текста заметки или выделения."
-      )
+      .setName("✨ AI Watermark Cleaner Button in Dock")
+      .setDesc(t("aiCleanTip", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.enableAiCleaner).onChange(async (val) => {
           this.plugin.settings.enableAiCleaner = val;
@@ -1943,30 +2723,20 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 8. Numbered Badges & Amounts
+    // 6. Numbered Badges & Sentence Focus
     new Setting(containerEl)
-      .setName(isEn ? "Square Number Badges (01-04) & Amounts ($)" : "Квадратные цветные бейджи цифр (01-04) и сумм ($)")
-      .setDesc(
-        isEn
-          ? "Transforms numbered list markers and [01]-[04] tokens into crisp Swiss colored badges."
-          : "Превращает списки 1-4 и маркеры [01]-[04] в яркие квадратные бейджи."
-      )
+      .setName("🔢 Square Number Badges (01–04) & Crypto/Money Capsules")
+      .setDesc("Transforms numbered lists, [01]–[04] markers, $ amounts, and 0x EVM addresses into Swiss capsules.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.colorizeNumbers).onChange(async (value) => {
           this.plugin.settings.colorizeNumbers = value;
           await this.plugin.saveSettings();
-          new Notice(isEn ? "Press Ctrl+R to refresh badges." : "Нажмите Ctrl+R, чтобы обновить бейджи.");
         })
       );
 
-    // 9. Sentence Focus
     new Setting(containerEl)
-      .setName(isEn ? "Sentence Focus Highlighting" : "Подсветка предложений (Sentence Focus)")
-      .setDesc(
-        isEn
-          ? "Highlight sentences on hover and click to pin active color from the palette."
-          : "Выделяйте предложения при наведении и кликайте, чтобы закрепить их выбранным цветом из палитры."
-      )
+      .setName("🎯 Sentence Focus Highlighting")
+      .setDesc(t("focusTip", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.sentenceFocus).onChange(async (value) => {
           this.plugin.settings.sentenceFocus = value;
@@ -1976,8 +2746,33 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // --- 💎 PRO SECTION ---
-    containerEl.createEl("h3", { text: isEn ? "💎 Alchemy Craft Pro" : "💎 Alchemy Craft Pro" });
+    // --- 📊 FOCUS ANALYTICS BENTO SCORECARD ---
+    const fa = this.plugin.settings.focusAnalytics || { completedSprints: 0, totalFocusMinutes: 0, tasksCompleted100: 0, currentStreak: 0 };
+    const analyticsCard = containerEl.createDiv({ cls: "artcraft-analytics-bento-card" });
+    analyticsCard.innerHTML = `
+      <div class="artcraft-analytics-head">${t("analyticsTitle", this.plugin)}</div>
+      <div class="artcraft-analytics-grid">
+        <div class="artcraft-stat-box">
+          <span class="stat-val">${fa.completedSprints || 0}</span>
+          <span class="stat-lbl">🍅 Sprints</span>
+        </div>
+        <div class="artcraft-stat-box">
+          <span class="stat-val">${fa.totalFocusMinutes || 0}m</span>
+          <span class="stat-lbl">⏱ Deep Work</span>
+        </div>
+        <div class="artcraft-stat-box">
+          <span class="stat-val">${fa.tasksCompleted100 || 0}</span>
+          <span class="stat-lbl">✅ 100% Checklists</span>
+        </div>
+        <div class="artcraft-stat-box">
+          <span class="stat-val">${fa.currentStreak || 0}🔥</span>
+          <span class="stat-lbl">Day Streak</span>
+        </div>
+      </div>
+    `;
+
+    // --- 💎 PRO SECTION (WITH HOLOGRAPHIC SHIMMER, CARD/TRIBUTE, CRYPTOBOT & UNIVERSAL EVM) ---
+    containerEl.createEl("h3", { text: "💎 Alchemy Craft Pro" });
 
     if (this.plugin.settings.isPro) {
       const activeCard = containerEl.createDiv({ cls: "artcraft-pro-active-box" });
@@ -1986,19 +2781,15 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       ).toLocaleDateString();
       activeCard.innerHTML = `
         <div class="pro-head">
-          <span class="pro-tag">${isEn ? "PRO ACTIVE" : "PRO АКТИВЕН"}</span>
-          <strong>${isEn ? "Annual Pass Active Until: " : "Годовой доступ активирован до: "} ${expDate}</strong>
+          <span class="pro-tag">${t("proActiveTitle", this.plugin)}</span>
+          <strong>${t("proExpiresOn", this.plugin)} ${expDate}</strong>
         </div>
         <div class="pro-tx">TXID / Order ID: <code>${this.plugin.settings.proTxHash || "Verified"}</code></div>
       `;
 
       new Setting(containerEl)
-        .setName(isEn ? "🌙 Midnight Dark Craft Mode" : "🌙 Ночной режим Midnight Dark Craft")
-        .setDesc(
-          isEn
-            ? "Exclusive Swiss dark mode designed specifically for night reading, coding, and focus."
-            : "Специальный швейцарский темный режим с сохранением теплой эстетики для ночной работы."
-        )
+        .setName(t("proMidnightName", this.plugin))
+        .setDesc(t("proMidnightDesc", this.plugin))
         .addToggle((toggle) =>
           toggle.setValue(this.plugin.settings.darkCraftTheme).onChange(async (val) => {
             this.plugin.settings.darkCraftTheme = val;
@@ -2007,62 +2798,63 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
         );
     } else {
-      const buyCard = containerEl.createDiv({ cls: "artcraft-pro-buy-card" });
+      const buyCard = containerEl.createDiv({ cls: "artcraft-pro-buy-card artcraft-holo-shimmer" });
       buyCard.innerHTML = `
         <div class="buy-head">
-          <span class="buy-badge">${isEn ? "PREMIUM PASS" : "ПРЕМИУМ ДОСТУП"}</span>
+          <span class="buy-badge">${t("proBuyCardBadge", this.plugin)}</span>
           <span class="buy-price">$4.99 / yr</span>
         </div>
-        <h4>${isEn ? "Unlock All Pro Features in Alchemy Craft" : "Разблокируйте все Pro функции Alchemy Craft"}</h4>
+        <h4>${t("proBuyCardTitle", this.plugin)}</h4>
         <ul class="buy-perks">
-          <li>🌙 <strong>Midnight Dark Craft</strong> — ${isEn ? "exclusive dark theme for late-night focus" : "эксклюзивная темная тема для ночного чтения и кодинга"}</li>
-          <li>🎨 <strong>${isEn ? "Expanded Palette" : "Расширенная палитра"}</strong> — ${isEn ? "4 extra highlighter colors (Gold, Crimson, Cyan, Rose)" : "4 дополнительных цвета хайлайтера (Gold, Crimson, Cyan, Rose)"}</li>
-          <li>📊 <strong>${isEn ? "Pro Focus Analytics" : "Pro Focus Analytics"}</strong> — ${isEn ? "deep work & Pomodoro flow tracking" : "аналитика сессий Pomodoro и времени в потоке"}</li>
-          <li>⚡ <strong>${isEn ? "Direct Support" : "Прямая поддержка"}</strong> — ${isEn ? "zero aggregator fees, directly funding development" : "без посредников, 100% перевод на кошелек автора"}</li>
+          <li>${t("proPerk1", this.plugin)}</li>
+          <li>${t("proPerk2", this.plugin)}</li>
+          <li>${t("proPerk3", this.plugin)}</li>
+          <li>${t("proPerk4", this.plugin)}</li>
         </ul>
       `;
 
-      const buyBtn = buyCard.createEl("button", {
-        text: isEn ? "💎 Get Alchemy Craft Pro ($4.99 / yr)" : "💎 Получить Alchemy Craft Pro ($4.99)",
+      const btnRow = buyCard.createDiv({ cls: "artcraft-buy-btn-row" });
+      const buyBtn = btnRow.createEl("button", {
+        text: t("getProBtn", this.plugin),
         cls: "artcraft-open-modal-btn",
       });
       buyBtn.onclick = () => {
-        new AlchemyCraftProModal(this.app, this.plugin).open();
+        new AlchemyCraftProModal(this.app, this.plugin, "card").open();
       };
     }
 
-    // Support section
-    containerEl.createEl("h3", { text: isEn ? "⭐ Support & Community" : "⭐ Поддержка и обратная связь" });
+    // --- ⭐ GLOBAL SUPPORT & CHECKOUT (NO BOOSTY! REPLACED WITH CARD/TRIBUTE, @CRYPTOBOT, TELEGRAM, GITHUB) ---
+    containerEl.createEl("h3", { text: "⭐ Global Checkout, Card Support & Community" });
 
     new Setting(containerEl)
-      .setName(isEn ? "Direct Support & Community" : "Прямая связь с автором и поддержка")
-      .setDesc(
-        isEn
-          ? "Alchemy Craft is free & open-source (MIT). Need help with Pro activation, have questions or feature ideas? Message directly on Telegram."
-          : "Alchemy Craft — бесплатный плагин (MIT). Нужна помощь с Pro активацией, есть вопросы или идеи для новых фичей? Пишите автору напрямую в Telegram."
-      )
+      .setName("💳 Global Payment & Direct Author Contact")
+      .setDesc("Pay by Bank Card (USA/EU/World via Tribute), 1-Click @CryptoBot, or Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20).")
       .addButton((btn) => {
         btn
-          .setButtonText(isEn ? "💬 Telegram (@StratAlchemy)" : "💬 Telegram (@StratAlchemy)")
+          .setButtonText("💳 Pay by Card (Tribute)")
           .setCta()
           .onClick(() => {
-            window.open("https://t.me/StratAlchemy", "_blank");
+            new AlchemyCraftProModal(this.app, this.plugin, "card").open();
           });
       })
       .addButton((btn) => {
-        btn
-          .setButtonText(isEn ? "🌟 GitHub — Star" : "🌟 GitHub — Поставить звезду")
-          .onClick(() => {
-            window.open("https://github.com/elyazaliverdiyev/alchemy-craft", "_blank");
-          });
+        btn.setButtonText("✈️ @CryptoBot (USDT/TON)").onClick(() => {
+          new AlchemyCraftProModal(this.app, this.plugin, "cryptobot").open();
+        });
       })
       .addButton((btn) => {
-        btn.setButtonText(isEn ? "☕ Boosty" : "☕ Boosty").onClick(() => {
-          window.open("https://boosty.to/stratalchemy", "_blank");
-          new Notice(isEn ? "Thank you for supporting! ❤️" : "Спасибо за поддержку! ❤️");
+        btn.setButtonText("💬 Telegram (@StratAlchemy)").onClick(() => {
+          window.open("https://t.me/StratAlchemy", "_blank");
+        });
+      })
+      .addButton((btn) => {
+        btn.setButtonText("🌟 GitHub Star").onClick(() => {
+          window.open("https://github.com/elyazaliverdiyev/alchemy-craft", "_blank");
         });
       });
   }
 }
 
 module.exports = AlchemyFlowPlugin;
+
+/* nosourcemap */

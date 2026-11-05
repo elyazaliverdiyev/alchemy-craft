@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alchemy Craft — Swiss Bento Reader, Focus & Pointer for Obsidian</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-canvas: #F4F3EF;
+      --bg-card: #FFFFFF;
+      --bg-card-alt: #F9F8F5;
+      --bg-sidebar: #EDEBE4;
+      --ink-primary: #111111;
+      --ink-secondary: #374151;
+      --ink-muted: #6B7280;
+      --border-strong: #111111;
+      --border-hairline: #D5D3CC;
+      --excel-green: #69BD28;
+      --excel-green-dark: #559E1D;
+      --badge-blue: #2563EB;
+      --badge-orange: #F59E0B;
+      --badge-green: #10B981;
+      --badge-purple: #8B5CF6;
+      --shadow-bento: 0 4px 0 #111111;
+      --shadow-bento-lg: 0 6px 0 #111111, 0 16px 32px rgba(17, 17, 17, 0.1);
+    }
+
+    body.dark-craft {
+      --bg-canvas: #111214;
+      --bg-card: #1A1C20;
+      --bg-card-alt: #22252A;
+      --bg-sidebar: #16181C;
+      --ink-primary: #F3F4F6;
+      --ink-secondary: #D1D5DB;
+      --ink-muted: #9CA3AF;
+      --border-strong: #374151;
+      --border-hairline: #2E323B;
+      --shadow-bento: 0 4px 0 #000000;
+      --shadow-bento-lg: 0 6px 0 #000000, 0 18px 38px rgba(0, 0, 0, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--ink-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease;
+      overflow-x: hidden;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Swiss Bento Card Styling */
+    .bento-card {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-strong);
+      border-radius: 12px;
+      box-shadow: var(--shadow-bento);
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .bento-card-interactive:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-bento-lg);
+    }
+
+    .bento-btn {
+      border: 1.5px solid #111111;
+      box-shadow: 0 3px 0 #111111;
+      transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .bento-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 #111111;
+    }
+
+    .bento-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #111111;
+    }
+
+    /* Holographic Foil Shimmer for Pro Card */
+    .pro-holo-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pro-holo-card::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 45%;
+      height: 200%;
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(105, 189, 40, 0.14) 45%,
+        rgba(255, 255, 255, 0.35) 50%,
+        rgba(37, 99, 235, 0.14) 55%,
+        rgba(255,255,255,0) 100%
+      );
+      transform: rotate(25deg);
+      animation: holoSweep 6.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes holoSweep {
+      0% { left: -60%; }
+      45%, 100% { left: 140%; }
+    }
+
+    /* Alchemy Flask SVG Animations */
+    @keyframes flaskBubble1 {
+      0% { transform: translateY(0) scale(0.7); opacity: 0; }
+      35% { opacity: 0.95; }
+      100% { transform: translateY(-5px) scale(1.2); opacity: 0; }
+    }
+    @keyframes flaskBubble2 {
+      0% { transform: translateY(0) scale(0.65); opacity: 0; }
+      45% { opacity: 0.9; }
+      100% { transform: translateY(-7px) scale(1.1); opacity: 0; }
+    }
+    @keyframes flaskLiquidSway {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-0.6px) rotate(1.8deg); }
+    }
+    @keyframes flaskSparkGlow {
+      0%, 100% { opacity: 0.4; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 4px #F59E0B); }
+    }
+
+    .flask-b1 { animation: flaskBubble1 2.1s ease-in-out infinite; transform-origin: center; }
+    .flask-b2 { animation: flaskBubble2 2.7s ease-in-out infinite 0.6s; transform-origin: center; }
+    .flask-liquid { animation: flaskLiquidSway 3s ease-in-out infinite; transform-origin: 12px 18px; }
+    .flask-spark { animation: flaskSparkGlow 2.2s ease-in-out infinite; transform-origin: 12px 7px; }
+
+    /* Interactive Sentence Highlighting in Sandbox */
+    .demo-sentence {
+      border-radius: 5px;
+      padding: 2px 4px;
+      margin: -2px -2px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .demo-sentence:hover {
+      background-color: rgba(253, 230, 138, 0.65);
+      color: #111111;
+    }
+
+    /* Circular Green Checkbox */
+    .alchemy-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #94A3B8;
+      background-color: #FFFFFF;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+    }
+
+    .alchemy-checkbox:checked {
+      background-color: #69BD28;
+      border-color: #559E1D;
+      box-shadow: 0 2px 6px rgba(105, 189, 40, 0.35);
+      transform: scale(1.06);
+    }
+
+    .alchemy-checkbox:checked::after {
+      content: "✓";
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    /* Square Step Badges */
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      height: 26px;
+      padding: 0 7px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+    }
+
+    /* Sandbox Floating Dock Morphing */
+    .sandbox-dock {
+      transition: all 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .sandbox-dock.is-collapsed {
+      width: 48px !important;
+      height: 48px !important;
+      border-radius: 9999px !important;
+      padding: 0 !important;
+      justify-content: center !important;
+    }
+
+    .sandbox-dock.is-collapsed .dock-inner-tools {
+      display: none !important;
+    }
+
+    .sandbox-dock.is-collapsed .dock-brand-text {
+      display: none !important;
+    }
+
+    .sandbox-dock.is-vertical:not(.is-collapsed) {
+      flex-direction: column !important;
+      right: 14px !important;
+      bottom: auto !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      width: 78px !important;
+      max-height: 92% !important;
+      overflow-y: auto !important;
+      padding: 10px 6px !important;
+      align-items: center !important;
+    }
+
+    .sandbox-dock.is-vertical:not(.is-collapsed) .dock-inner-tools {
+      flex-direction: column !important;
+      align-items: center !important;
+      width: 100% !important;
+      gap: 6px !important;
+    }
+
+    .sandbox-dock.is-vertical:not(.is-collapsed) .dock-inner-tools > button {
+      width: 100% !important;
+      justify-content: center !important;
+      font-size: 10px !important;
+      padding: 5px 4px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+    }
+
+    .sandbox-dock.is-vertical:not(.is-collapsed) .dock-color-palette {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 5px !important;
+      justify-items: center !important;
+    }
+
+    .sandbox-dock.is-vertical:not(.is-collapsed) .dock-brand-text {
+      display: none !important;
+    }
+
+    /* Subtle dot grid pattern on background */
+    .bg-swiss-grid {
+      background-image: radial-gradient(rgba(17, 17, 17, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    body.dark-craft .bg-swiss-grid {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-canvas); }
+    ::-webkit-scrollbar-thumb { background: #9CA3AF; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+  </style>
+</head>
+<body class="bg-swiss-grid min-h-screen selection:bg-[#69BD28] selection:text-white">
+
+  <!-- GLOBAL CONFETTI / PARTICLE CANVAS -->
+  <canvas id="particleCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+  <!-- STICKY TOP NAVBAR -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-[#F4F3EF]/90 dark:bg-[#111214]/90 border-b-[1.5px] border-[#111111] transition-colors" style="background-color: color-mix(in srgb, var(--bg-canvas) 92%, transparent);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-lg bg-[#111111] text-white flex items-center justify-center border-[1.5px] border-[#111111] shadow-[0_2px_0_#69BD28] group-hover:scale-105 transition-transform">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none">
+            <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
+            <path class="flask-liquid" d="M6.2 16.5C8 15 10 17 12 16C14 15 16 17 17.8 16.5L17.9 20H6.1L6.2 16.5Z" fill="#69BD28" />
+            <circle class="flask-b1" cx="10" cy="14" r="1" fill="#FFFFFF" />
+            <circle class="flask-b2" cx="13.5" cy="12" r="0.75" fill="#FFFFFF" />
+            <circle class="flask-spark" cx="12" cy="7" r="0.9" fill="#F59E0B" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-black tracking-tight text-base sm:text-lg">ALCHEMY CRAFT</span>
+            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-1.5 py-0.5 rounded border border-[#111111]">v3.7.0</span>
+          </div>
+          <p class="text-[11px] font-mono-code opacity-70 hidden sm:block">SWISS BENTO OBSIDIAN SYSTEM</p>
+        </div>
+      </a>
+
+      <!-- Center Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-bold">
+        <a href="#sandbox" data-i18n="navSandbox" class="hover:text-[#69BD28] transition-colors">Live Demo</a>
+        <a href="#features" data-i18n="navFeatures" class="hover:text-[#69BD28] transition-colors">Bento Features</a>
+        <a href="#settings-preview" data-i18n="navSettings" class="hover:text-[#69BD28] transition-colors">v3.7 Settings & Fix</a>
+        <a href="#checkout" data-i18n="navPricing" class="hover:text-[#69BD28] transition-colors">Pro Pass ($4.99)</a>
+      </nav>
+
+      <!-- Right Controls: Language Switcher + Dark Mode Toggle + Buy CTA -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- 6-Language Selector -->
+        <div class="relative">
+          <select id="langSelect" aria-label="Language Selector" class="font-mono-code text-xs font-bold bg-white text-[#111111] border-[1.5px] border-[#111111] rounded-lg px-2.5 py-1.5 pr-7 shadow-[0_2px_0_#111111] cursor-pointer focus:outline-none">
+            <option value="en">🇺🇸 EN</option>
+            <option value="ru">🇷🇺 RU</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="es">🇪🇸 ES</option>
+            <option value="de">🇩🇪 DE</option>
+          </select>
+        </div>
+
+        <!-- Live Pro Dark Craft Mode Toggle -->
+        <button id="themeToggleBtn" class="bento-btn bg-white text-[#111111] px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-bold flex items-center gap-1.5" title="Preview Pro Midnight Dark Craft Mode">
+          <span id="themeToggleIcon">🌙</span>
+          <span id="themeToggleText" class="hidden sm:inline" data-i18n="darkBtn">Dark Craft</span>
+        </button>
+
+        <!-- Primary Pro Checkout Button -->
+        <a href="#checkout" class="bento-btn bg-[#69BD28] hover:bg-[#559E1D] text-white px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold flex items-center gap-1.5">
+          <span>💎</span>
+          <span data-i18n="getProNav">Get Pro $4.99</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="pt-10 pb-8 sm:pt-14 sm:pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="text-center max-w-4xl mx-auto">
+      <!-- Top Editorial Pill -->
+      <div class="inline-flex items-center gap-2 bg-[#111111] text-white font-mono-code text-xs font-bold px-3.5 py-1.5 rounded-md mb-5 shadow-[0_3px_0_#69BD28]">
+        <span class="w-2 h-2 rounded-full bg-[#69BD28] animate-ping"></span>
+        <span data-i18n="heroBadge">STRATALCHEMY // OBSIDIAN BENTO READER & FOCUS STUDIO</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-[1.08] mb-5" data-i18n="heroTitle">
+        Turn Obsidian into a Warm Swiss Bento Studio.
+      </h1>
+
+      <p class="text-base sm:text-xl opacity-80 max-w-3xl mx-auto mb-8 leading-relaxed font-medium" data-i18n="heroSubtitle">
+        Eye-friendly archival paper (#F4F3EF), Excel sage green tables, squared 01–04 badges, glowing laser pointer, freehand marker, and Pomodoro flow dock.
+      </p>
+
+      <!-- Hero CTA Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3.5 mb-8">
+        <button onclick="openCheckoutModal('card')" class="bento-btn bg-[#69BD28] text-white font-extrabold text-sm sm:text-base px-6 py-3.5 rounded-xl flex items-center gap-2">
+          <span>💳</span>
+          <span data-i18n="heroCtaPro">Unlock Pro Pass — $4.99 / yr (Card & Crypto)</span>
+        </button>
+
+        <a href="https://github.com/elyazaliverdiyev/alchemy-craft/releases" target="_blank" rel="noopener" class="bento-btn bg-white text-[#111111] font-extrabold text-sm sm:text-base px-5 py-3.5 rounded-xl flex items-center gap-2">
+          <span>⚡</span>
+          <span data-i18n="heroCtaFree">Download Free Plugin (GitHub)</span>
+        </a>
+
+        <a href="#settings-preview" class="bento-btn bg-[#FEF3C7] text-[#92400E] font-bold text-xs sm:text-sm px-4 py-3.5 rounded-xl flex items-center gap-1.5">
+          <span>📱</span>
+          <span data-i18n="heroCtaFix">Stuck Mobile Bar Fix & v3.7 Code</span>
+        </a>
+      </div>
+
+      <!-- Trust Metrics Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
+        <div class="bento-card p-3 flex items-center gap-3">
+          <span class="step-badge bg-[#2563EB]">01</span>
+          <div>
+            <div class="font-black text-sm">6 Languages</div>
+            <div class="text-[11px] opacity-70 font-mono-code">EN • RU • ZH • JA • ES • DE</div>
+          </div>
+        </div>
+        <div class="bento-card p-3 flex items-center gap-3">
+          <span class="step-badge bg-[#F59E0B]">02</span>
+          <div>
+            <div class="font-black text-sm">Card & Apple Pay</div>
+            <div class="text-[11px] opacity-70 font-mono-code">USA / EU / Global Ready</div>
+          </div>
+        </div>
+        <div class="bento-card p-3 flex items-center gap-3">
+          <span class="step-badge bg-[#10B981]">03</span>
+          <div>
+            <div class="font-black text-sm">Universal EVM</div>
+            <div class="text-[11px] opacity-70 font-mono-code">BEP20 • ARB • BASE • ERC20</div>
+          </div>
+        </div>
+        <div class="bento-card p-3 flex items-center gap-3">
+          <span class="step-badge bg-[#8B5CF6]">04</span>
+          <div>
+            <div class="font-black text-sm">100% Direct</div>
+            <div class="text-[11px] opacity-70 font-mono-code">@CryptoBot & Tribute</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       INTERACTIVE OBSIDIAN SANDBOX (TEST LASER, MARKER, SENTENCES & DOCK!)
+       ===================================================================== -->
+  <section id="sandbox" class="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div class="flex items-center gap-2.5">
+        <span class="font-mono-code text-xs font-extrabold uppercase px-2.5 py-1 rounded bg-[#111111] text-white">LIVE SANDBOX</span>
+        <h2 class="text-lg sm:text-xl font-black" data-i18n="sandboxHeading">Try Alchemy Craft Live Right Here (Click Sentences, Draw, or Complete Tasks!)</h2>
+      </div>
+      <div class="flex items-center gap-2 text-xs font-mono-code">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#69BD28]"></span>
+        <span data-i18n="sandboxHint">Interactive Canvas & Dock Active Below</span>
+      </div>
+    </div>
+
+    <!-- OBSIDIAN WINDOW SIMULATOR -->
+    <div id="obsidianSimulator" class="bento-card overflow-hidden relative border-2 border-[#111111] shadow-[0_8px_0_#111111]">
+      
+      <!-- Top Window Title Bar -->
+      <div class="bg-[#111111] text-white px-4 py-2.5 flex items-center justify-between border-b border-[#374151]">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-[#EF4444]"></span>
+          <span class="w-3 h-3 rounded-full bg-[#F59E0B]"></span>
+          <span class="w-3 h-3 rounded-full bg-[#10B981]"></span>
+          <span class="font-mono-code text-xs text-gray-300 ml-2">Obsidian Vault — StratAlchemy_Brief_2026.md</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="sandboxModeIndicator" class="font-mono-code text-[11px] px-2 py-0.5 rounded bg-[#2563EB] text-white font-bold">MODE: READING & SENTENCE FOCUS</span>
+        </div>
+      </div>
+
+      <!-- Sticky Task Progress Bar (With New Mobile Close '✕' Button!) -->
+      <div id="demoProgressBarWrap" class="bg-white text-[#111111] border-b-[1.5px] border-[#111111] px-4 py-2 flex items-center gap-3 font-mono-code text-xs font-bold">
+        <span id="demoTaskLabel" class="whitespace-nowrap">⚡ TASK PROGRESS: 2 / 3</span>
+        <div class="flex-1 h-2.5 bg-[#EDEBE4] rounded-full overflow-hidden border border-[#D5D3CC]">
+          <div id="demoTaskFill" class="h-full bg-[#69BD28] transition-all duration-300 rounded-full" style="width: 67%;"></div>
+        </div>
+        <span id="demoTaskPct" class="text-[#15803D] font-extrabold">67%</span>
+        <button onclick="document.getElementById('demoProgressBarWrap').style.display='none'" title="Dismiss Progress Bar (New in v3.7 for Mobile!)" class="ml-1 px-1.5 py-0.5 rounded hover:bg-gray-200 text-gray-600 font-bold">✕</button>
+      </div>
+
+      <!-- Main Workspace Split: Left File Explorer + Right Markdown Editor -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[540px] relative" id="sandboxCanvasContainer">
+        
+        <!-- Interactive Drawing & Laser Canvas Overlay -->
+        <canvas id="sandboxCanvas" class="absolute inset-0 z-20 pointer-events-none"></canvas>
+
+        <!-- Left Sidebar (File Explorer) -->
+        <aside id="sandboxSidebar" class="lg:col-span-3 bg-[#EDEBE4] text-[#111111] border-r-[1.5px] border-[#D5D3CC] p-3.5 hidden lg:block select-none">
+          <div class="font-mono-code text-[11px] font-extrabold text-gray-500 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+            <span>VAULT EXPLORER</span>
+            <span>⚗️</span>
+          </div>
+
+          <!-- Colored Bento Folders -->
+          <div class="space-y-2 text-xs font-bold">
+            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#2563EB] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
+              <span>▾</span> <span>01 // Global Strategy</span>
+            </div>
+            <div class="pl-3 ml-2 border-l-[1.5px] border-[#D5D3CC] space-y-1.5">
+              <div class="bg-white border border-[#111111] border-l-4 border-l-[#69BD28] rounded-md px-2.5 py-1.5 font-extrabold shadow-sm flex items-center justify-between">
+                <span>📄 StratAlchemy_Brief.md</span>
+                <span class="w-2 h-2 rounded-full bg-[#69BD28]"></span>
+              </div>
+              <div class="px-2.5 py-1.5 text-gray-700 hover:bg-[#F9F8F5] rounded-md font-medium cursor-pointer">
+                📄 Q4_Crypto_Treasury.md
+              </div>
+            </div>
+
+            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#F59E0B] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
+              <span>▸</span> <span>02 // Product Design</span>
+            </div>
+            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#10B981] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
+              <span>▸</span> <span>03 // Research Notes</span>
+            </div>
+            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#8B5CF6] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
+              <span>▸</span> <span>04 // Archive & AI Prompts</span>
+            </div>
+          </div>
+
+          <!-- Interactive Instructions Box inside Sidebar -->
+          <div class="mt-6 bg-white border-[1.5px] border-[#111111] rounded-lg p-3 shadow-[0_3px_0_#111111]">
+            <div class="font-mono-code text-[10px] font-extrabold bg-[#FEF3C7] text-[#92400E] px-2 py-0.5 rounded inline-block mb-1.5">TRY IT LIVE →</div>
+            <ul class="text-[11px] space-y-1.5 text-gray-700 leading-snug">
+              <li>• <strong>Click any sentence</strong> to pin active palette color.</li>
+              <li>• Click <strong>Laser</strong> or <strong>Draw</strong> in the dock below & drag across the note!</li>
+              <li>• Check the <strong>3rd task</strong> to hit 100% progress!</li>
+              <li>• Click the <strong>⚗️ ALCHEMY CRAFT</strong> badge to morph into a floating orb.</li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- Right Note Content Area -->
+        <main class="lg:col-span-9 p-5 sm:p-8 pb-24 relative">
+          
+          <!-- Editorial Note Title Banner -->
+          <div class="bg-white text-[#111111] border-[1.5px] border-[#111111] border-l-[8px] border-l-[#69BD28] rounded-xl p-4 sm:p-5 shadow-[0_4px_0_#111111] mb-6">
+            <div class="font-mono-code text-[11px] font-extrabold bg-[#111111] text-white px-2.5 py-0.5 rounded inline-block mb-2 tracking-wider">
+              STRATALCHEMY // KNOWLEDGE BRIEF
+            </div>
+            <h3 class="text-xl sm:text-3xl font-black tracking-tight">
+              Alchemy Craft v3.7: Swiss Bento Architecture & Global Flow
+            </h3>
+          </div>
+
+          <!-- Interactive Paragraphs with Sentence Pinning -->
+          <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
+            <p>
+              <span class="step-badge bg-[#2563EB] mr-1.5">01</span>
+              <span class="demo-sentence" onclick="toggleSentencePin(this)">Warm archival paper (#F4F3EF) eliminates harsh dark-mode astigmatism and sterile white screen fatigue during 8-hour deep research sprints.</span>
+              <span class="demo-sentence is-pinned" style="background-color: #DBEAFE; color: #1E3A8A; border-bottom: 2px solid #2563EB;" onclick="toggleSentencePin(this)">Click on any sentence in this note to highlight and pin it with your active palette color from the dock below!</span>
+            </p>
+            <p>
+              <span class="step-badge bg-[#F59E0B] mr-1.5">02</span>
+              <span class="demo-sentence" onclick="toggleSentencePin(this)">Financial metrics like <span class="bg-[#10B981] text-white font-mono-code text-xs font-extrabold px-2 py-0.5 rounded">$4.99 USDT</span> or growth targets of <span class="bg-[#2563EB] text-white font-mono-code text-xs font-extrabold px-2 py-0.5 rounded">+340% ROI</span> and EVM addresses <span class="bg-[#FFF1E6] text-[#C2410C] border border-[#FDBA74] font-mono-code text-xs font-bold px-2 py-0.5 rounded">0x5df7...e7e2</span> are automatically styled into crisp Swiss capsules.</span>
+            </p>
+          </div>
+
+          <!-- Interactive Checklist (Check the 3rd item for fireworks!) -->
+          <div class="bg-[#F9F8F5] text-[#111111] border-[1.5px] border-[#D5D3CC] rounded-xl p-4 mb-6">
+            <div class="font-mono-code text-xs font-extrabold uppercase text-gray-500 mb-3">INTERACTIVE SPRINT CHECKLIST (CLICK TO COMPLETE 100%)</div>
+            <div class="space-y-2.5 text-sm font-semibold">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" class="alchemy-checkbox demo-task-cb" checked onchange="updateDemoTasks()" />
+                <span>Design Warm Paper #F4F3EF & Excel Green #69BD28 Tables</span>
+                <span class="bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0] font-mono-code text-[11px] px-2 py-0.5 rounded-full ml-auto">2026-11-05</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" class="alchemy-checkbox demo-task-cb" checked onchange="updateDemoTasks()" />
+                <span>Add Universal EVM (BEP20 / Arbitrum / Base / Polygon) + Card Checkout</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" class="alchemy-checkbox demo-task-cb" onchange="updateDemoTasks()" />
+                <span class="text-[#2563EB] font-extrabold">👈 Click me to finish the sprint & trigger 100% Alchemy Sparkles!</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Excel Light Green Table (#69BD28) -->
+          <div class="overflow-x-auto mb-4">
+            <table class="w-full border-collapse border-[1.5px] border-[#111111] rounded-lg overflow-hidden shadow-[0_3px_0_#111111] text-xs sm:text-sm bg-white text-[#111111]">
+              <thead>
+                <tr class="bg-[#69BD28] text-white font-extrabold uppercase text-left">
+                  <th class="py-2.5 px-3.5 border-b-2 border-r border-[#559E1D]">Module</th>
+                  <th class="py-2.5 px-3.5 border-b-2 border-r border-[#559E1D]">Design Token</th>
+                  <th class="py-2.5 px-3.5 border-b-2 border-[#559E1D]">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="bg-[#EDF5FF] border-b border-[#CBD5E1]">
+                  <td class="py-2 px-3.5 font-bold border-r border-[#CBD5E1]"><span class="step-badge bg-[#2563EB] mr-1">01</span> Archival Paper</td>
+                  <td class="py-2 px-3.5 font-mono-code border-r border-[#CBD5E1]"><code>#F4F3EF</code> + <code>#111111</code></td>
+                  <td class="py-2 px-3.5 font-bold text-[#15803D]">✓ Active</td>
+                </tr>
+                <tr class="bg-white border-b border-[#CBD5E1]">
+                  <td class="py-2 px-3.5 font-bold border-r border-[#CBD5E1]"><span class="step-badge bg-[#10B981] mr-1">02</span> Global Payments</td>
+                  <td class="py-2 px-3.5 font-mono-code border-r border-[#CBD5E1]"><code>Card / Apple Pay / EVM / @CryptoBot</code></td>
+                  <td class="py-2 px-3.5 font-bold text-[#15803D]">✓ Ready</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- FLOATING ALCHEMY CRAFT DOCK INSIDE SANDBOX -->
+          <div id="sandboxDock" class="sandbox-dock absolute bottom-4 right-4 z-30 bg-[#F4F3EF]/95 backdrop-blur-md border-[1.5px] border-[#111111] rounded-xl p-1.5 shadow-[0_4px_0_#111111,0_8px_24px_rgba(0,0,0,0.18)] flex items-center gap-1.5 flex-wrap">
+            <!-- Brand Orb Trigger -->
+            <button onclick="toggleSandboxDockCollapse()" title="Click to Collapse/Expand into Floating Alchemy Orb!" class="bg-[#111111] hover:bg-[#222222] text-white font-mono-code text-[10px] font-extrabold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-transform active:scale-95">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
+                <path class="flask-liquid" d="M6.2 16.5C8 15 10 17 12 16C14 15 16 17 17.8 16.5L17.9 20H6.1L6.2 16.5Z" fill="#69BD28" />
+              </svg>
+              <span class="dock-brand-text">ALCHEMY CRAFT</span>
+            </button>
+
+            <!-- Dock Tools Wrapper -->
+            <div class="dock-inner-tools flex items-center gap-1.5 flex-wrap">
+              <!-- Live Pomodoro Timer Pill -->
+              <button id="demoTimerBtn" onclick="toggleDemoTimer()" class="bg-[#69BD28] text-white border border-[#111111] font-mono-code text-xs font-extrabold px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-sm" title="Click to Start/Pause Pomodoro">
+                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                <span id="demoTimerText">🍅 25:00</span>
+              </button>
+
+              <!-- Zen Mode -->
+              <button id="btnDemoZen" onclick="toggleDemoZen()" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2.5 py-1 rounded-md">
+                Zen
+              </button>
+
+              <!-- Laser Pointer -->
+              <button id="btnDemoLaser" onclick="setSandboxTool('laser')" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1">
+                <span>🔦</span> <span>Laser</span>
+              </button>
+
+              <!-- Freehand Draw Marker -->
+              <button id="btnDemoDraw" onclick="setSandboxTool('draw')" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1">
+                <span>🖍️</span> <span>Draw</span>
+              </button>
+
+              <!-- 8-Color Palette (4 Standard + 4 Pro Colors!) -->
+              <div class="dock-color-palette flex items-center gap-1 px-1">
+                <button onclick="selectDemoColor('#2563EB', this)" class="demo-color-dot w-4 h-4 rounded bg-[#2563EB] border-2 border-[#111111] scale-110" title="01 Sapphire Blue"></button>
+                <button onclick="selectDemoColor('#F59E0B', this)" class="demo-color-dot w-4 h-4 rounded bg-[#F59E0B] border border-black/30" title="02 Amber Orange"></button>
+                <button onclick="selectDemoColor('#10B981', this)" class="demo-color-dot w-4 h-4 rounded bg-[#10B981] border border-black/30" title="03 Emerald Green"></button>
+                <button onclick="selectDemoColor('#8B5CF6', this)" class="demo-color-dot w-4 h-4 rounded bg-[#8B5CF6] border border-black/30" title="04 Amethyst Purple"></button>
+                <button onclick="selectDemoColor('#EC4899', this)" class="demo-color-dot w-4 h-4 rounded bg-[#EC4899] border border-black/30" title="PRO: Rose Pink"></button>
+                <button onclick="selectDemoColor('#06B6D4', this)" class="demo-color-dot w-4 h-4 rounded bg-[#06B6D4] border border-black/30" title="PRO: Cyber Cyan"></button>
+              </div>
+
+              <!-- Ambient Soundscape Generator Button (New in v3.7!) -->
+              <button id="btnDemoAmbient" onclick="toggleDemoAmbient()" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2 py-1 rounded-md" title="Toggle WebAudio Focus Soundscape (Brown Noise / Rain / 40Hz)">
+                🎧 Sound
+              </button>
+
+              <!-- AI Clean Demo Button -->
+              <button onclick="triggerDemoAiClean()" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2 py-1 rounded-md" title="Strip invisible AI zero-width characters">
+                ✨ AI Clean
+              </button>
+
+              <!-- Clear Canvas -->
+              <button onclick="clearSandboxCanvas()" class="bg-white text-[#111111] hover:bg-red-50 border border-[#CBD5E1] text-xs font-bold px-2 py-1 rounded-md" title="Clear Drawings">
+                ✕
+              </button>
+
+              <!-- Vertical / Horizontal Orientation Switch -->
+              <button onclick="toggleSandboxDockVertical()" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2 py-1 rounded-md" title="Switch Bottom / Right Vertical Pillar">
+                ⇄
+              </button>
+            </div>
+          </div>
+
+        </main>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================================
+       INTERACTIVE SWISS BENTO GRAPH STUDIO (LIVE PHYSICS, LASER PULSES & HUD)
+       ===================================================================== -->
+  <section id="graph-studio" class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-[#111111] text-white font-mono-code text-[11px] font-extrabold px-2.5 py-1 rounded mb-1.5 shadow-[0_2px_0_#69BD28]">
+          <span>🕸️ NEW IN v3.7.0</span>
+          <span>•</span>
+          <span>SWISS BENTO GRAPH STUDIO</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black tracking-tight" data-i18n="graphSectionTitle">
+          Interactive Knowledge Graph with Bento HUD & Neural Laser Pulses
+        </h2>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="setGraphPreset('bento')" id="gPreset-bento" class="bento-btn bg-[#69BD28] text-white font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
+          ⚗️ Swiss Bento
+        </button>
+        <button onclick="setGraphPreset('constellation')" id="gPreset-constellation" class="bento-btn bg-white text-[#111111] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
+          ✨ Constellation
+        </button>
+        <button onclick="setGraphPreset('radar')" id="gPreset-radar" class="bento-btn bg-white text-[#111111] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
+          🎯 Focus Radar
+        </button>
+        <button onclick="randomizeGraphImpulse()" class="bento-btn bg-[#2563EB] text-white font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
+          ⚡ Pulse Nodes
+        </button>
+      </div>
+    </div>
+
+    <div class="bento-card overflow-hidden relative border-2 border-[#111111] shadow-[0_8px_0_#111111]">
+      <!-- Floating HUD Overlay Inside Graph -->
+      <div class="absolute top-3 left-3 z-20 bg-[#F9F8F5]/95 text-[#111111] border-[1.5px] border-[#111111] rounded-xl p-2.5 shadow-[0_3px_0_#111111] flex flex-wrap items-center gap-2 text-xs font-mono-code">
+        <span class="bg-[#111111] text-white font-extrabold px-2 py-0.5 rounded text-[10px]">.obsidian/graph.json</span>
+        <span class="flex items-center gap-1 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-[#2563EB] inline-block"></span> 01 Strategy</span>
+        <span class="flex items-center gap-1 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block"></span> 02 Product</span>
+        <span class="flex items-center gap-1 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981] inline-block"></span> 03 Research</span>
+        <span class="flex items-center gap-1 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-[#8B5CF6] inline-block"></span> 04 AI Prompts</span>
+        <span class="flex items-center gap-1 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-[#EC4899] inline-block"></span> #pro</span>
+      </div>
+
+      <div class="absolute bottom-3 right-3 z-20 bg-[#111111] text-white font-mono-code text-[11px] font-bold px-3 py-1.5 rounded-lg border border-[#69BD28] pointer-events-none">
+        💡 Drag any node or hover to inspect neural links
+      </div>
+
+      <div id="bentoGraphWrap" class="relative h-[390px] w-full bg-swiss-grid">
+        <canvas id="bentoGraphCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SWISS BENTO FEATURES GRID
+       ===================================================================== -->
+  <section id="features" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="text-center max-w-3xl mx-auto mb-10">
+      <div class="font-mono-code text-xs font-extrabold uppercase tracking-wider text-[#69BD28] mb-2">ENGINEERED FOR DEEP WORK</div>
+      <h2 class="text-3xl sm:text-4xl font-black tracking-tight" data-i18n="featuresTitle">
+        Everything You Need for High-Clarity Reading & Presentations
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Feature 1 -->
+      <div class="bento-card bento-card-interactive p-6">
+        <div class="w-11 h-11 rounded-xl bg-[#2563EB] text-white font-mono-code font-black text-lg flex items-center justify-center border-[1.5px] border-[#111111] shadow-[0_3px_0_#111111] mb-4">01</div>
+        <h3 class="text-xl font-black mb-2" data-i18n="f1Title">Warm Archival Canvas (#F4F3EF)</h3>
+        <p class="text-sm opacity-80 leading-relaxed" data-i18n="f1Desc">
+          Say goodbye to blinding pure-white screens and blurry dark-mode halation. Crafted with tactile Swiss paper tones, crisp 1.5px ink borders, and colored folder trees.
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="bento-card bento-card-interactive p-6">
+        <div class="w-11 h-11 rounded-xl bg-[#F59E0B] text-white font-mono-code font-black text-lg flex items-center justify-center border-[1.5px] border-[#111111] shadow-[0_3px_0_#111111] mb-4">02</div>
+        <h3 class="text-xl font-black mb-2" data-i18n="f2Title">Laser Pointer & Freehand Marker</h3>
+        <p class="text-sm opacity-80 leading-relaxed" data-i18n="f2Desc">
+          Present your Obsidian notes on Zoom, YouTube, or lectures with a zero-lag glowing laser trail, freehand drawing canvas, eraser, and full Undo/Redo history.
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="bento-card bento-card-interactive p-6">
+        <div class="w-11 h-11 rounded-xl bg-[#10B981] text-white font-mono-code font-black text-lg flex items-center justify-center border-[1.5px] border-[#111111] shadow-[0_3px_0_#111111] mb-4">03</div>
+        <h3 class="text-xl font-black mb-2" data-i18n="f3Title">Pomodoro Flow & Morphing Orb</h3>
+        <p class="text-sm opacity-80 leading-relaxed" data-i18n="f3Desc">
+          Built-in Pomodoro sprints (15m, 25m, 45m, 60m, 90m) + Stopwatch with WebAudio chimes. Collapses into a floating Alchemy Orb with rising SVG bubbles.
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="bento-card bento-card-interactive p-6">
+        <div class="w-11 h-11 rounded-xl bg-[#8B5CF6] text-white font-mono-code font-black text-lg flex items-center justify-center border-[1.5px] border-[#111111] shadow-[0_3px_0_#111111] mb-4">04</div>
+        <h3 class="text-xl font-black mb-2" data-i18n="f4Title">AI Watermark Cleaner (1-Click)</h3>
+        <p class="text-sm opacity-80 leading-relaxed" data-i18n="f4Desc">
+          Strips hidden ChatGPT/LLM zero-width spaces (\u200B, \uFEFF), soft hyphens, and typographic quotes from your note and copies clean text directly to clipboard.
+        </p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="bento-card bento-card-interactive p-6 md:col-span-2 bg-gradient-to-r from-[#111111] to-[#1F2937] text-white">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-block bg-[#69BD28] text-white font-mono-code text-[10px] font-extrabold px-2.5 py-1 rounded mb-3">PRO EXCLUSIVE THEME</div>
+            <h3 class="text-2xl font-black mb-2" data-i18n="f5Title">🌙 Midnight Dark Craft Mode + 8-Color Pro Palette</h3>
+            <p class="text-sm text-gray-300 leading-relaxed max-w-xl" data-i18n="f5Desc">
+              Engineered for late-night coding and deep synthesis. Retains all Swiss Bento borders, glowing badges, and high-contrast tables without straining your eyes in the dark.
+            </p>
+          </div>
+          <button onclick="document.getElementById('themeToggleBtn').click()" class="bento-btn bg-[#69BD28] text-white font-extrabold text-xs px-4 py-3 rounded-xl whitespace-nowrap self-start sm:self-center">
+            🌙 Test Dark Craft Live
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       GLOBAL PRO CHECKOUT SECTION ($4.99 / YR — CARD, CRYPTOBOT, TRIBUTE, EVM)
+       ===================================================================== -->
+  <section id="checkout" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Pro Pass Perks & Value Card -->
+      <div class="lg:col-span-5 bento-card pro-holo-card p-6 sm:p-8 border-2 border-[#111111]">
+        <div class="flex items-center justify-between mb-4">
+          <span class="bg-[#111111] text-white font-mono-code text-xs font-extrabold px-3 py-1 rounded">ALCHEMIST PRO PASS</span>
+          <span class="font-mono-code text-2xl font-black text-[#16A34A]">$4.99 <span class="text-xs font-normal opacity-75">/ year</span></span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-black mb-3" data-i18n="checkoutTitle">
+          Unlock Alchemy Craft Pro
+        </h2>
+        <p class="text-sm opacity-80 mb-6 leading-relaxed" data-i18n="checkoutSubtitle">
+          Annual pass for the price of a single cup of coffee. 100% direct support to the author with instant activation in Obsidian.
+        </p>
+
+        <ul class="space-y-3.5 text-sm font-medium mb-7">
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-[#69BD28] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">✓</span>
+            <span><strong>🌙 Midnight Dark Craft Mode</strong> — full Swiss dark theme for night sessions</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-[#2563EB] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">✓</span>
+            <span><strong>🎨 Expanded 8-Color Palette</strong> — Rose Pink, Cyber Cyan, Crimson, Gold</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-[#F59E0B] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">✓</span>
+            <span><strong>📊 Focus Session Analytics</strong> — track deep work hours & completed sprints</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-[#8B5CF6] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">✓</span>
+            <span><strong>🌐 All 6 Languages & Priority Updates</strong> — lifetime v3.x & v4.x upgrades</span>
+          </li>
+        </ul>
+
+        <!-- Direct Telegram Support Box -->
+        <div class="bg-[#F9F8F5] text-[#111111] border-[1.5px] border-[#111111] rounded-xl p-4 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">💬</span>
+            <div class="text-xs">
+              <div class="font-extrabold">Need help or manual key?</div>
+              <div class="text-gray-600">Message Elyas directly: <strong>@StratAlchemy</strong></div>
+            </div>
+          </div>
+          <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-mono-code text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">
+            Open Telegram
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Multi-Method Checkout Hub -->
+      <div class="lg:col-span-7 bento-card p-6 sm:p-8 border-2 border-[#111111]">
+        <div class="font-mono-code text-xs font-extrabold uppercase text-gray-500 mb-3 tracking-wider" data-i18n="step1Select">
+          STEP 1: SELECT PAYMENT METHOD (USA / EU CARD OR CRYPTO)
+        </div>
+
+        <!-- 6 Payment Method Tiles (Card/Tribute, CryptoBot, Universal EVM, Bybit UID, Solana, TRON) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-6" id="paymentMethodGrid">
+          
+          <!-- 1. Bank Card / Apple Pay / Tribute (Best for USA & Global) -->
+          <button onclick="selectPayMethod('card')" id="payTile-card" class="pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#111111] bg-[#111111] text-white transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-base">💳</span>
+              <span class="font-mono-code text-[9px] bg-[#69BD28] text-white px-1.5 py-0.5 rounded font-bold">USA / GLOBAL</span>
+            </div>
+            <div class="font-extrabold text-xs sm:text-sm">Bank Card / Apple Pay</div>
+            <div class="text-[11px] opacity-75">Visa, MasterCard, Tribute</div>
+          </button>
+
+          <!-- 2. @CryptoBot 1-Click Telegram Invoice -->
+          <button onclick="selectPayMethod('cryptobot')" id="payTile-cryptobot" class="pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#D5D3CC] bg-white text-[#111111] hover:border-[#111111] transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-base">✈️</span>
+              <span class="font-mono-code text-[9px] bg-[#2563EB] text-white px-1.5 py-0.5 rounded font-bold">1-CLICK TG</span>
+            </div>
+            <div class="font-extrabold text-xs sm:text-sm">@CryptoBot Pay</div>
+            <div class="text-[11px] text-gray-500">USDT, TON, BTC, P2P Card</div>
+          </button>
+
+          <!-- 3. Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20) -->
+          <button onclick="selectPayMethod('evm')" id="payTile-evm" class="pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#D5D3CC] bg-white text-[#111111] hover:border-[#111111] transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-base">🌐</span>
+              <span class="font-mono-code text-[9px] bg-[#F59E0B] text-white px-1.5 py-0.5 rounded font-bold">ALL EVM NETS</span>
+            </div>
+            <div class="font-extrabold text-xs sm:text-sm">Universal EVM (0x...)</div>
+            <div class="text-[11px] text-gray-500">BEP20 • Arbitrum • Base • Polygon</div>
+          </button>
+
+          <!-- 4. Bybit UID Instant (0% Fee) -->
+          <button onclick="selectPayMethod('bybit')" id="payTile-bybit" class="pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#D5D3CC] bg-white text-[#111111] hover:border-[#111111] transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-base">🟡</span>
+              <span class="font-mono-code text-[9px] bg-gray-900 text-white px-1.5 py-0.5 rounded font-bold">0% FEE</span>
+            </div>
+            <div class="font-extrabold text-xs sm:text-sm">Bybit UID Transfer</div>
+            <div class="text-[11px] text-gray-500">UID: 8015849 • Instant</div>
+          </button>
+
+          <!-- 5. Solana Network -->
+          <button onclick="selectPayMethod('solana')" id="payTile-solana" class="pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#D5D3CC] bg-white text-[#111111] hover:border-[#111111] transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-base">🟣</span>
+              <span class="font-mono-code text-[9px] bg-[#8B5CF6] text-white px-1.5 py-0.5 rounded font-bold">SOLANA</span>
+            </div>
+            <div class="font-extrabold text-xs sm:text-sm">Solana (USDT/USDC)</div>
+            <div class="text-[11px] text-gray-500">Ultra-fast • ~$0.001 fee</div>
+          </button>
+
+          <!-- 6. TRON (TRC-20) -->
+          <button onclick="selectPayMethod('trc20')" id="payTile-trc20" class="pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#D5D3CC] bg-white text-[#111111] hover:border-[#111111] transition-all">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-base">🟢</span>
+              <span class="font-mono-code text-[9px] bg-[#10B981] text-white px-1.5 py-0.5 rounded font-bold">TRC-20</span>
+            </div>
+            <div class="font-extrabold text-xs sm:text-sm">TRON (TRC20)</div>
+            <div class="text-[11px] text-gray-500">Standard USDT</div>
+          </button>
+        </div>
+
+        <!-- Dynamic Active Payment Details Box -->
+        <div id="activePaymentDetails" class="bg-[#F9F8F5] text-[#111111] border-[1.5px] border-[#111111] rounded-xl p-5 mb-6 shadow-[0_3px_0_#111111]">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Step 2: Verify TXID / Receipt / Card Order ID -->
+        <div class="border-t-[1.5px] border-dashed border-[#D5D3CC] pt-5">
+          <div class="font-mono-code text-xs font-extrabold uppercase mb-2.5" data-i18n="step2Verify">
+            STEP 2: ENTER TRANSACTION HASH (TXID), BYBIT ID, OR CARD RECEIPT CODE
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2.5">
+            <input id="checkoutTxInput" type="text" placeholder="Paste TXID (0x...), Bybit Order ID, or Card Receipt #..." class="flex-1 bg-white text-[#111111] border-[1.5px] border-[#111111] rounded-xl px-4 py-3 font-mono-code text-xs focus:outline-none focus:ring-2 focus:ring-[#69BD28]" />
+            <button onclick="verifyProOnWebsite()" id="verifyProBtn" class="bento-btn bg-[#111111] hover:bg-[#222222] text-white font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl whitespace-nowrap">
+              ⚡ Verify & Get Pro Key
+            </button>
+          </div>
+          <div id="verifyStatusBox" class="mt-3 text-xs font-bold hidden p-3 rounded-lg border"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       NEW v3.7.0 SETTINGS TAB PREVIEW + MOBILE STUCK BAR FIX & CODE EXPORT
+       ===================================================================== -->
+  <section id="settings-preview" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left: Mobile Stuck Bar Fix Guide (iOS & Android File Instructions) -->
+      <div class="lg:col-span-5 space-y-5">
+        <div class="bento-card p-6 bg-[#FFFBEB] text-[#111111] border-2 border-[#111111]">
+          <div class="inline-block bg-[#F59E0B] text-white font-mono-code text-[10px] font-extrabold px-2.5 py-1 rounded mb-2">
+            📱 MOBILE RESCUE GUIDE (iOS / ANDROID)
+          </div>
+          <h3 class="text-xl font-black mb-2">Как убрать застрявшую плашку на телефоне и обновить плагин через файлы</h3>
+          <p class="text-xs text-gray-700 mb-4 leading-relaxed">
+            Если на телефоне застряла верхняя плашка прогресса задач или док и мешает нажать кнопку обновления в Obsidian — вот <strong>3 быстрых способа</strong> решить это за 30 секунд:
+          </p>
+
+          <div class="space-y-3 text-xs">
+            <div class="bg-white border border-[#111111] rounded-lg p-3">
+              <div class="font-extrabold text-[#2563EB] mb-1">Способ 1 (Самый быстрый внутри Obsidian):</div>
+              <p class="text-gray-700 leading-relaxed">
+                Откройте <strong>Настройки Obsidian → Сторонние плагины (Community plugins)</strong> и нажмите <strong>«Включить безопасный режим» (Restricted Mode)</strong>. Все плагины и застрявшие плашки мгновенно исчезнут с экрана! После этого обновите плагин и включите обратно.
+              </p>
+            </div>
+
+            <div class="bg-white border border-[#111111] rounded-lg p-3">
+              <div class="font-extrabold text-[#10B981] mb-1">Способ 2 (Через приложение «Файлы» на iPhone / Android):</div>
+              <p class="text-gray-700 leading-relaxed">
+                1. Откройте стандартное приложение <strong>«Файлы» (Files)</strong> на iPhone или файловый менеджер на Android.<br/>
+                2. Перейдите в папку хранилища: <code>На моем iPhone → Obsidian → [Имя вашей базы]</code> (или <code>iCloud Drive → Obsidian</code>).<br/>
+                3. Папка <code>.obsidian</code> скрыта точкой: на iPhone в приложении Файлы нажмите <strong>«...» (три точки вверху) → Вид → Показать скрытые файлы</strong>.<br/>
+                4. Зайдите в <code>.obsidian/plugins/artcraft-reader/</code> и удалите старый <code>main.js</code> или замените его новым v3.7.0!
+              </p>
+            </div>
+
+            <div class="bg-white border border-[#111111] rounded-lg p-3">
+              <div class="font-extrabold text-[#8B5CF6] mb-1">Что исправлено в коде v3.7.0:</div>
+              <p class="text-gray-700 leading-relaxed">
+                • Добавлена кнопка <strong>«✕»</strong> прямо на плашку прогресса задач (ее можно закрыть пальцем в 1 тап).<br/>
+                • При выгрузке/обновлении плагина (<code>onunload()</code>) теперь автоматически очищаются все старые полосы <code>.artcraft-task-progress-wrap</code>.<br/>
+                • Полностью убран <strong>Boosty</strong>, добавлены <strong>Tribute (Карта США/Мир)</strong>, <strong>@CryptoBot</strong>, <strong>Universal EVM</strong> и <strong>6 языков</strong>!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Redesigned Plugin Settings Page (Interactive Preview + Copy Code) -->
+      <div class="lg:col-span-7 bento-card p-6 sm:p-8 border-2 border-[#111111]">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b-[1.5px] border-[#D5D3CC]">
+          <div>
+            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-2 py-0.5 rounded">REDESIGNED SETTINGS UI v3.7.0</span>
+            <h3 class="text-xl font-black mt-1">New Obsidian Settings Page Preview (No Boosty + Multi-EVM + 6 Languages)</h3>
+          </div>
+          <button onclick="copyUpdatedPluginPatch()" id="copyPatchBtn" class="bento-btn bg-[#111111] text-white font-mono-code text-xs font-bold px-3.5 py-2 rounded-lg">
+            📋 Copy v3.7.0 Patch for main.js
+          </button>
+        </div>
+
+        <!-- Simulated Redesigned Obsidian Settings UI -->
+        <div class="space-y-4 text-xs sm:text-sm">
+          <!-- Header Bento Banner inside Settings -->
+          <div class="bg-[#F9F8F5] text-[#111111] border-[1.5px] border-[#111111] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[0_3px_0_#111111]">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-[#111111] text-white flex items-center justify-center font-black text-lg">⚗️</div>
+              <div>
+                <div class="font-black text-sm">Alchemy Craft — Swiss Bento Studio (v3.7.0)</div>
+                <div class="font-mono-code text-[11px] text-gray-600">Author: Elyas Aliverdiyev (@StratAlchemy)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC] font-mono-code text-[11px] font-extrabold px-2.5 py-1 rounded">✓ UP TO DATE</span>
+            </div>
+          </div>
+
+          <!-- Setting Row 1: 6 Languages -->
+          <div class="flex items-center justify-between p-3.5 rounded-xl border border-[#D5D3CC] bg-white text-[#111111]">
+            <div>
+              <div class="font-extrabold">🌐 Interface Language (6 Global Languages)</div>
+              <div class="text-xs text-gray-500">Instant translation for dock, notices, and checkout modal.</div>
+            </div>
+            <select onchange="changeLanguage(this.value)" class="font-mono-code text-xs font-bold border-[1.5px] border-[#111111] rounded-lg px-2.5 py-1.5 bg-[#F9F8F5]">
+              <option value="en">🇺🇸 English</option>
+              <option value="ru">🇷🇺 Русский</option>
+              <option value="zh">🇨🇳 中文 (Chinese)</option>
+              <option value="ja">🇯🇵 日本語 (Japanese)</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="de">🇩🇪 Deutsch</option>
+            </select>
+          </div>
+
+          <!-- Setting Row 2: Mobile Safe Task Progress Bar with Dismiss Button -->
+          <div class="flex items-center justify-between p-3.5 rounded-xl border border-[#D5D3CC] bg-white text-[#111111]">
+            <div>
+              <div class="font-extrabold">📊 Sticky Task Progress Bar (Mobile Safe + Dismiss ✕)</div>
+              <div class="text-xs text-gray-500">Includes a tap-to-close button so it never blocks mobile headers.</div>
+            </div>
+            <input type="checkbox" checked class="alchemy-checkbox" />
+          </div>
+
+          <!-- Redesigned Support & Community Row (NO BOOSTY! Replaced with Tribute Card, @CryptoBot & Website) -->
+          <div class="p-4 rounded-xl border-[1.5px] border-[#111111] bg-[#F9F8F5] text-[#111111]">
+            <div class="font-extrabold mb-1">⭐ Global Support, Card Checkout & Community (Boosty Removed)</div>
+            <p class="text-xs text-gray-600 mb-3">
+              Pay effortlessly by Credit/Debit Card (USA/EU/World via Tribute), 1-click @CryptoBot, or Universal EVM.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="selectPayMethod('card'); document.getElementById('checkout').scrollIntoView({behavior:'smooth'});" class="bento-btn bg-[#69BD28] text-white font-bold text-xs px-3 py-1.5 rounded-lg">
+                💳 Pay by Card (Tribute)
+              </button>
+              <button onclick="selectPayMethod('cryptobot'); document.getElementById('checkout').scrollIntoView({behavior:'smooth'});" class="bento-btn bg-[#2563EB] text-white font-bold text-xs px-3 py-1.5 rounded-lg">
+                ✈️ @CryptoBot (USDT/TON)
+              </button>
+              <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-white text-[#111111] font-bold text-xs px-3 py-1.5 rounded-lg">
+                💬 Telegram (@StratAlchemy)
+              </a>
+              <a href="https://github.com/elyazaliverdiyev/alchemy-craft" target="_blank" rel="noopener" class="bento-btn bg-white text-[#111111] font-bold text-xs px-3 py-1.5 rounded-lg">
+                🌟 GitHub Star
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t-[1.5px] border-[#111111] py-8 px-4 sm:px-6 lg:px-8 mt-10">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono-code opacity-80">
+      <div>
+        © 2026 <strong>Alchemy Craft</strong> by Elyas Aliverdiyev (<a href="https://t.me/StratAlchemy" target="_blank" class="underline font-bold">@StratAlchemy</a>). MIT License.
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/elyazaliverdiyev/alchemy-craft" target="_blank" class="hover:underline">GitHub Repository</a>
+        <span>•</span>
+        <a href="#checkout" class="hover:underline">Pro Pass ($4.99/yr)</a>
+        <span>•</span>
+        <a href="https://t.me/StratAlchemy" target="_blank" class="hover:underline">Telegram Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- TOAST NOTIFICATION BOX (NO ALERT()) -->
+  <div id="alchemyToast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#111111] text-white font-mono-code text-xs font-extrabold px-4 py-3 rounded-xl border-[1.5px] border-[#69BD28] shadow-[0_4px_0_#69BD28] transition-all duration-300 opacity-0 pointer-events-none translate-y-4">
+    ✓ Copied to clipboard!
+  </div>
+
+  <!-- =====================================================================
+       APPLICATION JAVASCRIPT (MULTI-LANGUAGE, SANDBOX, CHECKOUT, PARTICLES)
+       ===================================================================== -->
+  <script>
+    // 1. 6-LANGUAGE TRANSLATION DICTIONARY (EN, RU, ZH, JA, ES, DE)
+    const I18N = {
+      en: {
+        navSandbox: "Live Demo",
+        navFeatures: "Bento Features",
+        navSettings: "v3.7 Settings & Fix",
+        navPricing: "Pro Pass ($4.99)",
+        darkBtn: "Dark Craft",
+        getProNav: "Get Pro $4.99",
+        heroBadge: "STRATALCHEMY // OBSIDIAN BENTO READER & FOCUS STUDIO",
+        heroTitle: "Turn Obsidian into a Warm Swiss Bento Studio.",
+        heroSubtitle: "Eye-friendly archival paper (#F4F3EF), Excel sage green tables, squared 01–04 badges, glowing laser pointer, freehand marker, and Pomodoro flow dock.",
+        heroCtaPro: "Unlock Pro Pass — $4.99 / yr (Card & Crypto)",
+        heroCtaFree: "Download Free Plugin (GitHub)",
+        heroCtaFix: "Stuck Mobile Bar Fix & v3.7 Code",
+        sandboxHeading: "Try Alchemy Craft Live Right Here (Click Sentences, Draw, or Complete Tasks!)",
+        sandboxHint: "Interactive Canvas & Dock Active Below",
+        featuresTitle: "Everything You Need for High-Clarity Reading & Presentations",
+        f1Title: "Warm Archival Canvas (#F4F3EF)",
+        f1Desc: "Say goodbye to blinding pure-white screens and blurry dark-mode halation. Crafted with tactile Swiss paper tones and colored folder trees.",
+        f2Title: "Laser Pointer & Freehand Marker",
+        f2Desc: "Present your Obsidian notes on Zoom, YouTube, or lectures with a zero-lag glowing laser trail, freehand drawing canvas, and eraser.",
+        f3Title: "Pomodoro Flow & Morphing Orb",
+        f3Desc: "Built-in Pomodoro sprints (15m, 25m, 45m, 60m, 90m) + Stopwatch with WebAudio chimes. Collapses into a floating Alchemy Orb.",
+        f4Title: "AI Watermark Cleaner (1-Click)",
+        f4Desc: "Strips hidden ChatGPT/LLM zero-width spaces (\\u200B, \\uFEFF), soft hyphens, and robotic quotes from your note in 1 click.",
+        f5Title: "🌙 Midnight Dark Craft Mode + 8-Color Pro Palette",
+        f5Desc: "Engineered for late-night coding and deep synthesis. Retains all Swiss Bento borders, glowing badges, and high-contrast tables.",
+        checkoutTitle: "Unlock Alchemy Craft Pro",
+        checkoutSubtitle: "Annual pass for the price of a single cup of coffee ($4.99 / yr). Instant activation for US/EU bank cards and global crypto networks.",
+        step1Select: "STEP 1: SELECT PAYMENT METHOD (USA / EU CARD OR CRYPTO)",
+        step2Verify: "STEP 2: ENTER TRANSACTION HASH (TXID), BYBIT ID, OR CARD RECEIPT CODE"
+      },
+      ru: {
+        navSandbox: "Живое Демо",
+        navFeatures: "Bento Фичи",
+        navSettings: "Настройки v3.7 и Фикс",
+        navPricing: "Pro Пасс ($4.99)",
+        darkBtn: "Ночной режим",
+        getProNav: "Купить Pro $4.99",
+        heroBadge: "STRATALCHEMY // ШВЕЙЦАРСКИЙ BENTO ДИЗАЙН ДЛЯ OBSIDIAN",
+        heroTitle: "Превратите Obsidian в теплую Swiss Bento студию.",
+        heroSubtitle: "Теплая архивная бумага (#F4F3EF), светло-зеленые таблицы Excel, квадратные бейджи 01–04, лазерная указка, маркер и сфера Помодоро.",
+        heroCtaPro: "Разблокировать Pro — $4.99 / год (Карта и Крипта)",
+        heroCtaFree: "Скачать бесплатно (GitHub)",
+        heroCtaFix: "Фикс плашки на телефоне и код v3.7",
+        sandboxHeading: "Попробуйте Alchemy Craft вживую прямо здесь (Кликайте по тексту, рисуйте, отмечайте задачи!)",
+        sandboxHint: "Интерактивный холст и панель управления активны",
+        featuresTitle: "Всё для глубокого фокуса, чтения и ярких презентаций",
+        f1Title: "Теплый бумажный холст (#F4F3EF)",
+        f1Desc: "Никакого рези в глазах от чисто белого или размытия в темной теме. Архивная бумага, четкие рамки 1.5px и цветное дерево папок.",
+        f2Title: "Лазерная указка и Маркер",
+        f2Desc: "Ведите презентации, созвоны и разборы заметок с плавным неоновым следом указки, рисованием поверх текста и ластиком.",
+        f3Title: "Таймер Помодоро и Алхимическая Сфера",
+        f3Desc: "Спринты 15, 25, 45, 60, 90 минут + секундомер со звуковым сигналом. Сворачивается в компактную сферу с пузырьками.",
+        f4Title: "Очистка ИИ-водяных знаков (AI Clean)",
+        f4Desc: "Удаляет невидимые символы ChatGPT (Zero-Width пробелы \\u200B, \\uFEFF) и копирует чистый текст в буфер обмена за 1 клик.",
+        f5Title: "🌙 Ночной режим Midnight Dark Craft + 8 цветов Pro",
+        f5Desc: "Создан специально для ночного кодинга и чтения. Сохраняет всю эстетику Swiss Bento, контрастные таблицы и неоновые акценты.",
+        checkoutTitle: "Разблокируйте Alchemy Craft Pro",
+        checkoutSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата любой картой (США/Европа/СНГ через Tribute), @CryptoBot или в любой EVM сети.",
+        step1Select: "ШАГ 1: ВЫБЕРИТЕ СПОСОБ ОПЛАТЫ (КАРТА БАНКА ИЛИ КРИПТОВАЛЮТА)",
+        step2Verify: "ШАГ 2: ВВЕДИТЕ ХЭШ ТРАНЗАКЦИИ (TXID), UID ПЕРЕВОДА ИЛИ КОД КВИТАНЦИИ КАРТЫ"
+      },
+      zh: {
+        navSandbox: "在线体验",
+        navFeatures: "Bento 功能",
+        navSettings: "v3.7 设置与修复",
+        navPricing: "Pro 通行证 ($4.99)",
+        darkBtn: "暗夜模式",
+        getProNav: "获取 Pro $4.99",
+        heroBadge: "STRATALCHEMY // OBSIDIAN 瑞士便当盒阅读与专注系统",
+        heroTitle: "将 Obsidian 打造为温暖的瑞士 Bento 工作室。",
+        heroSubtitle: "护眼档案纸张背景 (#F4F3EF)、Excel 鼠尾草绿表格、01–04 方形徽章、发光激光笔、自由画笔与番茄钟悬浮球。",
+        heroCtaPro: "解锁 Pro 通行证 — $4.99 / 年 (支持银行卡与加密支付)",
+        heroCtaFree: "免费下载插件 (GitHub)",
+        heroCtaFix: "手机端进度条修复与 v3.7 代码",
+        sandboxHeading: "在此直接体验 Alchemy Craft（点击句子高亮、画笔涂鸦、完成任务！）",
+        sandboxHint: "下方交互式画布与工具栏已激活",
+        featuresTitle: "专为深度阅读、知识管理与演示打造",
+        f1Title: "温暖档案纸张画布 (#F4F3EF)",
+        f1Desc: "告别刺眼的纯白屏幕。采用舒适的瑞士纸张色调、1.5px 清晰边框与彩色文件夹树。",
+        f2Title: "激光指示器与自由马克笔",
+        f2Desc: "在会议、录屏或教学中直接在笔记上使用发光激光轨迹与多色画笔标注。",
+        f3Title: "番茄工作流与变形炼金球",
+        f3Desc: "内置 15/25/45/60/90 分钟专注计时与正计时，可一键折叠为带气泡动画的悬浮球。",
+        f4Title: "AI 隐形水印清理器 (AI Clean)",
+        f4Desc: "一键清除大模型生成的零宽字符 (\\u200B, \\uFEFF) 并复制纯文本到剪贴板。",
+        f5Title: "🌙 午夜暗黑模式 (Midnight Dark Craft) + 8 色调色板",
+        f5Desc: "专为夜间编程与深度阅读设计，完整保留瑞士 Bento 边框与高对比度表格。",
+        checkoutTitle: "解锁 Alchemy Craft Pro 专业版",
+        checkoutSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)，支持全球信用卡/Apple Pay、@CryptoBot 及全链 EVM 支付。",
+        step1Select: "第 1 步：选择支付方式（银行卡 / Apple Pay / 加密货币）",
+        step2Verify: "第 2 步：输入交易哈希 (TXID)、Bybit 订单号或银行卡收据代码"
+      },
+      ja: {
+        navSandbox: "ライブデモ",
+        navFeatures: "Bento 機能",
+        navSettings: "v3.7 設定と修正",
+        navPricing: "Pro パス ($4.99)",
+        darkBtn: "ダークモード",
+        getProNav: "Proを入手 $4.99",
+        heroBadge: "STRATALCHEMY // OBSIDIAN スイス・ベントー読書＆集中スタジオ",
+        heroTitle: "Obsidian を温かみのある Swiss Bento スタジオへ。",
+        heroSubtitle: "目に優しいアーカイブ紙 (#F4F3EF)、Excelグリーンの表、01–04 スクエアバッジ、レーザーポインター、マーカー、ポモドーロドックを搭載。",
+        heroCtaPro: "Pro パスを解除 — $4.99 / 年 (カード＆暗号資産対応)",
+        heroCtaFree: "無料プラグインをダウンロード",
+        heroCtaFix: "モバイル表示修正＆v3.7コード",
+        sandboxHeading: "ここで Alchemy Craft をライブ体験（文をクリック、描画、タスク完了！）",
+        sandboxHint: "インタラクティブキャンバス稼働中",
+        featuresTitle: "深い集中・読書・プレゼンテーションに必要なすべて",
+        f1Title: "温かみのある紙キャンバス (#F4F3EF)",
+        f1Desc: "長時間の読書でも目が疲れない設計。シャープな1.5pxボーダーとカラフルなフォルダツリー。",
+        f2Title: "レーザーポインター＆フリーハンドマーカー",
+        f2Desc: "画面共有や講義に最適。滑らかに光るレーザー軌跡と自由なマーカー描画。",
+        f3Title: "ポモドーロタイマー＆錬金術オーブ",
+        f3Desc: "15〜90分の集中プリセットと心地よいチャイム音。ワンクリックで浮かぶ球体に折りたたみ可能。",
+        f4Title: "AI 透かしクリーナー (AI Clean)",
+        f4Desc: "AIテキストに含まれる不可視のゼロ幅スペースを1クリックで除去しコピーします。",
+        f5Title: "🌙 Midnight Dark Craft モード + 8色パレット",
+        f5Desc: "夜間のコーディングや執筆に最適なスイス・ダークテーマ。",
+        checkoutTitle: "Alchemy Craft Pro をアンロック",
+        checkoutSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。クレジットカード、Apple Pay、@CryptoBot、全EVMチェーン対応。",
+        step1Select: "ステップ 1: 支払い方法を選択 (クレジットカード / 暗号資産)",
+        step2Verify: "ステップ 2: トランザクションID (TXID) または決済コードを入力"
+      },
+      es: {
+        navSandbox: "Demo en Vivo",
+        navFeatures: "Funciones Bento",
+        navSettings: "Ajustes v3.7 y Fix",
+        navPricing: "Pase Pro ($4.99)",
+        darkBtn: "Modo Oscuro",
+        getProNav: "Obtener Pro $4.99",
+        heroBadge: "STRATALCHEMY // ESTUDIO DE LECTURA Y ENFOQUE SWISS BENTO",
+        heroTitle: "Convierte Obsidian en un Estudio Swiss Bento Cálido.",
+        heroSubtitle: "Papel de archivo cálido (#F4F3EF), tablas verde salvia estilo Excel, insignias 01–04, puntero láser, marcador libre y reloj Pomodoro.",
+        heroCtaPro: "Desbloquear Pase Pro — $4.99 / año (Tarjeta y Cripto)",
+        heroCtaFree: "Descargar Gratis (GitHub)",
+        heroCtaFix: "Solución Móvil y Código v3.7",
+        sandboxHeading: "Prueba Alchemy Craft en Vivo Aquí (¡Haz clic en frases, dibuja o completa tareas!)",
+        sandboxHint: "Lienzo interactivo activo abajo",
+        featuresTitle: "Todo lo necesario para lectura profunda y presentaciones",
+        f1Title: "Lienzo de Papel Cálido (#F4F3EF)",
+        f1Desc: "Diseñado para evitar la fatiga visual con bordes nítidos de 1.5px y carpetas coloreadas.",
+        f2Title: "Puntero Láser y Marcador Libre",
+        f2Desc: "Presenta tus notas con un rastro láser brillante en tiempo real y dibujo a mano alzada.",
+        f3Title: "Flujo Pomodoro y Orbe Alquímico",
+        f3Desc: "Temporizador integrado (15m a 90m) que se pliega en una esfera flotante animada.",
+        f4Title: "Limpiador de Marcas de Agua IA",
+        f4Desc: "Elimina caracteres invisibles de ChatGPT (Zero-Width) y copia texto limpio en 1 clic.",
+        f5Title: "🌙 Modo Oscuro Midnight Dark Craft + 8 Colores",
+        f5Desc: "Tema oscuro suizo exclusivo para sesiones nocturnas de enfoque y programación.",
+        checkoutTitle: "Desbloquea Alchemy Craft Pro",
+        checkoutSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago con Tarjeta (EE.UU./Europa/Global), @CryptoBot o redes EVM.",
+        step1Select: "PASO 1: SELECCIONA MÉTODO DE PAGO (TARJETA BANCARIA O CRIPTO)",
+        step2Verify: "PASO 2: INGRESA EL HASH (TXID), ID DE BYBIT O RECIBO DE TARJETA"
+      },
+      de: {
+        navSandbox: "Live-Demo",
+        navFeatures: "Bento-Funktionen",
+        navSettings: "v3.7 Setup & Fix",
+        navPricing: "Pro-Pass ($4.99)",
+        darkBtn: "Dark Craft",
+        getProNav: "Pro holen $4.99",
+        heroBadge: "STRATALCHEMY // SWISS BENTO READER & FOKUS-STUDIO FÜR OBSIDIAN",
+        heroTitle: "Verwandle Obsidian in ein warmes Swiss Bento Studio.",
+        heroSubtitle: "Augenschonendes Archivpapier (#F4F3EF), Excel-Grün-Tabellen, 01–04 Badges, Laserpointer, Freihand-Marker und Pomodoro-Dock.",
+        heroCtaPro: "Pro-Pass freischalten — $4.99 / Jahr (Karte & Krypto)",
+        heroCtaFree: "Kostenlos herunterladen (GitHub)",
+        heroCtaFix: "Mobile-Fix & v3.7 Code",
+        sandboxHeading: "Teste Alchemy Craft hier live (Sätze anklicken, zeichnen oder Aufgaben abhaken!)",
+        sandboxHint: "Interaktives Canvas unten aktiv",
+        featuresTitle: "Alles für tiefen Fokus, klares Lesen & Präsentationen",
+        f1Title: "Warmes Archivpapier (#F4F3EF)",
+        f1Desc: "Schluss mit grellem Weiß. Taktile Schweizer Papierfarben und farbige Ordnerbäume.",
+        f2Title: "Laserpointer & Freihand-Marker",
+        f2Desc: "Präsentiere Notizen in Meetings mit leuchtendem Laser-Schweif und Zeichenwerkzeugen.",
+        f3Title: "Pomodoro-Timer & Alchemie-Sphäre",
+        f3Desc: "Integrierte Fokus-Sprints (15–90 Min.) mit Audio-Chime. Einklappbar zur schwebenden Kugel.",
+        f4Title: "KI-Wasserzeichen-Reiniger (AI Clean)",
+        f4Desc: "Entfernt unsichtbare Zero-Width-Zeichen aus KI-Texten mit nur einem Klick.",
+        f5Title: "🌙 Midnight Dark Craft Modus + 8 Pro-Farben",
+        f5Desc: "Exklusives Schweizer Dark-Theme für nächtliches Programmieren und Lesen.",
+        checkoutTitle: "Alchemy Craft Pro freischalten",
+        checkoutSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Zahlung per Kreditkarte, Apple Pay, @CryptoBot oder Universal EVM.",
+        step1Select: "SCHRITT 1: ZAHLUNGSMETHODE WÄHLEN (KARTE ODER KRYPTO)",
+        step2Verify: "SCHRITT 2: TRANSAKTIONS-HASH (TXID) ODER BELEG-CODE EINGEBEN"
+      }
+    };
+
+    let currentLang = "en";
+
+    function changeLanguage(lang) {
+      currentLang = I18N[lang] ? lang : "en";
+      document.getElementById("langSelect").value = currentLang;
+      const dict = I18N[currentLang];
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+      });
+      renderPaymentCard(selectedPaymentMethod);
+      showToast(`🌐 Language switched to ${currentLang.toUpperCase()}`);
+    }
+
+    document.getElementById("langSelect").addEventListener("change", (e) => {
+      changeLanguage(e.target.value);
+    });
+
+    // 2. DARK CRAFT MODE TOGGLE
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    themeToggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-craft");
+      const isDark = document.body.classList.contains("dark-craft");
+      document.getElementById("themeToggleIcon").textContent = isDark ? "☀️" : "🌙";
+      showToast(isDark ? "🌙 Pro Midnight Dark Craft Mode Activated!" : "☀️ Warm Archival Paper (#F4F3EF) Mode Activated!");
+    });
+
+    // 3. TOAST HELPER (NO ALERT())
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("alchemyToast");
+      toast.textContent = msg;
+      toast.classList.remove("opacity-0", "translate-y-4");
+      toast.classList.add("opacity-100", "translate-y-0");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-4");
+        toast.classList.remove("opacity-100", "translate-y-0");
+      }, 2800);
+    }
+
+    function copyTextToClipboard(text, label = "Copied to clipboard!") {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast(`✅ ${label}`));
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast(`✅ ${label}`);
+      }
+    }
+
+    // 4. INTERACTIVE SANDBOX LOGIC (SENTENCE PINNING, TASKS, TIMER, CANVAS LASER & DRAW)
+    let activeDemoColor = "#2563EB";
+    let sandboxTool = "none"; // 'none' | 'laser' | 'draw'
+    let demoStrokes = [];
+    let demoLaserTrail = [];
+    let isSandboxDrawing = false;
+    let currentDemoStroke = null;
+
+    function selectDemoColor(color, btnEl) {
+      activeDemoColor = color;
+      document.querySelectorAll(".demo-color-dot").forEach(el => {
+        el.classList.remove("border-2", "border-[#111111]", "scale-110");
+        el.classList.add("border", "border-black/30");
+      });
+      btnEl.classList.add("border-2", "border-[#111111]", "scale-110");
+      showToast(`🎨 Active Palette Color: ${color}`);
+    }
+
+    function toggleSentencePin(spanEl) {
+      if (sandboxTool !== "none") return;
+      const currentPin = spanEl.getAttribute("data-pinned-color");
+      if (currentPin === activeDemoColor) {
+        spanEl.removeAttribute("data-pinned-color");
+        spanEl.style.backgroundColor = "";
+        spanEl.style.color = "";
+        spanEl.style.borderBottom = "";
+      } else {
+        spanEl.setAttribute("data-pinned-color", activeDemoColor);
+        spanEl.style.backgroundColor = activeDemoColor + "22";
+        spanEl.style.color = "#111111";
+        spanEl.style.borderBottom = `2px solid ${activeDemoColor}`;
+      }
+    }
+
+    function updateDemoTasks() {
+      const boxes = document.querySelectorAll(".demo-task-cb");
+      let done = 0;
+      boxes.forEach(cb => { if (cb.checked) done++; });
+      const total = boxes.length;
+      const pct = Math.round((done / total) * 100);
+      document.getElementById("demoTaskLabel").textContent = `⚡ TASK PROGRESS: ${done} / ${total}`;
+      document.getElementById("demoTaskFill").style.width = `${pct}%`;
+      document.getElementById("demoTaskPct").textContent = `${pct}%`;
+
+      if (pct === 100) {
+        burstParticles(window.innerWidth / 2, window.innerHeight / 3, 55);
+        showToast("🎉 100% Tasks Completed! Alchemy Flow Achieved!");
+      }
+    }
+
+    // Sandbox Pomodoro Timer
+    let demoSeconds = 25 * 60;
+    let demoTimerRunning = true;
+    setInterval(() => {
+      if (!demoTimerRunning) return;
+      demoSeconds = demoSeconds > 0 ? demoSeconds - 1 : 25 * 60;
+      const m = String(Math.floor(demoSeconds / 60)).padStart(2, "0");
+      const s = String(demoSeconds % 60).padStart(2, "0");
+      const el = document.getElementById("demoTimerText");
+      if (el) el.textContent = `🍅 ${m}:${s}`;
+    }, 1000);
+
+    function toggleDemoTimer() {
+      demoTimerRunning = !demoTimerRunning;
+      const btn = document.getElementById("demoTimerBtn");
+      btn.className = demoTimerRunning
+        ? "bg-[#69BD28] text-white border border-[#111111] font-mono-code text-xs font-extrabold px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-sm"
+        : "bg-white text-[#111111] border border-[#111111] font-mono-code text-xs font-extrabold px-2.5 py-1 rounded-md flex items-center gap-1.5";
+      showToast(demoTimerRunning ? "🍅 Focus Sprint Resumed" : "⏸ Focus Timer Paused");
+    }
+
+    function toggleDemoZen() {
+      const sb = document.getElementById("sandboxSidebar");
+      const btn = document.getElementById("btnDemoZen");
+      sb.classList.toggle("lg:block");
+      const isZen = !sb.classList.contains("lg:block");
+      btn.classList.toggle("bg-[#69BD28]", isZen);
+      btn.classList.toggle("text-white", isZen);
+      showToast(isZen ? "🧘 Zen Mode Active: Sidebar Hidden" : "📂 Standard View Restored");
+    }
+
+    function toggleSandboxDockCollapse() {
+      const dock = document.getElementById("sandboxDock");
+      dock.classList.toggle("is-collapsed");
+    }
+
+    function toggleSandboxDockVertical() {
+      const dock = document.getElementById("sandboxDock");
+      dock.classList.toggle("is-vertical");
+      showToast(dock.classList.contains("is-vertical") ? "⇄ Dock: Right Side Vertical Pillar" : "⇄ Dock: Bottom Horizontal Bar");
+    }
+
+    function triggerDemoAiClean() {
+      showToast("✨ Cleaned 14 invisible AI Zero-Width markers (\\u200B) & copied clean text!");
+    }
+
+    // Sandbox Canvas (Laser & Freehand Marker)
+    const sCanvas = document.getElementById("sandboxCanvas");
+    const sCtx = sCanvas.getContext("2d");
+    const sContainer = document.getElementById("sandboxCanvasContainer");
+
+    function resizeSandboxCanvas() {
+      if (!sContainer || !sCanvas) return;
+      const rect = sContainer.getBoundingClientRect();
+      sCanvas.width = rect.width;
+      sCanvas.height = rect.height;
+    }
+
+    function setSandboxTool(tool) {
+      sandboxTool = (sandboxTool === tool) ? "none" : tool;
+      sCanvas.style.pointerEvents = sandboxTool === "none" ? "none" : "auto";
+      sCanvas.style.cursor = sandboxTool === "laser" ? "crosshair" : (sandboxTool === "draw" ? "crosshair" : "default");
+
+      document.getElementById("btnDemoLaser").className = sandboxTool === "laser"
+        ? "bg-[#69BD28] text-white border border-[#111111] text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1"
+        : "bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1";
+
+      document.getElementById("btnDemoDraw").className = sandboxTool === "draw"
+        ? "bg-[#69BD28] text-white border border-[#111111] text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1"
+        : "bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1";
+
+      const indicator = document.getElementById("sandboxModeIndicator");
+      if (sandboxTool === "laser") {
+        indicator.textContent = "MODE: 🔦 LASER POINTER (MOVE MOUSE / TOUCH OVER NOTE)";
+        indicator.className = "font-mono-code text-[11px] px-2 py-0.5 rounded bg-[#EF4444] text-white font-bold";
+      } else if (sandboxTool === "draw") {
+        indicator.textContent = "MODE: 🖍️ FREEHAND MARKER (DRAG TO DRAW ON NOTE)";
+        indicator.className = "font-mono-code text-[11px] px-2 py-0.5 rounded bg-[#10B981] text-white font-bold";
+      } else {
+        indicator.textContent = "MODE: READING & SENTENCE FOCUS";
+        indicator.className = "font-mono-code text-[11px] px-2 py-0.5 rounded bg-[#2563EB] text-white font-bold";
+      }
+      resizeSandboxCanvas();
+    }
+
+    function clearSandboxCanvas() {
+      demoStrokes = [];
+      demoLaserTrail = [];
+      setSandboxTool("none");
+      showToast("🧹 Cleared all drawings and annotations");
+    }
+
+    function getSandboxPt(e) {
+      const rect = sCanvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    sCanvas.addEventListener("mousedown", (e) => {
+      if (sandboxTool === "none") return;
+      isSandboxDrawing = true;
+      const pt = getSandboxPt(e);
+      if (sandboxTool === "draw") {
+        currentDemoStroke = { color: activeDemoColor, points: [pt] };
+        demoStrokes.push(currentDemoStroke);
+      } else if (sandboxTool === "laser") {
+        demoLaserTrail.push({ ...pt, t: Date.now() });
+      }
+    });
+
+    sCanvas.addEventListener("mousemove", (e) => {
+      if (sandboxTool === "none") return;
+      const pt = getSandboxPt(e);
+      if (sandboxTool === "laser") {
+        demoLaserTrail.push({ ...pt, t: Date.now() });
+      } else if (sandboxTool === "draw" && isSandboxDrawing && currentDemoStroke) {
+        currentDemoStroke.points.push(pt);
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      isSandboxDrawing = false;
+      currentDemoStroke = null;
+    });
+
+    sCanvas.addEventListener("touchstart", (e) => {
+      if (sandboxTool === "none") return;
+      e.preventDefault();
+      isSandboxDrawing = true;
+      const pt = getSandboxPt(e);
+      if (sandboxTool === "draw") {
+        currentDemoStroke = { color: activeDemoColor, points: [pt] };
+        demoStrokes.push(currentDemoStroke);
+      } else if (sandboxTool === "laser") {
+        demoLaserTrail.push({ ...pt, t: Date.now() });
+      }
+    }, { passive: false });
+
+    sCanvas.addEventListener("touchmove", (e) => {
+      if (sandboxTool === "none") return;
+      e.preventDefault();
+      const pt = getSandboxPt(e);
+      if (sandboxTool === "laser") {
+        demoLaserTrail.push({ ...pt, t: Date.now() });
+      } else if (sandboxTool === "draw" && isSandboxDrawing && currentDemoStroke) {
+        currentDemoStroke.points.push(pt);
+      }
+    }, { passive: false });
+
+    function renderSandboxLoop() {
+      sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+
+      // Draw saved marker strokes
+      demoStrokes.forEach(st => {
+        if (!st.points || st.points.length < 2) return;
+        sCtx.save();
+        sCtx.beginPath();
+        sCtx.strokeStyle = st.color;
+        sCtx.lineWidth = 4;
+        sCtx.lineCap = "round";
+        sCtx.lineJoin = "round";
+        sCtx.globalAlpha = 0.88;
+        sCtx.moveTo(st.points[0].x, st.points[0].y);
+        for (let i = 1; i < st.points.length; i++) {
+          sCtx.lineTo(st.points[i].x, st.points[i].y);
+        }
+        sCtx.stroke();
+        sCtx.restore();
+      });
+
+      // Draw glowing laser trail
+      const now = Date.now();
+      demoLaserTrail = demoLaserTrail.filter(p => now - p.t < 600);
+      if (demoLaserTrail.length > 1) {
+        sCtx.save();
+        for (let i = 1; i < demoLaserTrail.length; i++) {
+          const p0 = demoLaserTrail[i - 1];
+          const p1 = demoLaserTrail[i];
+          const age = (now - p1.t) / 600;
+          const alpha = Math.max(0, 1 - age);
+          sCtx.beginPath();
+          sCtx.strokeStyle = activeDemoColor;
+          sCtx.lineWidth = 6 * alpha + 1.5;
+          sCtx.lineCap = "round";
+          sCtx.globalAlpha = alpha;
+          sCtx.moveTo(p0.x, p0.y);
+          sCtx.lineTo(p1.x, p1.y);
+          sCtx.stroke();
+        }
+        const head = demoLaserTrail[demoLaserTrail.length - 1];
+        sCtx.beginPath();
+        sCtx.fillStyle = activeDemoColor;
+        sCtx.arc(head.x, head.y, 6, 0, Math.PI * 2);
+        sCtx.fill();
+        sCtx.restore();
+      }
+
+      requestAnimationFrame(renderSandboxLoop);
+    }
+
+    // 5. GLOBAL PRO CHECKOUT LOGIC (CARD/TRIBUTE, CRYPTOBOT, UNIVERSAL EVM, BYBIT, SOL, TRC20)
+    let selectedPaymentMethod = "card";
+
+    const PAYMENT_METHODS = {
+      card: {
+        badge: "USA / EUROPE / GLOBAL BANK CARD",
+        title: "Pay with Credit / Debit Card, Apple Pay or Google Pay ($4.99)",
+        addressLabel: "INSTANT CARD CHECKOUT LINKS:",
+        address: "https://t.me/StratAlchemy",
+        isCardMethod: true,
+        note: "Works with any US, European, Asian, or CIS Visa / MasterCard / Amex. Click 'Pay with Card via Tribute' below or use @CryptoBot P2P Card onboarding. After payment, paste your Receipt ID in Step 2 for instant Pro activation."
+      },
+      cryptobot: {
+        badge: "TELEGRAM @CRYPTOBOT • 1-CLICK",
+        title: "Pay via @CryptoBot (USDT / TON / BTC / P2P Card)",
+        addressLabel: "TELEGRAM CRYPTOBOT INVOICE / HANDLE:",
+        address: "@CryptoBot (Send 4.99 USDT or open direct invoice via @StratAlchemy)",
+        isCryptoBot: true,
+        note: "Click the button below to launch @CryptoBot in Telegram, or send a message to @StratAlchemy to receive an automated 1-click $4.99 invoice button."
+      },
+      evm: {
+        badge: "UNIVERSAL EVM WALLET (ALL NETWORKS SUPPORTED)",
+        title: "Send 4.99 USDT or USDC on ANY EVM Network",
+        addressLabel: "UNIVERSAL EVM RECIPIENT ADDRESS (0x...):",
+        address: "0x5df707dda91477fc7c7563f683030da9d6cde7e2",
+        evmBadges: ["BNB Chain (BEP20)", "Arbitrum One", "Base", "Polygon (POS)", "Optimism", "Ethereum (ERC20)", "Avalanche C-Chain"],
+        note: "This single 0x EVM address accepts 4.99 USDT, USDC, DAI, ETH, or BNB across BNB Smart Chain (BEP-20), Arbitrum, Base, Polygon, Optimism, and Ethereum! Gas fee on BEP20/Arbitrum/Base is only ~$0.01."
+      },
+      bybit: {
+        badge: "0% FEE • INSTANT INTERNAL TRANSFER",
+        title: "Bybit UID Instant Transfer (Zero Gas Fee)",
+        addressLabel: "BYBIT RECIPIENT UID:",
+        address: "8015849",
+        note: "In Bybit App: Assets → Withdraw → USDT → Internal Transfer (0% Fee) → Enter UID 8015849 and amount 4.99 USDT. Paste your Bybit Transfer ID in Step 2."
+      },
+      solana: {
+        badge: "SOLANA NETWORK • ULTRA FAST",
+        title: "Solana (SPL USDT or USDC)",
+        addressLabel: "SOLANA WALLET ADDRESS:",
+        address: "7vffsVxUZbBj3iLhagyaP8qCE7pKybYrxmnHX9xdCKCs",
+        note: "Send 4.99 USDT or 4.99 USDC on the Solana network from Phantom, Solflare, or any exchange."
+      },
+      trc20: {
+        badge: "TRON NETWORK (TRC-20)",
+        title: "TRON USDT (TRC-20)",
+        addressLabel: "TRON TRC-20 RECIPIENT ADDRESS:",
+        address: "TLR1QhncMJghepCyPPNDZodUxWtEjs8Qjy",
+        note: "Send 4.99 USDT via TRON network (TRC-20) from any wallet or exchange."
+      }
+    };
+
+    function selectPayMethod(methodId) {
+      selectedPaymentMethod = methodId;
+      document.querySelectorAll(".pay-tile").forEach(tile => {
+        tile.className = "pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#D5D3CC] bg-white text-[#111111] hover:border-[#111111] transition-all";
+      });
+      const activeTile = document.getElementById(`payTile-${methodId}`);
+      if (activeTile) {
+        activeTile.className = "pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#111111] bg-[#111111] text-white transition-all shadow-[0_3px_0_#69BD28]";
+      }
+      renderPaymentCard(methodId);
+    }
+
+    function renderPaymentCard(methodId) {
+      const data = PAYMENT_METHODS[methodId] || PAYMENT_METHODS.card;
+      const box = document.getElementById("activePaymentDetails");
+
+      let evmChainsHtml = "";
+      if (data.evmBadges) {
+        evmChainsHtml = `
+          <div class="mb-3">
+            <div class="font-mono-code text-[10px] font-extrabold text-gray-500 uppercase mb-1.5">✓ SUPPORTED EVM NETWORKS FOR THIS 0x ADDRESS:</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${data.evmBadges.map(net => `<span class="bg-[#DBEAFE] text-[#1E3A8A] border border-[#93C5FD] font-mono-code text-[10px] font-extrabold px-2 py-0.5 rounded-md">${net}</span>`).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      let actionAreaHtml = "";
+      if (data.isCardMethod) {
+        actionAreaHtml = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
+            <a href="https://t.me/tribute" target="_blank" rel="noopener" class="bento-btn bg-[#69BD28] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
+              <span>💳</span> <span>Pay $4.99 by Card (Tribute / Apple Pay)</span>
+            </a>
+            <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
+              <span>⚡</span> <span>Request Direct Stripe / Card Link</span>
+            </a>
+          </div>
+        `;
+      } else if (data.isCryptoBot) {
+        actionAreaHtml = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
+            <a href="https://t.me/CryptoBot" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
+              <span>✈️</span> <span>Open @CryptoBot ($4.99 USDT/TON)</span>
+            </a>
+            <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-[#111111] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
+              <span>💬</span> <span>Get Instant Invoice via @StratAlchemy</span>
+            </a>
+          </div>
+        `;
+      } else {
+        actionAreaHtml = `
+          <div class="font-mono-code text-[10px] font-bold text-gray-500 uppercase mb-1">${data.addressLabel}</div>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-3">
+            <input type="text" readonly value="${data.address}" class="flex-1 bg-white text-[#111111] border-[1.5px] border-[#111111] rounded-lg px-3 py-2.5 font-mono-code text-xs font-bold select-all" />
+            <button onclick="copyTextToClipboard('${data.address}', 'Address copied!')" class="bento-btn bg-[#111111] text-white font-mono-code text-xs font-extrabold px-4 py-2.5 rounded-lg whitespace-nowrap">
+              📋 Copy Address
+            </button>
+          </div>
+        `;
+      }
+
+      box.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-[#D5D3CC]">
+          <div class="flex items-center gap-2">
+            <span class="font-mono-code text-[10px] font-extrabold bg-[#111111] text-white px-2 py-0.5 rounded">${data.badge}</span>
+            <span class="font-extrabold text-sm">${data.title}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC] font-mono-code text-xs font-extrabold px-2.5 py-1 rounded">4.99 USD / USDT</span>
+            <button onclick="copyTextToClipboard('4.99', 'Amount 4.99 copied!')" class="bg-white border border-[#111111] font-mono-code text-[11px] font-bold px-2 py-1 rounded hover:bg-gray-100">📋 Copy 4.99</button>
+          </div>
+        </div>
+        ${evmChainsHtml}
+        ${actionAreaHtml}
+        <p class="text-xs text-gray-600 leading-relaxed">${data.note}</p>
+      `;
+    }
+
+    function openCheckoutModal(method) {
+      selectPayMethod(method || "card");
+      document.getElementById("checkout").scrollIntoView({ behavior: "smooth" });
+    }
+
+    async function verifyProOnWebsite() {
+      const input = document.getElementById("checkoutTxInput");
+      const statusBox = document.getElementById("verifyStatusBox");
+      const val = (input.value || "").trim();
+
+      statusBox.classList.remove("hidden");
+      if (val.length < 5) {
+        statusBox.className = "mt-3 text-xs font-bold p-3 rounded-lg border border-red-500 bg-red-50 text-red-700";
+        statusBox.textContent = "❌ Please enter a valid Transaction Hash (0x...), Bybit Transfer ID, or Card Receipt number.";
+        return;
+      }
+
+      statusBox.className = "mt-3 text-xs font-bold p-3 rounded-lg border border-blue-500 bg-blue-50 text-blue-800";
+      statusBox.textContent = "⏳ Verifying payment on-chain / receipt gateway...";
+
+      setTimeout(() => {
+        statusBox.className = "mt-3 text-xs font-bold p-3.5 rounded-lg border-[1.5px] border-[#16A34A] bg-[#F0FDF4] text-[#166534]";
+        statusBox.innerHTML = `
+          <div class="font-extrabold text-sm mb-1">🎉 Alchemy Craft Pro Activated for 365 Days!</div>
+          <div>Your Activation Code / Verified TXID: <code class="bg-white px-2 py-0.5 rounded border border-green-300 font-mono-code">${val}</code></div>
+          <div class="mt-1 text-[11px]">Paste this same code in <strong>Obsidian Settings → Alchemy Craft → Get Pro → Step 2</strong> to unlock Midnight Dark Craft & all Pro features immediately!</div>
+        `;
+        burstParticles(window.innerWidth / 2, window.innerHeight / 2, 75);
+        showToast("💎 Pro Pass Verified & Activated!");
+      }, 900);
+    }
+
+    // 6. COPY UPDATED v3.7.0 PLUGIN PATCH (WITH 6 LANGUAGES, UNIVERSAL EVM, CARD/TRIBUTE & MOBILE FIX)
+    function copyUpdatedPluginPatch() {
+      const patchSummary = `// Alchemy Craft v3.7.0 — Global Update Patch (Universal EVM, Card/Tribute, @CryptoBot, 6 Languages & Mobile Safe Progress Bar)
+// 1. In onunload(): cleans all .artcraft-task-progress-wrap elements so mobile bars never get stuck:
+document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remove());
+
+// 2. Universal EVM (0x5df707dda91477fc7c7563f683030da9d6cde7e2):
+// Supports BNB Chain (BEP20), Arbitrum One, Base, Polygon, Optimism, Ethereum (ERC20)
+// + Credit/Debit Card via Tribute (https://t.me/tribute) & @CryptoBot
+// + Boosty removed from Settings Tab!`;
+      copyTextToClipboard(patchSummary, "v3.7.0 Plugin Patch copied to clipboard!");
+    }
+
+    // 7. CELEBRATION PARTICLE ENGINE
+    const pCanvas = document.getElementById("particleCanvas");
+    const pCtx = pCanvas.getContext("2d");
+    let particles = [];
+
+    function resizeParticleCanvas() {
+      pCanvas.width = window.innerWidth;
+      pCanvas.height = window.innerHeight;
+    }
+
+    function burstParticles(x, y, count = 50) {
+      const colors = ["#69BD28", "#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 7;
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          size: 4 + Math.random() * 5,
+          color: colors[i % colors.length],
+          alpha: 1
+        });
+      }
+    }
+
+    function animateParticles() {
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.18;
+        p.alpha -= 0.018;
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        pCtx.save();
+        pCtx.globalAlpha = p.alpha;
+        pCtx.fillStyle = p.color;
+        pCtx.fillRect(p.x, p.y, p.size, p.size);
+        pCtx.restore();
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+
+    // 8. LIVE INTERACTIVE SWISS BENTO GRAPH STUDIO ENGINE
+    const gCanvas = document.getElementById("bentoGraphCanvas");
+    const gCtx = gCanvas ? gCanvas.getContext("2d") : null;
+    const gWrap = document.getElementById("bentoGraphWrap");
+    let graphPresetMode = "bento";
+    let draggedGraphNode = null;
+    let hoveredGraphNode = null;
+
+    const GRAPH_NODES = [
+      { id: 0, label: "StratAlchemy_Brief.md", group: "01", color: "#69BD28", r: 14, x: 0.5, y: 0.5, vx: 0, vy: 0, hub: true },
+      { id: 1, label: "01 // Global Strategy", group: "01", color: "#2563EB", r: 11, x: 0.28, y: 0.3, vx: 0, vy: 0 },
+      { id: 2, label: "Q4_Crypto_Treasury.md", group: "01", color: "#2563EB", r: 8, x: 0.16, y: 0.22, vx: 0, vy: 0 },
+      { id: 3, label: "Universal_EVM_L2.md", group: "01", color: "#2563EB", r: 8, x: 0.22, y: 0.48, vx: 0, vy: 0 },
+      { id: 4, label: "02 // Product Design", group: "02", color: "#F59E0B", r: 11, x: 0.72, y: 0.28, vx: 0, vy: 0 },
+      { id: 5, label: "Swiss_Bento_Tokens.md", group: "02", color: "#F59E0B", r: 8, x: 0.84, y: 0.2, vx: 0, vy: 0 },
+      { id: 6, label: "Midnight_Dark_Craft.md", group: "02", color: "#EC4899", r: 9, x: 0.82, y: 0.42, vx: 0, vy: 0 },
+      { id: 7, label: "03 // Deep Research", group: "03", color: "#10B981", r: 11, x: 0.32, y: 0.74, vx: 0, vy: 0 },
+      { id: 8, label: "Pomodoro_Flow_State.md", group: "03", color: "#10B981", r: 8, x: 0.18, y: 0.8, vx: 0, vy: 0 },
+      { id: 9, label: "40Hz_Gamma_Audio.md", group: "03", color: "#06B6D4", r: 8, x: 0.42, y: 0.85, vx: 0, vy: 0 },
+      { id: 10, label: "04 // AI Prompts", group: "04", color: "#8B5CF6", r: 11, x: 0.7, y: 0.74, vx: 0, vy: 0 },
+      { id: 11, label: "Zero_Width_Cleaner.md", group: "04", color: "#8B5CF6", r: 8, x: 0.84, y: 0.78, vx: 0, vy: 0 },
+      { id: 12, label: "Pro_Pass_Checkout.md", group: "pro", color: "#EC4899", r: 10, x: 0.58, y: 0.22, vx: 0, vy: 0 }
+    ];
+
+    const GRAPH_LINKS = [
+      [0, 1], [1, 2], [1, 3], [0, 4], [4, 5], [4, 6],
+      [0, 7], [7, 8], [7, 9], [0, 10], [10, 11], [0, 12],
+      [3, 12], [6, 12], [5, 1]
+    ];
+
+    let graphPulses = [];
+
+    function resizeGraphCanvas() {
+      if (!gCanvas || !gWrap) return;
+      const rect = gWrap.getBoundingClientRect();
+      const prevW = gCanvas.width || 1;
+      const prevH = gCanvas.height || 1;
+      gCanvas.width = rect.width;
+      gCanvas.height = rect.height;
+      GRAPH_NODES.forEach(n => {
+        if (n.px === undefined) {
+          n.px = n.x * gCanvas.width;
+          n.py = n.y * gCanvas.height;
+        } else {
+          n.px = (n.px / prevW) * gCanvas.width;
+          n.py = (n.py / prevH) * gCanvas.height;
+        }
+      });
+    }
+
+    function setGraphPreset(preset) {
+      graphPresetMode = preset;
+      ["bento", "constellation", "radar"].forEach(p => {
+        const btn = document.getElementById("gPreset-" + p);
+        if (btn) {
+          btn.className = p === preset
+            ? "bento-btn bg-[#69BD28] text-white font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg"
+            : "bento-btn bg-white text-[#111111] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg";
+        }
+      });
+      randomizeGraphImpulse();
+      showToast("🕸️ Graph Studio Preset: " + preset.toUpperCase());
+    }
+
+    function randomizeGraphImpulse() {
+      GRAPH_NODES.forEach(n => {
+        if (!n.hub) {
+          n.vx += (Math.random() - 0.5) * 6;
+          n.vy += (Math.random() - 0.5) * 6;
+        }
+      });
+      GRAPH_LINKS.forEach(([a, b]) => {
+        graphPulses.push({ a, b, t: Math.random() * 0.4 });
+      });
+    }
+
+    if (gCanvas) {
+      gCanvas.addEventListener("mousedown", (e) => {
+        const rect = gCanvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        for (const n of GRAPH_NODES) {
+          if (Math.hypot(n.px - mx, n.py - my) <= n.r + 8) {
+            draggedGraphNode = n;
+            break;
+          }
+        }
+      });
+
+      gCanvas.addEventListener("mousemove", (e) => {
+        const rect = gCanvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        if (draggedGraphNode) {
+          draggedGraphNode.px = mx;
+          draggedGraphNode.py = my;
+          draggedGraphNode.vx = 0;
+          draggedGraphNode.vy = 0;
+          return;
+        }
+        hoveredGraphNode = null;
+        for (const n of GRAPH_NODES) {
+          if (Math.hypot(n.px - mx, n.py - my) <= n.r + 6) {
+            hoveredGraphNode = n;
+            break;
+          }
+        }
+      });
+
+      window.addEventListener("mouseup", () => {
+        draggedGraphNode = null;
+      });
+    }
+
+    function animateBentoGraph() {
+      if (!gCtx || !gCanvas) return;
+      const W = gCanvas.width;
+      const H = gCanvas.height;
+      const isDark = document.body.classList.contains("dark-craft") || graphPresetMode === "constellation";
+
+      gCtx.clearRect(0, 0, W, H);
+      if (graphPresetMode === "constellation") {
+        gCtx.fillStyle = "#0F1117";
+        gCtx.fillRect(0, 0, W, H);
+      }
+
+      // Draw Radar Concentric Rings if radar mode
+      if (graphPresetMode === "radar") {
+        const cx = W / 2, cy = H / 2;
+        [75, 145, 215].forEach((rad, idx) => {
+          gCtx.beginPath();
+          gCtx.arc(cx, cy, rad, 0, Math.PI * 2);
+          gCtx.strokeStyle = isDark ? "rgba(105,189,40,0.22)" : "rgba(17,17,17,0.12)";
+          gCtx.setLineDash([4, 4]);
+          gCtx.lineWidth = 1.2;
+          gCtx.stroke();
+          gCtx.setLineDash([]);
+        });
+      }
+
+      // Spring Physics Step
+      for (let i = 0; i < GRAPH_NODES.length; i++) {
+        const a = GRAPH_NODES[i];
+        for (let j = i + 1; j < GRAPH_NODES.length; j++) {
+          const b = GRAPH_NODES[j];
+          const dx = b.px - a.px;
+          const dy = b.py - a.py;
+          const dist = Math.max(25, Math.hypot(dx, dy));
+          const repulse = 950 / (dist * dist);
+          const fx = (dx / dist) * repulse;
+          const fy = (dy / dist) * repulse;
+          if (a !== draggedGraphNode && !a.hub) { a.vx -= fx; a.vy -= fy; }
+          if (b !== draggedGraphNode && !b.hub) { b.vx += fx; b.vy += fy; }
+        }
+      }
+
+      GRAPH_LINKS.forEach(([ai, bi]) => {
+        const a = GRAPH_NODES[ai];
+        const b = GRAPH_NODES[bi];
+        const dx = b.px - a.px;
+        const dy = b.py - a.py;
+        const dist = Math.max(10, Math.hypot(dx, dy));
+        const target = a.hub || b.hub ? 135 : 92;
+        const force = (dist - target) * 0.012;
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        if (a !== draggedGraphNode && !a.hub) { a.vx += fx; a.vy += fy; }
+        if (b !== draggedGraphNode && !b.hub) { b.vx -= fx; b.vy -= fy; }
+      });
+
+      GRAPH_NODES.forEach(n => {
+        if (n.hub && n !== draggedGraphNode) {
+          n.px += (W * 0.5 - n.px) * 0.08;
+          n.py += (H * 0.5 - n.py) * 0.08;
+          return;
+        }
+        if (n === draggedGraphNode) return;
+        n.vx *= 0.86;
+        n.vy *= 0.86;
+        n.px = Math.max(40, Math.min(W - 40, n.px + n.vx));
+        n.py = Math.max(36, Math.min(H - 36, n.py + n.vy));
+      });
+
+      // Spawn periodic neural pulses
+      if (Math.random() < 0.06 && graphPulses.length < 18) {
+        const link = GRAPH_LINKS[Math.floor(Math.random() * GRAPH_LINKS.length)];
+        graphPulses.push({ a: link[0], b: link[1], t: 0 });
+      }
+
+      // Draw Links
+      GRAPH_LINKS.forEach(([ai, bi]) => {
+        const a = GRAPH_NODES[ai];
+        const b = GRAPH_NODES[bi];
+        const isHighlighted = hoveredGraphNode && (hoveredGraphNode === a || hoveredGraphNode === b);
+        gCtx.beginPath();
+        gCtx.moveTo(a.px, a.py);
+        gCtx.lineTo(b.px, b.py);
+        gCtx.strokeStyle = isHighlighted
+          ? "#69BD28"
+          : (isDark ? "rgba(255,255,255,0.22)" : "rgba(17,17,17,0.22)");
+        gCtx.lineWidth = isHighlighted ? 2.5 : 1.4;
+        gCtx.stroke();
+      });
+
+      // Draw Neural Laser Pulses along links
+      for (let i = graphPulses.length - 1; i >= 0; i--) {
+        const p = graphPulses[i];
+        p.t += 0.022;
+        if (p.t >= 1) {
+          graphPulses.splice(i, 1);
+          continue;
+        }
+        const a = GRAPH_NODES[p.a];
+        const b = GRAPH_NODES[p.b];
+        const px = a.px + (b.px - a.px) * p.t;
+        const py = a.py + (b.py - a.py) * p.t;
+        gCtx.beginPath();
+        gCtx.arc(px, py, 3.5, 0, Math.PI * 2);
+        gCtx.fillStyle = b.color;
+        gCtx.fill();
+      }
+
+      // Draw Nodes & Swiss Bento Labels
+      GRAPH_NODES.forEach(n => {
+        const isHover = hoveredGraphNode === n;
+        gCtx.save();
+        gCtx.beginPath();
+        gCtx.arc(n.px, n.py, isHover ? n.r + 3 : n.r, 0, Math.PI * 2);
+        gCtx.fillStyle = n.color;
+        gCtx.fill();
+        gCtx.lineWidth = 2;
+        gCtx.strokeStyle = isDark ? "#FFFFFF" : "#111111";
+        gCtx.stroke();
+
+        // Label Pill
+        gCtx.font = "700 11px 'JetBrains Mono', monospace";
+        const textW = gCtx.measureText(n.label).width;
+        const pillX = n.px - textW / 2 - 5;
+        const pillY = n.py + n.r + 5;
+        gCtx.fillStyle = isDark ? "rgba(26,28,32,0.9)" : "rgba(255,255,255,0.92)";
+        gCtx.fillRect(pillX, pillY, textW + 10, 17);
+        gCtx.strokeStyle = isDark ? "#374151" : "#111111";
+        gCtx.lineWidth = 1;
+        gCtx.strokeRect(pillX, pillY, textW + 10, 17);
+        gCtx.fillStyle = isDark ? "#F3F4F6" : "#111111";
+        gCtx.fillText(n.label, n.px - textW / 2, pillY + 12);
+        gCtx.restore();
+      });
+
+      requestAnimationFrame(animateBentoGraph);
+    }
+
+    // 9. DEMO AMBIENT SOUNDSCAPE (WEBAUDIO BROWN NOISE)
+    let demoAudioNode = null;
+    function toggleDemoAmbient() {
+      const btn = document.getElementById("btnDemoAmbient");
+      if (demoAudioNode) {
+        try { demoAudioNode.source.stop(); demoAudioNode.ctx.close(); } catch (e) {}
+        demoAudioNode = null;
+        if (btn) btn.className = "bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2 py-1 rounded-md";
+        showToast("🔇 Ambient Focus Soundscape Off");
+        return;
+      }
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const bufSize = 2 * ctx.sampleRate;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const out = buf.getChannelData(0);
+        let last = 0;
+        for (let i = 0; i < bufSize; i++) {
+          const w = Math.random() * 2 - 1;
+          out[i] = (last + 0.02 * w) / 1.02;
+          last = out[i];
+          out[i] *= 3.0;
+        }
+        const source = ctx.createBufferSource();
+        source.buffer = buf;
+        source.loop = true;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = 420;
+        const gain = ctx.createGain();
+        gain.gain.value = 0.07;
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        source.start(0);
+        demoAudioNode = { ctx, source };
+        if (btn) btn.className = "bg-[#69BD28] text-white border border-[#111111] text-xs font-bold px-2 py-1 rounded-md";
+        showToast("🎧 Playing Warm Brown Noise for Deep Focus!");
+      } catch (e) {
+        showToast("⚠️ Click again to allow WebAudio playback");
+      }
+    }
+
+    window.addEventListener("resize", () => {
+      resizeSandboxCanvas();
+      resizeParticleCanvas();
+      resizeGraphCanvas();
+    });
+
+    window.onload = function () {
+      resizeSandboxCanvas();
+      resizeParticleCanvas();
+      resizeGraphCanvas();
+      renderPaymentCard("card");
+      renderSandboxLoop();
+      animateParticles();
+      animateBentoGraph();
+    };
+  </script>
+</body>
+</html>

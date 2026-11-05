@@ -1,9 +1,9 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "3.5.5",
+  "version": "3.7.0",
   "minAppVersion": "1.0.0",
-  "description": "Warm Swiss Bento reading and focus mode: eye-friendly paper canvas (#F4F3EF), light green tables, square badges, sentence focus, laser pointer, and built-in Pomodoro dock.",
+  "description": "Warm Swiss Bento reading, Graph Studio & focus system: archival paper (#F4F3EF), Excel green tables, 8-color sentence pinning, laser pointer, ambient audio, and Pomodoro dock.",
   "author": "Elyas Aliverdiyev",
   "authorUrl": "https://github.com/elyazaliverdiyev",
   "isDesktopOnly": false
