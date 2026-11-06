@@ -84,6 +84,20 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
 
 const TRANSLATIONS = {
   en: {
+    eqTip: "LMB: Cycle 4 Visual Styles | RMB: Audio Menu & Sync PC Music/Mic",
+    audioSyncMic: "🎙️ Sync PC Audio / Stereo Mix / Mic",
+    audioStopSync: "⏹️ Stop Live Audio Sync",
+    audioSysLoopback: "🔊 System Screen Audio Loopback (Experimental)",
+    audioModeBars: "📊 16-Bar Spectrum Analyzer",
+    audioModeWave: "🌊 Dual Liquid Sine Wave",
+    audioModeOrb: "🔮 Radial Alchemy Resonance",
+    audioModeDna: "🧬 Harmonic DNA Matrix",
+    ambientRain: "🌧️ Ambient: Gentle Rain",
+    ambientBrown: "☕ Ambient: Deep Brown Noise",
+    ambientGamma: "🧠 Ambient: 40Hz Gamma Focus",
+    audioStopAll: "⏹️ Stop All Audio",
+    audioConnectedNotice: "🎙️ PC Audio / Stereo Mix synced to Equalizer!",
+    audioStoppedNotice: "🔇 Audio sync stopped.",
     dockCollapseTip: "Click to collapse/expand Alchemy Dock",
     timerTip: "LMB: Start/Pause | RMB: Presets & Ambient Audio | Double Click: Reset",
     uiBtn: "UI",
@@ -168,7 +182,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Focus Radar",
     graphColorizeBtn: "🎨 Auto-Color Nodes",
     graphFitBtn: "🎯 Center",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
     checkUpdatesBtn: "🔄 Check Updates",
     officialSiteBtn: "🌐 Official Website & Checkout",
     langName: "🌐 Interface Language (6 Global Languages)",
@@ -180,6 +194,20 @@ const TRANSLATIONS = {
     analyticsTitle: "📊 Focus Flow Analytics & Streak"
   },
   ru: {
+    eqTip: "ЛКМ: Смена 4 стилей | ПКМ: Аудио-меню и синхронизация звука ПК/микрофона",
+    audioSyncMic: "🎙️ Синхронизация звука ПК / Стерео микшер / Микрофон",
+    audioStopSync: "⏹️ Отключить синхронизацию звука",
+    audioSysLoopback: "🔊 Захват звука экрана системы (Экспериментально)",
+    audioModeBars: "📊 16-полосный спектроанализатор",
+    audioModeWave: "🌊 Двойная жидкая синусоида",
+    audioModeOrb: "🔮 Радиальный резонанс алхимии",
+    audioModeDna: "🧬 Гармоническая матрица ДНК",
+    ambientRain: "🌧️ Эмбиент: Мягкий дождь",
+    ambientBrown: "☕ Эмбиент: Глубокий Brown Noise",
+    ambientGamma: "🧠 Эмбиент: 40Hz Gamma Focus",
+    audioStopAll: "⏹️ Остановить все звуки",
+    audioConnectedNotice: "🎙️ Звук ПК / Стерео микшер синхронизирован с эквалайзером!",
+    audioStoppedNotice: "🔇 Синхронизация звука отключена.",
     dockCollapseTip: "Клик для сворачивания/разворачивания панели",
     timerTip: "ЛКМ: Старт/Пауза | ПКМ: Пресеты и Фоновый Звук | Двойной клик: Сброс",
     uiBtn: "UI",
@@ -264,7 +292,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Фокус Радар",
     graphColorizeBtn: "🎨 Раскрасить узлы",
     graphFitBtn: "🎯 В центр",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
     checkUpdatesBtn: "🔄 Проверить обновления",
     officialSiteBtn: "🌐 Официальный сайт и оплата",
     langName: "🌐 Язык интерфейса (6 мировых языков)",
@@ -276,6 +304,20 @@ const TRANSLATIONS = {
     analyticsTitle: "📊 Статистика Фокуса и Серии (Pro Analytics)"
   },
   zh: {
+    eqTip: "左键: 切换4种视觉风格 | 右键: 音频菜单与电脑音乐同步",
+    audioSyncMic: "🎙️ 同步电脑音频 / 立体声混音 / 麦克风",
+    audioStopSync: "⏹️ 停止实时音频同步",
+    audioSysLoopback: "🔊 系统屏幕音频回环 (实验性)",
+    audioModeBars: "📊 16频段频谱分析仪",
+    audioModeWave: "🌊 双重液体正弦波",
+    audioModeOrb: "🔮 放射状炼金共鸣环",
+    audioModeDna: "🧬 和声 DNA 矩阵点",
+    ambientRain: "🌧️ 环境白噪音: 淅沥雨声",
+    ambientBrown: "☕ 环境白噪音: 深度棕色噪音",
+    ambientGamma: "🧠 环境音: 40Hz 伽马专注波",
+    audioStopAll: "⏹️ 停止所有音频",
+    audioConnectedNotice: "🎙️ 电脑音频 / 混音已同步至均衡器！",
+    audioStoppedNotice: "🔇 音频同步已停止。",
     dockCollapseTip: "点击折叠/展开 Alchemy 工具栏",
     timerTip: "左键: 开始/暂停 | 右键: 预设与白噪音 | 双击: 重置",
     uiBtn: "UI",
@@ -360,7 +402,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "焦点雷达",
     graphColorizeBtn: "🎨 节点自动配色",
     graphFitBtn: "🎯 居中",
-    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.4)",
+    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.5)",
     checkUpdatesBtn: "🔄 检查更新",
     officialSiteBtn: "🌐 官方网站与收银台",
     langName: "🌐 界面语言 (支持 6 种国际语言)",
@@ -372,6 +414,20 @@ const TRANSLATIONS = {
     analyticsTitle: "📊 专注时长与连续打卡统计"
   },
   ja: {
+    eqTip: "左クリック: 4種のスタイル切替 | 右クリック: 音声メニューとPC同期",
+    audioSyncMic: "🎙️ PCオーディオ / ステレオミキサー / マイク同期",
+    audioStopSync: "⏹️ リアルタイム音声同期を停止",
+    audioSysLoopback: "🔊 システム画面オーディオ (実験的)",
+    audioModeBars: "📊 16バンド・スペクトラムアナライザー",
+    audioModeWave: "🌊 デュアル・リキッドサイン波",
+    audioModeOrb: "🔮 放射状アルケミー共鳴リング",
+    audioModeDna: "🧬 ハーモニックDNAマトリックス",
+    ambientRain: "🌧️ 環境音: 優しい雨音",
+    ambientBrown: "☕ 環境音: ディープ・ブラウンノイズ",
+    ambientGamma: "🧠 環境音: 40Hzガンマ集中波",
+    audioStopAll: "⏹️ すべての音声を停止",
+    audioConnectedNotice: "🎙️ PCオーディオ / ミキサーがイコライザーに同期されました！",
+    audioStoppedNotice: "🔇 音声同期を停止しました。",
     dockCollapseTip: "クリックしてドックを折りたたみ/展開",
     timerTip: "左クリック: 開始/一時停止 | 右クリック: プリセット＆環境音 | ダブルクリック: リセット",
     uiBtn: "UI",
@@ -456,7 +512,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "レーダー",
     graphColorizeBtn: "🎨 自動カラー適用",
     graphFitBtn: "🎯 中央揃え",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
     checkUpdatesBtn: "🔄 アップデート確認",
     officialSiteBtn: "🌐 公式サイト＆決済ページ",
     langName: "🌐 インターフェース言語 (6ヶ国語対応)",
@@ -468,6 +524,20 @@ const TRANSLATIONS = {
     analyticsTitle: "📊 集中セッション統計＆ストリーク"
   },
   es: {
+    eqTip: "Clic izq: Cambiar 4 estilos | Clic der: Menú de audio y sincronización",
+    audioSyncMic: "🎙️ Sincronizar audio de PC / Mezcla estéreo / Mic",
+    audioStopSync: "⏹️ Detener sincronización de audio",
+    audioSysLoopback: "🔊 Bucle de audio de pantalla del sistema (Experimental)",
+    audioModeBars: "📊 Analizador de espectro de 16 barras",
+    audioModeWave: "🌊 Onda sinusoidal líquida dual",
+    audioModeOrb: "🔮 Resonancia alquímica radial",
+    audioModeDna: "🧬 Matriz de ADN armónica",
+    ambientRain: "🌧️ Ambiente: Lluvia suave",
+    ambientBrown: "☕ Ambiente: Ruido marrón profundo",
+    ambientGamma: "🧠 Ambiente: Enfoque gamma de 40Hz",
+    audioStopAll: "⏹️ Detener todo el audio",
+    audioConnectedNotice: "🎙️ ¡Audio de PC / Mezcla estéreo sincronizado con el ecualizador!",
+    audioStoppedNotice: "🔇 Sincronización de audio detenida.",
     dockCollapseTip: "Clic para plegar/desplegar el panel Alchemy",
     timerTip: "Clic Izq: Iniciar/Pausar | Clic Der: Ajustes y Sonido Ambiente | Doble Clic: Reiniciar",
     uiBtn: "UI",
@@ -552,7 +622,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Radar Focus",
     graphColorizeBtn: "🎨 Colorear Nodos",
     graphFitBtn: "🎯 Centrar",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
     checkUpdatesBtn: "🔄 Buscar Actualizaciones",
     officialSiteBtn: "🌐 Sitio Oficial y Pagos",
     langName: "🌐 Idioma de la Interfaz (6 Idiomas Globales)",
@@ -564,6 +634,20 @@ const TRANSLATIONS = {
     analyticsTitle: "📊 Analíticas de Enfoque y Rachas"
   },
   de: {
+    eqTip: "L-Klick: 4 Stile wechseln | R-Klick: Audiomenü & PC-Synchronisation",
+    audioSyncMic: "🎙️ PC-Audio / Stereomix / Mikrofon synchronisieren",
+    audioStopSync: "⏹️ Live-Audio-Synchronisation stoppen",
+    audioSysLoopback: "🔊 System-Bildschirm-Audio-Loopback (Experimentell)",
+    audioModeBars: "📊 16-Band-Spektrumanalysator",
+    audioModeWave: "🌊 Duale flüssige Sinuswelle",
+    audioModeOrb: "🔮 Radiale Alchemie-Resonanz",
+    audioModeDna: "🧬 Harmonische DNA-Matrix",
+    ambientRain: "🌧️ Atmosphäre: Sanfter Regen",
+    ambientBrown: "☕ Atmosphäre: Tiefes braunes Rauschen",
+    ambientGamma: "🧠 Atmosphäre: 40Hz Gamma-Fokus",
+    audioStopAll: "⏹️ Alle Audios stoppen",
+    audioConnectedNotice: "🎙️ PC-Audio / Stereomix mit Equalizer synchronisiert!",
+    audioStoppedNotice: "🔇 Audiosynchronisation beendet.",
     dockCollapseTip: "Klicken zum Ein-/Ausklappen des Alchemy-Docks",
     timerTip: "Links: Start/Pause | Rechts: Presets & Ambient-Sound | Doppelklick: Reset",
     uiBtn: "UI",
@@ -648,7 +732,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Fokus-Radar",
     graphColorizeBtn: "🎨 Knoten färben",
     graphFitBtn: "🎯 Zentrieren",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
     checkUpdatesBtn: "🔄 Updates prüfen",
     officialSiteBtn: "🌐 Offizielle Website & Checkout",
     langName: "🌐 Oberflächensprache (6 Weltsprachen)",
@@ -1212,38 +1296,36 @@ class AlchemyFlowPlugin extends Plugin {
     const { Menu } = require("obsidian");
     const menu = new Menu();
 
-    const isSystemAudio = this.desktopAudioNodes && this.desktopAudioNodes.type === "system";
-    const isMicAudio = this.desktopAudioNodes && this.desktopAudioNodes.type === "mic";
+    const isAudioActive = !!this.desktopAudioNodes;
 
-    // 1. System audio capture (Default Windows Output: Speakers / Headphones / YouTube / Spotify)
+    // 1. Primary: PC Audio / Stereo Mix / Microphone (Works 100% natively in Obsidian)
     menu.addItem((item) => {
       item
-        .setTitle(isSystemAudio ? "⏹️ Отключить системный звук ПК" : "🔊 Захват звука системы ПК (YouTube, Spotify, Плеер)")
-        .setIcon(isSystemAudio ? "cross" : "audio-file")
+        .setTitle(isAudioActive ? t("audioStopSync", this) : t("audioSyncMic", this))
+        .setIcon(isAudioActive ? "cross" : "microphone")
         .onClick(async () => {
-          if (isSystemAudio) this.stopAudioCapture();
-          else await this.startSystemAudioCapture();
+          if (isAudioActive) this.stopAudioCapture();
+          else await this.startMicAudioCapture();
         });
     });
 
-    // 2. Microphone / Stereo Mix input
+    // 2. Secondary: System Screen Audio Loopback (requires browser display media support)
     menu.addItem((item) => {
       item
-        .setTitle(isMicAudio ? "⏹️ Отключить микрофон / микшер" : "🎙️ Захват с микрофона / Стерео микшера")
-        .setIcon(isMicAudio ? "cross" : "microphone")
+        .setTitle(t("audioSysLoopback", this))
+        .setIcon("audio-file")
         .onClick(async () => {
-          if (isMicAudio) this.stopAudioCapture();
-          else await this.startMicAudioCapture();
+          await this.startSystemAudioCapture();
         });
     });
 
     menu.addSeparator();
 
     const modes = [
-      { id: "bars", name: "📊 16-Bar Spectrum Analyzer" },
-      { id: "wave", name: "🌊 Dual Liquid Sine Wave" },
-      { id: "orb", name: "🔮 Radial Alchemy Resonance" },
-      { id: "dna", name: "🧬 Harmonic DNA Matrix" }
+      { id: "bars", name: t("audioModeBars", this) },
+      { id: "wave", name: t("audioModeWave", this) },
+      { id: "orb", name: t("audioModeOrb", this) },
+      { id: "dna", name: t("audioModeDna", this) }
     ];
     modes.forEach((m) => {
       menu.addItem((item) => {
@@ -1262,7 +1344,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     menu.addItem((item) => {
       item
-        .setTitle("🌧️ Ambient: Gentle Rain")
+        .setTitle(t("ambientRain", this))
         .setChecked(this.settings.ambientSound === "rain")
         .onClick(async () => {
           await this.setAmbientSound(this.settings.ambientSound === "rain" ? "off" : "rain");
@@ -1270,7 +1352,7 @@ class AlchemyFlowPlugin extends Plugin {
     });
     menu.addItem((item) => {
       item
-        .setTitle("☕ Ambient: Deep Brown Noise")
+        .setTitle(t("ambientBrown", this))
         .setChecked(this.settings.ambientSound === "brown")
         .onClick(async () => {
           await this.setAmbientSound(this.settings.ambientSound === "brown" ? "off" : "brown");
@@ -1278,23 +1360,23 @@ class AlchemyFlowPlugin extends Plugin {
     });
     menu.addItem((item) => {
       item
-        .setTitle("🧠 Ambient: 40Hz Gamma Focus")
+        .setTitle(t("ambientGamma", this))
         .setChecked(this.settings.ambientSound === "gamma40")
         .onClick(async () => {
           await this.setAmbientSound(this.settings.ambientSound === "gamma40" ? "off" : "gamma40");
         });
     });
 
-    if (this.settings.ambientSound !== "off" || this.desktopAudioNodes) {
+    if (this.settings.ambientSound !== "off" || isAudioActive) {
       menu.addSeparator();
       menu.addItem((item) => {
         item
-          .setTitle("⏹️ Stop All Audio")
+          .setTitle(t("audioStopAll", this))
           .setIcon("cross")
           .onClick(async () => {
             this.stopAudioCapture();
             await this.setAmbientSound("off");
-            new Notice("🔇 All audio stopped.");
+            new Notice(t("audioStoppedNotice", this));
           });
       });
     }
@@ -1378,7 +1460,7 @@ class AlchemyFlowPlugin extends Plugin {
       source.connect(analyser);
 
       this.desktopAudioNodes = { ctx, stream, source, analyser, type: "mic" };
-      new Notice("🎙️ Микрофон / Стерео микшер подключен к эквалайзеру.");
+      new Notice(t("audioConnectedNotice", this));
     } catch (err) {
       console.warn("Mic error:", err);
       new Notice("⚠️ Не удалось подключить устройство записи.");
@@ -1396,7 +1478,7 @@ class AlchemyFlowPlugin extends Plugin {
       }
     } catch (e) {}
     this.desktopAudioNodes = null;
-    new Notice("🔇 Аудио-поток отключен.");
+    new Notice(t("audioStoppedNotice", this));
   }
 
   stopDesktopAudioCapture() {
@@ -2645,7 +2727,7 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.settings.showEqualizer !== false) {
       const eqWrap = document.createElement("div");
       eqWrap.className = "artcraft-dock-eq-pill";
-      eqWrap.title = "LMB: Cycle 4 Visual Styles | RMB: Audio Menu & Sync PC Music/Mic";
+      eqWrap.title = t("eqTip", this);
       this.eqCanvas = document.createElement("canvas");
       this.eqCanvas.width = 56;
       this.eqCanvas.height = 20;
