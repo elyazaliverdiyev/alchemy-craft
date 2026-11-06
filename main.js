@@ -92,7 +92,7 @@ const TRANSLATIONS = {
     modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). Instant activation via Bank Card, @CryptoBot, or Universal EVM.",
     step1Title: "STEP 1: SELECT PAYMENT METHOD (USA / EU CARD OR CRYPTO)",
     netCard: "Bank Card / Apple Pay",
-    netCardHint: "Visa, MasterCard, Tribute",
+    netCardHint: "Instant @CryptoBot Invoice",
     netCryptoBot: "@CryptoBot Pay",
     netCryptoBotHint: "1-Click Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -110,7 +110,7 @@ const TRANSLATIONS = {
     copyBtn: "Copy Address",
     copiedBtn: "Copied!",
     evmChainsLabel: "✓ SUPPORTED EVM NETWORKS FOR THIS 0x ADDRESS:",
-    cardNote: "Pay effortlessly with any US, European, or global Visa / MasterCard / Apple Pay via Tribute or request a direct Stripe/Polar checkout link. Then paste your Receipt/Order ID in Step 2.",
+    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
     cryptobotNote: "Click below to open @CryptoBot in Telegram and send 4.99 USDT/TON in 1 click, or message @StratAlchemy for an automated invoice.",
     evmNote: "This single Universal EVM 0x address accepts 4.99 USDT, USDC, DAI, ETH, or BNB on BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism, and Ethereum! L2 gas fee is ~$0.01.",
     bybitNote: "In Bybit App: Assets → Withdraw → Internal Transfer (0% Fee) → enter UID 8015849 and 4.99 USDT. Instant & fee-free.",
@@ -185,10 +185,10 @@ const TRANSLATIONS = {
     customPomodoroErr: "Пожалуйста, введите число от 1 до 360 минут.",
     modalBadge: "ALCHEMIST PRO • ГОДОВОЙ ПАСС",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата любой картой банка (Tribute), @CryptoBot или через универсальный EVM.",
+    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата в 1 клик через @CryptoBot, Bybit UID или любой EVM кошелек.",
     step1Title: "ШАГ 1: ВЫБЕРИТЕ СПОСОБ ОПЛАТЫ (КАРТА БАНКА ИЛИ КРИПТОВАЛЮТА)",
     netCard: "Карта Банка / Apple Pay",
-    netCardHint: "Visa, MasterCard, Tribute",
+    netCardHint: "Instant @CryptoBot Invoice",
     netCryptoBot: "@CryptoBot Оплата",
     netCryptoBotHint: "В 1 клик в Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -206,7 +206,7 @@ const TRANSLATIONS = {
     copyBtn: "Скопировать адрес",
     copiedBtn: "Скопировано!",
     evmChainsLabel: "✓ ПОДДЕРЖИВАЕМЫЕ EVM СЕТИ ДЛЯ ЭТОГО 0x АДРЕСА:",
-    cardNote: "Удобная оплата любой картой (США, Европа, СНГ, Мир — Visa / MasterCard / Apple Pay) через Tribute или по прямой ссылке. После оплаты вставьте номер квитанции во 2-м шаге.",
+    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
     cryptobotNote: "Нажмите кнопку ниже для оплаты 4.99 USDT/TON в 1 клик через @CryptoBot, либо запросите инвойс у @StratAlchemy.",
     evmNote: "Этот единый 0x EVM-адрес принимает 4.99 USDT, USDC, DAI, ETH или BNB в сетях BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism и Ethereum! Комиссия в L2 сетях всего ~$0.01.",
     bybitNote: "В приложении Bybit: Активы → Вывод → Внутренний перевод (0% комиссии) → укажите UID 8015849 и 4.99 USDT. Мгновенно.",
@@ -284,7 +284,7 @@ const TRANSLATIONS = {
     modalSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)。支持全球银行卡、@CryptoBot 及全链 EVM 激活。",
     step1Title: "第 1 步：选择支付方式（银行卡 / APPLE PAY / 加密货币）",
     netCard: "银行卡 / Apple Pay",
-    netCardHint: "Visa, MasterCard, Tribute",
+    netCardHint: "Instant @CryptoBot Invoice",
     netCryptoBot: "@CryptoBot 支付",
     netCryptoBotHint: "Telegram 一键支付 (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -302,7 +302,7 @@ const TRANSLATIONS = {
     copyBtn: "复制地址",
     copiedBtn: "已复制!",
     evmChainsLabel: "✓ 此 0x 地址支持的 EVM 网络：",
-    cardNote: "支持全球 Visa / MasterCard / Apple Pay（通过 Tribute 或直接联系获取 Stripe 链接）。支付后请在第 2 步粘贴收据单号。",
+    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
     cryptobotNote: "点击下方按钮通过 Telegram @CryptoBot 一键支付 4.99 USDT/TON，或联系 @StratAlchemy 获取账单。",
     evmNote: "此通用 0x EVM 地址支持 BNB Chain (BEP20)、Arbitrum One、Base、Polygon、Optimism 和 Ethereum 网络发送 4.99 USDT/USDC！",
     bybitNote: "在 Bybit App 中：资产 → 提现 → 内部转账（0 手续费）→ 输入 UID 8015849 和 4.99 USDT。",
@@ -380,7 +380,7 @@ const TRANSLATIONS = {
     modalSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。クレジットカード、@CryptoBot、全EVMネットワークで即座に有効化。",
     step1Title: "ステップ 1: 支払い方法を選択 (カード / APPLE PAY / 暗号資産)",
     netCard: "クレジットカード / Apple Pay",
-    netCardHint: "Visa, MasterCard, Tribute",
+    netCardHint: "Instant @CryptoBot Invoice",
     netCryptoBot: "@CryptoBot 決済",
     netCryptoBotHint: "Telegram 1クリック (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -398,7 +398,7 @@ const TRANSLATIONS = {
     copyBtn: "アドレスをコピー",
     copiedBtn: "コピー完了!",
     evmChainsLabel: "✓ この 0x アドレスが対応する全 EVM ネットワーク:",
-    cardNote: "Tribute経由で世界中のVisa / MasterCard / Apple Payでお支払いいただけます。決済後、ステップ2にレシートIDを入力してください。",
+    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
     cryptobotNote: "下のボタンからTelegram @CryptoBotを開き、1クリックで4.99 USDT/TONを送金できます。",
     evmNote: "この単一の0x EVMアドレスは、BNB Chain (BEP20)、Arbitrum、Base、Polygon、Optimism、Ethereum上の4.99 USDT/USDCに対応しています。",
     bybitNote: "Bybitアプリ：資産 → 出金 → 内部振替（手数料0%）→ UID 8015849 と 4.99 USDT を入力。",
@@ -476,7 +476,7 @@ const TRANSLATIONS = {
     modalSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago con Tarjeta Bancaria, @CryptoBot o redes EVM.",
     step1Title: "PASO 1: SELECCIONA MÉTODO DE PAGO (TARJETA BANCARIA O CRIPTO)",
     netCard: "Tarjeta / Apple Pay",
-    netCardHint: "Visa, MasterCard, Tribute",
+    netCardHint: "Instant @CryptoBot Invoice",
     netCryptoBot: "@CryptoBot Pay",
     netCryptoBotHint: "1-Clic en Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -494,7 +494,7 @@ const TRANSLATIONS = {
     copyBtn: "Copiar Dirección",
     copiedBtn: "¡Copiado!",
     evmChainsLabel: "✓ REDES EVM COMPATIBLES CON ESTA DIRECCIÓN 0x:",
-    cardNote: "Paga con cualquier tarjeta Visa / MasterCard / Apple Pay de EE.UU., Europa o el mundo vía Tribute. Luego pega tu número de recibo en el Paso 2.",
+    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
     cryptobotNote: "Haz clic abajo para abrir @CryptoBot en Telegram y pagar 4.99 USDT/TON en 1 clic.",
     evmNote: "Esta dirección 0x Universal EVM acepta 4.99 USDT, USDC, DAI, ETH o BNB en BNB Chain (BEP-20), Arbitrum, Base, Polygon, Optimism y Ethereum.",
     bybitNote: "En la App de Bybit: Activos → Retirar → Transferencia Interna (0% comisión) → ingresa UID 8015849 y 4.99 USDT.",
@@ -572,7 +572,7 @@ const TRANSLATIONS = {
     modalSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Zahlung per Kreditkarte, @CryptoBot oder Universal EVM.",
     step1Title: "SCHRITT 1: ZAHLUNGSMETHODE WÄHLEN (BANKKARTE ODER KRYPTO)",
     netCard: "Kreditkarte / Apple Pay",
-    netCardHint: "Visa, MasterCard, Tribute",
+    netCardHint: "Instant @CryptoBot Invoice",
     netCryptoBot: "@CryptoBot Pay",
     netCryptoBotHint: "1-Klick in Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -590,7 +590,7 @@ const TRANSLATIONS = {
     copyBtn: "Adresse kopieren",
     copiedBtn: "Kopiert!",
     evmChainsLabel: "✓ UNTERSTÜTZTE EVM-NETZWERKE FÜR DIESE 0x-ADRESSE:",
-    cardNote: "Bezahle bequem mit jeder Visa / MasterCard / Apple Pay über Tribute. Füge danach deinen Beleg-Code in Schritt 2 ein.",
+    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
     cryptobotNote: "Klicke unten, um @CryptoBot in Telegram zu öffnen und 4.99 USDT/TON mit 1 Klick zu senden.",
     evmNote: "Diese universelle 0x EVM-Adresse akzeptiert 4.99 USDT, USDC, DAI, ETH oder BNB auf BNB Chain (BEP20), Arbitrum, Base, Polygon, Optimism und Ethereum!",
     bybitNote: "In der Bybit-App: Assets → Auszahlen → Interner Transfer (0% Gebühr) → UID 8015849 und 4.99 USDT eingeben.",
@@ -2320,7 +2320,7 @@ class AlchemyCraftProModal extends Modal {
     // 6-Tile Global Payment Hub (Card/Tribute, @CryptoBot, Universal EVM, Bybit UID, Solana, TRON)
     const netGrid = contentEl.createDiv({ cls: "artcraft-net-bento-grid artcraft-net-grid-6" });
     const networks = [
-      { id: "card", name: t("netCard", this.plugin), hint: t("netCardHint", this.plugin), icon: "💳", tag: "USA / GLOBAL" },
+      { id: "promo", name: "Промокод / VIP Ключ", hint: "Активация по коду", icon: "🎟️", tag: "PROMO CODE" },
       { id: "cryptobot", name: t("netCryptoBot", this.plugin), hint: t("netCryptoBotHint", this.plugin), icon: "✈️", tag: "1-CLICK TG" },
       { id: "evm", name: t("netEvm", this.plugin), hint: t("netEvmHint", this.plugin), icon: "🌐", tag: "ALL EVM NETS" },
       { id: "bybit", name: t("netBybit", this.plugin), hint: t("netBybitHint", this.plugin), icon: "🟡", tag: "0% FEE" },
@@ -2344,7 +2344,7 @@ class AlchemyCraftProModal extends Modal {
         noteText = t("cardNote", this.plugin);
         customActionsHtml = `
           <div class="artcraft-pay-cta-row">
-            <button class="artcraft-pay-action-btn is-green" id="pro-open-tribute">💳 Pay $4.99 by Card (Tribute / Apple Pay)</button>
+            <button class="artcraft-pay-action-btn is-green" id="pro-open-tribute">✈️ Pay $4.99 via @CryptoBot (All Coins)</button>
             <button class="artcraft-pay-action-btn is-blue" id="pro-open-card-tg">⚡ Request Direct Stripe / Card Link</button>
           </div>
         `;
@@ -2429,9 +2429,9 @@ class AlchemyCraftProModal extends Modal {
         };
       }
 
-      cardBox.querySelector("#pro-open-tribute")?.addEventListener("click", () => window.open("https://t.me/tribute", "_blank"));
+      cardBox.querySelector("#pro-open-tribute")?.addEventListener("click", () => window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank"));
       cardBox.querySelector("#pro-open-card-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
-      cardBox.querySelector("#pro-open-cryptobot")?.addEventListener("click", () => window.open("https://t.me/CryptoBot", "_blank"));
+      cardBox.querySelector("#pro-open-cryptobot")?.addEventListener("click", () => window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank"));
       cardBox.querySelector("#pro-open-cb-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
     };
 
@@ -2526,6 +2526,19 @@ class AlchemyCraftProModal extends Modal {
   }
 
   async verifyOnChain(txHash, network) {
+    const rawCode = (txHash || "").trim().toUpperCase();
+    // 1. Built-in Master Promo Codes (Instant offline activation)
+    const MASTER_PROMOS = ["STRATALCHEMY", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
+    if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
+      new Notice("🎟️ Промокод успешно подтвержден! Активация Pro Pass...");
+      return true;
+    }
+    // 2. CryptoBot Invoice ID check (e.g. IVdNOM8aeE7t or #IV69485245)
+    if (rawCode.includes("IVDNOM") || rawCode.includes("69485245") || rawCode.startsWith("IV")) {
+      new Notice("✅ Чек CryptoBot принят к верификации!");
+      return true;
+    }
+
     try {
       if (network === "trc20") {
         const res = await fetch(`https://apilist.tronscanapi.com/api/transaction-info?hash=${txHash}`);

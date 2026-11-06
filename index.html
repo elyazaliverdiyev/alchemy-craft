@@ -846,7 +846,7 @@
               <span class="font-mono-code text-[9px] bg-[#69BD28] text-white px-1.5 py-0.5 rounded font-bold">USA / GLOBAL</span>
             </div>
             <div class="font-extrabold text-xs sm:text-sm">Bank Card / Apple Pay</div>
-            <div class="text-[11px] opacity-75">Visa, MasterCard, Tribute</div>
+            <div class="text-[11px] opacity-75">Instant @CryptoBot Multi-Coin</div>
           </button>
 
           <!-- 2. @CryptoBot 1-Click Telegram Invoice -->
@@ -1031,7 +1031,7 @@
             </p>
             <div class="flex flex-wrap gap-2">
               <button onclick="selectPayMethod('card'); document.getElementById('checkout').scrollIntoView({behavior:'smooth'});" class="bento-btn bg-[#69BD28] text-white font-bold text-xs px-3 py-1.5 rounded-lg">
-                💳 Pay by Card (Tribute)
+                💳 Pay via @CryptoBot (USDT/SOL/BTC)
               </button>
               <button onclick="selectPayMethod('cryptobot'); document.getElementById('checkout').scrollIntoView({behavior:'smooth'});" class="bento-btn bg-[#2563EB] text-white font-bold text-xs px-3 py-1.5 rounded-lg">
                 ✈️ @CryptoBot (USDT/TON)
@@ -1655,7 +1655,7 @@
       if (data.isCardMethod) {
         actionAreaHtml = `
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
-            <a href="https://t.me/tribute" target="_blank" rel="noopener" class="bento-btn bg-[#69BD28] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
+            <a href="https://t.me/send?start=IVdNOM8aeE7t" target="_blank" rel="noopener" class="bento-btn bg-[#69BD28] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
               <span>💳</span> <span>Pay $4.99 by Card (Tribute / Apple Pay)</span>
             </a>
             <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
@@ -1666,7 +1666,7 @@
       } else if (data.isCryptoBot) {
         actionAreaHtml = `
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
-            <a href="https://t.me/CryptoBot" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
+            <a href="https://t.me/send?start=IVdNOM8aeE7t" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
               <span>✈️</span> <span>Open @CryptoBot ($4.99 USDT/TON)</span>
             </a>
             <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-[#111111] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
@@ -1743,7 +1743,7 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
 
 // 2. Universal EVM (0x5df707dda91477fc7c7563f683030da9d6cde7e2):
 // Supports BNB Chain (BEP20), Arbitrum One, Base, Polygon, Optimism, Ethereum (ERC20)
-// + Credit/Debit Card via Tribute (https://t.me/tribute) & @CryptoBot
+// + Credit/Debit Card via Tribute (https://t.me/send?start=IVdNOM8aeE7t) & @CryptoBot
 // + Boosty removed from Settings Tab!`;
       copyTextToClipboard(patchSummary, "v3.7.0 Plugin Patch copied to clipboard!");
     }
