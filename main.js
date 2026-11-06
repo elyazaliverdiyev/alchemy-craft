@@ -168,7 +168,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Focus Radar",
     graphColorizeBtn: "🎨 Auto-Color Nodes",
     graphFitBtn: "🎯 Center",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.2)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
     checkUpdatesBtn: "🔄 Check Updates",
     officialSiteBtn: "🌐 Official Website & Checkout",
     langName: "🌐 Interface Language (6 Global Languages)",
@@ -264,7 +264,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Фокус Радар",
     graphColorizeBtn: "🎨 Раскрасить узлы",
     graphFitBtn: "🎯 В центр",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.2)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
     checkUpdatesBtn: "🔄 Проверить обновления",
     officialSiteBtn: "🌐 Официальный сайт и оплата",
     langName: "🌐 Язык интерфейса (6 мировых языков)",
@@ -360,7 +360,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "焦点雷达",
     graphColorizeBtn: "🎨 节点自动配色",
     graphFitBtn: "🎯 居中",
-    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.2)",
+    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.3)",
     checkUpdatesBtn: "🔄 检查更新",
     officialSiteBtn: "🌐 官方网站与收银台",
     langName: "🌐 界面语言 (支持 6 种国际语言)",
@@ -456,7 +456,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "レーダー",
     graphColorizeBtn: "🎨 自動カラー適用",
     graphFitBtn: "🎯 中央揃え",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.2)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
     checkUpdatesBtn: "🔄 アップデート確認",
     officialSiteBtn: "🌐 公式サイト＆決済ページ",
     langName: "🌐 インターフェース言語 (6ヶ国語対応)",
@@ -552,7 +552,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Radar Focus",
     graphColorizeBtn: "🎨 Colorear Nodos",
     graphFitBtn: "🎯 Centrar",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.2)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
     checkUpdatesBtn: "🔄 Buscar Actualizaciones",
     officialSiteBtn: "🌐 Sitio Oficial y Pagos",
     langName: "🌐 Idioma de la Interfaz (6 Idiomas Globales)",
@@ -648,7 +648,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Fokus-Radar",
     graphColorizeBtn: "🎨 Knoten färben",
     graphFitBtn: "🎯 Zentrieren",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.2)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
     checkUpdatesBtn: "🔄 Updates prüfen",
     officialSiteBtn: "🌐 Offizielle Website & Checkout",
     langName: "🌐 Oberflächensprache (6 Weltsprachen)",
@@ -1080,44 +1080,11 @@ class AlchemyFlowPlugin extends Plugin {
       }
       this.targetLampX = e.clientX;
       this.targetLampY = e.clientY;
-      if (this.settings.magicLamp) {
-        document.documentElement.style.setProperty("--sicraft-lamp-x", `${e.clientX}px`);
-        document.documentElement.style.setProperty("--sicraft-lamp-y", `${e.clientY}px`);
-        this.updateReactiveLightShadows(e.clientX, e.clientY);
-      }
     });
   }
 
   updateReactiveLightShadows(lx, ly) {
-    // Elements near the Magic Lamp cast physical directional shadows away from the light source and glow warmly!
-    const targets = document.querySelectorAll(
-      ".markdown-rendered p, .markdown-rendered table, .markdown-rendered .callout, .inline-title, .cm-line"
-    );
-    const radius = this.settings.lampRadius || 280;
-    for (let i = 0; i < targets.length; i++) {
-      const el = targets[i];
-      const r = el.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > window.innerHeight) continue;
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const dx = cx - lx;
-      const dy = cy - ly;
-      const dist = Math.hypot(dx, dy);
-      if (dist < radius * 1.35) {
-        const intensity = Math.max(0, 1 - dist / (radius * 1.35));
-        const sx = Math.round((dx / radius) * 7 * intensity);
-        const sy = Math.round((dy / radius) * 7 * intensity);
-        el.style.setProperty("--sicraft-light-intensity", intensity.toFixed(2));
-        el.style.setProperty("--sicraft-shadow-x", `${sx}px`);
-        el.style.setProperty("--sicraft-shadow-y", `${sy}px`);
-        el.classList.add("is-lamp-lit");
-      } else if (el.classList.contains("is-lamp-lit")) {
-        el.classList.remove("is-lamp-lit");
-        el.style.removeProperty("--sicraft-light-intensity");
-        el.style.removeProperty("--sicraft-shadow-x");
-        el.style.removeProperty("--sicraft-shadow-y");
-      }
-    }
+    // Zero-overhead: GPU Canvas handles the entire lighting beam at 144 FPS
   }
 
   async toggleMagicLamp() {
@@ -1200,39 +1167,124 @@ class AlchemyFlowPlugin extends Plugin {
   async toggleDesktopAudioCapture() {
     if (this.desktopAudioNodes) {
       this.stopDesktopAudioCapture();
-      new Notice("🔇 Desktop Audio Sync stopped.");
+      new Notice("🔇 Live Audio Sync stopped.");
       return;
     }
     try {
       let stream = null;
-      // Try system loopback / desktop audio capture first, fallback to audio input sensor
-      if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      // Try microphone / system loopback input first
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            video: false,
+          });
+        } catch (e) {}
+      }
+      if (!stream && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
         try {
           stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
         } catch (e) {}
       }
-      if (!stream && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        stream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-          video: false,
-        });
-      }
       if (!stream) {
-        new Notice("⚠️ Audio stream permission was declined.");
+        new Notice("⚠️ Audio permission was declined or not available.");
         return;
       }
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioCtx();
+      if (ctx.state === "suspended") {
+        await ctx.resume();
+      }
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
-      analyser.fftSize = 128;
-      analyser.smoothingTimeConstant = 0.76;
+      analyser.fftSize = 64;
+      analyser.smoothingTimeConstant = 0.68;
       source.connect(analyser);
       this.desktopAudioNodes = { ctx, stream, source, analyser };
-      new Notice("🎚️ Sonic Equalizer connected to live PC / Room Audio! Right-click equalizer to switch visual styles.");
+      new Notice("🎙️ Sonic Equalizer synced to Live Audio! Right-click for options.");
     } catch (err) {
-      new Notice("💡 Tip: Start built-in Rain/Brown Noise or allow audio capture to drive the Equalizer.");
+      console.warn("Audio sync error:", err);
+      new Notice("💡 Allow microphone or audio capture in Obsidian to sync live PC music.");
     }
+  }
+
+  showAudioMenu(event) {
+    const { Menu } = require("obsidian");
+    const menu = new Menu();
+
+    const isMicActive = !!this.desktopAudioNodes;
+    menu.addItem((item) => {
+      item
+        .setTitle(isMicActive ? "🔇 Stop Live Audio Sync" : "🎙️ Sync PC Audio / Microphone (Equalizer)")
+        .setIcon(isMicActive ? "cross" : "microphone")
+        .onClick(async () => {
+          await this.toggleDesktopAudioCapture();
+        });
+    });
+
+    menu.addSeparator();
+
+    const modes = [
+      { id: "bars", name: "📊 16-Bar Spectrum Analyzer" },
+      { id: "wave", name: "🌊 Dual Liquid Sine Wave" },
+      { id: "orb", name: "🔮 Radial Alchemy Resonance" },
+      { id: "dna", name: "🧬 Harmonic DNA Matrix" }
+    ];
+    modes.forEach((m) => {
+      menu.addItem((item) => {
+        item
+          .setTitle(m.name)
+          .setChecked(this.settings.eqMode === m.id)
+          .onClick(async () => {
+            this.settings.eqMode = m.id;
+            await this.saveSettings();
+            new Notice(`🎚️ Mode: ${m.name}`);
+          });
+      });
+    });
+
+    menu.addSeparator();
+
+    menu.addItem((item) => {
+      item
+        .setTitle("🌧️ Ambient: Gentle Rain")
+        .setChecked(this.settings.ambientSound === "rain")
+        .onClick(async () => {
+          await this.setAmbientSound(this.settings.ambientSound === "rain" ? "off" : "rain");
+        });
+    });
+    menu.addItem((item) => {
+      item
+        .setTitle("☕ Ambient: Deep Brown Noise")
+        .setChecked(this.settings.ambientSound === "brown")
+        .onClick(async () => {
+          await this.setAmbientSound(this.settings.ambientSound === "brown" ? "off" : "brown");
+        });
+    });
+    menu.addItem((item) => {
+      item
+        .setTitle("🧠 Ambient: 40Hz Gamma Focus")
+        .setChecked(this.settings.ambientSound === "gamma40")
+        .onClick(async () => {
+          await this.setAmbientSound(this.settings.ambientSound === "gamma40" ? "off" : "gamma40");
+        });
+    });
+
+    if (this.settings.ambientSound !== "off" || isMicActive) {
+      menu.addSeparator();
+      menu.addItem((item) => {
+        item
+          .setTitle("⏹️ Stop All Audio")
+          .setIcon("cross")
+          .onClick(async () => {
+            this.stopDesktopAudioCapture();
+            await this.setAmbientSound("off");
+            new Notice("🔇 All audio stopped.");
+          });
+      });
+    }
+
+    menu.showAtMouseEvent(event);
   }
 
   stopDesktopAudioCapture() {
@@ -2465,9 +2517,10 @@ class AlchemyFlowPlugin extends Plugin {
 
     // 6.5. Smart LED Cursor Lamp Button (LMB: Toggle | RMB: Open 2700K-6500K Smart LED Controller)
     this.btnLamp = document.createElement("button");
-    this.btnLamp.className = "artcraft-dock-btn";
+    const isLampSolo = !this.settings.enableAiCleaner;
+    this.btnLamp.className = `artcraft-dock-btn is-lamp-btn ${isLampSolo ? "is-full-row" : ""}`;
     this.btnLamp.title = "LMB: Toggle Smart LED Lamp | RMB: Configure Brightness, Kelvin (2700K–6500K) & Room Dimmer";
-    this.btnLamp.innerHTML = `${SICRAFT_SVGS.lamp}<span class="artcraft-btn-label">Lamp</span>`;
+    this.btnLamp.innerHTML = `${SICRAFT_SVGS.lamp}<span class="artcraft-btn-label">${isLampSolo ? "Smart LED Lamp" : "Lamp"}</span>`;
     this.btnLamp.addEventListener("click", () => {
       this.toggleMagicLamp();
     });
@@ -2481,7 +2534,7 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.settings.showEqualizer !== false) {
       const eqWrap = document.createElement("div");
       eqWrap.className = "artcraft-dock-eq-pill";
-      eqWrap.title = "LMB: Switch Equalizer Style (Bars / Liquid Wave / Orb / DNA) | Double-Click: Sync PC Audio | RMB: Sound Menu";
+      eqWrap.title = "LMB: Cycle 4 Visual Styles | RMB: Audio Menu & Sync PC Music/Mic";
       this.eqCanvas = document.createElement("canvas");
       this.eqCanvas.width = 56;
       this.eqCanvas.height = 20;
@@ -2496,7 +2549,7 @@ class AlchemyFlowPlugin extends Plugin {
       });
       eqWrap.addEventListener("contextmenu", (e) => {
         e.preventDefault();
-        this.showTimerMenu(e);
+        this.showAudioMenu(e);
       });
       contentWrap.appendChild(eqWrap);
     }
@@ -3027,13 +3080,20 @@ class AlchemyFlowPlugin extends Plugin {
       const mode = this.settings.eqMode || "bars";
       const colors = ["#69BD28", "#2563EB", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"];
 
+      const tNow = Date.now() * 0.0035;
       if (mode === "bars") {
         const bars = 14;
         const barW = 2.8;
         const gap = 1.2;
         for (let i = 0; i < bars; i++) {
-          const val = freqData ? freqData[i % freqData.length] : 0;
-          const h = freqData ? Math.max(2, (val / 255) * (eh - 2)) : 2;
+          let h = 2;
+          if (freqData) {
+            const val = freqData[i % freqData.length];
+            h = Math.max(2, (val / 255) * (eh - 2));
+          } else {
+            const idle = Math.sin(tNow + i * 0.45) * 0.5 + 0.5;
+            h = Math.max(2, idle * (eh * 0.42));
+          }
           eqCtx.fillStyle = colors[i % colors.length];
           eqCtx.fillRect(i * (barW + gap), eh - h, barW, h);
         }
@@ -3048,6 +3108,8 @@ class AlchemyFlowPlugin extends Plugin {
             if (timeData) {
               const idx = Math.floor((x / ew) * timeData.length);
               amp = ((timeData[idx] - 128) / 128) * (eh * 0.45);
+            } else {
+              amp = Math.sin(tNow + (x / ew) * Math.PI * 2 * (w + 1)) * (eh * 0.22);
             }
             const y = eh / 2 + amp * (w === 0 ? 1 : -0.7);
             if (x === 0) eqCtx.moveTo(x, y);
@@ -3063,6 +3125,8 @@ class AlchemyFlowPlugin extends Plugin {
         if (freqData) {
           for (let i = 0; i < 12; i++) avg += freqData[i];
           avg = avg / (12 * 255);
+        } else {
+          avg = (Math.sin(tNow) * 0.5 + 0.5) * 0.4;
         }
         const r1 = 3 + avg * 6.5;
         const r2 = 5 + avg * 8.5;
@@ -3079,9 +3143,14 @@ class AlchemyFlowPlugin extends Plugin {
         // Harmonic DNA Matrix Dots
         const cols = 10;
         for (let i = 0; i < cols; i++) {
-          const val = freqData ? freqData[i * 2] / 255 : 0;
+          let spread = 0;
+          if (freqData) {
+            const val = freqData[i * 2] / 255;
+            spread = val * (eh * 0.42);
+          } else {
+            spread = (Math.sin(tNow + i * 0.5) * 0.5 + 0.5) * (eh * 0.35);
+          }
           const x = 4 + i * 5.2;
-          const spread = val * (eh * 0.42);
           eqCtx.fillStyle = "#69BD28";
           eqCtx.beginPath();
           eqCtx.arc(x, eh / 2 - spread, 1.7, 0, Math.PI * 2);
@@ -3830,7 +3899,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     // --- ⭐ GLOBAL SUPPORT & CHECKOUT (NO BOOSTY! REPLACED WITH PROMO/KEY, @CRYPTOBOT, TELEGRAM, GITHUB) ---
     containerEl.createEl("h3", { text: "⭐ Global Checkout, Card Support & Community" });
 
-    new Setting(containerEl)
+    const supportSetting = new Setting(containerEl)
       .setName("💳 Global Payment & Direct Author Contact")
       .setDesc("Pay by Bank Card (USA/EU/World via @CryptoBot or Direct 0% EVM), 1-Click @CryptoBot, or Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20).")
       .addButton((btn) => {
@@ -3856,6 +3925,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           window.open("https://github.com/elyazaliverdiyev/alchemy-craft", "_blank");
         });
       });
+    supportSetting.settingEl.classList.add("artcraft-settings-full-width");
   }
 }
 
