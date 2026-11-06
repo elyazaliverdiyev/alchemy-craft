@@ -1,10 +1,10 @@
 {
   "id": "artcraft-reader",
-  "name": "Alchemy Craft",
-  "version": "3.7.0",
+  "name": "SiCraft // Alchemy Craft",
+  "version": "4.2.0",
   "minAppVersion": "1.0.0",
-  "description": "Warm Swiss Bento reading, Graph Studio & focus system: archival paper (#F4F3EF), Excel green tables, 8-color sentence pinning, laser pointer, ambient audio, and Pomodoro dock.",
-  "author": "Elyas Aliverdiyev",
+  "description": "Tactile Swiss Bento Studio, 2700K-6500K Smart LED Cursor Lamp, 4-Mode Audio Equalizer, Graph HUD & Focus System for Obsidian.",
+  "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://github.com/elyazaliverdiyev",
   "isDesktopOnly": false
 }

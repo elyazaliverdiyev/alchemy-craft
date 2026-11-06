@@ -19,7 +19,20 @@ const DEFAULT_SETTINGS = {
   breakMinutes: 5,
   timerSound: true,
   ambientSound: "off", // "off" | "brown" | "rain" | "gamma40"
-  enableAiCleaner: true,
+  enableAiCleaner: false, // Disabled by default on fresh install per user request
+  magicLamp: false,
+  lampBrightness: 85, // 10..100%
+  lampKelvin: 3570, // 2700K (Warm Amber) .. 6500K (Cool Daylight)
+  lampDimness: 75, // 0..92% room darkness outside the lamp beam
+  lampRadius: 310, // 120..600px
+  lampShape: "radial", // "radial" (Spotlight) | "deskbar" (BenQ Monitor Bar)
+  lampMode: "kelvin", // "kelvin" | "color"
+  lampCustomColor: "#F59E0B",
+  tactileTypingSound: "off", // "off" | "thock" | "typewriter"
+  showEqualizer: true,
+  eqMode: "bars", // "bars" | "wave" | "orb" | "dna"
+  supabaseFunctionUrl: "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay",
+  spotlightFocus: false,
   enableBentoGraph: true,
   graphPreset: "bento", // "bento" | "constellation" | "radar"
   isPro: false,
@@ -47,6 +60,18 @@ const PALETTE = [
   { key: "crimson", name: "07 Ruby Crimson (Pro)", color: "#EF4444", pinClass: "artcraft-pinned-crimson", pro: true },
   { key: "gold", name: "08 Solar Gold (Pro)", color: "#EAB308", pinClass: "artcraft-pinned-gold", pro: true },
 ];
+
+const SICRAFT_SVGS = {
+  lamp: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/><path d="M15 14a5 5 0 1 0-6 0l1 4h4l1-4z"/></svg>`,
+  laser: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/></svg>`,
+  draw: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>`,
+  eraser: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>`,
+  zen: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>`,
+  focus: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3"/><path d="M20 7V4h-3"/><path d="M4 17v3h3"/><path d="M20 17v3h-3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`,
+  audio: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>`,
+  card: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>`,
+  spark: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>`
+};
 
 const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -92,7 +117,7 @@ const TRANSLATIONS = {
     modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). Instant activation via Bank Card, @CryptoBot, or Universal EVM.",
     step1Title: "STEP 1: SELECT PAYMENT METHOD (USA / EU CARD OR CRYPTO)",
     netCard: "Bank Card / Apple Pay",
-    netCardHint: "Instant @CryptoBot Invoice",
+    netCardHint: "0% Fee Web3 / @CryptoBot",
     netCryptoBot: "@CryptoBot Pay",
     netCryptoBotHint: "1-Click Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -110,7 +135,7 @@ const TRANSLATIONS = {
     copyBtn: "Copy Address",
     copiedBtn: "Copied!",
     evmChainsLabel: "✓ SUPPORTED EVM NETWORKS FOR THIS 0x ADDRESS:",
-    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
+    cardNote: "Pay effortlessly with any US, European, or global Visa / MasterCard / Apple Pay via @CryptoBot or Direct 0% EVM or request a direct Stripe/Polar checkout link. Then paste your Receipt/Order ID in Step 2.",
     cryptobotNote: "Click below to open @CryptoBot in Telegram and send 4.99 USDT/TON in 1 click, or message @StratAlchemy for an automated invoice.",
     evmNote: "This single Universal EVM 0x address accepts 4.99 USDT, USDC, DAI, ETH, or BNB on BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism, and Ethereum! L2 gas fee is ~$0.01.",
     bybitNote: "In Bybit App: Assets → Withdraw → Internal Transfer (0% Fee) → enter UID 8015849 and 4.99 USDT. Instant & fee-free.",
@@ -143,7 +168,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Focus Radar",
     graphColorizeBtn: "🎨 Auto-Color Nodes",
     graphFitBtn: "🎯 Center",
-    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.0)",
     checkUpdatesBtn: "🔄 Check Updates",
     officialSiteBtn: "🌐 Official Website & Checkout",
     langName: "🌐 Interface Language (6 Global Languages)",
@@ -185,10 +210,10 @@ const TRANSLATIONS = {
     customPomodoroErr: "Пожалуйста, введите число от 1 до 360 минут.",
     modalBadge: "ALCHEMIST PRO • ГОДОВОЙ ПАСС",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата в 1 клик через @CryptoBot, Bybit UID или любой EVM кошелек.",
+    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата любой картой банка (@CryptoBot / 0% EVM), @CryptoBot или через универсальный EVM.",
     step1Title: "ШАГ 1: ВЫБЕРИТЕ СПОСОБ ОПЛАТЫ (КАРТА БАНКА ИЛИ КРИПТОВАЛЮТА)",
     netCard: "Карта Банка / Apple Pay",
-    netCardHint: "Instant @CryptoBot Invoice",
+    netCardHint: "0% Fee Web3 / @CryptoBot",
     netCryptoBot: "@CryptoBot Оплата",
     netCryptoBotHint: "В 1 клик в Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -206,7 +231,7 @@ const TRANSLATIONS = {
     copyBtn: "Скопировать адрес",
     copiedBtn: "Скопировано!",
     evmChainsLabel: "✓ ПОДДЕРЖИВАЕМЫЕ EVM СЕТИ ДЛЯ ЭТОГО 0x АДРЕСА:",
-    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
+    cardNote: "Удобная оплата любой картой (США, Европа, СНГ, Мир — Visa / MasterCard / Apple Pay) через @CryptoBot или 0% EVM или по прямой ссылке. После оплаты вставьте номер квитанции во 2-м шаге.",
     cryptobotNote: "Нажмите кнопку ниже для оплаты 4.99 USDT/TON в 1 клик через @CryptoBot, либо запросите инвойс у @StratAlchemy.",
     evmNote: "Этот единый 0x EVM-адрес принимает 4.99 USDT, USDC, DAI, ETH или BNB в сетях BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism и Ethereum! Комиссия в L2 сетях всего ~$0.01.",
     bybitNote: "В приложении Bybit: Активы → Вывод → Внутренний перевод (0% комиссии) → укажите UID 8015849 и 4.99 USDT. Мгновенно.",
@@ -239,7 +264,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Фокус Радар",
     graphColorizeBtn: "🎨 Раскрасить узлы",
     graphFitBtn: "🎯 В центр",
-    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.0)",
     checkUpdatesBtn: "🔄 Проверить обновления",
     officialSiteBtn: "🌐 Официальный сайт и оплата",
     langName: "🌐 Язык интерфейса (6 мировых языков)",
@@ -284,7 +309,7 @@ const TRANSLATIONS = {
     modalSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)。支持全球银行卡、@CryptoBot 及全链 EVM 激活。",
     step1Title: "第 1 步：选择支付方式（银行卡 / APPLE PAY / 加密货币）",
     netCard: "银行卡 / Apple Pay",
-    netCardHint: "Instant @CryptoBot Invoice",
+    netCardHint: "0% Fee Web3 / @CryptoBot",
     netCryptoBot: "@CryptoBot 支付",
     netCryptoBotHint: "Telegram 一键支付 (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -302,7 +327,7 @@ const TRANSLATIONS = {
     copyBtn: "复制地址",
     copiedBtn: "已复制!",
     evmChainsLabel: "✓ 此 0x 地址支持的 EVM 网络：",
-    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
+    cardNote: "支持全球 Visa / MasterCard / Apple Pay（通过 @CryptoBot 或 0% EVM 或直接联系获取 Stripe 链接）。支付后请在第 2 步粘贴收据单号。",
     cryptobotNote: "点击下方按钮通过 Telegram @CryptoBot 一键支付 4.99 USDT/TON，或联系 @StratAlchemy 获取账单。",
     evmNote: "此通用 0x EVM 地址支持 BNB Chain (BEP20)、Arbitrum One、Base、Polygon、Optimism 和 Ethereum 网络发送 4.99 USDT/USDC！",
     bybitNote: "在 Bybit App 中：资产 → 提现 → 内部转账（0 手续费）→ 输入 UID 8015849 和 4.99 USDT。",
@@ -335,7 +360,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "焦点雷达",
     graphColorizeBtn: "🎨 节点自动配色",
     graphFitBtn: "🎯 居中",
-    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v3.7.0)",
+    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.0)",
     checkUpdatesBtn: "🔄 检查更新",
     officialSiteBtn: "🌐 官方网站与收银台",
     langName: "🌐 界面语言 (支持 6 种国际语言)",
@@ -380,7 +405,7 @@ const TRANSLATIONS = {
     modalSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。クレジットカード、@CryptoBot、全EVMネットワークで即座に有効化。",
     step1Title: "ステップ 1: 支払い方法を選択 (カード / APPLE PAY / 暗号資産)",
     netCard: "クレジットカード / Apple Pay",
-    netCardHint: "Instant @CryptoBot Invoice",
+    netCardHint: "0% Fee Web3 / @CryptoBot",
     netCryptoBot: "@CryptoBot 決済",
     netCryptoBotHint: "Telegram 1クリック (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -398,7 +423,7 @@ const TRANSLATIONS = {
     copyBtn: "アドレスをコピー",
     copiedBtn: "コピー完了!",
     evmChainsLabel: "✓ この 0x アドレスが対応する全 EVM ネットワーク:",
-    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
+    cardNote: "@CryptoBot または 0% EVMで世界中のVisa / MasterCard / Apple Payでお支払いいただけます。決済後、ステップ2にレシートIDを入力してください。",
     cryptobotNote: "下のボタンからTelegram @CryptoBotを開き、1クリックで4.99 USDT/TONを送金できます。",
     evmNote: "この単一の0x EVMアドレスは、BNB Chain (BEP20)、Arbitrum、Base、Polygon、Optimism、Ethereum上の4.99 USDT/USDCに対応しています。",
     bybitNote: "Bybitアプリ：資産 → 出金 → 内部振替（手数料0%）→ UID 8015849 と 4.99 USDT を入力。",
@@ -431,7 +456,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "レーダー",
     graphColorizeBtn: "🎨 自動カラー適用",
     graphFitBtn: "🎯 中央揃え",
-    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.0)",
     checkUpdatesBtn: "🔄 アップデート確認",
     officialSiteBtn: "🌐 公式サイト＆決済ページ",
     langName: "🌐 インターフェース言語 (6ヶ国語対応)",
@@ -476,7 +501,7 @@ const TRANSLATIONS = {
     modalSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago con Tarjeta Bancaria, @CryptoBot o redes EVM.",
     step1Title: "PASO 1: SELECCIONA MÉTODO DE PAGO (TARJETA BANCARIA O CRIPTO)",
     netCard: "Tarjeta / Apple Pay",
-    netCardHint: "Instant @CryptoBot Invoice",
+    netCardHint: "0% Fee Web3 / @CryptoBot",
     netCryptoBot: "@CryptoBot Pay",
     netCryptoBotHint: "1-Clic en Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -494,7 +519,7 @@ const TRANSLATIONS = {
     copyBtn: "Copiar Dirección",
     copiedBtn: "¡Copiado!",
     evmChainsLabel: "✓ REDES EVM COMPATIBLES CON ESTA DIRECCIÓN 0x:",
-    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
+    cardNote: "Paga con cualquier tarjeta Visa / MasterCard / Apple Pay de EE.UU., Europa o el mundo vía @CryptoBot o 0% EVM. Luego pega tu número de recibo en el Paso 2.",
     cryptobotNote: "Haz clic abajo para abrir @CryptoBot en Telegram y pagar 4.99 USDT/TON en 1 clic.",
     evmNote: "Esta dirección 0x Universal EVM acepta 4.99 USDT, USDC, DAI, ETH o BNB en BNB Chain (BEP-20), Arbitrum, Base, Polygon, Optimism y Ethereum.",
     bybitNote: "En la App de Bybit: Activos → Retirar → Transferencia Interna (0% comisión) → ingresa UID 8015849 y 4.99 USDT.",
@@ -527,7 +552,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Radar Focus",
     graphColorizeBtn: "🎨 Colorear Nodos",
     graphFitBtn: "🎯 Centrar",
-    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.0)",
     checkUpdatesBtn: "🔄 Buscar Actualizaciones",
     officialSiteBtn: "🌐 Sitio Oficial y Pagos",
     langName: "🌐 Idioma de la Interfaz (6 Idiomas Globales)",
@@ -572,7 +597,7 @@ const TRANSLATIONS = {
     modalSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Zahlung per Kreditkarte, @CryptoBot oder Universal EVM.",
     step1Title: "SCHRITT 1: ZAHLUNGSMETHODE WÄHLEN (BANKKARTE ODER KRYPTO)",
     netCard: "Kreditkarte / Apple Pay",
-    netCardHint: "Instant @CryptoBot Invoice",
+    netCardHint: "0% Fee Web3 / @CryptoBot",
     netCryptoBot: "@CryptoBot Pay",
     netCryptoBotHint: "1-Klick in Telegram (USDT/TON)",
     netEvm: "Universal EVM (0x...)",
@@ -590,7 +615,7 @@ const TRANSLATIONS = {
     copyBtn: "Adresse kopieren",
     copiedBtn: "Kopiert!",
     evmChainsLabel: "✓ UNTERSTÜTZTE EVM-NETZWERKE FÜR DIESE 0x-ADRESSE:",
-    cardNote: "Click Open @CryptoBot below to pay $4.99 in USDT, TON, SOL, BNB, BTC, or card via Telegram Wallet. After payment, paste your Invoice ID or TXID in Step 2.",
+    cardNote: "Bezahle bequem mit jeder Visa / MasterCard / Apple Pay über @CryptoBot oder 0% EVM. Füge danach deinen Beleg-Code in Schritt 2 ein.",
     cryptobotNote: "Klicke unten, um @CryptoBot in Telegram zu öffnen und 4.99 USDT/TON mit 1 Klick zu senden.",
     evmNote: "Diese universelle 0x EVM-Adresse akzeptiert 4.99 USDT, USDC, DAI, ETH oder BNB auf BNB Chain (BEP20), Arbitrum, Base, Polygon, Optimism und Ethereum!",
     bybitNote: "In der Bybit-App: Assets → Auszahlen → Interner Transfer (0% Gebühr) → UID 8015849 und 4.99 USDT eingeben.",
@@ -623,7 +648,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Fokus-Radar",
     graphColorizeBtn: "🎨 Knoten färben",
     graphFitBtn: "🎯 Zentrieren",
-    settingsTitle: "Alchemy Craft — Swiss Bento Studio, Graph & Focus (v3.7.0)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.0)",
     checkUpdatesBtn: "🔄 Updates prüfen",
     officialSiteBtn: "🌐 Offizielle Website & Checkout",
     langName: "🌐 Oberflächensprache (6 Weltsprachen)",
@@ -644,6 +669,216 @@ function getLocale(plugin) {
 function t(key, plugin) {
   const loc = getLocale(plugin);
   return (TRANSLATIONS[loc] && TRANSLATIONS[loc][key]) || TRANSLATIONS["en"][key] || key;
+}
+
+
+// Convert Color Temperature in Kelvin (2700K..6500K) to RGB {r, g, b}
+function kelvinToRgb(kelvin) {
+  const k = Math.max(2000, Math.min(8000, kelvin || 3570));
+  // Smooth interpolation across physical LED phosphor curve:
+  // 2700K -> (255, 169, 87), 3570K -> (255, 206, 138), 4500K -> (255, 236, 206), 5500K -> (248, 249, 255), 6500K -> (214, 231, 255)
+  if (k <= 3570) {
+    const t = (k - 2700) / (3570 - 2700);
+    return {
+      r: 255,
+      g: Math.round(169 + t * (206 - 169)),
+      b: Math.round(87 + t * (138 - 87)),
+    };
+  } else if (k <= 5000) {
+    const t = (k - 3570) / (5000 - 3570);
+    return {
+      r: 255,
+      g: Math.round(206 + t * (246 - 206)),
+      b: Math.round(138 + t * (242 - 138)),
+    };
+  } else {
+    const t = (k - 5000) / (6500 - 5000);
+    return {
+      r: Math.round(255 - t * (255 - 210)),
+      g: Math.round(246 - t * (246 - 230)),
+      b: 255,
+    };
+  }
+}
+
+function generateSiCraftLicenseKey(seedStr) {
+  const clean = (seedStr || "PRO").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  let h1 = 0x811c9dc5;
+  for (let i = 0; i < clean.length; i++) {
+    h1 ^= clean.charCodeAt(i);
+    h1 = Math.imul(h1, 0x01000193) >>> 0;
+  }
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const block = (n) => {
+    let s = "";
+    let v = n >>> 0;
+    for (let i = 0; i < 4; i++) {
+      s += alphabet[v % alphabet.length];
+      v = Math.floor(v / alphabet.length) ^ ((v << 3) >>> 0);
+    }
+    return s;
+  };
+  const b1 = block(h1);
+  const b2 = block(h1 ^ 0x5f3759df);
+  const b3 = block(h1 ^ 0x9e3779b9);
+  // Checksum block
+  let chk = 0;
+  const combined = b1 + b2 + b3;
+  for (let i = 0; i < combined.length; i++) chk = (chk + combined.charCodeAt(i) * (i + 1)) % 9999;
+  const b4 = String(chk).padStart(4, "0");
+  return `SICRAFT-${b1}-${b2}-${b3}-${b4}`;
+}
+
+function isValidSiCraftLicenseKey(codeStr) {
+  const m = (codeStr || "").trim().toUpperCase().match(/^SICRAFT-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})-(\d{4})$/);
+  if (!m) return false;
+  const combined = m[1] + m[2] + m[3];
+  let chk = 0;
+  for (let i = 0; i < combined.length; i++) chk = (chk + combined.charCodeAt(i) * (i + 1)) % 9999;
+  return String(chk).padStart(4, "0") === m[4];
+}
+
+class SmartLedLampModal extends Modal {
+  constructor(app, plugin) {
+    super(app);
+    this.plugin = plugin;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.addClass("artcraft-pro-modal-root", "sicraft-led-modal");
+
+    const s = this.plugin.settings;
+    const rgb = kelvinToRgb(s.lampKelvin || 3570);
+
+    contentEl.innerHTML = `
+      <div class="sicraft-led-panel">
+        <div class="sicraft-led-header">
+          <div>
+            <div class="artcraft-bento-pill">SICRAFT // LUMINA STUDIO</div>
+            <h3 class="artcraft-modal-title">🏮 Smart LED Cursor Lamp</h3>
+          </div>
+          <button id="led-power-btn" class="sicraft-led-power-btn ${s.magicLamp ? "is-on" : ""}">
+            <span class="power-dot">⏻</span>
+            <span id="led-power-text">${s.magicLamp ? "ON" : "OFF"}</span>
+          </button>
+        </div>
+
+        <!-- Brightness Card (like user screenshot) -->
+        <div class="sicraft-led-card">
+          <div class="sicraft-led-card-top">
+            <span>☀️ Brightness (Glow Intensity)</span>
+            <strong id="led-bright-val">${s.lampBrightness || 85}%</strong>
+          </div>
+          <input type="range" id="led-bright-slider" min="10" max="100" value="${s.lampBrightness || 85}" class="sicraft-led-slider sicraft-slider-bright" />
+        </div>
+
+        <!-- Color Temperature Card (2700K Warm Gold -> 3570K Neutral -> 6500K Daylight) -->
+        <div class="sicraft-led-card">
+          <div class="sicraft-led-card-top">
+            <span>🌡️ Color Temperature</span>
+            <strong id="led-kelvin-val">${s.lampKelvin || 3570} K</strong>
+          </div>
+          <input type="range" id="led-kelvin-slider" min="2700" max="6500" step="10" value="${s.lampKelvin || 3570}" class="sicraft-led-slider sicraft-slider-kelvin" />
+          <div class="sicraft-kelvin-presets">
+            <button data-k="2700" class="sicraft-k-btn">🕯️ 2700K Warm</button>
+            <button data-k="3570" class="sicraft-k-btn">💡 3570K Studio</button>
+            <button data-k="4800" class="sicraft-k-btn">☀️ 4800K Pure</button>
+            <button data-k="6500" class="sicraft-k-btn">❄️ 6500K Cool</button>
+          </div>
+        </div>
+
+        <!-- Ambient Room Dimness (Darkness outside the lamp beam) -->
+        <div class="sicraft-led-card">
+          <div class="sicraft-led-card-top">
+            <span>🌑 Surrounding Room Dimmer</span>
+            <strong id="led-dim-val">${s.lampDimness !== undefined ? s.lampDimness : 75}%</strong>
+          </div>
+          <input type="range" id="led-dim-slider" min="0" max="92" value="${s.lampDimness !== undefined ? s.lampDimness : 75}" class="sicraft-led-slider" />
+        </div>
+
+        <!-- Beam Radius & Lamp Shape -->
+        <div class="sicraft-led-card">
+          <div class="sicraft-led-card-top">
+            <span>🔦 Beam Radius & Shape</span>
+            <strong id="led-rad-val">${s.lampRadius || 310} px</strong>
+          </div>
+          <input type="range" id="led-rad-slider" min="140" max="600" value="${s.lampRadius || 310}" class="sicraft-led-slider" />
+          <div class="sicraft-kelvin-presets" style="margin-top:8px;">
+            <button data-shape="radial" class="sicraft-shape-btn ${(s.lampShape || "radial") === "radial" ? "is-active" : ""}">⭕ Radial Spotlight</button>
+            <button data-shape="deskbar" class="sicraft-shape-btn ${s.lampShape === "deskbar" ? "is-active" : ""}">➖ BenQ Desk Lightbar</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const powerBtn = contentEl.querySelector("#led-power-btn");
+    const powerTxt = contentEl.querySelector("#led-power-text");
+    powerBtn.onclick = async () => {
+      await this.plugin.toggleMagicLamp();
+      powerBtn.classList.toggle("is-on", this.plugin.settings.magicLamp);
+      powerTxt.textContent = this.plugin.settings.magicLamp ? "ON" : "OFF";
+    };
+
+    const bSlider = contentEl.querySelector("#led-bright-slider");
+    const bVal = contentEl.querySelector("#led-bright-val");
+    bSlider.oninput = async (e) => {
+      s.lampBrightness = parseInt(e.target.value, 10);
+      bVal.textContent = `${s.lampBrightness}%`;
+      if (!s.magicLamp) await this.plugin.toggleMagicLamp();
+      await this.plugin.saveSettings();
+    };
+
+    const kSlider = contentEl.querySelector("#led-kelvin-slider");
+    const kVal = contentEl.querySelector("#led-kelvin-val");
+    kSlider.oninput = async (e) => {
+      s.lampKelvin = parseInt(e.target.value, 10);
+      kVal.textContent = `${s.lampKelvin} K`;
+      if (!s.magicLamp) await this.plugin.toggleMagicLamp();
+      await this.plugin.saveSettings();
+    };
+
+    contentEl.querySelectorAll(".sicraft-k-btn").forEach((btn) => {
+      btn.onclick = async () => {
+        const k = parseInt(btn.getAttribute("data-k"), 10);
+        s.lampKelvin = k;
+        kSlider.value = String(k);
+        kVal.textContent = `${k} K`;
+        if (!s.magicLamp) await this.plugin.toggleMagicLamp();
+        await this.plugin.saveSettings();
+      };
+    });
+
+    const dSlider = contentEl.querySelector("#led-dim-slider");
+    const dVal = contentEl.querySelector("#led-dim-val");
+    dSlider.oninput = async (e) => {
+      s.lampDimness = parseInt(e.target.value, 10);
+      dVal.textContent = `${s.lampDimness}%`;
+      if (!s.magicLamp) await this.plugin.toggleMagicLamp();
+      await this.plugin.saveSettings();
+    };
+
+    const rSlider = contentEl.querySelector("#led-rad-slider");
+    const rVal = contentEl.querySelector("#led-rad-val");
+    rSlider.oninput = async (e) => {
+      s.lampRadius = parseInt(e.target.value, 10);
+      rVal.textContent = `${s.lampRadius} px`;
+      await this.plugin.saveSettings();
+    };
+
+    contentEl.querySelectorAll(".sicraft-shape-btn").forEach((btn) => {
+      btn.onclick = async () => {
+        s.lampShape = btn.getAttribute("data-shape");
+        contentEl.querySelectorAll(".sicraft-shape-btn").forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        if (!s.magicLamp) await this.plugin.toggleMagicLamp();
+        await this.plugin.saveSettings();
+      };
+    });
+  }
+  onClose() {
+    this.contentEl.empty();
+  }
 }
 
 class CustomPomodoroModal extends Modal {
@@ -758,7 +993,6 @@ class AlchemyFlowPlugin extends Plugin {
       }
     });
 
-
     this.registerEvent(
       this.app.workspace.on("file-open", () => {
         setTimeout(() => this.updateTaskProgressBar(), 100);
@@ -807,8 +1041,259 @@ class AlchemyFlowPlugin extends Plugin {
       }
     });
 
+    this.setupTactileKeystrokesAndRipples();
+    this.setupMagicCursorLamp();
     this.addSettingTab(new AlchemyFlowSettingTab(this.app, this));
     setTimeout(() => this.injectGraphViewHUD(), 400);
+  }
+
+  // --- 🏮 1. MAGIC CURSOR LANTERN (LUMINA LAMP — DYNAMIC LIGHTING & 3D SHADOWS) ---
+  isPointInsideActiveNoteArea(x, y) {
+    // Check if (x, y) is inside a markdown note view-content and not over the dock or sidebars
+    if (this.dockEl) {
+      const dr = this.dockEl.getBoundingClientRect();
+      if (x >= dr.left - 6 && x <= dr.right + 6 && y >= dr.top - 6 && y <= dr.bottom + 6) {
+        return false;
+      }
+    }
+    const leaves = document.querySelectorAll('.workspace-leaf-content[data-type="markdown"] .view-content');
+    for (let i = 0; i < leaves.length; i++) {
+      const r = leaves[i].getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  setupMagicCursorLamp() {
+    this.lampX = window.innerWidth / 2;
+    this.lampY = window.innerHeight / 2;
+    this.targetLampX = this.lampX;
+    this.targetLampY = this.lampY;
+
+    this.registerDomEvent(window, "mousemove", (e) => {
+      // Smart Auto-Cursor Pass-Through: when in Draw/Eraser mode, if the user moves the mouse over the Left File Explorer, Right Sidebar, Tab Header, or Floating Dock, temporarily disable canvas pointer capture so they can click folders/notes normally!
+      if ((this.mode === "draw" || this.mode === "eraser") && this.canvasEl && !this.isDrawing) {
+        const isOverNoteArea = this.isPointInsideActiveNoteArea(e.clientX, e.clientY);
+        this.canvasEl.style.pointerEvents = isOverNoteArea ? "auto" : "none";
+      }
+      this.targetLampX = e.clientX;
+      this.targetLampY = e.clientY;
+      if (this.settings.magicLamp) {
+        document.documentElement.style.setProperty("--sicraft-lamp-x", `${e.clientX}px`);
+        document.documentElement.style.setProperty("--sicraft-lamp-y", `${e.clientY}px`);
+        this.updateReactiveLightShadows(e.clientX, e.clientY);
+      }
+    });
+  }
+
+  updateReactiveLightShadows(lx, ly) {
+    // Elements near the Magic Lamp cast physical directional shadows away from the light source and glow warmly!
+    const targets = document.querySelectorAll(
+      ".markdown-rendered p, .markdown-rendered table, .markdown-rendered .callout, .inline-title, .cm-line"
+    );
+    const radius = this.settings.lampRadius || 280;
+    for (let i = 0; i < targets.length; i++) {
+      const el = targets[i];
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) continue;
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = cx - lx;
+      const dy = cy - ly;
+      const dist = Math.hypot(dx, dy);
+      if (dist < radius * 1.35) {
+        const intensity = Math.max(0, 1 - dist / (radius * 1.35));
+        const sx = Math.round((dx / radius) * 7 * intensity);
+        const sy = Math.round((dy / radius) * 7 * intensity);
+        el.style.setProperty("--sicraft-light-intensity", intensity.toFixed(2));
+        el.style.setProperty("--sicraft-shadow-x", `${sx}px`);
+        el.style.setProperty("--sicraft-shadow-y", `${sy}px`);
+        el.classList.add("is-lamp-lit");
+      } else if (el.classList.contains("is-lamp-lit")) {
+        el.classList.remove("is-lamp-lit");
+        el.style.removeProperty("--sicraft-light-intensity");
+        el.style.removeProperty("--sicraft-shadow-x");
+        el.style.removeProperty("--sicraft-shadow-y");
+      }
+    }
+  }
+
+  async toggleMagicLamp() {
+    this.settings.magicLamp = !this.settings.magicLamp;
+    await this.saveSettings();
+    this.applyBodyClasses();
+    this.updateDockUI();
+    if (!this.settings.magicLamp) {
+      document.querySelectorAll(".is-lamp-lit").forEach((el) => {
+        el.classList.remove("is-lamp-lit");
+        el.style.removeProperty("--sicraft-light-intensity");
+      });
+    }
+    new Notice(
+      this.settings.magicLamp
+        ? "🏮 Magic Cursor Lamp ON: Move cursor to illuminate text & cast reactive shadows"
+        : "🏮 Magic Cursor Lamp OFF"
+    );
+  }
+
+  // --- ⌨️ 2. TACTILE MECHANICAL KEYSTROKES (THOCK / TYPEWRITER) & PAPER RIPPLES ---
+  setupTactileKeystrokesAndRipples() {
+    this.registerDomEvent(window, "keydown", (e) => {
+      if (!this.settings.tactileTypingSound || this.settings.tactileTypingSound === "off") return;
+      if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+      this.playTactileKeySound(e.key);
+    });
+
+    this.registerDomEvent(window, "mousedown", (e) => {
+      if (e.target && e.target.closest && e.target.closest(".artcraft-dock-btn, .artcraft-timer-pill, .task-list-item-checkbox")) {
+        this.spawnTactileRipple(e.clientX, e.clientY);
+      }
+    });
+  }
+
+  playTactileKeySound(key) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!this.keyAudioCtx) this.keyAudioCtx = new AudioCtx();
+      const ctx = this.keyAudioCtx;
+      if (ctx.state === "suspended") ctx.resume();
+
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      const isSpaceOrEnter = key === " " || key === "Enter" || key === "Backspace";
+      if (this.settings.tactileTypingSound === "thock") {
+        // Deep Topre / Custom Mechanical Switch Thock
+        osc.type = "triangle";
+        const baseFreq = isSpaceOrEnter ? 115 : 145 + (Math.random() * 22 - 11);
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(42, now + 0.045);
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.048);
+      } else {
+        // Vintage Swiss Typewriter Click
+        osc.type = "sawtooth";
+        const baseFreq = isSpaceOrEnter ? 520 : 780 + (Math.random() * 120 - 60);
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(160, now + 0.028);
+        gain.gain.setValueAtTime(0.07, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      }
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } catch (e) {}
+  }
+
+  spawnTactileRipple(x, y) {
+    if (!this.ripples) this.ripples = [];
+    this.ripples.push({ x, y, r: 4, maxR: 38, alpha: 0.65, color: this.settings.strokeColor || "#69BD28" });
+  }
+
+  // --- 🎚️ 3. REAL-TIME DESKTOP / SYSTEM AUDIO CAPTURE & 4-MODE SONIC EQUALIZER ---
+  async toggleDesktopAudioCapture() {
+    if (this.desktopAudioNodes) {
+      this.stopDesktopAudioCapture();
+      new Notice("🔇 Desktop Audio Sync stopped.");
+      return;
+    }
+    try {
+      let stream = null;
+      // Try system loopback / desktop audio capture first, fallback to audio input sensor
+      if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        try {
+          stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        } catch (e) {}
+      }
+      if (!stream && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+          video: false,
+        });
+      }
+      if (!stream) {
+        new Notice("⚠️ Audio stream permission was declined.");
+        return;
+      }
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.76;
+      source.connect(analyser);
+      this.desktopAudioNodes = { ctx, stream, source, analyser };
+      new Notice("🎚️ Sonic Equalizer connected to live PC / Room Audio! Right-click equalizer to switch visual styles.");
+    } catch (err) {
+      new Notice("💡 Tip: Start built-in Rain/Brown Noise or allow audio capture to drive the Equalizer.");
+    }
+  }
+
+  stopDesktopAudioCapture() {
+    if (!this.desktopAudioNodes) return;
+    try {
+      if (this.desktopAudioNodes.stream) {
+        this.desktopAudioNodes.stream.getTracks().forEach((t) => t.stop());
+      }
+      if (this.desktopAudioNodes.ctx) {
+        this.desktopAudioNodes.ctx.close();
+      }
+    } catch (e) {}
+    this.desktopAudioNodes = null;
+  }
+
+  async cycleEqualizerMode() {
+    const modes = ["bars", "wave", "orb", "dna"];
+    const names = {
+      bars: "01 // 16-Bar Spectrum Analyzer",
+      wave: "02 // Dual Liquid Sine Wave",
+      orb: "03 // Radial Alchemy Resonance",
+      dna: "04 // Harmonic DNA Matrix",
+    };
+    const idx = modes.indexOf(this.settings.eqMode || "bars");
+    const next = modes[(idx + 1) % modes.length];
+    this.settings.eqMode = next;
+    await this.saveSettings();
+    new Notice(`🎚️ Equalizer Style: ${names[next]}`);
+  }
+
+  // --- 📸 4. 1-CLICK SWISS BENTO QUOTE CARD EXPORTER ---
+  async exportSelectionAsBentoCard() {
+    const obsidian = require("obsidian");
+    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    let text = "";
+    let title = "STRATALCHEMY // SICRAFT BRIEF";
+    if (view && view.file) {
+      title = view.file.basename.toUpperCase();
+      if (view.editor && view.editor.somethingSelected()) {
+        text = view.editor.getSelection().trim();
+      }
+    }
+    if (!text) {
+      const pinned = [];
+      document.querySelectorAll(".artcraft-sentence.is-pinned").forEach((el) => {
+        pinned.push((el.textContent || "").trim());
+      });
+      if (pinned.length > 0) text = pinned.join(" ");
+    }
+    if (!text && view && view.editor) {
+      text = view.editor.getValue().split("\n").filter((l) => l.trim().length > 20)[0] || "Deep work in Swiss Bento clarity.";
+    }
+
+    const cardMarkdown = `> [!NOTE] ⚗️ ${title} — SICRAFT // ALCHEMY CRAFT
+> **"${text.replace(/\n+/g, " ")}"**
+> 
+> \`01 // FOCUS\` • \`#F4F3EF ARCHIVAL PAPER\` • \`@StratAlchemy\``;
+
+    await navigator.clipboard.writeText(cardMarkdown);
+    this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 45);
+    new Notice("📸 Swiss Bento Callout Card copied to clipboard! Paste anywhere in Obsidian or social media.");
   }
 
   registerCommands() {
@@ -916,6 +1401,35 @@ class AlchemyFlowPlugin extends Plugin {
     });
 
     this.addCommand({
+      id: "toggle-magic-cursor-lamp",
+      name: "🏮 Toggle Magic Cursor Lantern (Interactive Text Illumination & Shadows)",
+      callback: () => this.toggleMagicLamp(),
+    });
+
+    this.addCommand({
+      id: "load-custom-music-visualizer",
+      name: "🎵 Load Custom Music / Audio File into Sonic Equalizer",
+      callback: () => this.openCustomAudioPicker(),
+    });
+
+    this.addCommand({
+      id: "export-bento-quote-card",
+      name: "📸 Export Selection as Swiss Bento Callout Card",
+      callback: () => this.exportSelectionAsBentoCard(),
+    });
+
+    this.addCommand({
+      id: "toggle-spotlight-focus",
+      name: "🔦 Toggle Spotlight Paragraph Dimmer Mode",
+      callback: async () => {
+        this.settings.spotlightFocus = !this.settings.spotlightFocus;
+        await this.saveSettings();
+        this.applyBodyClasses();
+        this.updateDockUI();
+      },
+    });
+
+    this.addCommand({
       id: "clear-drawings",
       name: "Clear All Drawings & Highlights",
       callback: () => this.clearAllAnnotations(),
@@ -932,6 +1446,17 @@ class AlchemyFlowPlugin extends Plugin {
       "artcraft-bento-graph"
     );
     this.stopAmbientSound();
+    this.stopDesktopAudioCapture();
+    if (this.cmObserver) {
+      this.cmObserver.disconnect();
+      this.cmObserver = null;
+    }
+    if (this.onScrollCapture) {
+      window.removeEventListener("scroll", this.onScrollCapture, { capture: true });
+    }
+    if (window.AlchemyCraftAgent) {
+      delete window.AlchemyCraftAgent;
+    }
     if (this.lpInterval) clearInterval(this.lpInterval);
     if (this.timerInterval) clearInterval(this.timerInterval);
     if (this.animFrame) cancelAnimationFrame(this.animFrame);
@@ -979,24 +1504,30 @@ class AlchemyFlowPlugin extends Plugin {
         filter.type = "lowpass";
         filter.frequency.value = type === "brown" ? 420 : 1100;
 
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
+        analyser.smoothingTimeConstant = 0.8;
         whiteNoise.connect(filter);
         filter.connect(masterGain);
+        filter.connect(analyser);
         whiteNoise.start(0);
-        this.ambientNodes = { ctx, source: whiteNoise };
+        this.ambientNodes = { ctx, source: whiteNoise, analyser };
       } else if (type === "gamma40") {
-        // 40Hz Binaural Focus Drone (200Hz L + 240Hz R warm pad)
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
         const osc1 = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
         osc1.type = "sine";
         osc2.type = "sine";
         osc1.frequency.value = 180;
-        osc2.frequency.value = 220; // 40Hz delta
+        osc2.frequency.value = 220;
         masterGain.gain.value = 0.035;
         osc1.connect(masterGain);
         osc2.connect(masterGain);
+        osc1.connect(analyser);
         osc1.start();
         osc2.start();
-        this.ambientNodes = { ctx, osc1, osc2 };
+        this.ambientNodes = { ctx, osc1, osc2, analyser };
       }
     } catch (e) {
       // Ignore AudioContext restriction errors
@@ -1006,6 +1537,10 @@ class AlchemyFlowPlugin extends Plugin {
   stopAmbientSound() {
     if (!this.ambientNodes) return;
     try {
+      if (this.ambientNodes.audioEl) {
+        this.ambientNodes.audioEl.pause();
+        if (this.ambientNodes.fileUrl) URL.revokeObjectURL(this.ambientNodes.fileUrl);
+      }
       if (this.ambientNodes.source) this.ambientNodes.source.stop();
       if (this.ambientNodes.osc1) this.ambientNodes.osc1.stop();
       if (this.ambientNodes.osc2) this.ambientNodes.osc2.stop();
@@ -1278,6 +1813,20 @@ class AlchemyFlowPlugin extends Plugin {
           if (this.timerRunning) this.startAmbientSound("gamma40");
         });
     });
+    menu.addItem((item) => {
+      item
+        .setTitle(this.desktopAudioNodes ? "🔴 Stop PC / Room Audio Sync" : "🎙️ Sync Equalizer with PC / Room Audio")
+        .onClick(() => {
+          this.toggleDesktopAudioCapture();
+        });
+    });
+    menu.addItem((item) => {
+      item
+        .setTitle(`🎚️ Switch Equalizer Animation (Current: ${(this.settings.eqMode || "bars").toUpperCase()})`)
+        .onClick(() => {
+          this.cycleEqualizerMode();
+        });
+    });
     menu.addSeparator();
     menu.addItem((item) => {
       item
@@ -1289,7 +1838,10 @@ class AlchemyFlowPlugin extends Plugin {
           this.resetTimer();
         });
     });
-    menu.showAtMouseEvent(event);
+    // Open menu ABOVE the bottom dock so 'Stopwatch' is never clipped at the bottom of the screen!
+    const safeX = Math.min(event.clientX, window.innerWidth - 250);
+    const safeY = Math.max(40, Math.min(event.clientY - 340, window.innerHeight - 380));
+    menu.showAtPosition({ x: safeX, y: safeY });
   }
 
   updateTimerDisplay() {
@@ -1312,6 +1864,8 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-zen-mode", !!this.zenMode);
     document.body.classList.toggle("artcraft-dark-craft", !!this.settings.darkCraftTheme && !!this.settings.isPro);
     document.body.classList.toggle("artcraft-bento-graph", this.settings.enableBentoGraph !== false);
+    document.body.classList.toggle("artcraft-spotlight-mode", !!this.settings.spotlightFocus);
+    document.body.classList.toggle("artcraft-magic-lamp", !!this.settings.magicLamp);
 
     const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
     const show = this.settings.showHeaderTag !== false && tag.length > 0;
@@ -1528,25 +2082,64 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   setupLivePreviewObserver() {
+    let rafPending = false;
     const styleLivePreviewNodes = () => {
-      if (this.settings.enableBentoGraph !== false) {
-        this.injectGraphViewHUD();
-      }
+      rafPending = false;
       if (!this.settings.artcraftTheme || !this.settings.colorizeNumbers) return;
-
-      document.querySelectorAll(".HyperMD-list-line .cm-formatting-list-ol").forEach((el) => {
-        const txt = (el.textContent || "").trim();
+      const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
+      const listSpans = document.querySelectorAll(".HyperMD-list-line .cm-formatting-list-ol");
+      for (let i = 0; i < listSpans.length; i++) {
+        const el = listSpans[i];
+        const txt = el.textContent;
+        if (!txt) continue;
         const num = parseInt(txt, 10);
-        if (!isNaN(num)) {
-          const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
-          const c = colors[(num - 1) % 4];
-          el.style.setProperty("background-color", c, "important");
+        if (!isNaN(num) && num > 0) {
+          const mod = ((num - 1) % 4) + 1;
+          const modStr = String(mod);
+          if (el.getAttribute("data-artcraft-mod") !== modStr) {
+            el.setAttribute("data-artcraft-mod", modStr);
+            el.style.setProperty("background-color", colors[mod - 1], "important");
+          }
         }
-      });
+      }
+    };
+
+    const scheduleStyle = () => {
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(styleLivePreviewNodes);
+      }
     };
 
     styleLivePreviewNodes();
-    this.lpInterval = setInterval(styleLivePreviewNodes, 1000);
+
+    // Instant zero-lag MutationObserver when CodeMirror 6 virtual scroller mounts new lines
+    this.cmObserver = new MutationObserver((mutations) => {
+      for (let i = 0; i < mutations.length; i++) {
+        if (mutations[i].addedNodes.length > 0 || mutations[i].type === "characterData") {
+          scheduleStyle();
+          break;
+        }
+      }
+    });
+    this.cmObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    // Passive scroll listener on capture phase so scrolling with mouse wheel colors badges on the exact same frame
+    this.onScrollCapture = () => scheduleStyle();
+    window.addEventListener("scroll", this.onScrollCapture, { capture: true, passive: true });
+    this.registerDomEvent(window, "wheel", () => scheduleStyle(), { passive: true });
+
+    // Lightweight fallback check for Graph HUD
+    this.lpInterval = setInterval(() => {
+      if (this.settings.enableBentoGraph !== false) {
+        this.injectGraphViewHUD();
+      }
+      scheduleStyle();
+    }, 1200);
   }
 
   enhanceMarkdownElement(rootEl) {
@@ -1766,7 +2359,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnZen = document.createElement("button");
     this.btnZen.className = "artcraft-dock-btn";
     this.btnZen.title = t("zenTip", this);
-    this.btnZen.textContent = t("zenBtn", this);
+    this.btnZen.innerHTML = `${SICRAFT_SVGS.zen}<span class="artcraft-btn-label">${t("zenBtn", this)}</span>`;
     this.btnZen.addEventListener("click", () => {
       this.zenMode = !this.zenMode;
       this.applyBodyClasses();
@@ -1778,7 +2371,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnSentence = document.createElement("button");
     this.btnSentence.className = "artcraft-dock-btn";
     this.btnSentence.title = t("focusTip", this);
-    this.btnSentence.textContent = t("focusBtn", this);
+    this.btnSentence.innerHTML = `${SICRAFT_SVGS.focus}<span class="artcraft-btn-label">${t("focusBtn", this)}</span>`;
     this.btnSentence.addEventListener("click", async () => {
       this.settings.sentenceFocus = !this.settings.sentenceFocus;
       await this.saveSettings();
@@ -1791,7 +2384,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnLaser = document.createElement("button");
     this.btnLaser.className = "artcraft-dock-btn";
     this.btnLaser.title = t("laserTip", this);
-    this.btnLaser.textContent = t("laserBtn", this);
+    this.btnLaser.innerHTML = `${SICRAFT_SVGS.laser}<span class="artcraft-btn-label">${t("laserBtn", this)}</span>`;
     this.btnLaser.addEventListener("click", () => {
       this.toggleMode(this.mode === "laser" ? "none" : "laser");
     });
@@ -1801,7 +2394,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnDraw = document.createElement("button");
     this.btnDraw.className = "artcraft-dock-btn";
     this.btnDraw.title = t("drawTip", this);
-    this.btnDraw.textContent = t("drawBtn", this);
+    this.btnDraw.innerHTML = `${SICRAFT_SVGS.draw}<span class="artcraft-btn-label">${t("drawBtn", this)}</span>`;
     this.btnDraw.addEventListener("click", () => {
       this.toggleMode(this.mode === "draw" ? "none" : "draw");
     });
@@ -1811,7 +2404,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnEraser = document.createElement("button");
     this.btnEraser.className = "artcraft-dock-btn";
     this.btnEraser.title = t("eraserTip", this);
-    this.btnEraser.textContent = t("eraserBtn", this);
+    this.btnEraser.innerHTML = `${SICRAFT_SVGS.eraser}<span class="artcraft-btn-label">${t("eraserBtn", this)}</span>`;
     this.btnEraser.addEventListener("click", () => {
       this.toggleMode(this.mode === "eraser" ? "none" : "eraser");
     });
@@ -1863,11 +2456,49 @@ class AlchemyFlowPlugin extends Plugin {
       this.btnCleanAI = document.createElement("button");
       this.btnCleanAI.className = "artcraft-dock-btn";
       this.btnCleanAI.title = t("aiCleanTip", this);
-      this.btnCleanAI.textContent = t("aiCleanBtn", this);
+      this.btnCleanAI.innerHTML = `${SICRAFT_SVGS.spark}<span class="artcraft-btn-label">${t("aiCleanBtn", this)}</span>`;
       this.btnCleanAI.addEventListener("click", () => {
         this.cleanCurrentNoteAIWatermarks();
       });
       contentWrap.appendChild(this.btnCleanAI);
+    }
+
+    // 6.5. Smart LED Cursor Lamp Button (LMB: Toggle | RMB: Open 2700K-6500K Smart LED Controller)
+    this.btnLamp = document.createElement("button");
+    this.btnLamp.className = "artcraft-dock-btn";
+    this.btnLamp.title = "LMB: Toggle Smart LED Lamp | RMB: Configure Brightness, Kelvin (2700K–6500K) & Room Dimmer";
+    this.btnLamp.innerHTML = `${SICRAFT_SVGS.lamp}<span class="artcraft-btn-label">Lamp</span>`;
+    this.btnLamp.addEventListener("click", () => {
+      this.toggleMagicLamp();
+    });
+    this.btnLamp.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      new SmartLedLampModal(this.app, this).open();
+    });
+    contentWrap.appendChild(this.btnLamp);
+
+    // 6.6. Live 4-Mode Sonic Equalizer (Reacts ONLY to real audio; LMB: Cycle 4 Visual Modes | RMB: Audio Source Menu)
+    if (this.settings.showEqualizer !== false) {
+      const eqWrap = document.createElement("div");
+      eqWrap.className = "artcraft-dock-eq-pill";
+      eqWrap.title = "LMB: Switch Equalizer Style (Bars / Liquid Wave / Orb / DNA) | Double-Click: Sync PC Audio | RMB: Sound Menu";
+      this.eqCanvas = document.createElement("canvas");
+      this.eqCanvas.width = 56;
+      this.eqCanvas.height = 20;
+      this.eqCanvas.className = "artcraft-dock-eq-canvas";
+      eqWrap.appendChild(this.eqCanvas);
+      eqWrap.addEventListener("click", () => {
+        this.cycleEqualizerMode();
+      });
+      eqWrap.addEventListener("dblclick", (e) => {
+        e.preventDefault();
+        this.toggleDesktopAudioCapture();
+      });
+      eqWrap.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        this.showTimerMenu(e);
+      });
+      contentWrap.appendChild(eqWrap);
     }
 
     // 7. Clear button
@@ -1940,6 +2571,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnLaser?.classList.toggle("is-active", this.mode === "laser");
     this.btnDraw?.classList.toggle("is-active", this.mode === "draw");
     this.btnEraser?.classList.toggle("is-active", this.mode === "eraser");
+    this.btnLamp?.classList.toggle("is-active", !!this.settings.magicLamp);
     if (this.colorDots) {
       this.colorDots.forEach((d) => {
         d.el.classList.toggle("is-active", d.key === this.settings.activeColorKey);
@@ -1969,8 +2601,10 @@ class AlchemyFlowPlugin extends Plugin {
       this.canvasEl.classList.toggle("mode-laser", this.mode === "laser");
       this.canvasEl.classList.toggle("mode-draw", this.mode === "draw");
       this.canvasEl.classList.toggle("mode-eraser", this.mode === "eraser");
-      this.canvasEl.style.pointerEvents = active ? "auto" : "none";
-      this.canvasEl.style.touchAction = active ? "none" : "auto";
+      // In Laser mode, pointer-events stays 'none' because window.mousemove already tracks the laser, so wheel scrolling and clicking work 100% natively!
+      const capturePointer = this.mode === "draw" || this.mode === "eraser";
+      this.canvasEl.style.pointerEvents = capturePointer ? "auto" : "none";
+      this.canvasEl.style.touchAction = capturePointer ? "none" : "auto";
       if (active && this.resizeCanvas) {
         this.resizeCanvas();
       }
@@ -2182,6 +2816,23 @@ class AlchemyFlowPlugin extends Plugin {
     window.addEventListener("touchend", onEnd, { passive: true });
     window.addEventListener("touchcancel", onEnd, { passive: true });
 
+    // Forward mouse wheel scrolling through the drawing canvas to the active note scroller!
+    canvas.addEventListener(
+      "wheel",
+      (e) => {
+        const scroller =
+          document.querySelector(".workspace-leaf.mod-active .cm-scroller") ||
+          document.querySelector(".workspace-leaf.mod-active .markdown-preview-view") ||
+          document.querySelector(".cm-scroller") ||
+          document.querySelector(".markdown-preview-view");
+        if (scroller) {
+          scroller.scrollTop += e.deltaY;
+          scroller.scrollLeft += e.deltaX;
+        }
+      },
+      { passive: true }
+    );
+
     canvas.addEventListener("mousedown", onStart);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onEnd);
@@ -2265,6 +2916,184 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.restore();
     }
 
+    // 3.5. Render Real Smart LED Cursor Lamp (Room Dimmer + True Kelvin 2700K–6500K Spotlight Beam!)
+    if (this.settings.magicLamp && this.targetLampX !== undefined) {
+      this.lampX += (this.targetLampX - this.lampX) * 0.25;
+      this.lampY += (this.targetLampY - this.lampY) * 0.25;
+      const radius = this.settings.lampRadius || 310;
+      const dimPct = (this.settings.lampDimness !== undefined ? this.settings.lampDimness : 75) / 100;
+      const brightPct = (this.settings.lampBrightness || 85) / 100;
+      const rgb = kelvinToRgb(this.settings.lampKelvin || 3570);
+      const lx = this.lampX;
+      const ly = this.lampY - 32; // Offset for canvas top: 32px
+
+      ctx.save();
+      if (this.settings.lampShape === "deskbar") {
+        // BenQ ScreenBar / Monitor Lightbar Cone
+        if (dimPct > 0.02) {
+          ctx.fillStyle = `rgba(10, 11, 14, ${dimPct * 0.88})`;
+          ctx.fillRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+          ctx.globalCompositeOperation = "destination-out";
+          const coneGrad = ctx.createRadialGradient(lx, Math.max(0, ly - 120), 20, lx, ly + 80, radius * 1.45);
+          coneGrad.addColorStop(0, "rgba(0,0,0,1)");
+          coneGrad.addColorStop(0.65, "rgba(0,0,0,0.85)");
+          coneGrad.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = coneGrad;
+          ctx.beginPath();
+          ctx.ellipse(lx, ly + 30, radius * 1.4, radius * 0.95, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+        // Draw sleek physical LED bar above cursor + warm Kelvin beam
+        const barGrad = ctx.createRadialGradient(lx, ly, 5, lx, ly, radius * 1.25);
+        barGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.38 * brightPct})`);
+        barGrad.addColorStop(0.55, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.14 * brightPct})`);
+        barGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+        ctx.fillStyle = barGrad;
+        ctx.beginPath();
+        ctx.ellipse(lx, ly + 20, radius * 1.35, radius * 0.85, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Radial Spotlight Mode: dims surrounding screen & punches a crystal-clear lit circle around cursor!
+        if (dimPct > 0.02) {
+          ctx.fillStyle = `rgba(10, 11, 14, ${dimPct * 0.88})`;
+          ctx.fillRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+          ctx.globalCompositeOperation = "destination-out";
+          const holeGrad = ctx.createRadialGradient(lx, ly, radius * 0.18, lx, ly, radius);
+          holeGrad.addColorStop(0, "rgba(0, 0, 0, 1)");
+          holeGrad.addColorStop(0.62, "rgba(0, 0, 0, 0.92)");
+          holeGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+          ctx.fillStyle = holeGrad;
+          ctx.beginPath();
+          ctx.arc(lx, ly, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // Add authentic Kelvin LED tint (2700K Warm Gold -> 6500K Cool Daylight) inside the beam
+        ctx.globalCompositeOperation = "source-over";
+        const beamGrad = ctx.createRadialGradient(lx, ly, 4, lx, ly, radius);
+        beamGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.34 * brightPct})`);
+        beamGrad.addColorStop(0.55, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.14 * brightPct})`);
+        beamGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.arc(lx, ly, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // 3.6. Render Tactile Paper Ripples
+    if (this.ripples && this.ripples.length > 0) {
+      for (let i = this.ripples.length - 1; i >= 0; i--) {
+        const rp = this.ripples[i];
+        rp.r += 2.4;
+        rp.alpha -= 0.032;
+        if (rp.alpha <= 0) {
+          this.ripples.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y - 32, rp.r, 0, Math.PI * 2);
+        ctx.strokeStyle = rp.color;
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = rp.alpha;
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // 3.7. Render Real-Time 4-Mode Sonic Equalizer in Floating Dock (Strictly Audio-Reactive!)
+    if (this.eqCanvas) {
+      const eqCtx = this.eqCanvas.getContext("2d");
+      const ew = this.eqCanvas.width;
+      const eh = this.eqCanvas.height;
+      eqCtx.clearRect(0, 0, ew, eh);
+
+      const activeAnalyser =
+        (this.desktopAudioNodes && this.desktopAudioNodes.analyser) ||
+        (this.ambientNodes && this.ambientNodes.analyser) ||
+        null;
+
+      let freqData = null;
+      let timeData = null;
+      if (activeAnalyser) {
+        freqData = new Uint8Array(activeAnalyser.frequencyBinCount);
+        timeData = new Uint8Array(activeAnalyser.frequencyBinCount);
+        activeAnalyser.getByteFrequencyData(freqData);
+        activeAnalyser.getByteTimeDomainData(timeData);
+      }
+
+      const mode = this.settings.eqMode || "bars";
+      const colors = ["#69BD28", "#2563EB", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"];
+
+      if (mode === "bars") {
+        const bars = 14;
+        const barW = 2.8;
+        const gap = 1.2;
+        for (let i = 0; i < bars; i++) {
+          const val = freqData ? freqData[i % freqData.length] : 0;
+          const h = freqData ? Math.max(2, (val / 255) * (eh - 2)) : 2;
+          eqCtx.fillStyle = colors[i % colors.length];
+          eqCtx.fillRect(i * (barW + gap), eh - h, barW, h);
+        }
+      } else if (mode === "wave") {
+        // Dual Liquid Sine Wave
+        for (let w = 0; w < 2; w++) {
+          eqCtx.beginPath();
+          eqCtx.strokeStyle = w === 0 ? "#69BD28" : "#2563EB";
+          eqCtx.lineWidth = 1.6;
+          for (let x = 0; x < ew; x++) {
+            let amp = 0;
+            if (timeData) {
+              const idx = Math.floor((x / ew) * timeData.length);
+              amp = ((timeData[idx] - 128) / 128) * (eh * 0.45);
+            }
+            const y = eh / 2 + amp * (w === 0 ? 1 : -0.7);
+            if (x === 0) eqCtx.moveTo(x, y);
+            else eqCtx.lineTo(x, y);
+          }
+          eqCtx.stroke();
+        }
+      } else if (mode === "orb") {
+        // Radial Alchemy Resonance Rings
+        const cx = ew / 2;
+        const cy = eh / 2;
+        let avg = 0;
+        if (freqData) {
+          for (let i = 0; i < 12; i++) avg += freqData[i];
+          avg = avg / (12 * 255);
+        }
+        const r1 = 3 + avg * 6.5;
+        const r2 = 5 + avg * 8.5;
+        eqCtx.beginPath();
+        eqCtx.arc(cx, cy, r2, 0, Math.PI * 2);
+        eqCtx.strokeStyle = "rgba(37, 99, 235, 0.7)";
+        eqCtx.lineWidth = 1.3;
+        eqCtx.stroke();
+        eqCtx.beginPath();
+        eqCtx.arc(cx, cy, r1, 0, Math.PI * 2);
+        eqCtx.fillStyle = "#69BD28";
+        eqCtx.fill();
+      } else {
+        // Harmonic DNA Matrix Dots
+        const cols = 10;
+        for (let i = 0; i < cols; i++) {
+          const val = freqData ? freqData[i * 2] / 255 : 0;
+          const x = 4 + i * 5.2;
+          const spread = val * (eh * 0.42);
+          eqCtx.fillStyle = "#69BD28";
+          eqCtx.beginPath();
+          eqCtx.arc(x, eh / 2 - spread, 1.7, 0, Math.PI * 2);
+          eqCtx.fill();
+          eqCtx.fillStyle = "#EC4899";
+          eqCtx.beginPath();
+          eqCtx.arc(x, eh / 2 + spread, 1.7, 0, Math.PI * 2);
+          eqCtx.fill();
+        }
+      }
+    }
+
     // 4. Render Alchemy Celebration Confetti Particles
     if (this.particles && this.particles.length > 0) {
       for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -2296,7 +3125,7 @@ class AlchemyFlowPlugin extends Plugin {
 }
 
 class AlchemyCraftProModal extends Modal {
-  constructor(app, plugin, initialMethod = "card") {
+  constructor(app, plugin, initialMethod = "evm") {
     super(app);
     this.plugin = plugin;
     this.selectedNetwork = initialMethod;
@@ -2317,7 +3146,7 @@ class AlchemyCraftProModal extends Modal {
     const gridLabel = contentEl.createDiv({ cls: "artcraft-section-label" });
     gridLabel.setText(t("step1Title", this.plugin));
 
-    // 6-Tile Global Payment Hub (Card/Tribute, @CryptoBot, Universal EVM, Bybit UID, Solana, TRON)
+    // 6-Tile Global Payment Hub (Promo/Key, @CryptoBot, Universal EVM, Bybit UID, Solana, TRON)
     const netGrid = contentEl.createDiv({ cls: "artcraft-net-bento-grid artcraft-net-grid-6" });
     const networks = [
       { id: "promo", name: "Промокод / VIP Ключ", hint: "Активация по коду", icon: "🎟️", tag: "PROMO CODE" },
@@ -2340,20 +3169,20 @@ class AlchemyCraftProModal extends Modal {
       let evmBadgesHtml = "";
       let customActionsHtml = "";
 
-      if (netId === "card") {
+      if (netId === "promo" || netId === "card") {
         noteText = t("cardNote", this.plugin);
         customActionsHtml = `
           <div class="artcraft-pay-cta-row">
-            <button class="artcraft-pay-action-btn is-green" id="pro-open-tribute">✈️ Pay $4.99 via @CryptoBot (All Coins)</button>
+            <button class="artcraft-pay-action-btn is-green" id="pro-open-promo-cb">✈️ Pay $4.99 via @CryptoBot (All Coins)</button>
             <button class="artcraft-pay-action-btn is-blue" id="pro-open-card-tg">⚡ Request Direct Stripe / Card Link</button>
           </div>
         `;
       } else if (netId === "cryptobot") {
-        noteText = t("cryptobotNote", this.plugin);
+        noteText = "✈️ Click below to generate an official Crypto Pay API Invoice (#A668773) with full product description ('SiCraft // Alchemy Craft Pro Pass — 1 Year') and automatic verification!";
         customActionsHtml = `
           <div class="artcraft-pay-cta-row">
-            <button class="artcraft-pay-action-btn is-blue" id="pro-open-cryptobot">✈️ Open @CryptoBot ($4.99 USDT/TON)</button>
-            <button class="artcraft-pay-action-btn is-dark" id="pro-open-cb-tg">💬 Get Instant Invoice via @StratAlchemy</button>
+            <button class="artcraft-pay-action-btn is-blue" id="pro-create-api-invoice">✈️ Pay $4.99 via @CryptoBot (With Description)</button>
+            <button class="artcraft-pay-action-btn is-dark" id="pro-open-cb-tg">💬 Support @StratAlchemy</button>
           </div>
         `;
       } else if (netId === "evm") {
@@ -2429,9 +3258,41 @@ class AlchemyCraftProModal extends Modal {
         };
       }
 
-      cardBox.querySelector("#pro-open-tribute")?.addEventListener("click", () => window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank"));
+      const createRichCryptoBotInvoice = async (btnEl) => {
+        const origText = btnEl.textContent;
+        btnEl.textContent = "⏳ Opening Secure Invoice...";
+        try {
+          // Calls your secure Supabase Edge Function (so your Crypto-Pay-API-Token stays 100% private on Supabase server!)
+          const sbFuncUrl = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
+          const res = await fetch(sbFuncUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "create_invoice", amount: "4.99" }),
+          });
+          if (res.ok) {
+            const d = await res.json();
+            if (d && d.pay_url) {
+              if (d.invoice_id) {
+                const txField = this.contentEl.querySelector(".verify-tx-input");
+                if (txField) txField.value = String(d.invoice_id);
+              }
+              window.open(d.pay_url, "_blank");
+              return;
+            }
+          }
+          window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank");
+        } catch (e) {
+          window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank");
+        } finally {
+          btnEl.textContent = origText;
+        }
+      };
+
+      const btnPromoCb = cardBox.querySelector("#pro-open-promo-cb");
+      if (btnPromoCb) btnPromoCb.addEventListener("click", () => createRichCryptoBotInvoice(btnPromoCb));
       cardBox.querySelector("#pro-open-card-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
-      cardBox.querySelector("#pro-open-cryptobot")?.addEventListener("click", () => window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank"));
+      const btnApiCb = cardBox.querySelector("#pro-create-api-invoice");
+      if (btnApiCb) btnApiCb.addEventListener("click", () => createRichCryptoBotInvoice(btnApiCb));
       cardBox.querySelector("#pro-open-cb-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
     };
 
@@ -2502,8 +3363,9 @@ class AlchemyCraftProModal extends Modal {
 
       const verified = await this.verifyOnChain(val, this.selectedNetwork);
       if (verified) {
+        const uniqueLicenseKey = isValidSiCraftLicenseKey(val) ? val.toUpperCase() : generateSiCraftLicenseKey(val);
         this.plugin.settings.isPro = true;
-        this.plugin.settings.proTxHash = val;
+        this.plugin.settings.proTxHash = uniqueLicenseKey;
         this.plugin.settings.proActivatedAt = Date.now();
         this.plugin.settings.proPlan = "1_year";
         await this.plugin.saveSettings();
@@ -2546,8 +3408,6 @@ class AlchemyCraftProModal extends Modal {
         if (data && data.success) {
           new Notice(`🎉 Успешно! Активирован тариф: ${data.plan || "1_year"}`);
           return true;
-        } else if (data && data.message) {
-          console.log("Supabase redeem response:", data.message);
         }
       }
     } catch (err) {
@@ -2555,12 +3415,39 @@ class AlchemyCraftProModal extends Modal {
     }
 
     // 2. Built-in Master Promo Codes (Instant offline activation)
-    const MASTER_PROMOS = ["STRATALCHEMY", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
+    // 1.5. Cryptographic SiCraft License Key Verification (Format: SICRAFT-XXXX-XXXX-XXXX-XXXX)
+    if (isValidSiCraftLicenseKey(rawCode)) {
+      new Notice("🔐 Cryptographic License Key Verified! Activating SiCraft Pro Pass...");
+      return true;
+    }
+
+    // 1.6. Secure Supabase Edge Function Invoice Check
+    try {
+      const sbFuncUrl = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
+      const cleanId = rawCode.replace(/[^0-9]/g, "");
+      if (cleanId.length >= 5) {
+        const cbRes = await fetch(sbFuncUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "check_invoice", invoice_id: cleanId }),
+        });
+        if (cbRes.ok) {
+          const d = await cbRes.json();
+          if (d && d.paid) {
+            new Notice("✅ CryptoBot Invoice Confirmed via Supabase!");
+            return true;
+          }
+        }
+      }
+    } catch (e) {}
+
+    const MASTER_PROMOS = ["STRATALCHEMY", "SICRAFT-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
     if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
       new Notice("🎟️ Промокод успешно подтвержден! Активация Pro Pass...");
       return true;
     }
-    // 2. CryptoBot Invoice ID check (e.g. IVdNOM8aeE7t or #IV69485245)
+
+    // 3. CryptoBot Invoice ID check (e.g. IVdNOM8aeE7t or #IV69485245)
     if (rawCode.includes("IVDNOM") || rawCode.includes("69485245") || rawCode.startsWith("IV")) {
       new Notice("✅ Чек CryptoBot принят к верификации!");
       return true;
@@ -2614,7 +3501,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         <div class="artcraft-settings-flask-box">${ALCHEMY_ICON_SVG}</div>
         <div>
           <div class="artcraft-settings-hero-title">${t("settingsTitle", this.plugin)}</div>
-          <div class="artcraft-settings-hero-sub">Author: Elyas Aliverdiyev (@StratAlchemy) • Swiss Bento System</div>
+          <div class="artcraft-settings-hero-sub">Author: Elyaz Aliverdiyev (@StratAlchemy) • Swiss Bento System</div>
         </div>
       </div>
       <div class="artcraft-settings-hero-actions">
@@ -2622,7 +3509,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       </div>
     `;
     heroBanner.querySelector("#artcraft-check-rel-btn")?.addEventListener("click", () => {
-      window.open("https://github.com/elyazaliverdiyev/alchemy-craft/releases", "_blank");
+      window.open("obsidian://show-plugin?id=artcraft-reader");
+      new Notice("🔄 Opening Alchemy Craft in Obsidian Community Plugins...");
     });
 
     // 1. 6-Language Global Selector
@@ -2763,6 +3651,82 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
+    // 5.1 Smart LED Cursor Lamp (2700K–6500K + Brightness + Room Dimmer)
+    new Setting(containerEl)
+      .setName("🏮 Smart LED Cursor Lamp (2700K–6500K Kelvin, Brightness & Room Dimmer)")
+      .setDesc("Dims the surrounding screen like a dark study room while your cursor shines a warm 2700K–6500K LED spotlight or BenQ Lightbar over your text.")
+      .addButton((btn) =>
+        btn.setButtonText("🎛️ Configure Lamp (Kelvin & Dimmer)").onClick(() => {
+          new SmartLedLampModal(this.app, this.plugin).open();
+        })
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(!!this.plugin.settings.magicLamp).onChange(async (val) => {
+          this.plugin.settings.magicLamp = val;
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
+          this.plugin.updateDockUI();
+        })
+      );
+
+    // 5.15 Tactile Mechanical Keystroke Audio (ASMR Thock / Typewriter)
+    new Setting(containerEl)
+      .setName("⌨️ Tactile Keystroke Sound (Mechanical Switch ASMR)")
+      .setDesc("Zero-latency WebAudio mechanical keyboard sound while typing notes (Deep Topre Thock or Vintage Swiss Typewriter).")
+      .addDropdown((drop) =>
+        drop
+          .addOption("off", "🔇 Off")
+          .addOption("thock", "🎹 Deep Mechanical Thock")
+          .addOption("typewriter", "📠 Vintage Swiss Typewriter")
+          .setValue(this.plugin.settings.tactileTypingSound || "off")
+          .onChange(async (val) => {
+            this.plugin.settings.tactileTypingSound = val;
+            await this.plugin.saveSettings();
+            if (val !== "off") this.plugin.playTactileKeySound("a");
+          })
+      );
+
+    // 5.18 Live 4-Mode Sonic Equalizer & Desktop Audio Sync
+    new Setting(containerEl)
+      .setName("🎚️ Live 4-Mode Sonic Equalizer (Desktop Audio & Soundscape Reactive)")
+      .setDesc("Reacts strictly to real audio (PC/System audio or built-in Rain/Brown Noise). Click the equalizer in the dock to switch between 4 animations: Spectrum Bars, Dual Liquid Wave, Radial Orb, and Harmonic DNA.")
+      .addDropdown((drop) =>
+        drop
+          .addOption("bars", "01 // 14-Bar Spectrum")
+          .addOption("wave", "02 // Dual Liquid Sine Wave")
+          .addOption("orb", "03 // Radial Alchemy Orb")
+          .addOption("dna", "04 // Harmonic DNA Matrix")
+          .setValue(this.plugin.settings.eqMode || "bars")
+          .onChange(async (val) => {
+            this.plugin.settings.eqMode = val;
+            await this.plugin.saveSettings();
+          })
+      )
+      .addButton((btn) =>
+        btn.setButtonText("🎙️ Sync PC Audio").onClick(() => {
+          this.plugin.toggleDesktopAudioCapture();
+        })
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.showEqualizer !== false).onChange(async (val) => {
+          this.plugin.settings.showEqualizer = val;
+          await this.plugin.saveSettings();
+          this.plugin.createFloatingDock();
+        })
+      );
+
+    // 5.2 Spotlight Focus Reading Dimmer
+    new Setting(containerEl)
+      .setName("🔦 Spotlight Paragraph Focus Dimmer")
+      .setDesc("Gently dims inactive paragraphs to 45% opacity while keeping your hovered or active paragraph at 100% crisp contrast.")
+      .addToggle((toggle) =>
+        toggle.setValue(!!this.plugin.settings.spotlightFocus).onChange(async (val) => {
+          this.plugin.settings.spotlightFocus = val;
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
+        })
+      );
+
     // 6. Numbered Badges & Sentence Focus
     new Setting(containerEl)
       .setName("🔢 Square Number Badges (01–04) & Crypto/Money Capsules")
@@ -2811,7 +3775,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       </div>
     `;
 
-    // --- 💎 PRO SECTION (WITH HOLOGRAPHIC SHIMMER, CARD/TRIBUTE, CRYPTOBOT & UNIVERSAL EVM) ---
+    // --- 💎 PRO SECTION (WITH HOLOGRAPHIC SHIMMER, PROMO/KEY, CRYPTOBOT & UNIVERSAL EVM) ---
     containerEl.createEl("h3", { text: "💎 Alchemy Craft Pro" });
 
     if (this.plugin.settings.isPro) {
@@ -2859,22 +3823,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         cls: "artcraft-open-modal-btn",
       });
       buyBtn.onclick = () => {
-        new AlchemyCraftProModal(this.app, this.plugin, "card").open();
+        new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
       };
     }
 
-    // --- ⭐ GLOBAL SUPPORT & CHECKOUT (NO BOOSTY! REPLACED WITH CARD/TRIBUTE, @CRYPTOBOT, TELEGRAM, GITHUB) ---
+    // --- ⭐ GLOBAL SUPPORT & CHECKOUT (NO BOOSTY! REPLACED WITH PROMO/KEY, @CRYPTOBOT, TELEGRAM, GITHUB) ---
     containerEl.createEl("h3", { text: "⭐ Global Checkout, Card Support & Community" });
 
     new Setting(containerEl)
       .setName("💳 Global Payment & Direct Author Contact")
-      .setDesc("Pay by Bank Card (USA/EU/World via Tribute), 1-Click @CryptoBot, or Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20).")
+      .setDesc("Pay by Bank Card (USA/EU/World via @CryptoBot or Direct 0% EVM), 1-Click @CryptoBot, or Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20).")
       .addButton((btn) => {
         btn
-          .setButtonText("💳 Pay by Card (Tribute)")
+          .setButtonText("🌐 0% Fee EVM / Bybit UID")
           .setCta()
           .onClick(() => {
-            new AlchemyCraftProModal(this.app, this.plugin, "card").open();
+            new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
           });
       })
       .addButton((btn) => {

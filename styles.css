@@ -2225,3 +2225,394 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   color: #F3F4F6 !important;
   border-color: #374151 !important;
 }
+
+/* ==========================================================================
+   13. ALCHEMY CRAFT v4.0.0 — ZERO-LAG SCROLL BADGES, SPOTLIGHT DIMMER,
+       AI AGENT BRIDGE BUTTON & MAGNETIC SPRING MICRO-INTERACTIONS
+   ========================================================================== */
+
+/* Zero-lag Instant Scroll Color Rules for Live Preview Numbered Lists */
+body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="1"] {
+  background-color: var(--artcraft-badge-blue, #2563EB) !important;
+}
+body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="2"] {
+  background-color: var(--artcraft-badge-orange, #F59E0B) !important;
+}
+body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="3"] {
+  background-color: var(--artcraft-badge-green, #10B981) !important;
+}
+body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="4"] {
+  background-color: var(--artcraft-badge-purple, #8B5CF6) !important;
+}
+
+/* Pure CSS sibling cycle fallback BEFORE JS MutationObserver even fires (0ms frame-0 accuracy!) */
+body.artcraft-theme-active .cm-line:not(.HyperMD-list-line-nobullet) + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-blue, #2563EB) !important;
+}
+body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-orange, #F59E0B) !important;
+}
+body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-green, #10B981) !important;
+}
+body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-purple, #8B5CF6) !important;
+}
+
+/* Spotlight Paragraph Focus Dimmer Mode */
+body.artcraft-spotlight-mode .markdown-rendered p,
+body.artcraft-spotlight-mode .markdown-rendered li,
+body.artcraft-spotlight-mode .cm-line:not(.cm-active) {
+  opacity: 0.42;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s ease;
+}
+
+body.artcraft-spotlight-mode .markdown-rendered p:hover,
+body.artcraft-spotlight-mode .markdown-rendered li:hover,
+body.artcraft-spotlight-mode .cm-line:hover,
+body.artcraft-spotlight-mode .cm-line.cm-active {
+  opacity: 1 !important;
+}
+
+/* 🤖 AI Agent Context Bridge Button in Floating Dock */
+.artcraft-agent-btn {
+  background: linear-gradient(135deg, #111111 0%, #1E293B 100%) !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #69BD28 !important;
+  box-shadow: 0 2px 0 #69BD28 !important;
+  font-weight: 800 !important;
+}
+
+.artcraft-agent-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 0 #69BD28, 0 0 12px rgba(105, 189, 40, 0.35) !important;
+}
+
+/* Complex Spring & Tactile Micro-Animations for Checkboxes & Badges */
+@keyframes artcraftCheckboxPop {
+  0% { transform: scale(0.8); }
+  55% { transform: scale(1.22) rotate(-4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox:checked,
+body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked {
+  animation: artcraftCheckboxPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   14. SICRAFT // ALCHEMY CRAFT v4.1.0 — MAGIC CURSOR LAMP, SONIC EQUALIZER,
+       MENU Z-INDEX FIX, CUSTOM VECTOR SVGS & FULL OBSIDIAN SPECTRUM COVERAGE
+   ========================================================================== */
+
+/* Fix Obsidian Context Menu / Pomodoro Presets Menu z-index so 'Stopwatch' is NEVER behind the dock! */
+.menu {
+  z-index: 10050 !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 6px 0 #111111, 0 14px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Custom Minimalist Swiss Bento Vector SVG Icons inside Dock */
+.sicraft-svg-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  stroke-width: 2.1;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.artcraft-dock-btn:hover .sicraft-svg-icon {
+  transform: scale(1.15) rotate(-4deg);
+}
+
+/* Live 12-Bar Sonic Equalizer Pill in Dock */
+.artcraft-dock-eq-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111111;
+  border: 1.5px solid #111111;
+  border-radius: 6px;
+  padding: 3px 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #69BD28;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.artcraft-dock-eq-pill:hover {
+  transform: translateY(-1.5px) scale(1.04);
+}
+
+.artcraft-dock-eq-canvas {
+  display: block;
+  width: 52px;
+  height: 18px;
+}
+
+/* 🏮 Magic Cursor Lantern (Lumina Lamp) — Dynamic Text Illumination & 3D Reactive Shadows */
+body.artcraft-magic-lamp .markdown-rendered p,
+body.artcraft-magic-lamp .markdown-rendered li,
+body.artcraft-magic-lamp .cm-line {
+  transition: text-shadow 0.12s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.artcraft-magic-lamp .is-lamp-lit {
+  text-shadow: 0 0 calc(14px * var(--sicraft-light-intensity, 0.5)) rgba(245, 158, 11, 0.32);
+}
+
+body.artcraft-magic-lamp .markdown-rendered table.is-lamp-lit,
+body.artcraft-magic-lamp .markdown-rendered .callout.is-lamp-lit,
+body.artcraft-magic-lamp .inline-title.is-lamp-lit {
+  box-shadow: var(--sicraft-shadow-x, 0px) var(--sicraft-shadow-y, 4px) 0 #111111,
+              0 0 calc(26px * var(--sicraft-light-intensity, 0.5)) rgba(245, 158, 11, 0.28) !important;
+  border-color: #F59E0B !important;
+}
+
+/* ==========================================================================
+   15. FULL OBSIDIAN SPECTRUM COVERAGE (CANVAS, BACKLINKS, TAGS, BLOCKQUOTES)
+   ========================================================================== */
+
+/* Obsidian Canvas (.canvas-node) Swiss Bento Styling */
+body.artcraft-theme-active .canvas-node-container {
+  border: 2px solid #111111 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 5px 0 #111111, 0 12px 24px rgba(17, 17, 17, 0.12) !important;
+  background-color: var(--artcraft-bg-card, #FFFFFF) !important;
+}
+
+body.artcraft-theme-active .canvas-node.is-focused .canvas-node-container {
+  border-color: #69BD28 !important;
+  box-shadow: 0 6px 0 #69BD28, 0 16px 32px rgba(105, 189, 40, 0.22) !important;
+}
+
+/* Tags (#tag) Swiss Capsule Styling */
+body.artcraft-theme-active a.tag,
+body.artcraft-theme-active .cm-hashtag {
+  background-color: #EEF4FF !important;
+  color: #1E3A8A !important;
+  border: 1px solid #93C5FD !important;
+  border-radius: 6px !important;
+  padding: 1px 7px !important;
+  font-family: var(--font-monospace) !important;
+  font-size: 0.82em !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+}
+
+/* Blockquotes (> Quote) Editorial Styling */
+body.artcraft-theme-active .markdown-rendered blockquote {
+  background-color: #FFFFFF !important;
+  border: 1.5px solid #111111 !important;
+  border-left: 6px solid #69BD28 !important;
+  border-radius: 9px !important;
+  padding: 12px 18px !important;
+  box-shadow: 0 3px 0 #111111 !important;
+  color: #111111 !important;
+  font-style: normal !important;
+}
+
+/* Right Sidebar Outline & Backlinks Pane */
+body.artcraft-theme-active .workspace-split.mod-right-split .view-content {
+  background-color: var(--artcraft-bg-sidebar, #EDEBE4) !important;
+}
+
+body.artcraft-theme-active .tree-item-self {
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+}
+
+body.artcraft-theme-active .tree-item-self:hover {
+  background-color: #FFFFFF !important;
+  color: #111111 !important;
+}
+
+/* ==========================================================================
+   16. SICRAFT // ALCHEMY CRAFT v4.2.0 — 2-COLUMN COMPACT VERTICAL DOCK
+       (ZERO SCROLLBARS, ZERO CLIPPING) & SMART LED LAMP CONTROLLER MODAL
+   ========================================================================== */
+
+/* Fix Vertical Dock Pillar: 2-Column Bento Grid so ALL tools fit with ZERO scrollbars & ZERO text clipping! */
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  flex-direction: column !important;
+  right: 14px !important;
+  left: auto !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  width: 112px !important;
+  max-width: 112px !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 10px 8px !important;
+  border-radius: 14px !important;
+  gap: 6px !important;
+  box-shadow: 0 5px 0 #111111, 0 14px 32px rgba(17, 17, 17, 0.22) !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 5px !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+/* Full-width items in the 2-column vertical dock (Timer, Color Palette, Equalizer) */
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap,
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pill {
+  grid-column: span 2 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  justify-content: center !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  justify-items: center !important;
+  gap: 4px !important;
+  padding: 3px 0 !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 5px 3px !important;
+  font-size: 9.5px !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  overflow: hidden !important;
+}
+
+/* ==========================================================================
+   SMART LED CURSOR LAMP CONTROLLER MODAL (INSPIRED BY SMART LED UI)
+   ========================================================================== */
+.sicraft-led-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sicraft-led-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid #E5E7EB;
+}
+
+.sicraft-led-power-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1F2937;
+  color: #9CA3AF;
+  border: 1.5px solid #111111;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sicraft-led-power-btn.is-on {
+  background: #F97316 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 0 #111111, 0 0 16px rgba(249, 115, 22, 0.45);
+}
+
+.sicraft-led-card {
+  background: #1A1C20;
+  color: #F3F4F6;
+  border: 1.5px solid #111111;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 0 #111111;
+}
+
+.sicraft-led-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.sicraft-led-card-top strong {
+  font-family: "JetBrains Mono", monospace;
+  color: #FBBF24;
+}
+
+.sicraft-led-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+  border: 1.5px solid #374151;
+  background: #2E323B;
+  padding: 0 4px;
+}
+
+.sicraft-slider-bright {
+  background: linear-gradient(90deg, #374151 0%, #F59E0B 50%, #FDE047 100%) !important;
+}
+
+.sicraft-slider-kelvin {
+  background: linear-gradient(90deg, #EA580C 0%, #FBBF24 38%, #FEF9C3 68%, #DBEAFE 100%) !important;
+}
+
+.sicraft-led-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid #111111;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  cursor: grab;
+}
+
+.sicraft-kelvin-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.sicraft-k-btn,
+.sicraft-shape-btn {
+  background: #252830;
+  color: #E5E7EB;
+  border: 1px solid #374151;
+  border-radius: 7px;
+  padding: 6px 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.sicraft-k-btn:hover,
+.sicraft-shape-btn:hover,
+.sicraft-shape-btn.is-active {
+  background: #F59E0B !important;
+  color: #111111 !important;
+  border-color: #FFFFFF !important;
+}
