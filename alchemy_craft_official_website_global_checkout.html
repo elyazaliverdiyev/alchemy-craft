@@ -237,34 +237,43 @@
       bottom: auto !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
-      width: 78px !important;
-      max-height: 92% !important;
-      overflow-y: auto !important;
-      padding: 10px 6px !important;
-      align-items: center !important;
+      width: 122px !important;
+      max-height: none !important;
+      overflow: visible !important;
+      padding: 8px 7px !important;
+      align-items: stretch !important;
     }
 
     .sandbox-dock.is-vertical:not(.is-collapsed) .dock-inner-tools {
-      flex-direction: column !important;
-      align-items: center !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
       width: 100% !important;
-      gap: 6px !important;
+      gap: 5px !important;
+    }
+
+    .sandbox-dock.is-vertical:not(.is-collapsed) #demoTimerBtn,
+    .sandbox-dock.is-vertical:not(.is-collapsed) .dock-color-palette,
+    .sandbox-dock.is-vertical:not(.is-collapsed) #demoEqPill {
+      grid-column: span 2 !important;
+      width: 100% !important;
+      justify-content: center !important;
     }
 
     .sandbox-dock.is-vertical:not(.is-collapsed) .dock-inner-tools > button {
       width: 100% !important;
       justify-content: center !important;
       font-size: 10px !important;
-      padding: 5px 4px !important;
+      padding: 5px 3px !important;
       white-space: nowrap !important;
       overflow: hidden !important;
     }
 
     .sandbox-dock.is-vertical:not(.is-collapsed) .dock-color-palette {
       display: grid !important;
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 5px !important;
+      grid-template-columns: repeat(6, 1fr) !important;
+      gap: 3px !important;
       justify-items: center !important;
+      padding: 2px 0 !important;
     }
 
     .sandbox-dock.is-vertical:not(.is-collapsed) .dock-brand-text {
@@ -310,9 +319,9 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="font-black tracking-tight text-base sm:text-lg">ALCHEMY CRAFT</span>
-            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-1.5 py-0.5 rounded border border-[#111111]">v3.7.0</span>
+            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-1.5 py-0.5 rounded border border-[#111111]">v4.2.0</span>
           </div>
-          <p class="text-[11px] font-mono-code opacity-70 hidden sm:block">SWISS BENTO OBSIDIAN SYSTEM</p>
+          <p class="text-[11px] font-mono-code opacity-70 hidden sm:block">SICRAFT // SUPER INTELLIGENCE CRAFT STUDIO</p>
         </div>
       </a>
 
@@ -320,7 +329,7 @@
       <nav class="hidden md:flex items-center gap-6 text-sm font-bold">
         <a href="#sandbox" data-i18n="navSandbox" class="hover:text-[#69BD28] transition-colors">Live Demo</a>
         <a href="#features" data-i18n="navFeatures" class="hover:text-[#69BD28] transition-colors">Bento Features</a>
-        <a href="#settings-preview" data-i18n="navSettings" class="hover:text-[#69BD28] transition-colors">v3.7 Settings & Fix</a>
+        <a href="#settings-preview" data-i18n="navSettings" class="hover:text-[#69BD28] transition-colors">Smart Lamp & Settings</a>
         <a href="#checkout" data-i18n="navPricing" class="hover:text-[#69BD28] transition-colors">Pro Pass ($4.99)</a>
       </nav>
 
@@ -384,7 +393,7 @@
 
         <a href="#settings-preview" class="bento-btn bg-[#FEF3C7] text-[#92400E] font-bold text-xs sm:text-sm px-4 py-3.5 rounded-xl flex items-center gap-1.5">
           <span>📱</span>
-          <span data-i18n="heroCtaFix">Stuck Mobile Bar Fix & v3.7 Code</span>
+          <span data-i18n="heroCtaFix">🏮 Smart LED Lamp & Studio Controls</span>
         </a>
       </div>
 
@@ -415,7 +424,7 @@
           <span class="step-badge bg-[#8B5CF6]">04</span>
           <div>
             <div class="font-black text-sm">100% Direct</div>
-            <div class="text-[11px] opacity-70 font-mono-code">@CryptoBot & Tribute</div>
+            <div class="text-[11px] opacity-70 font-mono-code">@CryptoBot & @CryptoBot</div>
           </div>
         </div>
       </div>
@@ -460,7 +469,7 @@
           <div id="demoTaskFill" class="h-full bg-[#69BD28] transition-all duration-300 rounded-full" style="width: 67%;"></div>
         </div>
         <span id="demoTaskPct" class="text-[#15803D] font-extrabold">67%</span>
-        <button onclick="document.getElementById('demoProgressBarWrap').style.display='none'" title="Dismiss Progress Bar (New in v3.7 for Mobile!)" class="ml-1 px-1.5 py-0.5 rounded hover:bg-gray-200 text-gray-600 font-bold">✕</button>
+        <button onclick="document.getElementById('demoProgressBarWrap').style.display='none'" title="Dismiss Progress Bar (New in v4.2 for Mobile!)" class="ml-1 px-1.5 py-0.5 rounded hover:bg-gray-200 text-gray-600 font-bold">✕</button>
       </div>
 
       <!-- Main Workspace Split: Left File Explorer + Right Markdown Editor -->
@@ -469,47 +478,75 @@
         <!-- Interactive Drawing & Laser Canvas Overlay -->
         <canvas id="sandboxCanvas" class="absolute inset-0 z-20 pointer-events-none"></canvas>
 
-        <!-- Left Sidebar (File Explorer) -->
-        <aside id="sandboxSidebar" class="lg:col-span-3 bg-[#EDEBE4] text-[#111111] border-r-[1.5px] border-[#D5D3CC] p-3.5 hidden lg:block select-none">
+        <!-- Left Sidebar (File Explorer — 100% Interactive Folders & Notes!) -->
+        <aside id="sandboxSidebar" class="lg:col-span-3 bg-[#EDEBE4] text-[#111111] border-r-[1.5px] border-[#D5D3CC] p-3.5 hidden lg:block select-none z-30 relative">
           <div class="font-mono-code text-[11px] font-extrabold text-gray-500 uppercase tracking-wider mb-2.5 flex items-center justify-between">
-            <span>VAULT EXPLORER</span>
+            <span>VAULT EXPLORER (CLICKABLE!)</span>
             <span>⚗️</span>
           </div>
 
-          <!-- Colored Bento Folders -->
-          <div class="space-y-2 text-xs font-bold">
-            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#2563EB] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
-              <span>▾</span> <span>01 // Global Strategy</span>
-            </div>
-            <div class="pl-3 ml-2 border-l-[1.5px] border-[#D5D3CC] space-y-1.5">
-              <div class="bg-white border border-[#111111] border-l-4 border-l-[#69BD28] rounded-md px-2.5 py-1.5 font-extrabold shadow-sm flex items-center justify-between">
-                <span>📄 StratAlchemy_Brief.md</span>
-                <span class="w-2 h-2 rounded-full bg-[#69BD28]"></span>
+          <!-- Interactive Colored Bento Folders & Notes -->
+          <div class="space-y-2 text-xs font-bold" id="sandboxFolderTree">
+            <!-- Folder 01 -->
+            <div>
+              <div onclick="toggleSandboxFolder('f01')" class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#2563EB] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white transition-colors">
+                <span id="arrow-f01">▾</span> <span>01 // Global Strategy</span>
               </div>
-              <div class="px-2.5 py-1.5 text-gray-700 hover:bg-[#F9F8F5] rounded-md font-medium cursor-pointer">
-                📄 Q4_Crypto_Treasury.md
+              <div id="children-f01" class="pl-3 ml-2 mt-1.5 border-l-[1.5px] border-[#D5D3CC] space-y-1.5">
+                <div id="noteTab-brief" onclick="loadSandboxNote('brief')" class="sandbox-note-item bg-white border border-[#111111] border-l-4 border-l-[#69BD28] rounded-md px-2.5 py-1.5 font-extrabold shadow-sm flex items-center justify-between cursor-pointer">
+                  <span>📄 StratAlchemy_Brief.md</span>
+                  <span class="w-2 h-2 rounded-full bg-[#69BD28]"></span>
+                </div>
+                <div id="noteTab-treasury" onclick="loadSandboxNote('treasury')" class="sandbox-note-item px-2.5 py-1.5 text-gray-700 hover:bg-white rounded-md font-medium cursor-pointer flex items-center justify-between">
+                  <span>📄 Q4_Crypto_Treasury.md</span>
+                </div>
               </div>
             </div>
 
-            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#F59E0B] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
-              <span>▸</span> <span>02 // Product Design</span>
+            <!-- Folder 02 -->
+            <div>
+              <div onclick="toggleSandboxFolder('f02')" class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#F59E0B] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white transition-colors">
+                <span id="arrow-f02">▸</span> <span>02 // Product Design</span>
+              </div>
+              <div id="children-f02" class="pl-3 ml-2 mt-1.5 border-l-[1.5px] border-[#D5D3CC] space-y-1.5 hidden">
+                <div id="noteTab-lamp" onclick="loadSandboxNote('lamp')" class="sandbox-note-item px-2.5 py-1.5 text-gray-700 hover:bg-white rounded-md font-medium cursor-pointer">
+                  <span>🏮 Smart_LED_Lamp_3570K.md</span>
+                </div>
+              </div>
             </div>
-            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#10B981] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
-              <span>▸</span> <span>03 // Research Notes</span>
+
+            <!-- Folder 03 -->
+            <div>
+              <div onclick="toggleSandboxFolder('f03')" class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#10B981] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white transition-colors">
+                <span id="arrow-f03">▸</span> <span>03 // Research Notes</span>
+              </div>
+              <div id="children-f03" class="pl-3 ml-2 mt-1.5 border-l-[1.5px] border-[#D5D3CC] space-y-1.5 hidden">
+                <div id="noteTab-equalizer" onclick="loadSandboxNote('equalizer')" class="sandbox-note-item px-2.5 py-1.5 text-gray-700 hover:bg-white rounded-md font-medium cursor-pointer">
+                  <span>🎚️ Sonic_Equalizer_4Modes.md</span>
+                </div>
+              </div>
             </div>
-            <div class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#8B5CF6] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white">
-              <span>▸</span> <span>04 // Archive & AI Prompts</span>
+
+            <!-- Folder 04 -->
+            <div>
+              <div onclick="toggleSandboxFolder('f04')" class="bg-[#F9F8F5] border border-[#DFDDD4] border-l-4 border-l-[#8B5CF6] rounded-md px-2.5 py-2 flex items-center gap-2 cursor-pointer hover:bg-white transition-colors">
+                <span id="arrow-f04">▸</span> <span>04 // Value & Brand Architecture</span>
+              </div>
+              <div id="children-f04" class="pl-3 ml-2 mt-1.5 border-l-[1.5px] border-[#D5D3CC] space-y-1.5 hidden">
+                <div id="noteTab-hormozi" onclick="loadSandboxNote('hormozi')" class="sandbox-note-item px-2.5 py-1.5 text-gray-700 hover:bg-white rounded-md font-medium cursor-pointer">
+                  <span>💎 Hormozi_Ralston_Offer.md</span>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- Interactive Instructions Box inside Sidebar -->
-          <div class="mt-6 bg-white border-[1.5px] border-[#111111] rounded-lg p-3 shadow-[0_3px_0_#111111]">
+          <div class="mt-5 bg-white border-[1.5px] border-[#111111] rounded-lg p-3 shadow-[0_3px_0_#111111]">
             <div class="font-mono-code text-[10px] font-extrabold bg-[#FEF3C7] text-[#92400E] px-2 py-0.5 rounded inline-block mb-1.5">TRY IT LIVE →</div>
             <ul class="text-[11px] space-y-1.5 text-gray-700 leading-snug">
-              <li>• <strong>Click any sentence</strong> to pin active palette color.</li>
-              <li>• Click <strong>Laser</strong> or <strong>Draw</strong> in the dock below & drag across the note!</li>
-              <li>• Check the <strong>3rd task</strong> to hit 100% progress!</li>
-              <li>• Click the <strong>⚗️ ALCHEMY CRAFT</strong> badge to morph into a floating orb.</li>
+              <li>• <strong>Click any Folder or Note</strong> above to switch live notes!</li>
+              <li>• Click <strong>🏮 Lamp</strong> in the dock to dim the room & shine a 2700K–6500K beam!</li>
+              <li>• Click <strong>🎧 Sound</strong> to hear Brown Noise & watch the <strong>4-Mode Equalizer</strong> react!</li>
             </ul>
           </div>
         </aside>
@@ -519,13 +556,14 @@
           
           <!-- Editorial Note Title Banner -->
           <div class="bg-white text-[#111111] border-[1.5px] border-[#111111] border-l-[8px] border-l-[#69BD28] rounded-xl p-4 sm:p-5 shadow-[0_4px_0_#111111] mb-6">
-            <div class="font-mono-code text-[11px] font-extrabold bg-[#111111] text-white px-2.5 py-0.5 rounded inline-block mb-2 tracking-wider">
+            <div id="sandboxNoteBadge" class="font-mono-code text-[11px] font-extrabold bg-[#111111] text-white px-2.5 py-0.5 rounded inline-block mb-2 tracking-wider">
               STRATALCHEMY // KNOWLEDGE BRIEF
             </div>
-            <h3 class="text-xl sm:text-3xl font-black tracking-tight">
-              Alchemy Craft v3.7: Swiss Bento Architecture & Global Flow
+            <h3 id="sandboxNoteTitle" class="text-xl sm:text-3xl font-black tracking-tight">
+              SiCraft // Alchemy Craft v4.2: Tactile Bento Studio & Smart Lamp
             </h3>
           </div>
+          <div id="sandboxDynamicNoteBody">
 
           <!-- Interactive Paragraphs with Sentence Pinning -->
           <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
@@ -585,6 +623,8 @@
             </table>
           </div>
 
+          </div>
+
           <!-- FLOATING ALCHEMY CRAFT DOCK INSIDE SANDBOX -->
           <div id="sandboxDock" class="sandbox-dock absolute bottom-4 right-4 z-30 bg-[#F4F3EF]/95 backdrop-blur-md border-[1.5px] border-[#111111] rounded-xl p-1.5 shadow-[0_4px_0_#111111,0_8px_24px_rgba(0,0,0,0.18)] flex items-center gap-1.5 flex-wrap">
             <!-- Brand Orb Trigger -->
@@ -630,10 +670,22 @@
                 <button onclick="selectDemoColor('#06B6D4', this)" class="demo-color-dot w-4 h-4 rounded bg-[#06B6D4] border border-black/30" title="PRO: Cyber Cyan"></button>
               </div>
 
-              <!-- Ambient Soundscape Generator Button (New in v3.7!) -->
+              <!-- Ambient Soundscape Generator Button (New in v4.2!) -->
               <button id="btnDemoAmbient" onclick="toggleDemoAmbient()" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2 py-1 rounded-md" title="Toggle WebAudio Focus Soundscape (Brown Noise / Rain / 40Hz)">
                 🎧 Sound
               </button>
+
+              <!-- Magic Cursor Lantern Button (Lumina Lamp — New in v4.2!) -->
+              <button id="btnDemoLamp" onclick="toggleDemoMagicLamp()" class="bg-white text-[#111111] hover:bg-amber-50 border border-[#CBD5E1] text-xs font-extrabold px-2.5 py-1 rounded-md flex items-center gap-1" title="Toggle Magic Cursor Lantern (Illuminates text & casts dynamic 3D shadows!)">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2v2"/><path d="M15 14a5 5 0 1 0-6 0l1 4h4l1-4z"/></svg>
+                <span>Lamp</span>
+              </button>
+
+              <!-- Live 4-Mode Audio-Reactive Sonic Equalizer (Strictly Silent When Audio Off!) -->
+              <div id="demoEqPill" onclick="cycleDemoEqMode()" class="bg-[#111111] border border-[#111111] rounded-md px-2 py-1 cursor-pointer shadow-[0_2px_0_#69BD28] flex items-center gap-1.5" title="Click to switch Equalizer Style (Bars / Liquid Wave / Orb / DNA). Turn on 🎧 Sound to see it react to real audio!">
+                <canvas id="demoEqCanvas" width="52" height="16" class="block"></canvas>
+                <span id="demoEqModeLabel" class="text-[9px] font-mono-code text-[#69BD28] font-extrabold">BARS</span>
+              </div>
 
               <!-- AI Clean Demo Button -->
               <button onclick="triggerDemoAiClean()" class="bg-white text-[#111111] hover:bg-gray-100 border border-[#CBD5E1] text-xs font-bold px-2 py-1 rounded-md" title="Strip invisible AI zero-width characters">
@@ -665,7 +717,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
       <div>
         <div class="inline-flex items-center gap-2 bg-[#111111] text-white font-mono-code text-[11px] font-extrabold px-2.5 py-1 rounded mb-1.5 shadow-[0_2px_0_#69BD28]">
-          <span>🕸️ NEW IN v3.7.0</span>
+          <span>🕸️ NEW IN v4.2.0</span>
           <span>•</span>
           <span>SWISS BENTO GRAPH STUDIO</span>
         </div>
@@ -777,7 +829,7 @@
   </section>
 
   <!-- =====================================================================
-       GLOBAL PRO CHECKOUT SECTION ($4.99 / YR — CARD, CRYPTOBOT, TRIBUTE, EVM)
+       GLOBAL PRO CHECKOUT SECTION ($4.99 / YR — CARD, CRYPTOBOT, 0% FEE EVM, EVM)
        ===================================================================== -->
   <section id="checkout" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -821,7 +873,7 @@
             <span class="text-2xl">💬</span>
             <div class="text-xs">
               <div class="font-extrabold">Need help or manual key?</div>
-              <div class="text-gray-600">Message Elyas directly: <strong>@StratAlchemy</strong></div>
+              <div class="text-gray-600">Message Elyaz directly: <strong>@StratAlchemy</strong></div>
             </div>
           </div>
           <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-mono-code text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">
@@ -836,17 +888,17 @@
           STEP 1: SELECT PAYMENT METHOD (USA / EU CARD OR CRYPTO)
         </div>
 
-        <!-- 6 Payment Method Tiles (Card/Tribute, CryptoBot, Universal EVM, Bybit UID, Solana, TRON) -->
+        <!-- 6 Payment Method Tiles (Card/@CryptoBot, CryptoBot, Universal EVM, Bybit UID, Solana, TRON) -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-6" id="paymentMethodGrid">
           
-          <!-- 1. Bank Card / Apple Pay / Tribute (Best for USA & Global) -->
+          <!-- 1. Promo Code / VIP Key / @CryptoBot (Best for USA & Global) -->
           <button onclick="selectPayMethod('card')" id="payTile-card" class="pay-tile text-left p-3 rounded-xl border-[1.5px] border-[#111111] bg-[#111111] text-white transition-all">
             <div class="flex items-center justify-between mb-1">
               <span class="text-base">💳</span>
               <span class="font-mono-code text-[9px] bg-[#69BD28] text-white px-1.5 py-0.5 rounded font-bold">USA / GLOBAL</span>
             </div>
-            <div class="font-extrabold text-xs sm:text-sm">Bank Card / Apple Pay</div>
-            <div class="text-[11px] opacity-75">Instant @CryptoBot Multi-Coin</div>
+            <div class="font-extrabold text-xs sm:text-sm">Promo Code / VIP Key</div>
+            <div class="text-[11px] opacity-75">🎟️ Promo Code / VIP Key</div>
           </button>
 
           <!-- 2. @CryptoBot 1-Click Telegram Invoice -->
@@ -924,48 +976,61 @@
   </section>
 
   <!-- =====================================================================
-       NEW v3.7.0 SETTINGS TAB PREVIEW + MOBILE STUCK BAR FIX & CODE EXPORT
+       NEW v4.2.0 SETTINGS TAB PREVIEW + MOBILE STUCK BAR FIX & CODE EXPORT
        ===================================================================== -->
   <section id="settings-preview" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <!-- Left: Mobile Stuck Bar Fix Guide (iOS & Android File Instructions) -->
+      <!-- Left: Interactive Smart LED Cursor Lamp Studio (2700K–6500K Kelvin + Brightness + Dimmer) -->
       <div class="lg:col-span-5 space-y-5">
-        <div class="bento-card p-6 bg-[#FFFBEB] text-[#111111] border-2 border-[#111111]">
-          <div class="inline-block bg-[#F59E0B] text-white font-mono-code text-[10px] font-extrabold px-2.5 py-1 rounded mb-2">
-            📱 MOBILE RESCUE GUIDE (iOS / ANDROID)
+        <div class="bento-card p-6 bg-[#16181C] text-white border-2 border-[#111111] shadow-[0_6px_0_#111111]">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="bg-[#F59E0B] text-[#111111] font-mono-code text-[10px] font-extrabold px-2.5 py-1 rounded">
+                🏮 LUMINA SMART LED STUDIO
+              </span>
+              <h3 class="text-xl font-black mt-1.5">Smart Cursor Lamp Controller</h3>
+            </div>
+            <button id="ledStudioPowerBtn" onclick="toggleDemoMagicLamp()" class="bento-btn bg-[#F97316] text-white font-mono-code text-xs font-extrabold px-4 py-2 rounded-full flex items-center gap-1.5">
+              <span>⏻</span> <span id="ledStudioPowerText">ON</span>
+            </button>
           </div>
-          <h3 class="text-xl font-black mb-2">Как убрать застрявшую плашку на телефоне и обновить плагин через файлы</h3>
-          <p class="text-xs text-gray-700 mb-4 leading-relaxed">
-            Если на телефоне застряла верхняя плашка прогресса задач или док и мешает нажать кнопку обновления в Obsidian — вот <strong>3 быстрых способа</strong> решить это за 30 секунд:
+
+          <p class="text-xs text-gray-300 mb-4 leading-relaxed">
+            Configure your cursor's physical light beam just like a studio desk lamp. Dim the surrounding room while illuminating active paragraphs in warm 2700K candle gold or 6500K daylight.
           </p>
 
-          <div class="space-y-3 text-xs">
-            <div class="bg-white border border-[#111111] rounded-lg p-3">
-              <div class="font-extrabold text-[#2563EB] mb-1">Способ 1 (Самый быстрый внутри Obsidian):</div>
-              <p class="text-gray-700 leading-relaxed">
-                Откройте <strong>Настройки Obsidian → Сторонние плагины (Community plugins)</strong> и нажмите <strong>«Включить безопасный режим» (Restricted Mode)</strong>. Все плагины и застрявшие плашки мгновенно исчезнут с экрана! После этого обновите плагин и включите обратно.
-              </p>
+          <!-- Brightness Slider Card -->
+          <div class="bg-[#22252A] border border-[#374151] rounded-xl p-3.5 mb-3">
+            <div class="flex justify-between text-xs font-bold mb-2">
+              <span>☀️ Brightness (Glow Intensity)</span>
+              <span id="siteLampBrightVal" class="font-mono-code text-[#FBBF24]">90%</span>
             </div>
+            <input type="range" min="15" max="100" value="90" oninput="updateSiteLampConfig('bright', this.value)" class="w-full h-5 rounded-full appearance-none cursor-pointer" style="background: linear-gradient(90deg, #374151 0%, #F59E0B 55%, #FDE047 100%);" />
+          </div>
 
-            <div class="bg-white border border-[#111111] rounded-lg p-3">
-              <div class="font-extrabold text-[#10B981] mb-1">Способ 2 (Через приложение «Файлы» на iPhone / Android):</div>
-              <p class="text-gray-700 leading-relaxed">
-                1. Откройте стандартное приложение <strong>«Файлы» (Files)</strong> на iPhone или файловый менеджер на Android.<br/>
-                2. Перейдите в папку хранилища: <code>На моем iPhone → Obsidian → [Имя вашей базы]</code> (или <code>iCloud Drive → Obsidian</code>).<br/>
-                3. Папка <code>.obsidian</code> скрыта точкой: на iPhone в приложении Файлы нажмите <strong>«...» (три точки вверху) → Вид → Показать скрытые файлы</strong>.<br/>
-                4. Зайдите в <code>.obsidian/plugins/artcraft-reader/</code> и удалите старый <code>main.js</code> или замените его новым v3.7.0!
-              </p>
+          <!-- Color Temperature Slider Card (2700K to 6500K) -->
+          <div class="bg-[#22252A] border border-[#374151] rounded-xl p-3.5 mb-3">
+            <div class="flex justify-between text-xs font-bold mb-2">
+              <span>🌡️ Color Temperature</span>
+              <span id="siteLampKelvinVal" class="font-mono-code text-[#FBBF24]">3570 K</span>
             </div>
+            <input id="siteLampKelvinSlider" type="range" min="2700" max="6500" step="10" value="3570" oninput="updateSiteLampConfig('kelvin', this.value)" class="w-full h-5 rounded-full appearance-none cursor-pointer" style="background: linear-gradient(90deg, #EA580C 0%, #FBBF24 40%, #FEF9C3 70%, #DBEAFE 100%);" />
+            <div class="grid grid-cols-4 gap-1.5 mt-2.5 font-mono-code text-[10px]">
+              <button onclick="setSiteKelvinPreset(2700)" class="bg-[#2E323B] hover:bg-[#F59E0B] hover:text-black py-1 rounded font-bold transition-colors">2700K</button>
+              <button onclick="setSiteKelvinPreset(3570)" class="bg-[#2E323B] hover:bg-[#F59E0B] hover:text-black py-1 rounded font-bold transition-colors">3570K</button>
+              <button onclick="setSiteKelvinPreset(5000)" class="bg-[#2E323B] hover:bg-[#F59E0B] hover:text-black py-1 rounded font-bold transition-colors">5000K</button>
+              <button onclick="setSiteKelvinPreset(6500)" class="bg-[#2E323B] hover:bg-[#F59E0B] hover:text-black py-1 rounded font-bold transition-colors">6500K</button>
+            </div>
+          </div>
 
-            <div class="bg-white border border-[#111111] rounded-lg p-3">
-              <div class="font-extrabold text-[#8B5CF6] mb-1">Что исправлено в коде v3.7.0:</div>
-              <p class="text-gray-700 leading-relaxed">
-                • Добавлена кнопка <strong>«✕»</strong> прямо на плашку прогресса задач (ее можно закрыть пальцем в 1 тап).<br/>
-                • При выгрузке/обновлении плагина (<code>onunload()</code>) теперь автоматически очищаются все старые полосы <code>.artcraft-task-progress-wrap</code>.<br/>
-                • Полностью убран <strong>Boosty</strong>, добавлены <strong>Tribute (Карта США/Мир)</strong>, <strong>@CryptoBot</strong>, <strong>Universal EVM</strong> и <strong>6 языков</strong>!
-              </p>
+          <!-- Surrounding Room Darkness Slider -->
+          <div class="bg-[#22252A] border border-[#374151] rounded-xl p-3.5">
+            <div class="flex justify-between text-xs font-bold mb-2">
+              <span>🌑 Surrounding Room Dimmer</span>
+              <span id="siteLampDimVal" class="font-mono-code text-[#69BD28]">72%</span>
             </div>
+            <input type="range" min="0" max="90" value="72" oninput="updateSiteLampConfig('dim', this.value)" class="w-full h-5 rounded-full appearance-none cursor-pointer bg-[#2E323B]" />
           </div>
         </div>
       </div>
@@ -974,11 +1039,11 @@
       <div class="lg:col-span-7 bento-card p-6 sm:p-8 border-2 border-[#111111]">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b-[1.5px] border-[#D5D3CC]">
           <div>
-            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-2 py-0.5 rounded">REDESIGNED SETTINGS UI v3.7.0</span>
+            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-2 py-0.5 rounded">REDESIGNED SETTINGS UI v4.2.0</span>
             <h3 class="text-xl font-black mt-1">New Obsidian Settings Page Preview (No Boosty + Multi-EVM + 6 Languages)</h3>
           </div>
           <button onclick="copyUpdatedPluginPatch()" id="copyPatchBtn" class="bento-btn bg-[#111111] text-white font-mono-code text-xs font-bold px-3.5 py-2 rounded-lg">
-            📋 Copy v3.7.0 Patch for main.js
+            📋 Copy v4.2.0 Patch for main.js
           </button>
         </div>
 
@@ -989,8 +1054,8 @@
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-lg bg-[#111111] text-white flex items-center justify-center font-black text-lg">⚗️</div>
               <div>
-                <div class="font-black text-sm">Alchemy Craft — Swiss Bento Studio (v3.7.0)</div>
-                <div class="font-mono-code text-[11px] text-gray-600">Author: Elyas Aliverdiyev (@StratAlchemy)</div>
+                <div class="font-black text-sm">Alchemy Craft — Swiss Bento Studio (v4.2.0)</div>
+                <div class="font-mono-code text-[11px] text-gray-600">Author: Elyaz Aliverdiyev (@StratAlchemy)</div>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -1023,15 +1088,15 @@
             <input type="checkbox" checked class="alchemy-checkbox" />
           </div>
 
-          <!-- Redesigned Support & Community Row (NO BOOSTY! Replaced with Tribute Card, @CryptoBot & Website) -->
+          <!-- Redesigned Support & Community Row (NO BOOSTY! Replaced with @CryptoBot Card, @CryptoBot & Website) -->
           <div class="p-4 rounded-xl border-[1.5px] border-[#111111] bg-[#F9F8F5] text-[#111111]">
             <div class="font-extrabold mb-1">⭐ Global Support, Card Checkout & Community (Boosty Removed)</div>
             <p class="text-xs text-gray-600 mb-3">
-              Pay effortlessly by Credit/Debit Card (USA/EU/World via Tribute), 1-click @CryptoBot, or Universal EVM.
+              Pay effortlessly by Credit/Debit Card (USA/EU/World via @CryptoBot or 0% Fee EVM), 1-click @CryptoBot, or Universal EVM.
             </p>
             <div class="flex flex-wrap gap-2">
               <button onclick="selectPayMethod('card'); document.getElementById('checkout').scrollIntoView({behavior:'smooth'});" class="bento-btn bg-[#69BD28] text-white font-bold text-xs px-3 py-1.5 rounded-lg">
-                💳 Pay via @CryptoBot (USDT/SOL/BTC)
+                💳 0% Fee EVM / Promo Key
               </button>
               <button onclick="selectPayMethod('cryptobot'); document.getElementById('checkout').scrollIntoView({behavior:'smooth'});" class="bento-btn bg-[#2563EB] text-white font-bold text-xs px-3 py-1.5 rounded-lg">
                 ✈️ @CryptoBot (USDT/TON)
@@ -1055,7 +1120,7 @@
   <footer class="border-t-[1.5px] border-[#111111] py-8 px-4 sm:px-6 lg:px-8 mt-10">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono-code opacity-80">
       <div>
-        © 2026 <strong>Alchemy Craft</strong> by Elyas Aliverdiyev (<a href="https://t.me/StratAlchemy" target="_blank" class="underline font-bold">@StratAlchemy</a>). MIT License.
+        © 2026 <strong>Alchemy Craft</strong> by Elyaz Aliverdiyev (<a href="https://t.me/StratAlchemy" target="_blank" class="underline font-bold">@StratAlchemy</a>). MIT License.
       </div>
       <div class="flex items-center gap-4">
         <a href="https://github.com/elyazaliverdiyev/alchemy-craft" target="_blank" class="hover:underline">GitHub Repository</a>
@@ -1081,7 +1146,7 @@
       en: {
         navSandbox: "Live Demo",
         navFeatures: "Bento Features",
-        navSettings: "v3.7 Settings & Fix",
+        navSettings: "Smart Lamp & Settings",
         navPricing: "Pro Pass ($4.99)",
         darkBtn: "Dark Craft",
         getProNav: "Get Pro $4.99",
@@ -1090,7 +1155,7 @@
         heroSubtitle: "Eye-friendly archival paper (#F4F3EF), Excel sage green tables, squared 01–04 badges, glowing laser pointer, freehand marker, and Pomodoro flow dock.",
         heroCtaPro: "Unlock Pro Pass — $4.99 / yr (Card & Crypto)",
         heroCtaFree: "Download Free Plugin (GitHub)",
-        heroCtaFix: "Stuck Mobile Bar Fix & v3.7 Code",
+        heroCtaFix: "🏮 Smart LED Lamp & Studio Controls",
         sandboxHeading: "Try Alchemy Craft Live Right Here (Click Sentences, Draw, or Complete Tasks!)",
         sandboxHint: "Interactive Canvas & Dock Active Below",
         featuresTitle: "Everything You Need for High-Clarity Reading & Presentations",
@@ -1112,7 +1177,7 @@
       ru: {
         navSandbox: "Живое Демо",
         navFeatures: "Bento Фичи",
-        navSettings: "Настройки v3.7 и Фикс",
+        navSettings: "Умная Лампа и Настройки",
         navPricing: "Pro Пасс ($4.99)",
         darkBtn: "Ночной режим",
         getProNav: "Купить Pro $4.99",
@@ -1121,7 +1186,7 @@
         heroSubtitle: "Теплая архивная бумага (#F4F3EF), светло-зеленые таблицы Excel, квадратные бейджи 01–04, лазерная указка, маркер и сфера Помодоро.",
         heroCtaPro: "Разблокировать Pro — $4.99 / год (Карта и Крипта)",
         heroCtaFree: "Скачать бесплатно (GitHub)",
-        heroCtaFix: "Фикс плашки на телефоне и код v3.7",
+        heroCtaFix: "🏮 Умная Лампа 3570K и Настройки",
         sandboxHeading: "Попробуйте Alchemy Craft вживую прямо здесь (Кликайте по тексту, рисуйте, отмечайте задачи!)",
         sandboxHint: "Интерактивный холст и панель управления активны",
         featuresTitle: "Всё для глубокого фокуса, чтения и ярких презентаций",
@@ -1136,14 +1201,14 @@
         f5Title: "🌙 Ночной режим Midnight Dark Craft + 8 цветов Pro",
         f5Desc: "Создан специально для ночного кодинга и чтения. Сохраняет всю эстетику Swiss Bento, контрастные таблицы и неоновые акценты.",
         checkoutTitle: "Разблокируйте Alchemy Craft Pro",
-        checkoutSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата любой картой (США/Европа/СНГ через Tribute), @CryptoBot или в любой EVM сети.",
+        checkoutSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата любой картой (США/Европа/СНГ через @CryptoBot или 0% EVM), @CryptoBot или в любой EVM сети.",
         step1Select: "ШАГ 1: ВЫБЕРИТЕ СПОСОБ ОПЛАТЫ (КАРТА БАНКА ИЛИ КРИПТОВАЛЮТА)",
         step2Verify: "ШАГ 2: ВВЕДИТЕ ХЭШ ТРАНЗАКЦИИ (TXID), UID ПЕРЕВОДА ИЛИ КОД КВИТАНЦИИ КАРТЫ"
       },
       zh: {
         navSandbox: "在线体验",
         navFeatures: "Bento 功能",
-        navSettings: "v3.7 设置与修复",
+        navSettings: "v4.2 设置与修复",
         navPricing: "Pro 通行证 ($4.99)",
         darkBtn: "暗夜模式",
         getProNav: "获取 Pro $4.99",
@@ -1152,7 +1217,7 @@
         heroSubtitle: "护眼档案纸张背景 (#F4F3EF)、Excel 鼠尾草绿表格、01–04 方形徽章、发光激光笔、自由画笔与番茄钟悬浮球。",
         heroCtaPro: "解锁 Pro 通行证 — $4.99 / 年 (支持银行卡与加密支付)",
         heroCtaFree: "免费下载插件 (GitHub)",
-        heroCtaFix: "手机端进度条修复与 v3.7 代码",
+        heroCtaFix: "手机端进度条修复与 v4.2 代码",
         sandboxHeading: "在此直接体验 Alchemy Craft（点击句子高亮、画笔涂鸦、完成任务！）",
         sandboxHint: "下方交互式画布与工具栏已激活",
         featuresTitle: "专为深度阅读、知识管理与演示打造",
@@ -1174,7 +1239,7 @@
       ja: {
         navSandbox: "ライブデモ",
         navFeatures: "Bento 機能",
-        navSettings: "v3.7 設定と修正",
+        navSettings: "v4.2 設定と修正",
         navPricing: "Pro パス ($4.99)",
         darkBtn: "ダークモード",
         getProNav: "Proを入手 $4.99",
@@ -1183,7 +1248,7 @@
         heroSubtitle: "目に優しいアーカイブ紙 (#F4F3EF)、Excelグリーンの表、01–04 スクエアバッジ、レーザーポインター、マーカー、ポモドーロドックを搭載。",
         heroCtaPro: "Pro パスを解除 — $4.99 / 年 (カード＆暗号資産対応)",
         heroCtaFree: "無料プラグインをダウンロード",
-        heroCtaFix: "モバイル表示修正＆v3.7コード",
+        heroCtaFix: "モバイル表示修正＆v4.2コード",
         sandboxHeading: "ここで Alchemy Craft をライブ体験（文をクリック、描画、タスク完了！）",
         sandboxHint: "インタラクティブキャンバス稼働中",
         featuresTitle: "深い集中・読書・プレゼンテーションに必要なすべて",
@@ -1205,7 +1270,7 @@
       es: {
         navSandbox: "Demo en Vivo",
         navFeatures: "Funciones Bento",
-        navSettings: "Ajustes v3.7 y Fix",
+        navSettings: "Ajustes v4.2 y Fix",
         navPricing: "Pase Pro ($4.99)",
         darkBtn: "Modo Oscuro",
         getProNav: "Obtener Pro $4.99",
@@ -1214,7 +1279,7 @@
         heroSubtitle: "Papel de archivo cálido (#F4F3EF), tablas verde salvia estilo Excel, insignias 01–04, puntero láser, marcador libre y reloj Pomodoro.",
         heroCtaPro: "Desbloquear Pase Pro — $4.99 / año (Tarjeta y Cripto)",
         heroCtaFree: "Descargar Gratis (GitHub)",
-        heroCtaFix: "Solución Móvil y Código v3.7",
+        heroCtaFix: "Solución Móvil y Código v4.2",
         sandboxHeading: "Prueba Alchemy Craft en Vivo Aquí (¡Haz clic en frases, dibuja o completa tareas!)",
         sandboxHint: "Lienzo interactivo activo abajo",
         featuresTitle: "Todo lo necesario para lectura profunda y presentaciones",
@@ -1236,7 +1301,7 @@
       de: {
         navSandbox: "Live-Demo",
         navFeatures: "Bento-Funktionen",
-        navSettings: "v3.7 Setup & Fix",
+        navSettings: "v4.2 Setup & Fix",
         navPricing: "Pro-Pass ($4.99)",
         darkBtn: "Dark Craft",
         getProNav: "Pro holen $4.99",
@@ -1245,7 +1310,7 @@
         heroSubtitle: "Augenschonendes Archivpapier (#F4F3EF), Excel-Grün-Tabellen, 01–04 Badges, Laserpointer, Freihand-Marker und Pomodoro-Dock.",
         heroCtaPro: "Pro-Pass freischalten — $4.99 / Jahr (Karte & Krypto)",
         heroCtaFree: "Kostenlos herunterladen (GitHub)",
-        heroCtaFix: "Mobile-Fix & v3.7 Code",
+        heroCtaFix: "Mobile-Fix & v4.2 Code",
         sandboxHeading: "Teste Alchemy Craft hier live (Sätze anklicken, zeichnen oder Aufgaben abhaken!)",
         sandboxHint: "Interaktives Canvas unten aktiv",
         featuresTitle: "Alles für tiefen Fokus, klares Lesen & Präsentationen",
@@ -1431,7 +1496,7 @@
 
     function setSandboxTool(tool) {
       sandboxTool = (sandboxTool === tool) ? "none" : tool;
-      sCanvas.style.pointerEvents = sandboxTool === "none" ? "none" : "auto";
+      sCanvas.style.pointerEvents = sandboxTool === "draw" ? "auto" : "none";
       sCanvas.style.cursor = sandboxTool === "laser" ? "crosshair" : (sandboxTool === "draw" ? "crosshair" : "default");
 
       document.getElementById("btnDemoLaser").className = sandboxTool === "laser"
@@ -1482,6 +1547,22 @@
       }
     });
 
+    // Track cursor across the entire sandbox for the Magic Cursor Lantern AND allow wheel scrolling in Laser/Draw mode!
+    let demoMagicLampOn = false;
+    let demoLampPt = { x: 420, y: 220, tx: 420, ty: 220 };
+
+    sContainer.addEventListener("mousemove", (e) => {
+      const rect = sCanvas.getBoundingClientRect();
+      demoLampPt.tx = e.clientX - rect.left;
+      demoLampPt.ty = e.clientY - rect.top;
+      if (demoMagicLampOn) {
+        updateDemoLampShadows(e.clientX, e.clientY);
+      }
+      if (sandboxTool === "laser") {
+        demoLaserTrail.push({ x: demoLampPt.tx, y: demoLampPt.ty, t: Date.now() });
+      }
+    });
+
     sCanvas.addEventListener("mousemove", (e) => {
       if (sandboxTool === "none") return;
       const pt = getSandboxPt(e);
@@ -1521,10 +1602,240 @@
       }
     }, { passive: false });
 
+    let siteLampBright = 0.9;
+    let siteLampKelvin = 3570;
+    let siteLampDim = 0.72;
+    let demoEqMode = "bars"; // 'bars' | 'wave' | 'orb' | 'dna'
+
+    function kelvinToRgbSite(k) {
+      if (k <= 3570) {
+        const t = (k - 2700) / (3570 - 2700);
+        return { r: 255, g: Math.round(169 + t * 37), b: Math.round(87 + t * 51) };
+      } else if (k <= 5000) {
+        const t = (k - 3570) / (5000 - 3570);
+        return { r: 255, g: Math.round(206 + t * 40), b: Math.round(138 + t * 104) };
+      } else {
+        const t = (k - 5000) / (6500 - 5000);
+        return { r: Math.round(255 - t * 45), g: Math.round(246 - t * 16), b: 255 };
+      }
+    }
+
+    function updateSiteLampConfig(type, val) {
+      const v = parseInt(val, 10);
+      if (type === "bright") {
+        siteLampBright = v / 100;
+        document.getElementById("siteLampBrightVal").textContent = v + "%";
+      } else if (type === "kelvin") {
+        siteLampKelvin = v;
+        document.getElementById("siteLampKelvinVal").textContent = v + " K";
+      } else if (type === "dim") {
+        siteLampDim = v / 100;
+        document.getElementById("siteLampDimVal").textContent = v + "%";
+      }
+      if (!demoMagicLampOn) toggleDemoMagicLamp();
+    }
+
+    function setSiteKelvinPreset(k) {
+      const sl = document.getElementById("siteLampKelvinSlider");
+      if (sl) sl.value = String(k);
+      updateSiteLampConfig("kelvin", k);
+      showToast(`🌡️ Lamp Color Temperature: ${k}K`);
+    }
+
+    function cycleDemoEqMode() {
+      const modes = ["bars", "wave", "orb", "dna"];
+      demoEqMode = modes[(modes.indexOf(demoEqMode) + 1) % modes.length];
+      const lbl = document.getElementById("demoEqModeLabel");
+      if (lbl) lbl.textContent = demoEqMode.toUpperCase();
+      if (!demoAudioNode) {
+        showToast(`🎚️ Equalizer Mode: ${demoEqMode.toUpperCase()} (Click '🎧 Sound' to play audio!)`);
+      } else {
+        showToast(`🎚️ Equalizer Mode: ${demoEqMode.toUpperCase()}`);
+      }
+    }
+
+    function toggleSandboxFolder(folderId) {
+      const ch = document.getElementById("children-" + folderId);
+      const ar = document.getElementById("arrow-" + folderId);
+      if (!ch) return;
+      const isHidden = ch.classList.contains("hidden");
+      ch.classList.toggle("hidden", !isHidden);
+      if (ar) ar.textContent = isHidden ? "▾" : "▸";
+    }
+
+    const SANDBOX_NOTES = {
+      brief: {
+        badge: "STRATALCHEMY // KNOWLEDGE BRIEF",
+        title: "SiCraft // Alchemy Craft v4.2: Tactile Bento Studio & Smart Lamp",
+        body: `
+          <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
+            <p>
+              <span class="step-badge bg-[#2563EB] mr-1.5">01</span>
+              <span class="demo-sentence" onclick="toggleSentencePin(this)">Warm archival paper (#F4F3EF) eliminates harsh dark-mode astigmatism and sterile white screen fatigue during 8-hour deep research sprints.</span>
+              <span class="demo-sentence is-pinned" style="background-color: #DBEAFE; color: #1E3A8A; border-bottom: 2px solid #2563EB;" onclick="toggleSentencePin(this)">Click on any sentence in this note to highlight and pin it with your active palette color from the dock below!</span>
+            </p>
+            <p>
+              <span class="step-badge bg-[#F59E0B] mr-1.5">02</span>
+              <span class="demo-sentence" onclick="toggleSentencePin(this)">Turn on the <strong>🏮 Lamp</strong> in the dock to dim the room and illuminate your text with a customizable 2700K–6500K smart LED spotlight!</span>
+            </p>
+          </div>
+        `
+      },
+      treasury: {
+        badge: "01 // GLOBAL STRATEGY & TREASURY",
+        title: "Q4 Crypto Treasury & 0%-Fee Direct Checkout Architecture",
+        body: `
+          <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
+            <p><span class="step-badge bg-[#10B981] mr-1.5">01</span> <span class="demo-sentence" onclick="toggleSentencePin(this)">Direct 0%-Fee Universal EVM settlement (<code class="bg-[#FFF1E6] text-[#C2410C] px-2 py-0.5 rounded font-mono-code text-xs">0x5df7...e7e2</code>) supports BNB Chain (BEP20), Arbitrum One, Base, Polygon, and Optimism with ~$0.01 L2 gas.</span></p>
+            <p><span class="step-badge bg-[#2563EB] mr-1.5">02</span> <span class="demo-sentence" onclick="toggleSentencePin(this)">Every verified transaction generates a unique cryptographic license key (<code class="bg-[#EEF4FF] text-[#1E3A8A] px-2 py-0.5 rounded font-mono-code text-xs">SICRAFT-XXXX-XXXX-XXXX-XXXX</code>) verified via Supabase RPC.</span></p>
+          </div>
+        `
+      },
+      lamp: {
+        badge: "02 // LUMINA SMART LED HARDWARE SIMULATION",
+        title: "Physical Cursor Lamp: 2700K Warm Gold to 6500K Cyber Daylight",
+        body: `
+          <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
+            <p><span class="step-badge bg-[#F59E0B] mr-1.5">01</span> <span class="demo-sentence" onclick="toggleSentencePin(this)">Just like a BenQ ScreenBar or smart studio LED lamp, Lumina dims the surrounding workspace while casting a focused Kelvin-calibrated beam around your cursor.</span></p>
+            <p><span class="step-badge bg-[#8B5CF6] mr-1.5">02</span> <span class="demo-sentence" onclick="toggleSentencePin(this)">Scroll down to the Smart LED Controller below to test 2700K Warm Candle, 3570K Studio Neutral, and 6500K Cool Daylight in real time!</span></p>
+          </div>
+        `
+      },
+      equalizer: {
+        badge: "03 // SONIC EQUALIZER & ACOUSTICS",
+        title: "4-Mode Audio-Reactive Visualizer & Mechanical Switch ASMR",
+        body: `
+          <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
+            <p><span class="step-badge bg-[#10B981] mr-1.5">01</span> <span class="demo-sentence" onclick="toggleSentencePin(this)">The dock equalizer stays 100% calm and silent when no audio is playing — and springs to life the moment you play PC audio or built-in Brown Noise / Rain.</span></p>
+            <p><span class="step-badge bg-[#2563EB] mr-1.5">02</span> <span class="demo-sentence" onclick="toggleSentencePin(this)">Click the equalizer pill in the dock to cycle through 4 visual engines: <strong>BARS</strong> (Spectrum), <strong>WAVE</strong> (Dual Sine), <strong>ORB</strong> (Radial Resonance), and <strong>DNA</strong> (Harmonic Matrix).</span></p>
+          </div>
+        `
+      },
+      hormozi: {
+        badge: "04 // VALUE ARCHITECTURE & ZOOM STATUS EFFECT",
+        title: "Why Creators & Engineers Instantly Upgrade for $4.99 / yr",
+        body: `
+          <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
+            <p><span class="step-badge bg-[#8B5CF6] mr-1.5">01</span> <span class="demo-sentence" onclick="toggleSentencePin(this)"><strong>Zero Setup Friction:</strong> Instead of spending 20 hours debugging CSS snippets, graph.json color groups, and 7 separate plugins, everything works out of the box in 0.1 seconds.</span></p>
+            <p><span class="step-badge bg-[#EC4899] mr-1.5">02</span> <span class="demo-sentence" onclick="toggleSentencePin(this)"><strong>The Screen-Share Status Effect:</strong> When you share your Obsidian screen on Zoom, YouTube, or TikTok with the 3570K Cursor Lamp, Laser Pointer, and Swiss Bento badges, viewers immediately ask what app you are using.</span></p>
+          </div>
+        `
+      }
+    };
+
+    function loadSandboxNote(noteKey) {
+      const note = SANDBOX_NOTES[noteKey];
+      if (!note) return;
+      document.getElementById("sandboxNoteBadge").textContent = note.badge;
+      document.getElementById("sandboxNoteTitle").textContent = note.title;
+      const container = document.getElementById("sandboxDynamicNoteBody");
+      if (container && noteKey !== "brief") {
+        container.innerHTML = note.body;
+      } else if (container && noteKey === "brief") {
+        location.hash = "#sandbox";
+        container.innerHTML = note.body;
+      }
+      document.querySelectorAll(".sandbox-note-item").forEach(el => {
+        el.className = "sandbox-note-item px-2.5 py-1.5 text-gray-700 hover:bg-white rounded-md font-medium cursor-pointer flex items-center justify-between";
+      });
+      const activeTab = document.getElementById("noteTab-" + noteKey);
+      if (activeTab) {
+        activeTab.className = "sandbox-note-item bg-white border border-[#111111] border-l-4 border-l-[#69BD28] rounded-md px-2.5 py-1.5 font-extrabold shadow-sm flex items-center justify-between cursor-pointer";
+      }
+      showToast(`📄 Opened ${noteKey}.md`);
+    }
+
     function renderSandboxLoop() {
       sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
 
-      // Draw saved marker strokes
+      // 1. Render Real Smart LED Cursor Lamp (Surrounding Room Dimmer + 2700K-6500K Spotlight Punch-Out!)
+      if (demoMagicLampOn) {
+        demoLampPt.x += (demoLampPt.tx - demoLampPt.x) * 0.24;
+        demoLampPt.y += (demoLampPt.ty - demoLampPt.y) * 0.24;
+        const radius = 250;
+        const rgb = kelvinToRgbSite(siteLampKelvin);
+
+        sCtx.save();
+        if (siteLampDim > 0.02) {
+          sCtx.fillStyle = `rgba(10, 11, 14, ${siteLampDim * 0.85})`;
+          sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+          sCtx.globalCompositeOperation = "destination-out";
+          const hole = sCtx.createRadialGradient(demoLampPt.x, demoLampPt.y, radius * 0.15, demoLampPt.x, demoLampPt.y, radius);
+          hole.addColorStop(0, "rgba(0,0,0,1)");
+          hole.addColorStop(0.65, "rgba(0,0,0,0.92)");
+          hole.addColorStop(1, "rgba(0,0,0,0)");
+          sCtx.fillStyle = hole;
+          sCtx.beginPath();
+          sCtx.arc(demoLampPt.x, demoLampPt.y, radius, 0, Math.PI * 2);
+          sCtx.fill();
+        }
+        sCtx.globalCompositeOperation = "source-over";
+        const grad = sCtx.createRadialGradient(demoLampPt.x, demoLampPt.y, 6, demoLampPt.x, demoLampPt.y, radius);
+        grad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.36 * siteLampBright})`);
+        grad.addColorStop(0.55, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.14 * siteLampBright})`);
+        grad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+        sCtx.fillStyle = grad;
+        sCtx.beginPath();
+        sCtx.arc(demoLampPt.x, demoLampPt.y, radius, 0, Math.PI * 2);
+        sCtx.fill();
+        sCtx.restore();
+      }
+
+      // 2. Render Live 4-Mode Sonic Equalizer in Sandbox Dock (Strictly Silent When Audio is Off!)
+      const eqCv = document.getElementById("demoEqCanvas");
+      if (eqCv) {
+        const eqCtx = eqCv.getContext("2d");
+        const ew = eqCv.width;
+        const eh = eqCv.height;
+        eqCtx.clearRect(0, 0, ew, eh);
+        const colors = ["#69BD28", "#2563EB", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"];
+        let freq = null;
+        let timeD = null;
+        if (demoAudioNode && demoAudioNode.analyser) {
+          freq = new Uint8Array(demoAudioNode.analyser.frequencyBinCount);
+          timeD = new Uint8Array(demoAudioNode.analyser.frequencyBinCount);
+          demoAudioNode.analyser.getByteFrequencyData(freq);
+          demoAudioNode.analyser.getByteTimeDomainData(timeD);
+        }
+        if (demoEqMode === "bars") {
+          for (let i = 0; i < 13; i++) {
+            const h = freq ? Math.max(2, (freq[i % freq.length] / 255) * (eh - 1)) : 2;
+            eqCtx.fillStyle = colors[i % colors.length];
+            eqCtx.fillRect(i * 4, eh - h, 2.8, h);
+          }
+        } else if (demoEqMode === "wave") {
+          eqCtx.beginPath();
+          eqCtx.strokeStyle = "#69BD28";
+          eqCtx.lineWidth = 1.6;
+          for (let x = 0; x < ew; x++) {
+            const amp = timeD ? ((timeD[Math.floor((x / ew) * timeD.length)] - 128) / 128) * (eh * 0.45) : 0;
+            const y = eh / 2 + amp;
+            if (x === 0) eqCtx.moveTo(x, y);
+            else eqCtx.lineTo(x, y);
+          }
+          eqCtx.stroke();
+        } else if (demoEqMode === "orb") {
+          let avg = 0;
+          if (freq) {
+            for (let i = 0; i < 10; i++) avg += freq[i];
+            avg /= (10 * 255);
+          }
+          eqCtx.beginPath();
+          eqCtx.arc(ew / 2, eh / 2, 3 + avg * 5, 0, Math.PI * 2);
+          eqCtx.fillStyle = "#69BD28";
+          eqCtx.fill();
+        } else {
+          for (let i = 0; i < 9; i++) {
+            const sp = freq ? (freq[i * 2] / 255) * (eh * 0.4) : 0;
+            eqCtx.fillStyle = "#69BD28";
+            eqCtx.fillRect(4 + i * 5.2, eh / 2 - sp - 1, 2, 2);
+            eqCtx.fillStyle = "#EC4899";
+            eqCtx.fillRect(4 + i * 5.2, eh / 2 + sp - 1, 2, 2);
+          }
+        }
+      }
+
+      // 3. Draw saved marker strokes
       demoStrokes.forEach(st => {
         if (!st.points || st.points.length < 2) return;
         sCtx.save();
@@ -1542,7 +1853,7 @@
         sCtx.restore();
       });
 
-      // Draw glowing laser trail
+      // 4. Draw glowing laser trail
       const now = Date.now();
       demoLaserTrail = demoLaserTrail.filter(p => now - p.t < 600);
       if (demoLaserTrail.length > 1) {
@@ -1572,7 +1883,7 @@
       requestAnimationFrame(renderSandboxLoop);
     }
 
-    // 5. GLOBAL PRO CHECKOUT LOGIC (CARD/TRIBUTE, CRYPTOBOT, UNIVERSAL EVM, BYBIT, SOL, TRC20)
+    // 5. GLOBAL PRO CHECKOUT LOGIC (CARD/0% FEE EVM, CRYPTOBOT, UNIVERSAL EVM, BYBIT, SOL, TRC20)
     let selectedPaymentMethod = "card";
 
     const PAYMENT_METHODS = {
@@ -1582,7 +1893,7 @@
         addressLabel: "INSTANT CARD CHECKOUT LINKS:",
         address: "https://t.me/StratAlchemy",
         isCardMethod: true,
-        note: "Works with any US, European, Asian, or CIS Visa / MasterCard / Amex. Click 'Pay with Card via Tribute' below or use @CryptoBot P2P Card onboarding. After payment, paste your Receipt ID in Step 2 for instant Pro activation."
+        note: "Works with any US, European, Asian, or CIS Visa / MasterCard / Amex. Click 'Pay with Card via @CryptoBot or 0% Fee EVM' below or use @CryptoBot P2P Card onboarding. After payment, paste your Receipt ID in Step 2 for instant Pro activation."
       },
       cryptobot: {
         badge: "TELEGRAM @CRYPTOBOT • 1-CLICK",
@@ -1598,7 +1909,8 @@
         addressLabel: "UNIVERSAL EVM RECIPIENT ADDRESS (0x...):",
         address: "0x5df707dda91477fc7c7563f683030da9d6cde7e2",
         evmBadges: ["BNB Chain (BEP20)", "Arbitrum One", "Base", "Polygon (POS)", "Optimism", "Ethereum (ERC20)", "Avalanche C-Chain"],
-        note: "This single 0x EVM address accepts 4.99 USDT, USDC, DAI, ETH, or BNB across BNB Smart Chain (BEP-20), Arbitrum, Base, Polygon, Optimism, and Ethereum! Gas fee on BEP20/Arbitrum/Base is only ~$0.01."
+        isEvmDirect: true,
+        note: "0% Platform Fee! Send 4.99 USDT or USDC across BNB Smart Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism, or Ethereum. You can also click '🦊 Send via Web3 Wallet (0% Fee)' below to open MetaMask / Rabby / TrustWallet directly."
       },
       bybit: {
         badge: "0% FEE • INSTANT INTERNAL TRANSFER",
@@ -1656,7 +1968,7 @@
         actionAreaHtml = `
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
             <a href="https://t.me/send?start=IVdNOM8aeE7t" target="_blank" rel="noopener" class="bento-btn bg-[#69BD28] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
-              <span>💳</span> <span>Pay $4.99 by Card (Tribute / Apple Pay)</span>
+              <span>💳</span> <span>✈️ Pay $4.99 via @CryptoBot (All Coins)</span>
             </a>
             <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="bento-btn bg-[#2563EB] text-white font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-center">
               <span>⚡</span> <span>Request Direct Stripe / Card Link</span>
@@ -1675,6 +1987,9 @@
           </div>
         `;
       } else {
+        const web3BtnHtml = data.isEvmDirect
+          ? `<button onclick="payWithWeb3Wallet()" class="bento-btn bg-[#69BD28] text-white font-mono-code text-xs font-extrabold px-4 py-2.5 rounded-lg whitespace-nowrap">🦊 Web3 Wallet (0% Fee)</button>`
+          : "";
         actionAreaHtml = `
           <div class="font-mono-code text-[10px] font-bold text-gray-500 uppercase mb-1">${data.addressLabel}</div>
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-3">
@@ -1682,6 +1997,7 @@
             <button onclick="copyTextToClipboard('${data.address}', 'Address copied!')" class="bento-btn bg-[#111111] text-white font-mono-code text-xs font-extrabold px-4 py-2.5 rounded-lg whitespace-nowrap">
               📋 Copy Address
             </button>
+            ${web3BtnHtml}
           </div>
         `;
       }
@@ -1708,10 +2024,32 @@
       document.getElementById("checkout").scrollIntoView({ behavior: "smooth" });
     }
 
+    function triggerDemoAgentBrief() {
+      const sampleXml = `<obsidian_agent_context version="4.0.0" generator="Alchemy Craft">\n  <note_title>StratAlchemy_Brief_2026</note_title>\n  <highlighted_key_sentences>\n    1. "Click on any sentence in this note to highlight and pin it..."\n  </highlighted_key_sentences>\n  <open_action_items>\n    - [ ] Click me to finish the sprint & trigger 100% Alchemy Sparkles!\n  </open_action_items>\n</obsidian_agent_context>`;
+      copyTextToClipboard(sampleXml, "🤖 AI Agent XML Context Brief copied for Claude / Cursor / ChatGPT!");
+      burstParticles(window.innerWidth / 2, window.innerHeight / 2, 40);
+    }
+
+    async function payWithWeb3Wallet() {
+      const addr = "0x5df707dda91477fc7c7563f683030da9d6cde7e2";
+      copyTextToClipboard(addr, "0x EVM Address copied!");
+      if (window.ethereum) {
+        try {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          showToast("🦊 Wallet connected! Send 4.99 USDT/USDC to 0x5df7...e7e2 (copied)");
+        } catch (e) {
+          showToast("📋 0x EVM Address copied! Paste in MetaMask / Rabby / TrustWallet.");
+        }
+      } else {
+        showToast("📋 0x EVM Address copied! Paste in MetaMask / Rabby / Bybit.");
+      }
+    }
+
     async function verifyProOnWebsite() {
       const input = document.getElementById("checkoutTxInput");
       const statusBox = document.getElementById("verifyStatusBox");
       const val = (input.value || "").trim();
+      const rawCode = val.toUpperCase();
 
       statusBox.classList.remove("hidden");
       if (val.length < 5) {
@@ -1725,27 +2063,41 @@
 
       setTimeout(() => {
         statusBox.className = "mt-3 text-xs font-bold p-3.5 rounded-lg border-[1.5px] border-[#16A34A] bg-[#F0FDF4] text-[#166534]";
+        // Generate unique cryptographic SiCraft Pro License Key with checksum!
+        const clean = val.toUpperCase().replace(/[^A-Z0-9]/g, "");
+        let h1 = 0x811c9dc5;
+        for (let i = 0; i < clean.length; i++) { h1 ^= clean.charCodeAt(i); h1 = Math.imul(h1, 0x01000193) >>> 0; }
+        const alpha = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        const blk = (n) => { let s = "", v = n >>> 0; for (let i = 0; i < 4; i++) { s += alpha[v % alpha.length]; v = Math.floor(v / alpha.length) ^ ((v << 3) >>> 0); } return s; };
+        const b1 = blk(h1), b2 = blk(h1 ^ 0x5f3759df), b3 = blk(h1 ^ 0x9e3779b9);
+        const comb = b1 + b2 + b3;
+        let chk = 0;
+        for (let i = 0; i < comb.length; i++) chk = (chk + comb.charCodeAt(i) * (i + 1)) % 9999;
+        const licenseKey = `SICRAFT-${b1}-${b2}-${b3}-${String(chk).padStart(4, "0")}`;
+
         statusBox.innerHTML = `
-          <div class="font-extrabold text-sm mb-1">🎉 Alchemy Craft Pro Activated for 365 Days!</div>
-          <div>Your Activation Code / Verified TXID: <code class="bg-white px-2 py-0.5 rounded border border-green-300 font-mono-code">${val}</code></div>
-          <div class="mt-1 text-[11px]">Paste this same code in <strong>Obsidian Settings → Alchemy Craft → Get Pro → Step 2</strong> to unlock Midnight Dark Craft & all Pro features immediately!</div>
+          <div class="font-extrabold text-sm mb-1">🎉 SiCraft // Alchemy Craft Pro Activated (365 Days)!</div>
+          <div class="my-1.5">Your Unique Cryptographic Pro Key: <code class="bg-white px-2.5 py-1 rounded border-2 border-[#16A34A] font-mono-code font-black text-xs select-all">${licenseKey}</code>
+            <button onclick="copyTextToClipboard('${licenseKey}', 'Pro License Key copied!')" class="ml-2 bg-[#111111] text-white font-mono-code text-[10px] px-2 py-0.5 rounded">📋 Copy Key</button>
+          </div>
+          <div class="mt-1 text-[11px]">Paste this cryptographic key in <strong>Obsidian Settings → SiCraft // Alchemy Craft → Get Pro → Step 2</strong> for instant activation!</div>
         `;
         burstParticles(window.innerWidth / 2, window.innerHeight / 2, 75);
         showToast("💎 Pro Pass Verified & Activated!");
       }, 900);
     }
 
-    // 6. COPY UPDATED v3.7.0 PLUGIN PATCH (WITH 6 LANGUAGES, UNIVERSAL EVM, CARD/TRIBUTE & MOBILE FIX)
+    // 6. COPY UPDATED v4.2.0 PLUGIN PATCH (WITH 6 LANGUAGES, UNIVERSAL EVM, CARD/0% FEE EVM & MOBILE FIX)
     function copyUpdatedPluginPatch() {
-      const patchSummary = `// Alchemy Craft v3.7.0 — Global Update Patch (Universal EVM, Card/Tribute, @CryptoBot, 6 Languages & Mobile Safe Progress Bar)
+      const patchSummary = `// Alchemy Craft v4.2.0 — Global Update Patch (Universal EVM, Card/@CryptoBot, @CryptoBot, 6 Languages & Mobile Safe Progress Bar)
 // 1. In onunload(): cleans all .artcraft-task-progress-wrap elements so mobile bars never get stuck:
 document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remove());
 
 // 2. Universal EVM (0x5df707dda91477fc7c7563f683030da9d6cde7e2):
 // Supports BNB Chain (BEP20), Arbitrum One, Base, Polygon, Optimism, Ethereum (ERC20)
-// + Credit/Debit Card via Tribute (https://t.me/send?start=IVdNOM8aeE7t) & @CryptoBot
+// + Credit/Debit Card via @CryptoBot or 0% Fee EVM (https://t.me/send?start=IVdNOM8aeE7t) & @CryptoBot
 // + Boosty removed from Settings Tab!`;
-      copyTextToClipboard(patchSummary, "v3.7.0 Plugin Patch copied to clipboard!");
+      copyTextToClipboard(patchSummary, "v4.2.0 Plugin Patch copied to clipboard!");
     }
 
     // 7. CELEBRATION PARTICLE ENGINE
@@ -2050,6 +2402,41 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
     }
 
     // 9. DEMO AMBIENT SOUNDSCAPE (WEBAUDIO BROWN NOISE)
+    function toggleDemoMagicLamp() {
+      demoMagicLampOn = !demoMagicLampOn;
+      const btn = document.getElementById("btnDemoLamp");
+      if (btn) {
+        btn.className = demoMagicLampOn
+          ? "bg-[#F59E0B] text-white border border-[#111111] text-xs font-extrabold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm"
+          : "bg-white text-[#111111] hover:bg-amber-50 border border-[#CBD5E1] text-xs font-extrabold px-2.5 py-1 rounded-md flex items-center gap-1";
+      }
+      const pBtn = document.getElementById("ledStudioPowerBtn");
+      const pTxt = document.getElementById("ledStudioPowerText");
+      if (pBtn && pTxt) {
+        pTxt.textContent = demoMagicLampOn ? "ON" : "OFF";
+        pBtn.className = demoMagicLampOn
+          ? "bento-btn bg-[#F97316] text-white font-mono-code text-xs font-extrabold px-4 py-2 rounded-full flex items-center gap-1.5"
+          : "bento-btn bg-[#374151] text-gray-300 font-mono-code text-xs font-extrabold px-4 py-2 rounded-full flex items-center gap-1.5";
+      }
+      showToast(demoMagicLampOn ? "🏮 Smart LED Lamp ON (" + siteLampKelvin + "K): Move mouse over note!" : "🏮 Smart LED Lamp OFF");
+    }
+
+    function updateDemoLampShadows(clientX, clientY) {
+      const cards = document.querySelectorAll("#obsidianSimulator main p, #obsidianSimulator main table");
+      cards.forEach(el => {
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(cx - clientX, cy - clientY);
+        if (dist < 320) {
+          const intensity = Math.max(0, 1 - dist / 320);
+          el.style.textShadow = `0 0 ${Math.round(14 * intensity)}px rgba(245, 158, 11, 0.35)`;
+        } else {
+          el.style.textShadow = "";
+        }
+      });
+    }
+
     let demoAudioNode = null;
     function toggleDemoAmbient() {
       const btn = document.getElementById("btnDemoAmbient");
@@ -2081,11 +2468,14 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
         filter.frequency.value = 420;
         const gain = ctx.createGain();
         gain.gain.value = 0.07;
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
         source.connect(filter);
         filter.connect(gain);
+        filter.connect(analyser);
         gain.connect(ctx.destination);
         source.start(0);
-        demoAudioNode = { ctx, source };
+        demoAudioNode = { ctx, source, analyser };
         if (btn) btn.className = "bg-[#69BD28] text-white border border-[#111111] text-xs font-bold px-2 py-1 rounded-md";
         showToast("🎧 Playing Warm Brown Noise for Deep Focus!");
       } catch (e) {
@@ -2103,7 +2493,7 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
       resizeSandboxCanvas();
       resizeParticleCanvas();
       resizeGraphCanvas();
-      renderPaymentCard("card");
+      selectPayMethod("evm");
       renderSandboxLoop();
       animateParticles();
       animateBentoGraph();
