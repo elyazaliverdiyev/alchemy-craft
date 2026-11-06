@@ -2527,7 +2527,34 @@ class AlchemyCraftProModal extends Modal {
 
   async verifyOnChain(txHash, network) {
     const rawCode = (txHash || "").trim().toUpperCase();
-    // 1. Built-in Master Promo Codes (Instant offline activation)
+
+    // 1. Live Supabase Database Verification (Validates dynamic promo codes & commercial licenses)
+    try {
+      const sbUrl = "https://tsnnckbvxokjmbgfeqdj.supabase.co/rest/v1/rpc/redeem_code";
+      const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
+      const resp = await fetch(sbUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": sbKey,
+          "Authorization": `Bearer ${sbKey}`,
+        },
+        body: JSON.stringify({ p_code: rawCode }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.success) {
+          new Notice(`🎉 Успешно! Активирован тариф: ${data.plan || "1_year"}`);
+          return true;
+        } else if (data && data.message) {
+          console.log("Supabase redeem response:", data.message);
+        }
+      }
+    } catch (err) {
+      console.warn("Supabase network check skipped, using local fallback:", err);
+    }
+
+    // 2. Built-in Master Promo Codes (Instant offline activation)
     const MASTER_PROMOS = ["STRATALCHEMY", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
     if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
       new Notice("🎟️ Промокод успешно подтвержден! Активация Pro Pass...");
