@@ -168,7 +168,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Focus Radar",
     graphColorizeBtn: "🎨 Auto-Color Nodes",
     graphFitBtn: "🎯 Center",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
     checkUpdatesBtn: "🔄 Check Updates",
     officialSiteBtn: "🌐 Official Website & Checkout",
     langName: "🌐 Interface Language (6 Global Languages)",
@@ -264,7 +264,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Фокус Радар",
     graphColorizeBtn: "🎨 Раскрасить узлы",
     graphFitBtn: "🎯 В центр",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
     checkUpdatesBtn: "🔄 Проверить обновления",
     officialSiteBtn: "🌐 Официальный сайт и оплата",
     langName: "🌐 Язык интерфейса (6 мировых языков)",
@@ -360,7 +360,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "焦点雷达",
     graphColorizeBtn: "🎨 节点自动配色",
     graphFitBtn: "🎯 居中",
-    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.3)",
+    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.4)",
     checkUpdatesBtn: "🔄 检查更新",
     officialSiteBtn: "🌐 官方网站与收银台",
     langName: "🌐 界面语言 (支持 6 种国际语言)",
@@ -456,7 +456,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "レーダー",
     graphColorizeBtn: "🎨 自動カラー適用",
     graphFitBtn: "🎯 中央揃え",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
     checkUpdatesBtn: "🔄 アップデート確認",
     officialSiteBtn: "🌐 公式サイト＆決済ページ",
     langName: "🌐 インターフェース言語 (6ヶ国語対応)",
@@ -552,7 +552,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Radar Focus",
     graphColorizeBtn: "🎨 Colorear Nodos",
     graphFitBtn: "🎯 Centrar",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
     checkUpdatesBtn: "🔄 Buscar Actualizaciones",
     officialSiteBtn: "🌐 Sitio Oficial y Pagos",
     langName: "🌐 Idioma de la Interfaz (6 Idiomas Globales)",
@@ -648,7 +648,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Fokus-Radar",
     graphColorizeBtn: "🎨 Knoten färben",
     graphFitBtn: "🎯 Zentrieren",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.3)",
+    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.4)",
     checkUpdatesBtn: "🔄 Updates prüfen",
     officialSiteBtn: "🌐 Offizielle Website & Checkout",
     langName: "🌐 Oberflächensprache (6 Weltsprachen)",
@@ -1212,13 +1212,28 @@ class AlchemyFlowPlugin extends Plugin {
     const { Menu } = require("obsidian");
     const menu = new Menu();
 
-    const isMicActive = !!this.desktopAudioNodes;
+    const isSystemAudio = this.desktopAudioNodes && this.desktopAudioNodes.type === "system";
+    const isMicAudio = this.desktopAudioNodes && this.desktopAudioNodes.type === "mic";
+
+    // 1. System audio capture (Default Windows Output: Speakers / Headphones / YouTube / Spotify)
     menu.addItem((item) => {
       item
-        .setTitle(isMicActive ? "🔇 Stop Live Audio Sync" : "🎙️ Sync PC Audio / Microphone (Equalizer)")
-        .setIcon(isMicActive ? "cross" : "microphone")
+        .setTitle(isSystemAudio ? "⏹️ Отключить системный звук ПК" : "🔊 Захват звука системы ПК (YouTube, Spotify, Плеер)")
+        .setIcon(isSystemAudio ? "cross" : "audio-file")
         .onClick(async () => {
-          await this.toggleDesktopAudioCapture();
+          if (isSystemAudio) this.stopAudioCapture();
+          else await this.startSystemAudioCapture();
+        });
+    });
+
+    // 2. Microphone / Stereo Mix input
+    menu.addItem((item) => {
+      item
+        .setTitle(isMicAudio ? "⏹️ Отключить микрофон / микшер" : "🎙️ Захват с микрофона / Стерео микшера")
+        .setIcon(isMicAudio ? "cross" : "microphone")
+        .onClick(async () => {
+          if (isMicAudio) this.stopAudioCapture();
+          else await this.startMicAudioCapture();
         });
     });
 
@@ -1238,7 +1253,7 @@ class AlchemyFlowPlugin extends Plugin {
           .onClick(async () => {
             this.settings.eqMode = m.id;
             await this.saveSettings();
-            new Notice(`🎚️ Mode: ${m.name}`);
+            new Notice("🎚️ Mode: " + m.name);
           });
       });
     });
@@ -1270,14 +1285,14 @@ class AlchemyFlowPlugin extends Plugin {
         });
     });
 
-    if (this.settings.ambientSound !== "off" || isMicActive) {
+    if (this.settings.ambientSound !== "off" || this.desktopAudioNodes) {
       menu.addSeparator();
       menu.addItem((item) => {
         item
           .setTitle("⏹️ Stop All Audio")
           .setIcon("cross")
           .onClick(async () => {
-            this.stopDesktopAudioCapture();
+            this.stopAudioCapture();
             await this.setAmbientSound("off");
             new Notice("🔇 All audio stopped.");
           });
@@ -1287,7 +1302,90 @@ class AlchemyFlowPlugin extends Plugin {
     menu.showAtMouseEvent(event);
   }
 
-  stopDesktopAudioCapture() {
+  async startSystemAudioCapture() {
+    this.stopAudioCapture();
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        new Notice("⚠️ Capture not supported.");
+        return;
+      }
+      new Notice("🔊 В окне выбора нажмите 'Весь экран' и отметьте галочку 'Поделиться системным звуком'!");
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+        },
+      });
+
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks || audioTracks.length === 0) {
+        stream.getTracks().forEach((t) => t.stop());
+        new Notice("⚠️ В окне выбора не была включена галочка 'Поделиться системным звуком'!");
+        return;
+      }
+
+      // Stop video immediately to save 100% resources
+      stream.getVideoTracks().forEach((vt) => vt.stop());
+
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      if (ctx.state === "suspended") {
+        await ctx.resume();
+      }
+
+      const audioStream = new MediaStream([audioTracks[0]]);
+      const source = ctx.createMediaStreamSource(audioStream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.70;
+      source.connect(analyser);
+
+      this.desktopAudioNodes = { ctx, stream: audioStream, source, analyser, type: "system" };
+      new Notice("🔊 Системный звук ПК подключен! Эквалайзер считывает звук в такт музыке.");
+
+      audioTracks[0].onended = () => {
+        this.stopAudioCapture();
+      };
+    } catch (err) {
+      console.warn("System audio capture error:", err);
+    }
+  }
+
+  async startMicAudioCapture() {
+    this.stopAudioCapture();
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        new Notice("⚠️ Microphone not supported.");
+        return;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+        video: false,
+      });
+
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      if (ctx.state === "suspended") {
+        await ctx.resume();
+      }
+
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.70;
+      source.connect(analyser);
+
+      this.desktopAudioNodes = { ctx, stream, source, analyser, type: "mic" };
+      new Notice("🎙️ Микрофон / Стерео микшер подключен к эквалайзеру.");
+    } catch (err) {
+      console.warn("Mic error:", err);
+      new Notice("⚠️ Не удалось подключить устройство записи.");
+    }
+  }
+
+  stopAudioCapture() {
     if (!this.desktopAudioNodes) return;
     try {
       if (this.desktopAudioNodes.stream) {
@@ -1298,6 +1396,19 @@ class AlchemyFlowPlugin extends Plugin {
       }
     } catch (e) {}
     this.desktopAudioNodes = null;
+    new Notice("🔇 Аудио-поток отключен.");
+  }
+
+  stopDesktopAudioCapture() {
+    this.stopAudioCapture();
+  }
+
+  toggleDesktopAudioCapture() {
+    if (this.desktopAudioNodes) {
+      this.stopAudioCapture();
+    } else {
+      this.startSystemAudioCapture();
+    }
   }
 
   async cycleEqualizerMode() {
@@ -3070,46 +3181,73 @@ class AlchemyFlowPlugin extends Plugin {
 
       let freqData = null;
       let timeData = null;
+      let hasSound = false;
+
       if (activeAnalyser) {
         freqData = new Uint8Array(activeAnalyser.frequencyBinCount);
         timeData = new Uint8Array(activeAnalyser.frequencyBinCount);
         activeAnalyser.getByteFrequencyData(freqData);
         activeAnalyser.getByteTimeDomainData(timeData);
+
+        for (let j = 0; j < freqData.length; j++) {
+          if (freqData[j] > 8) {
+            hasSound = true;
+            break;
+          }
+        }
       }
 
       const mode = this.settings.eqMode || "bars";
       const colors = ["#69BD28", "#2563EB", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"];
 
-      const tNow = Date.now() * 0.0035;
       if (mode === "bars") {
         const bars = 14;
         const barW = 2.8;
         const gap = 1.2;
+        // Real Musical Frequency Bands mapping from 64 bins (375Hz to 18000Hz)
+        const bandRanges = [
+          [1, 1],   // Sub-bass / Kick (375 Hz)
+          [2, 2],   // Bass (750 Hz)
+          [3, 3],   // Low Mid (1125 Hz)
+          [4, 4],   // Mid (1500 Hz)
+          [5, 5],   // Mid (1875 Hz)
+          [6, 7],   // Mid-High (2250-2625 Hz)
+          [8, 9],   // Upper Mid (3000-3375 Hz)
+          [10, 12], // Presence (3750-4500 Hz)
+          [13, 16], // Presence (4875-6000 Hz)
+          [17, 21], // Treble (6375-7875 Hz)
+          [22, 27], // High Treble (8250-10125 Hz)
+          [28, 35], // High Treble (10500-13125 Hz)
+          [36, 45], // Air (13500-16875 Hz)
+          [46, 58], // Shimmer (17250-21750 Hz)
+        ];
+
         for (let i = 0; i < bars; i++) {
-          let h = 2;
-          if (freqData) {
-            const val = freqData[i % freqData.length];
-            h = Math.max(2, (val / 255) * (eh - 2));
-          } else {
-            const idle = Math.sin(tNow + i * 0.45) * 0.5 + 0.5;
-            h = Math.max(2, idle * (eh * 0.42));
+          let h = 2; // Real resting baseline when silent
+          if (hasSound && freqData) {
+            const [bStart, bEnd] = bandRanges[i];
+            let maxVal = 0;
+            for (let b = bStart; b <= bEnd && b < freqData.length; b++) {
+              if (freqData[b] > maxVal) maxVal = freqData[b];
+            }
+            const trebleBoost = 1.0 + (i / bars) * 0.45;
+            const normalized = Math.min(255, maxVal * trebleBoost);
+            h = Math.max(2, (normalized / 255) * (eh - 2));
           }
           eqCtx.fillStyle = colors[i % colors.length];
           eqCtx.fillRect(i * (barW + gap), eh - h, barW, h);
         }
       } else if (mode === "wave") {
-        // Dual Liquid Sine Wave
+        // Dual Liquid Sine Wave (Real Oscilloscope)
         for (let w = 0; w < 2; w++) {
           eqCtx.beginPath();
           eqCtx.strokeStyle = w === 0 ? "#69BD28" : "#2563EB";
           eqCtx.lineWidth = 1.6;
           for (let x = 0; x < ew; x++) {
             let amp = 0;
-            if (timeData) {
+            if (hasSound && timeData) {
               const idx = Math.floor((x / ew) * timeData.length);
               amp = ((timeData[idx] - 128) / 128) * (eh * 0.45);
-            } else {
-              amp = Math.sin(tNow + (x / ew) * Math.PI * 2 * (w + 1)) * (eh * 0.22);
             }
             const y = eh / 2 + amp * (w === 0 ? 1 : -0.7);
             if (x === 0) eqCtx.moveTo(x, y);
@@ -3122,11 +3260,9 @@ class AlchemyFlowPlugin extends Plugin {
         const cx = ew / 2;
         const cy = eh / 2;
         let avg = 0;
-        if (freqData) {
+        if (hasSound && freqData) {
           for (let i = 0; i < 12; i++) avg += freqData[i];
           avg = avg / (12 * 255);
-        } else {
-          avg = (Math.sin(tNow) * 0.5 + 0.5) * 0.4;
         }
         const r1 = 3 + avg * 6.5;
         const r2 = 5 + avg * 8.5;
@@ -3144,11 +3280,9 @@ class AlchemyFlowPlugin extends Plugin {
         const cols = 10;
         for (let i = 0; i < cols; i++) {
           let spread = 0;
-          if (freqData) {
+          if (hasSound && freqData) {
             const val = freqData[i * 2] / 255;
             spread = val * (eh * 0.42);
-          } else {
-            spread = (Math.sin(tNow + i * 0.5) * 0.5 + 0.5) * (eh * 0.35);
           }
           const x = 4 + i * 5.2;
           eqCtx.fillStyle = "#69BD28";
