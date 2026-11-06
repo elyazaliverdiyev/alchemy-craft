@@ -1800,34 +1800,7 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
   border-color: #D5D3CC;
 }
 
-/* Fix Vertical Dock Pillar so text/buttons never clip or overflow */
-body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
-  max-width: 68px !important;
-  width: 68px !important;
-  padding: 8px 6px !important;
-}
-
-body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
-  width: 54px !important;
-  padding: 5px 4px !important;
-  font-size: 10px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill {
-  width: 54px !important;
-  padding: 4px 3px !important;
-  font-size: 9.5px !important;
-  white-space: nowrap !important;
-}
+/* Deprecated 68px rule removed in favor of authoritative 142px 2-column Swiss Bento Dock */
 
 /* ==========================================================================
    10. SWISS BENTO GRAPH STUDIO (OBSIDIAN GRAPH VIEW ENHANCEMENTS & HUD)
@@ -2441,8 +2414,8 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
   top: 50% !important;
   bottom: auto !important;
   transform: translateY(-50%) !important;
-  width: 112px !important;
-  max-width: 112px !important;
+  width: 142px !important;
+  max-width: 142px !important;
   max-height: none !important;
   overflow: visible !important;
   padding: 10px 8px !important;
@@ -2484,11 +2457,18 @@ body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-d
 body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
   width: 100% !important;
   min-width: 0 !important;
-  padding: 5px 3px !important;
-  font-size: 9.5px !important;
+  padding: 6px 5px !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
   justify-content: center !important;
-  gap: 3px !important;
+  gap: 4px !important;
   overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn.is-full-row {
+  grid-column: span 2 !important;
 }
 
 /* ==========================================================================
@@ -2614,4 +2594,62 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
   background: #F59E0B !important;
   color: #111111 !important;
   border-color: #FFFFFF !important;
+}
+
+
+/* ==========================================================================
+   SETTINGS TAB OVERFLOW PROTECTION & FULL-WIDTH CARDS
+   ========================================================================== */
+.artcraft-settings-full-width {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 14px 16px !important;
+  background: #F9F8F6 !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 3px 0 #111111 !important;
+  margin-top: 14px !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.artcraft-settings-full-width .setting-item-info {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-bottom: 6px !important;
+}
+
+.artcraft-settings-full-width .setting-item-control {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.artcraft-settings-full-width .setting-item-control button {
+  margin: 0 !important;
+  white-space: nowrap !important;
+  font-size: 11.5px !important;
+  padding: 6px 12px !important;
+  font-weight: 700 !important;
+}
+
+.vertical-tab-content .setting-item {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+.vertical-tab-content .setting-item-control {
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+.vertical-tab-content .setting-item-description {
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
 }
