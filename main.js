@@ -333,7 +333,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Focus Radar",
     graphColorizeBtn: "Colorize My Vault",
     graphOrphansBtn: "Hide Orphans",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
     checkUpdatesBtn: "Check Updates",
     langName: "Interface Language (6 Global Languages)",
     langDesc: "Instantly translates all settings, floating dock buttons, Graph HUD, and modals.",
@@ -484,7 +484,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Фокус Радар",
     graphColorizeBtn: "Раскрасить мои папки",
     graphOrphansBtn: "Без одиночек",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
     checkUpdatesBtn: "Проверить обновления",
     langName: "Язык интерфейса (6 мировых языков)",
     langDesc: "Мгновенно переводит все настройки, кнопки панели, Граф и окно оплаты на выбранный язык.",
@@ -635,7 +635,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "焦点雷达",
     graphColorizeBtn: "一键配色我的文件夹",
     graphOrphansBtn: "隐藏孤立点",
-    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.3.1)",
+    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统",
     checkUpdatesBtn: "检查更新",
     langName: "界面语言 (支持 6 种国际语言)",
     langDesc: "即时切换所有设置项、工具栏、图谱控制器与收银台语言。",
@@ -786,7 +786,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "レーダー",
     graphColorizeBtn: "フォルダ自動色分け",
     graphOrphansBtn: "孤立ノード非表示",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
     checkUpdatesBtn: "アップデート確認",
     langName: "インターフェース言語 (6ヶ国語対応)",
     langDesc: "すべての設定項目、ドック、グラフHUD、決済画面を選択した言語に切り替えます。",
@@ -937,7 +937,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Radar Focus",
     graphColorizeBtn: "Colorear Mis Carpetas",
     graphOrphansBtn: "Ocultar Huérfanos",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
     checkUpdatesBtn: "Buscar Actualizaciones",
     langName: "Idioma de la Interfaz (6 Idiomas Globales)",
     langDesc: "Traduce al instante todos los ajustes, botones de la barra, Grafo y ventana de pago.",
@@ -1088,7 +1088,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Fokus-Radar",
     graphColorizeBtn: "Meine Ordner färben",
     graphOrphansBtn: "Waisen ausblenden",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
     checkUpdatesBtn: "Updates prüfen",
     langName: "Oberflächensprache (6 Weltsprachen)",
     langDesc: "Übersetzt sofort alle Einstellungen, Dock-Buttons, Graph-HUD und das Checkout-Fenster.",
@@ -3646,9 +3646,11 @@ class AlchemyFlowPlugin extends Plugin {
         hud.setAttribute("data-lang", lang);
         hud.innerHTML = `
           <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento">${SICRAFT_SVGS.graph} <span>${t("graphPresetBento", this)}</span></button>
-          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "constellation" ? "is-active" : ""}" data-preset="constellation">${SICRAFT_SVGS.spark} <span>${t("graphPresetConstellation", this)}</span></button>
+          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "mindpalace" ? "is-active" : ""}" data-preset="mindpalace">🏛️ <span>${isRu ? "3D Mind-Palace" : "3D Palace"}</span></button>
           <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar">${SICRAFT_SVGS.zen} <span>${t("graphPresetRadar", this)}</span></button>
-          <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse">${SICRAFT_SVGS.bolt} <span>${isRu ? "Импульсы связей" : "Pulse Nodes"}</span></button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse">${SICRAFT_SVGS.bolt} <span>${isRu ? "Фотоны" : "Photons"}</span></button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-resonance-btn" data-action="resonance" title="${isRu ? "Найти забытые бриллианты мыслей гармоническим резонансом" : "Harmonic Memory Resonance"}">✨ <span>${isRu ? "Резонанс" : "Resonance"}</span></button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-walk-btn" data-action="walk" title="${isRu ? "Кинематографический тур по цепочкам связей" : "Cinematic Constellation Tour"}">🚀 <span>${isRu ? "Тур" : "Tour"}</span></button>
           <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${SICRAFT_SVGS.spark} <span>${t("graphColorizeBtn", this)}</span></button>
           <button class="artcraft-graph-hud-btn" data-action="toggle-orphans">${t("graphOrphansBtn", this)}</button>
           <button class="artcraft-graph-hud-btn" data-action="snap-png">${SICRAFT_SVGS.camera} <span>${isRu ? "Снимок PNG" : "Snap PNG"}</span></button>
@@ -3664,6 +3666,9 @@ class AlchemyFlowPlugin extends Plugin {
             hud.querySelectorAll("[data-preset]").forEach((b) => b.classList.remove("is-active"));
             btn.classList.add("is-active");
             viewContent.setAttribute("data-graph-preset", preset);
+            if (preset === "mindpalace") {
+              new Notice(isRu ? "🏛️ Режим 3D Mind-Palace активирован: пространственные Z-слои и изометрические тени!" : "🏛️ 3D Mind-Palace activated: spatial Z-layers & isometric shadows!");
+            }
           });
         });
 
@@ -3672,6 +3677,16 @@ class AlchemyFlowPlugin extends Plugin {
           this.settings.graphPulseNodes = !this.settings.graphPulseNodes;
           await this.saveSettings();
           hud.querySelector('[data-action="pulse"]')?.classList.toggle("is-pulse-on", this.settings.graphPulseNodes);
+        });
+
+        hud.querySelector('[data-action="resonance"]')?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.triggerMemoryResonance(viewContent, view.renderer);
+        });
+
+        hud.querySelector('[data-action="walk"]')?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.toggleConstellationWalk(viewContent, view.renderer);
         });
 
         hud.querySelector('[data-action="colorize"]')?.addEventListener("click", (e) => {
@@ -3772,7 +3787,200 @@ class AlchemyFlowPlugin extends Plugin {
         return { x: wt.tx * scaleX, y: wt.ty * scaleY };
       };
 
-      // A. Radar Concentric Range Rings
+      // A. Architectural Swiss Blueprint Grid, Technical Crosshairs & Corner Frames
+      if (preset === "mindpalace" || preset === "bento") {
+        ctx.save();
+        ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.035)" : "rgba(17, 17, 17, 0.045)";
+        ctx.lineWidth = 1;
+        const gridSize = 54;
+        for (let x = 0; x < cw; x += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, ch);
+          ctx.stroke();
+        }
+        for (let y = 0; y < ch; y += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(cw, y);
+          ctx.stroke();
+        }
+        // Corner technical brackets & coordinates
+        ctx.font = '600 9px "JetBrains Mono", monospace';
+        ctx.fillStyle = isDark ? "rgba(255, 255, 255, 0.28)" : "rgba(17, 17, 17, 0.32)";
+        ctx.fillText("┌ 47.3769° N // 8.5417° E [ZURICH PROTOCOL]", 16, 20);
+        ctx.fillText("ALCHEMICAL REASONING ENGINE // 144 FPS ┘", cw - 250, ch - 16);
+        ctx.restore();
+      }
+
+      // B. 3D Mind-Palace Spatial Elevation & Parallax Shadows
+      if (preset === "mindpalace") {
+        ctx.save();
+        const mx = this.graphMouseX || 0;
+        const my = this.graphMouseY || 0;
+        const visibleNodes = renderer.nodes.slice(0, 140);
+        for (let i = 0; i < visibleNodes.length; i++) {
+          const n = visibleNodes[i];
+          const pt = getScreenPt(n);
+          if (!pt || pt.x < -20 || pt.x > cw + 20 || pt.y < -20 || pt.y > ch + 20) continue;
+
+          const nid = String(n.id || "").toLowerCase();
+          const isProject = nid.includes("project") || nid.includes("kaito") || nid.includes("alchemy");
+          if (isProject) {
+            // Isometric drop shadow on floor plane
+            ctx.beginPath();
+            ctx.arc(pt.x + 4 + mx * 10, pt.y + 8 + my * 10, 6, 0, Math.PI * 2);
+            ctx.fillStyle = isDark ? "rgba(0, 0, 0, 0.45)" : "rgba(17, 17, 17, 0.12)";
+            ctx.fill();
+
+            // Elevation neon ring
+            const pulse = 8 + Math.sin(this.graphPulsePhase * 2.5 + i) * 1.5;
+            ctx.beginPath();
+            ctx.arc(pt.x + mx * 5, pt.y + my * 5, pulse, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(105, 189, 40, 0.5)";
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      // C. Memory Resonance: Expanding Harmonic Shockwave & Supernova Gems
+      if (this.memoryResonanceActive && this.resonanceGems && this.resonanceGems.length > 0) {
+        ctx.save();
+        const elapsed = (Date.now() - (this.memoryResonanceStart || Date.now())) / 1000;
+        const waveR = elapsed * 500;
+        const waveAlpha = Math.max(0, 1 - elapsed / 5);
+
+        // Center harmonic shockwave
+        ctx.beginPath();
+        ctx.arc(cw / 2, ch / 2, waveR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(245, 158, 11, ${waveAlpha * 0.45})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Highlight resonant gems
+        for (let i = 0; i < this.resonanceGems.length; i++) {
+          const gem = this.resonanceGems[i];
+          const gpt = getScreenPt(gem);
+          if (!gpt) continue;
+
+          // Expanding golden halo
+          const haloR = 14 + Math.sin(this.graphPulsePhase * 4 + i) * 4;
+          ctx.beginPath();
+          ctx.arc(gpt.x, gpt.y, haloR, 0, Math.PI * 2);
+          ctx.strokeStyle = "#F59E0B";
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
+
+          // Golden rays
+          ctx.strokeStyle = "rgba(245, 158, 11, 0.6)";
+          ctx.lineWidth = 1;
+          for (let a = 0; a < 4; a++) {
+            const ang = (a * Math.PI) / 2 + this.graphPulsePhase * 0.5;
+            ctx.beginPath();
+            ctx.moveTo(gpt.x + Math.cos(ang) * (haloR + 2), gpt.y + Math.sin(ang) * (haloR + 2));
+            ctx.lineTo(gpt.x + Math.cos(ang) * (haloR + 9), gpt.y + Math.sin(ang) * (haloR + 9));
+            ctx.stroke();
+          }
+
+          // Callout card
+          const rawId = String(gem.id || "").replace(/\.md$/i, "");
+          const gemName = rawId.split("/").pop() || rawId;
+          ctx.font = '700 10.5px "JetBrains Mono", monospace';
+          const cardText = `⭐ РЕЗОНАНС: ${gemName.slice(0, 22)}`;
+          const tw = ctx.measureText(cardText).width + 16;
+          const cx = Math.max(8, Math.min(cw - tw - 8, gpt.x - tw / 2));
+          const cy = gpt.y - 32;
+
+          ctx.fillStyle = "#111111";
+          ctx.fillRect(cx + 2, cy + 2, tw, 22);
+          ctx.fillStyle = isDark ? "#292524" : "#FFFBEB";
+          ctx.fillRect(cx, cy, tw, 22);
+          ctx.strokeStyle = "#F59E0B";
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(cx, cy, tw, 22);
+
+          ctx.fillStyle = isDark ? "#FDE68A" : "#92400E";
+          ctx.textBaseline = "middle";
+          ctx.textAlign = "center";
+          ctx.fillText(cardText, cx + tw / 2, cy + 11);
+        }
+        ctx.restore();
+      }
+
+      // D. Constellation Walk Animation & Step Advancement
+      if (this.constellationWalkActive && this.constellationPath && this.constellationPath.length > 0) {
+        ctx.save();
+        const nowMs = Date.now();
+        if (nowMs - (this.constellationLastStepTime || 0) > 3400) {
+          this.constellationLastStepTime = nowMs;
+          this.constellationStep = (this.constellationStep + 1) % this.constellationPath.length;
+          this.playTactileClick();
+        }
+
+        const stepIdx = this.constellationStep || 0;
+        const curGem = this.constellationPath[stepIdx];
+        const nextGem = this.constellationPath[(stepIdx + 1) % this.constellationPath.length];
+        const p1 = getScreenPt(curGem);
+        const p2 = getScreenPt(nextGem);
+
+        if (p1 && p2) {
+          // Highlight laser beam
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = "#6366F1";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          // Traveling photon comet
+          const prog = ((nowMs - this.constellationLastStepTime) % 3400) / 3400;
+          const px = p1.x + (p2.x - p1.x) * prog;
+          const py = p1.y + (p2.y - p1.y) * prog;
+
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#818CF8";
+          ctx.fill();
+          ctx.strokeStyle = "#111111";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Target active beacon
+        if (p1) {
+          ctx.beginPath();
+          ctx.arc(p1.x, p1.y, 16 + Math.sin(this.graphPulsePhase * 5) * 3, 0, Math.PI * 2);
+          ctx.strokeStyle = "#6366F1";
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+        }
+
+        // Tour HUD card at bottom center
+        const curTitle = String(curGem.id || "").replace(/\.md$/i, "").split("/").pop();
+        const tourMsg = `📍 СОЗВЕЗДИЕ-ТУР • ШАГ ${stepIdx + 1}/${this.constellationPath.length}: «${curTitle.slice(0, 24)}»`;
+        ctx.font = '700 11px "JetBrains Mono", monospace';
+        const msgW = ctx.measureText(tourMsg).width + 24;
+        const bx = (cw - msgW) / 2;
+        const by = ch - 54;
+
+        ctx.fillStyle = "#111111";
+        ctx.fillRect(bx + 3, by + 3, msgW, 26);
+        ctx.fillStyle = isDark ? "#1E1B4B" : "#EEF2FF";
+        ctx.fillRect(bx, by, msgW, 26);
+        ctx.strokeStyle = "#6366F1";
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(bx, by, msgW, 26);
+
+        ctx.fillStyle = isDark ? "#E0E7FF" : "#3730A3";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillText(tourMsg, bx + msgW / 2, by + 13);
+        ctx.restore();
+      }
+
+      // E. Radar Concentric Range Rings
       if (preset === "radar" || (preset === "bento" && hovered)) {
         let centerPt = hovered ? getScreenPt(hovered) : { x: cw / 2, y: ch / 2 };
         if (centerPt && centerPt.x >= 0 && centerPt.x <= cw && centerPt.y >= 0 && centerPt.y <= ch) {
@@ -3889,6 +4097,137 @@ class AlchemyFlowPlugin extends Plugin {
         }
       }
     }
+  }
+
+  triggerMemoryResonance(viewContent, renderer) {
+    if (!renderer || !renderer.nodes || renderer.nodes.length === 0) {
+      new Notice("Откройте граф, чтобы запустить Резонанс памяти!");
+      return;
+    }
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    this.playHarmonicResonanceChime();
+    this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 45);
+
+    this.memoryResonanceActive = true;
+    this.memoryResonanceStart = Date.now();
+
+    // Find 3 to 5 dormant gem nodes (nodes that have links, but older/untouched)
+    const allNodes = renderer.nodes.filter((n) => n && n.id && !n.id.includes("node_modules") && !n.id.includes("_CloudSync"));
+    if (allNodes.length === 0) return;
+
+    // Score nodes: prefer nodes with connections
+    const links = renderer.links || [];
+    const linkMap = {};
+    for (let i = 0; i < links.length; i++) {
+      const l = links[i];
+      if (l.source && l.source.id) linkMap[l.source.id] = (linkMap[l.source.id] || 0) + 1;
+      if (l.target && l.target.id) linkMap[l.target.id] = (linkMap[l.target.id] || 0) + 1;
+    }
+
+    const scored = allNodes
+      .map((n) => ({ node: n, score: linkMap[n.id] || 0 }))
+      .filter((x) => x.score >= 2)
+      .sort((a, b) => b.score - a.score);
+
+    // Shuffle top 15 and pick 3-4
+    const candidates = scored.slice(0, 15).sort(() => Math.random() - 0.5).slice(0, 4);
+    this.resonanceGems = candidates.map((c) => c.node);
+
+    new Notice(
+      isRu
+        ? `✨ Резонанс памяти: Обнаружено ${this.resonanceGems.length} забытых бриллиантов мысли!`
+        : `✨ Memory Resonance: Discovered ${this.resonanceGems.length} dormant knowledge gems!`
+    );
+
+    setTimeout(() => {
+      this.memoryResonanceActive = false;
+      this.resonanceGems = [];
+    }, 7000);
+  }
+
+  playHarmonicResonanceChime() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === "suspended") ctx.resume();
+
+      const now = ctx.currentTime;
+      // Dual-sine 432 Hz + 864 Hz harmonic bell
+      [432, 864].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const initGain = idx === 0 ? 0.22 : 0.12;
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(initGain, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.85);
+
+        osc.start(now);
+        osc.stop(now + 1.85);
+      });
+    } catch (e) {}
+  }
+
+  toggleConstellationWalk(viewContent, renderer) {
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    if (this.constellationWalkActive) {
+      this.constellationWalkActive = false;
+      this.constellationPath = [];
+      new Notice(isRu ? "⏹ Созвездие-Тур завершен." : "⏹ Tour ended.");
+      return;
+    }
+
+    if (!renderer || !renderer.nodes || renderer.nodes.length === 0) {
+      new Notice("Откройте граф для запуска тура!");
+      return;
+    }
+
+    const allNodes = renderer.nodes.filter((n) => n && n.id && !n.id.includes("node_modules"));
+    if (allNodes.length < 3) return;
+
+    // Build random connected walk path of 5-6 steps
+    const links = renderer.links || [];
+    const adj = {};
+    for (let i = 0; i < links.length; i++) {
+      const l = links[i];
+      if (l.source && l.target) {
+        if (!adj[l.source.id]) adj[l.source.id] = [];
+        if (!adj[l.target.id]) adj[l.target.id] = [];
+        adj[l.source.id].push(l.target);
+        adj[l.target.id].push(l.source);
+      }
+    }
+
+    // Start with hovered node or a high-link node
+    let cur = renderer.hoveredNode || allNodes[Math.floor(Math.random() * allNodes.length)];
+    const path = [cur];
+    for (let step = 0; step < 6; step++) {
+      const neighbors = adj[cur.id] || [];
+      const unvisited = neighbors.filter((nb) => !path.includes(nb));
+      if (unvisited.length > 0) {
+        cur = unvisited[Math.floor(Math.random() * unvisited.length)];
+        path.push(cur);
+      } else {
+        break;
+      }
+    }
+
+    this.constellationWalkActive = true;
+    this.constellationPath = path;
+    this.constellationStep = 0;
+    this.constellationLastStepTime = Date.now();
+
+    this.playTactileClick();
+    new Notice(
+      isRu
+        ? `🚀 Созвездие-Тур: Построен маршрут из ${path.length} станций знаний!`
+        : `🚀 Constellation Tour: Mapped path of ${path.length} knowledge stations!`
+    );
   }
 
   async applyBentoGraphColorGroups(toggleOrphans = false, silent = false) {
@@ -4294,24 +4633,26 @@ class AlchemyFlowPlugin extends Plugin {
     wrap.innerHTML = `
       <div class="artcraft-top-bar-inner">
         <div class="artcraft-header-main-row">
-          ${
-            showStats
-              ? `<span class="artcraft-reading-stats-pill" title="${
-                  isRu ? "Расчетное время чтения (~200 слов/мин)" : "Estimated reading time (~200 wpm)"
-                }">${SICRAFT_SVGS.book}<span>${readingText}</span></span>`
-              : ""
-          }
-          ${
-            showTasks
-              ? `<div class="artcraft-compact-task-pill" title="${isRu ? "Прогресс выполнения задач" : "Task completion progress"}">
-                  <span class="task-pill-lbl">${isRu ? "Задачи:" : "Tasks:"} <strong>${done}/${total}</strong></span>
-                  <div class="artcraft-task-progress-bar-bg">
-                    <div class="artcraft-task-progress-bar-fill" style="width: ${pct}%"></div>
-                  </div>
-                  <span class="task-pill-pct">${pct}%</span>
-                </div>`
-              : ""
-          }
+          <div class="artcraft-header-meta-group">
+            ${
+              showStats
+                ? `<span class="artcraft-reading-stats-pill" title="${
+                    isRu ? "Расчетное время чтения (~200 слов/мин)" : "Estimated reading time (~200 wpm)"
+                  }">${SICRAFT_SVGS.book}<span>${readingText}</span></span>`
+                : ""
+            }
+            ${
+              showTasks
+                ? `<div class="artcraft-compact-task-pill" title="${isRu ? "Прогресс выполнения задач" : "Task completion progress"}">
+                    <span class="task-pill-lbl">${isRu ? "Задачи:" : "Tasks:"} <strong>${done}/${total}</strong></span>
+                    <div class="artcraft-task-progress-bar-bg">
+                      <div class="artcraft-task-progress-bar-fill" style="width: ${pct}%"></div>
+                    </div>
+                    <span class="task-pill-pct">${pct}%</span>
+                  </div>`
+                : ""
+            }
+          </div>
           <div class="artcraft-note-craft-actions">
             ${stampBadgeHtml}
             <button class="artcraft-craft-mini-btn" data-act="bookmark" title="${
@@ -6848,11 +7189,17 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       <div class="artcraft-settings-hero-left">
         <div class="artcraft-settings-flask-box">${ALCHEMY_ICON_SVG}</div>
         <div>
-          <div class="artcraft-settings-hero-title">${t("settingsTitle", this.plugin)}</div>
+          <div class="artcraft-settings-hero-title">
+            ${t("settingsTitle", this.plugin)}
+            <span class="artcraft-hero-version-pill">v${this.plugin.manifest.version}</span>
+          </div>
           <div class="artcraft-settings-hero-sub">Author: Elyaz Aliverdiyev (@StratAlchemy) • Swiss Bento Craft System</div>
         </div>
       </div>
       <div class="artcraft-settings-hero-actions">
+        <a href="https://elyazaliverdiyev.github.io/alchemy-craft/" target="_blank" class="artcraft-update-btn artcraft-website-btn" title="${isRu ? "Открыть официальный сайт и документацию" : "Open official website & documentation"}">
+          ${SICRAFT_SVGS.spark} <span>${isRu ? "🌐 Сайт & Доки" : "🌐 Website & Docs"}</span>
+        </a>
         <button class="artcraft-update-btn" id="artcraft-check-rel-btn">${t("checkUpdatesBtn", this.plugin)}</button>
       </div>
     `;
