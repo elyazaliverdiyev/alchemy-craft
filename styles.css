@@ -2863,15 +2863,36 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   border: 1px solid rgba(17, 17, 17, 0.25);
 }
 
-/* Position HUD at Top-Right when Legend Pill is at Top-Left (or wrap cleanly) */
+/* Center-Top Cockpit for Graph HUD — NEVER overlaps right-side Obsidian settings drawer */
 .artcraft-graph-hud {
+  position: absolute !important;
   top: 14px !important;
-  right: 52px !important;
-  left: auto !important;
-  background: #FFFFFF !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  z-index: 23 !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 24 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 999px !important;
+  padding: 4px 6px !important;
+  box-shadow: 0 4px 0 #111111, 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+  font-family: "JetBrains Mono", monospace !important;
+  white-space: nowrap !important;
+  pointer-events: auto !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.artcraft-graph-hud.is-minimized {
+  padding: 4px 8px !important;
+}
+
+.artcraft-graph-hud.is-minimized .artcraft-graph-hud-btn:not([data-action="toggle-hud"]) {
+  display: none !important;
 }
 
 .artcraft-graph-hud-btn {
