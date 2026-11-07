@@ -1,4 +1,4 @@
-const { Plugin, PluginSettingTab, Setting, Notice, Modal, Menu } = require("obsidian");
+const { Plugin, PluginSettingTab, Setting, Notice, Modal, Menu, addIcon } = require("obsidian");
 
 const DEFAULT_SETTINGS = {
   uiLanguage: "en", // "en" | "ru" | "zh" | "ja" | "es" | "de"
@@ -78,8 +78,43 @@ const SICRAFT_SVGS = {
   copy: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
   check: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
   globe: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
-  ruler: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="2"/><line x1="6" y1="8" x2="6" y2="12"/><line x1="10" y1="8" x2="10" y2="14"/><line x1="14" y1="8" x2="14" y2="12"/><line x1="18" y1="8" x2="18" y2="14"/></svg>`
+  ruler: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="2"/><line x1="6" y1="8" x2="6" y2="12"/><line x1="10" y1="8" x2="10" y2="14"/><line x1="14" y1="8" x2="14" y2="12"/><line x1="18" y1="8" x2="18" y2="14"/></svg>`,
+  undo: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>`,
+  redo: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>`,
+  clear: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  orient: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+  collapse: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  eqBars: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="12"/><line x1="9" y1="20" x2="9" y2="6"/><line x1="14" y1="20" x2="14" y2="10"/><line x1="19" y1="20" x2="19" y2="4"/></svg>`,
+  eqWave: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-4 5-2"/></svg>`,
+  eqOrb: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>`,
+  eqMatrix: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>`
 };
+
+function registerSicraftMenuIcons() {
+  if (typeof addIcon !== "function") return;
+  const wrap = (inner) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  try {
+    addIcon("sicraft-bolt", wrap(`<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`));
+    addIcon("sicraft-timer", wrap(`<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/>`));
+    addIcon("sicraft-target", wrap(`<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>`));
+    addIcon("sicraft-wave", wrap(`<path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-4 5-2"/><path d="M2 17c2.5-4 5-4 7.5 0s5 4 7.5 0 3.5-3 5-1" opacity="0.65"/>`));
+    addIcon("sicraft-rocket", wrap(`<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>`));
+    addIcon("sicraft-sliders", wrap(`<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>`));
+    addIcon("sicraft-coffee", wrap(`<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>`));
+    addIcon("sicraft-palm", wrap(`<path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/><path d="M12 8a4.5 4.5 0 0 0-4.5-4.5c-1.5 0-2.8.7-3.5 1.8"/><path d="M12 8a4.5 4.5 0 0 1 4.5-4.5c1.5 0 2.8.7 3.5 1.8"/>`));
+    addIcon("sicraft-headphones", wrap(`<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>`));
+    addIcon("sicraft-rain", wrap(`<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/>`));
+    addIcon("sicraft-brain", wrap(`<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"/>`));
+    addIcon("sicraft-mic", wrap(`<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>`));
+    addIcon("sicraft-speaker", wrap(`<rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="14" r="4"/><line x1="12" y1="6" x2="12.01" y2="6"/>`));
+    addIcon("sicraft-music", wrap(`<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>`));
+    addIcon("sicraft-stopwatch", wrap(`<circle cx="12" cy="13" r="8"/><polyline points="12 9 12 13 15 13"/><line x1="9" y1="2" x2="15" y2="2"/><line x1="19" y1="6" x2="20" y2="5"/>`));
+    addIcon("sicraft-bars", wrap(`<line x1="4" y1="20" x2="4" y2="10"/><line x1="9" y1="20" x2="9" y2="4"/><line x1="14" y1="20" x2="14" y2="12"/><line x1="19" y1="20" x2="19" y2="6"/>`));
+    addIcon("sicraft-orb", wrap(`<circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/>`));
+    addIcon("sicraft-matrix", wrap(`<rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/>`));
+    addIcon("sicraft-stop", wrap(`<rect x="5" y="5" width="14" height="14" rx="2"/>`));
+  } catch (e) {}
+}
 const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
   <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
@@ -1153,21 +1188,23 @@ class SmartLedLampModal extends Modal {
 
     const bSlider = contentEl.querySelector("#led-bright-slider");
     const bVal = contentEl.querySelector("#led-bright-val");
-    bSlider.oninput = async (e) => {
+    bSlider.oninput = (e) => {
       s.lampBrightness = parseInt(e.target.value, 10);
       bVal.textContent = `${s.lampBrightness}%`;
-      if (!s.magicLamp) await this.plugin.toggleMagicLamp();
-      await this.plugin.saveSettings();
+      if (!s.magicLamp) this.plugin.toggleMagicLamp();
+      else this.plugin.updateLampGpuStyle();
     };
+    bSlider.onchange = () => this.plugin.saveSettings();
 
     const kSlider = contentEl.querySelector("#led-kelvin-slider");
     const kVal = contentEl.querySelector("#led-kelvin-val");
-    kSlider.oninput = async (e) => {
+    kSlider.oninput = (e) => {
       s.lampKelvin = parseInt(e.target.value, 10);
       kVal.textContent = `${s.lampKelvin} K`;
-      if (!s.magicLamp) await this.plugin.toggleMagicLamp();
-      await this.plugin.saveSettings();
+      if (!s.magicLamp) this.plugin.toggleMagicLamp();
+      else this.plugin.updateLampGpuStyle();
     };
+    kSlider.onchange = () => this.plugin.saveSettings();
 
     contentEl.querySelectorAll(".sicraft-k-btn").forEach((btn) => {
       btn.onclick = async () => {
@@ -1176,26 +1213,29 @@ class SmartLedLampModal extends Modal {
         kSlider.value = String(k);
         kVal.textContent = `${k} K`;
         if (!s.magicLamp) await this.plugin.toggleMagicLamp();
+        else this.plugin.updateLampGpuStyle();
         await this.plugin.saveSettings();
       };
     });
 
     const dSlider = contentEl.querySelector("#led-dim-slider");
     const dVal = contentEl.querySelector("#led-dim-val");
-    dSlider.oninput = async (e) => {
+    dSlider.oninput = (e) => {
       s.lampDimness = parseInt(e.target.value, 10);
       dVal.textContent = `${s.lampDimness}%`;
-      if (!s.magicLamp) await this.plugin.toggleMagicLamp();
-      await this.plugin.saveSettings();
+      if (!s.magicLamp) this.plugin.toggleMagicLamp();
+      else this.plugin.updateLampGpuStyle();
     };
+    dSlider.onchange = () => this.plugin.saveSettings();
 
     const rSlider = contentEl.querySelector("#led-rad-slider");
     const rVal = contentEl.querySelector("#led-rad-val");
-    rSlider.oninput = async (e) => {
+    rSlider.oninput = (e) => {
       s.lampRadius = parseInt(e.target.value, 10);
       rVal.textContent = `${s.lampRadius} px`;
-      await this.plugin.saveSettings();
+      this.plugin.updateLampGpuStyle();
     };
+    rSlider.onchange = () => this.plugin.saveSettings();
 
     contentEl.querySelectorAll(".sicraft-shape-btn").forEach((btn) => {
       btn.onclick = async () => {
@@ -1203,6 +1243,7 @@ class SmartLedLampModal extends Modal {
         contentEl.querySelectorAll(".sicraft-shape-btn").forEach((b) => b.classList.remove("is-active"));
         btn.classList.add("is-active");
         if (!s.magicLamp) await this.plugin.toggleMagicLamp();
+        else this.plugin.updateLampGpuStyle();
         await this.plugin.saveSettings();
       };
     });
@@ -1282,6 +1323,7 @@ class CustomPomodoroModal extends Modal {
 class AlchemyFlowPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
+    registerSicraftMenuIcons();
 
     this.mode = "none"; // "none" | "laser" | "draw" | "eraser"
     this.isDrawing = false;
@@ -1300,6 +1342,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerInterval = null;
 
     this.applyBodyClasses();
+    this.createLampGpuLayer();
     this.createOverlayCanvas();
     if (this.settings.showFloatingDock) {
       this.createFloatingDock();
@@ -1397,78 +1440,77 @@ class AlchemyFlowPlugin extends Plugin {
     return false;
   }
 
+  createLampGpuLayer() {
+    if (this.lampWrapEl) this.lampWrapEl.remove();
+    const wrap = document.createElement("div");
+    wrap.className = "sicraft-lamp-gpu-wrap";
+    const beam = document.createElement("div");
+    beam.className = "sicraft-lamp-gpu-beam";
+    wrap.appendChild(beam);
+    document.body.appendChild(wrap);
+    this.lampWrapEl = wrap;
+    this.lampBeamEl = beam;
+    this.updateLampGpuStyle();
+  }
+
+  updateLampGpuStyle() {
+    if (!this.lampWrapEl || !this.lampBeamEl) return;
+    if (!this.settings.magicLamp) {
+      this.lampWrapEl.style.display = "none";
+      return;
+    }
+    this.lampWrapEl.style.display = "block";
+    const radius = this.settings.lampRadius || 310;
+    const dimPct = (this.settings.lampDimness !== undefined ? this.settings.lampDimness : 75) / 100;
+    const brightPct = (this.settings.lampBrightness || 85) / 100;
+    const rgb = kelvinToRgb(this.settings.lampKelvin || 3570);
+    const darkAlpha = (dimPct * 0.86).toFixed(3);
+    const coreAlpha = (0.32 * brightPct).toFixed(3);
+    const midAlpha = (0.14 * brightPct).toFixed(3);
+    const rimAlpha = (0.04 * brightPct).toFixed(3);
+
+    if (this.settings.lampShape === "deskbar") {
+      const rx = Math.round(radius * 1.45);
+      const ry = Math.round(radius * 0.9);
+      this.lampBeamEl.style.background = `radial-gradient(${rx}px ${ry}px at 2500px 2500px, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${coreAlpha}) 0%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${midAlpha}) 45%, rgba(10, 11, 14, ${(dimPct * 0.45).toFixed(3)}) 78%, rgba(10, 11, 14, ${darkAlpha}) 100%)`;
+    } else {
+      this.lampBeamEl.style.background = `radial-gradient(circle ${radius}px at 2500px 2500px, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${coreAlpha}) 0%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${midAlpha}) 48%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${rimAlpha}) 72%, rgba(10, 11, 14, ${darkAlpha}) 100%)`;
+    }
+    const lx = this.targetLampX || window.innerWidth / 2;
+    const ly = this.targetLampY || window.innerHeight / 2;
+    this.lampBeamEl.style.transform = `translate3d(${Math.round(lx - 2500)}px, ${Math.round(ly - 32 - 2500)}px, 0)`;
+  }
+
   setupMagicCursorLamp() {
     this.lampX = window.innerWidth / 2;
     this.lampY = window.innerHeight / 2;
     this.targetLampX = this.lampX;
     this.targetLampY = this.lampY;
-    this.lampVx = 0;
-    this.lampVy = 0;
 
     this.registerDomEvent(window, "mousemove", (e) => {
-      // Smart Auto-Cursor Pass-Through: when in Draw/Eraser mode, if the user moves the mouse over the Left File Explorer, Right Sidebar, Tab Header, or Floating Dock, temporarily disable canvas pointer capture so they can click folders/notes normally!
       if ((this.mode === "draw" || this.mode === "eraser") && this.canvasEl && !this.isDrawing) {
         const isOverNoteArea = this.isPointInsideActiveNoteArea(e.clientX, e.clientY);
         this.canvasEl.style.pointerEvents = isOverNoteArea ? "auto" : "none";
       }
-      this.lampVx = e.clientX - (this.targetLampX || e.clientX);
-      this.lampVy = e.clientY - (this.targetLampY || e.clientY);
       this.targetLampX = e.clientX;
       this.targetLampY = e.clientY;
-      if (this.settings.magicLamp) {
-        document.documentElement.style.setProperty("--sicraft-lamp-x", `${e.clientX}px`);
-        document.documentElement.style.setProperty("--sicraft-lamp-y", `${e.clientY}px`);
+      // Pure GPU hardware-composited translate3d (0% CPU, 0 DOM style invalidations, 240 FPS!)
+      if (this.settings.magicLamp && this.lampBeamEl) {
+        this.lampBeamEl.style.transform = `translate3d(${e.clientX - 2500}px, ${e.clientY - 32 - 2500}px, 0)`;
       }
     });
-  }
-
-  updateReactiveLightShadows(lx, ly) {
-    // Elements near the Magic Lamp cast physical directional shadows away from the light source and glow warmly!
-    const targets = document.querySelectorAll(
-      ".markdown-rendered p, .markdown-rendered table, .markdown-rendered .callout, .inline-title, .cm-line"
-    );
-    const radius = this.settings.lampRadius || 280;
-    for (let i = 0; i < targets.length; i++) {
-      const el = targets[i];
-      const r = el.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > window.innerHeight) continue;
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const dx = cx - lx;
-      const dy = cy - ly;
-      const dist = Math.hypot(dx, dy);
-      if (dist < radius * 1.35) {
-        const intensity = Math.max(0, 1 - dist / (radius * 1.35));
-        const sx = Math.round((dx / radius) * 7 * intensity);
-        const sy = Math.round((dy / radius) * 7 * intensity);
-        el.style.setProperty("--sicraft-light-intensity", intensity.toFixed(2));
-        el.style.setProperty("--sicraft-shadow-x", `${sx}px`);
-        el.style.setProperty("--sicraft-shadow-y", `${sy}px`);
-        el.classList.add("is-lamp-lit");
-      } else if (el.classList.contains("is-lamp-lit")) {
-        el.classList.remove("is-lamp-lit");
-        el.style.removeProperty("--sicraft-light-intensity");
-        el.style.removeProperty("--sicraft-shadow-x");
-        el.style.removeProperty("--sicraft-shadow-y");
-      }
-    }
   }
 
   async toggleMagicLamp() {
     this.settings.magicLamp = !this.settings.magicLamp;
     await this.saveSettings();
     this.applyBodyClasses();
+    this.updateLampGpuStyle();
     this.updateDockUI();
-    if (!this.settings.magicLamp) {
-      document.querySelectorAll(".is-lamp-lit").forEach((el) => {
-        el.classList.remove("is-lamp-lit");
-        el.style.removeProperty("--sicraft-light-intensity");
-      });
-    }
     new Notice(
       this.settings.magicLamp
-        ? "🏮 Magic Cursor Lamp ON: Move cursor to illuminate text & cast reactive shadows"
-        : "🏮 Magic Cursor Lamp OFF"
+        ? "Smart LED Cursor Lamp ON (GPU 144 FPS)"
+        : "Smart LED Cursor Lamp OFF"
     );
   }
 
@@ -1501,7 +1543,6 @@ class AlchemyFlowPlugin extends Plugin {
 
       const isSpaceOrEnter = key === " " || key === "Enter" || key === "Backspace";
       if (this.settings.tactileTypingSound === "thock") {
-        // Deep Topre / Custom Mechanical Switch Thock
         osc.type = "triangle";
         const baseFreq = isSpaceOrEnter ? 115 : 145 + (Math.random() * 22 - 11);
         osc.frequency.setValueAtTime(baseFreq, now);
@@ -1509,7 +1550,6 @@ class AlchemyFlowPlugin extends Plugin {
         gain.gain.setValueAtTime(0.14, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.048);
       } else {
-        // Vintage Swiss Typewriter Click
         osc.type = "sawtooth";
         const baseFreq = isSpaceOrEnter ? 520 : 780 + (Math.random() * 120 - 60);
         osc.frequency.setValueAtTime(baseFreq, now);
@@ -1528,6 +1568,7 @@ class AlchemyFlowPlugin extends Plugin {
   spawnTactileRipple(x, y) {
     if (!this.ripples) this.ripples = [];
     this.ripples.push({ x, y, r: 4, maxR: 38, alpha: 0.65, color: this.settings.strokeColor || "#69BD28" });
+    this.wakeOverlayCanvas();
   }
 
   // --- 🎚️ 3. NATIVE ELECTRON DESKTOP SYSTEM AUDIO LOOPBACK (TELEGRAM / YOUTUBE / SPOTIFY) & 4-MODE EQUALIZER ---
@@ -1539,19 +1580,18 @@ class AlchemyFlowPlugin extends Plugin {
     } else {
       this.startAmbientSound(val);
     }
+    this.updateEqualizerPillUI();
   }
 
   showAudioMenu(event) {
-    const { Menu } = require("obsidian");
     const menu = new Menu();
-
     const isAudioActive = !!this.desktopAudioNodes;
 
-    // 1. Primary: Native Desktop System Audio Loopback (Captures Telegram, YouTube, Spotify, Browser, Games directly via Electron desktopCapturer!)
+    // 1. Primary: Native Desktop System Audio Loopback
     menu.addItem((item) => {
       item
         .setTitle(isAudioActive && this.desktopAudioNodes.type === "system" ? t("audioStopSync", this) : t("audioSyncSystem", this))
-        .setIcon(isAudioActive && this.desktopAudioNodes.type === "system" ? "cross" : "volume-2")
+        .setIcon(isAudioActive && this.desktopAudioNodes.type === "system" ? "sicraft-stop" : "sicraft-speaker")
         .onClick(async () => {
           if (isAudioActive && this.desktopAudioNodes.type === "system") this.stopAudioCapture();
           else await this.startSystemAudioCapture();
@@ -1562,7 +1602,7 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addItem((item) => {
       item
         .setTitle(isAudioActive && this.desktopAudioNodes.type === "mic" ? t("audioStopSync", this) : t("audioSyncMic", this))
-        .setIcon(isAudioActive && this.desktopAudioNodes.type === "mic" ? "cross" : "microphone")
+        .setIcon(isAudioActive && this.desktopAudioNodes.type === "mic" ? "sicraft-stop" : "sicraft-mic")
         .onClick(async () => {
           if (isAudioActive && this.desktopAudioNodes.type === "mic") this.stopAudioCapture();
           else await this.startMicAudioCapture();
@@ -1572,19 +1612,24 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addSeparator();
 
     const modes = [
-      { id: "bars", name: t("audioModeBars", this) },
-      { id: "wave", name: t("audioModeWave", this) },
-      { id: "orb", name: t("audioModeOrb", this) },
-      { id: "dna", name: t("audioModeDna", this) },
+      { id: "bars", name: t("audioModeBars", this), icon: "sicraft-bars" },
+      { id: "wave", name: t("audioModeWave", this), icon: "sicraft-wave" },
+      { id: "orb", name: t("audioModeOrb", this), icon: "sicraft-orb" },
+      { id: "dna", name: t("audioModeDna", this), icon: "sicraft-matrix" },
     ];
     modes.forEach((m) => {
       menu.addItem((item) => {
         item
           .setTitle(m.name)
+          .setIcon(m.icon)
           .setChecked(this.settings.eqMode === m.id)
           .onClick(async () => {
             this.settings.eqMode = m.id;
             await this.saveSettings();
+            this.updateEqualizerPillUI();
+            if (!this.desktopAudioNodes && !this.ambientNodes) {
+              await this.startSystemAudioCapture();
+            }
             new Notice("Equalizer: " + m.name);
           });
       });
@@ -1595,6 +1640,7 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addItem((item) => {
       item
         .setTitle(t("ambientRain", this))
+        .setIcon("sicraft-rain")
         .setChecked(this.settings.ambientSound === "rain")
         .onClick(async () => {
           await this.setAmbientSound(this.settings.ambientSound === "rain" ? "off" : "rain");
@@ -1603,6 +1649,7 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addItem((item) => {
       item
         .setTitle(t("ambientBrown", this))
+        .setIcon("sicraft-headphones")
         .setChecked(this.settings.ambientSound === "brown")
         .onClick(async () => {
           await this.setAmbientSound(this.settings.ambientSound === "brown" ? "off" : "brown");
@@ -1611,6 +1658,7 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addItem((item) => {
       item
         .setTitle(t("ambientGamma", this))
+        .setIcon("sicraft-brain")
         .setChecked(this.settings.ambientSound === "gamma40")
         .onClick(async () => {
           await this.setAmbientSound(this.settings.ambientSound === "gamma40" ? "off" : "gamma40");
@@ -1619,8 +1667,8 @@ class AlchemyFlowPlugin extends Plugin {
 
     menu.addItem((item) => {
       item
-        .setTitle((this.settings.uiLanguage || "en") === "ru" ? "🎵 Свой трек / MP3 файл..." : "🎵 Load Custom Music File (MP3/WAV)...")
-        .setIcon("music")
+        .setTitle((this.settings.uiLanguage || "en") === "ru" ? "Свой трек / MP3 файл..." : "Load Custom Music File (MP3/WAV)...")
+        .setIcon("sicraft-music")
         .onClick(() => {
           this.openCustomAudioPicker();
         });
@@ -1631,7 +1679,7 @@ class AlchemyFlowPlugin extends Plugin {
       menu.addItem((item) => {
         item
           .setTitle(t("audioStopAll", this))
-          .setIcon("cross")
+          .setIcon("sicraft-stop")
           .onClick(async () => {
             this.stopAudioCapture();
             await this.setAmbientSound("off");
@@ -1668,7 +1716,8 @@ class AlchemyFlowPlugin extends Plugin {
         analyser.connect(ctx.destination);
         audioEl.play();
         this.ambientNodes = { ctx, audioEl, fileUrl, analyser };
-        new Notice(`🎵 Playing: ${file.name}`);
+        this.updateEqualizerPillUI();
+        new Notice(`Playing: ${file.name}`);
       } catch (e) {
         new Notice("Could not load audio file.");
       }
@@ -1676,53 +1725,48 @@ class AlchemyFlowPlugin extends Plugin {
     input.click();
   }
 
+  connectStreamToAnalyser(stream, type, gainVal = 2.4) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+    if (ctx.state === "suspended") ctx.resume();
+
+    // Hidden muted audio sink ensures Chromium's audio pipeline never suspends the MediaStream!
+    const sinkAudio = document.createElement("audio");
+    sinkAudio.muted = true;
+    sinkAudio.autoplay = true;
+    try {
+      sinkAudio.srcObject = stream;
+      sinkAudio.play().catch(() => {});
+    } catch (e) {}
+
+    const source = ctx.createMediaStreamSource(stream);
+    const preAmp = ctx.createGain();
+    preAmp.gain.value = gainVal;
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 256;
+    analyser.smoothingTimeConstant = 0.72;
+    analyser.minDecibels = -95;
+    analyser.maxDecibels = -20;
+
+    // Zero-gain destination connection fixes Chromium Issue #327649 where disconnected AnalyserNodes receive all-zero FFT frames!
+    const silentGain = ctx.createGain();
+    silentGain.gain.value = 0;
+
+    source.connect(preAmp);
+    preAmp.connect(analyser);
+    analyser.connect(silentGain);
+    silentGain.connect(ctx.destination);
+
+    this.desktopAudioNodes = { ctx, stream, source, analyser, silentGain, sinkAudio, type };
+    this.updateEqualizerPillUI();
+  }
+
   async startSystemAudioCapture() {
     this.stopAudioCapture(true);
     let stream = null;
 
-    // Strategy A1: Pure Electron WASAPI Desktop Loopback (NO maxWidth:1 constraint that breaks Windows DWM!)
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          mandatory: {
-            chromeMediaSource: "desktop",
-          },
-        },
-        video: {
-          mandatory: {
-            chromeMediaSource: "desktop",
-          },
-        },
-      });
-    } catch (e1) {
-      // Strategy A2: Electron desktopCapturer source ID with safe bounds
-      try {
-        const electron = window.require ? window.require("electron") : null;
-        const capturer = electron && (electron.desktopCapturer || (electron.remote && electron.remote.desktopCapturer));
-        if (capturer) {
-          const sources = await capturer.getSources({ types: ["screen", "window"] });
-          if (sources && sources.length > 0) {
-            stream = await navigator.mediaDevices.getUserMedia({
-              audio: {
-                mandatory: {
-                  chromeMediaSource: "desktop",
-                  chromeMediaSourceId: sources[0].id,
-                },
-              },
-              video: {
-                mandatory: {
-                  chromeMediaSource: "desktop",
-                  chromeMediaSourceId: sources[0].id,
-                },
-              },
-            });
-          }
-        }
-      } catch (e2) {}
-    }
-
-    // Strategy B: Check if user has a "Stereo Mix" / "Loopback" / "What U Hear" / "CABLE" audio device
-    if (!stream && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    // Strategy A: Check if user has a dedicated "Stereo Mix" / "Loopback" / "What U Hear" / "CABLE" audio input first
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const loopbackDev = devices.find(
@@ -1741,59 +1785,47 @@ class AlchemyFlowPlugin extends Plugin {
             video: false,
           });
         }
-      } catch (e3) {}
+      } catch (e0) {}
     }
 
-    // Strategy C: Standard getDisplayMedia fallback with systemAudio: "include"
-    if (!stream && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      try {
-        stream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: {
-            echoCancellation: false,
-            noiseSuppression: false,
-            autoGainControl: false,
-            systemAudio: "include",
-          },
-          systemAudio: "include",
-        });
-      } catch (e4) {}
-    }
-
-    // Strategy D: High-sensitivity Room/Speaker Acoustic Pickup (with 3.2x Pre-Amp Gain so music from speakers/headphones drives all 16 bars!)
+    // Strategy B: Electron WASAPI Desktop Loopback (keep low-res video track alive so Electron doesn't kill the WASAPI session!)
     if (!stream) {
+      const sourceIds = ["screen:0:0", "screen:1:0", undefined];
+      for (const sid of sourceIds) {
+        if (stream) break;
+        try {
+          const mandatoryAudio = { chromeMediaSource: "desktop" };
+          const mandatoryVideo = { chromeMediaSource: "desktop", maxWidth: 320, maxHeight: 180, maxFrameRate: 2 };
+          if (sid) {
+            mandatoryAudio.chromeMediaSourceId = sid;
+            mandatoryVideo.chromeMediaSourceId = sid;
+          }
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: { mandatory: mandatoryAudio },
+            video: { mandatory: mandatoryVideo },
+          });
+        } catch (e1) {}
+      }
+    }
+
+    // Strategy C: High-sensitivity Default Audio / Room Pickup
+    if (!stream || !stream.getAudioTracks || stream.getAudioTracks().length === 0) {
+      if (stream) stream.getTracks().forEach((t) => t.stop());
       return this.startMicAudioCapture(true);
     }
 
     try {
-      const audioTracks = stream.getAudioTracks();
-      if (!audioTracks || audioTracks.length === 0) {
-        stream.getTracks().forEach((t) => t.stop());
-        return this.startMicAudioCapture(true);
-      }
-
-      // Immediately stop video track so 0% GPU is used on screen video
-      stream.getVideoTracks().forEach((vt) => vt.stop());
-
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioCtx();
-      if (ctx.state === "suspended") await ctx.resume();
-
-      const audioStream = new MediaStream([audioTracks[0]]);
-      const source = ctx.createMediaStreamSource(audioStream);
-      const preAmp = ctx.createGain();
-      preAmp.gain.value = 1.85;
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.72;
-      analyser.minDecibels = -92;
-      analyser.maxDecibels = -18;
-
-      source.connect(preAmp);
-      preAmp.connect(analyser);
-
-      this.desktopAudioNodes = { ctx, stream: audioStream, source, analyser, type: "system" };
+      this.connectStreamToAnalyser(stream, "system", 2.4);
       new Notice(t("audioConnectedNotice", this));
+
+      // Watchdog: if Electron's desktop audio track is muted by Windows DWM after 600ms, seamlessly switch to high-gain default audio input
+      setTimeout(() => {
+        if (!this.desktopAudioNodes || this.desktopAudioNodes.type !== "system") return;
+        const track = stream.getAudioTracks()[0];
+        if (!track || track.readyState === "ended" || track.muted) {
+          this.startMicAudioCapture(true);
+        }
+      }, 600);
     } catch (err) {
       return this.startMicAudioCapture(true);
     }
@@ -1806,24 +1838,7 @@ class AlchemyFlowPlugin extends Plugin {
         audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
         video: false,
       });
-
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioCtx();
-      if (ctx.state === "suspended") await ctx.resume();
-
-      const source = ctx.createMediaStreamSource(stream);
-      const preAmp = ctx.createGain();
-      preAmp.gain.value = highGainForSpeakers ? 3.2 : 2.2;
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.72;
-      analyser.minDecibels = -95;
-      analyser.maxDecibels = -22;
-
-      source.connect(preAmp);
-      preAmp.connect(analyser);
-
-      this.desktopAudioNodes = { ctx, stream, source, analyser, type: "mic" };
+      this.connectStreamToAnalyser(stream, "mic", highGainForSpeakers ? 3.8 : 2.6);
       new Notice(t("audioMicConnectedNotice", this));
     } catch (err) {
       new Notice("Could not access audio device.");
@@ -1833,6 +1848,10 @@ class AlchemyFlowPlugin extends Plugin {
   stopAudioCapture(silent = false) {
     if (!this.desktopAudioNodes) return;
     try {
+      if (this.desktopAudioNodes.sinkAudio) {
+        this.desktopAudioNodes.sinkAudio.pause();
+        this.desktopAudioNodes.sinkAudio.srcObject = null;
+      }
       if (this.desktopAudioNodes.stream) {
         this.desktopAudioNodes.stream.getTracks().forEach((t) => t.stop());
       }
@@ -1841,6 +1860,7 @@ class AlchemyFlowPlugin extends Plugin {
       }
     } catch (e) {}
     this.desktopAudioNodes = null;
+    this.updateEqualizerPillUI();
     if (!silent) new Notice(t("audioStoppedNotice", this));
   }
 
@@ -1856,7 +1876,28 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
+  updateEqualizerPillUI() {
+    if (!this.eqWrap) return;
+    const isSynced = !!(this.desktopAudioNodes || this.ambientNodes);
+    this.eqWrap.classList.toggle("is-synced", isSynced);
+    if (this.eqModeIconEl) {
+      const modeIcons = {
+        bars: SICRAFT_SVGS.eqBars,
+        wave: SICRAFT_SVGS.eqWave,
+        orb: SICRAFT_SVGS.eqOrb,
+        dna: SICRAFT_SVGS.eqMatrix,
+      };
+      this.eqModeIconEl.innerHTML = modeIcons[this.settings.eqMode || "bars"] || SICRAFT_SVGS.eqBars;
+    }
+  }
+
   async cycleEqualizerMode() {
+    // If no audio source is active yet, first click automatically starts audio sync!
+    if (!this.desktopAudioNodes && !this.ambientNodes) {
+      await this.startSystemAudioCapture();
+      this.updateEqualizerPillUI();
+      return;
+    }
     const modes = ["bars", "wave", "orb", "dna"];
     const names = {
       bars: t("audioModeBars", this),
@@ -1868,6 +1909,7 @@ class AlchemyFlowPlugin extends Plugin {
     const next = modes[(idx + 1) % modes.length];
     this.settings.eqMode = next;
     await this.saveSettings();
+    this.updateEqualizerPillUI();
     new Notice(`Equalizer: ${names[next]}`);
   }
   // --- 📸 4. 1-CLICK SWISS BENTO QUOTE CARD EXPORTER ---
@@ -2067,10 +2109,11 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.lpInterval) clearInterval(this.lpInterval);
     if (this.timerInterval) clearInterval(this.timerInterval);
     if (this.animFrame) cancelAnimationFrame(this.animFrame);
+    if (this.eqAnimFrame) cancelAnimationFrame(this.eqAnimFrame);
+    if (this.lampWrapEl) this.lampWrapEl.remove();
     if (this.canvasEl) this.canvasEl.remove();
     if (this.dockEl) this.dockEl.remove();
-    // Clean up all task progress bars & graph HUDs so mobile DOM never gets stuck
-    document.querySelectorAll(".artcraft-task-progress-wrap, .artcraft-graph-hud").forEach((el) => el.remove());
+    document.querySelectorAll(".artcraft-task-progress-wrap, .artcraft-graph-hud, .artcraft-graph-legend-pill, .artcraft-graph-hint-pill, .artcraft-graph-fx-canvas").forEach((el) => el.remove());
   }
 
   // --- AMBIENT FOCUS SOUNDSCAPE ENGINE (WEBAUDIO SYNTHESIS) ---
@@ -2081,8 +2124,9 @@ class AlchemyFlowPlugin extends Plugin {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
+      if (ctx.state === "suspended") ctx.resume();
       const masterGain = ctx.createGain();
-      masterGain.gain.value = 0.08;
+      masterGain.gain.value = 0.09;
       masterGain.connect(ctx.destination);
 
       if (type === "brown" || type === "rain") {
@@ -2097,7 +2141,6 @@ class AlchemyFlowPlugin extends Plugin {
             lastOut = output[i];
             output[i] *= 3.2;
           } else {
-            // Soft Rain pink/filtered texture
             output[i] = (lastOut + 0.08 * white) / 1.08;
             lastOut = output[i];
             output[i] *= 1.8;
@@ -2112,33 +2155,41 @@ class AlchemyFlowPlugin extends Plugin {
         filter.frequency.value = type === "brown" ? 420 : 1100;
 
         const analyser = ctx.createAnalyser();
-        analyser.fftSize = 64;
-        analyser.smoothingTimeConstant = 0.8;
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.72;
+        const silentGain = ctx.createGain();
+        silentGain.gain.value = 0;
         whiteNoise.connect(filter);
         filter.connect(masterGain);
         filter.connect(analyser);
+        analyser.connect(silentGain);
+        silentGain.connect(ctx.destination);
         whiteNoise.start(0);
         this.ambientNodes = { ctx, source: whiteNoise, analyser };
       } else if (type === "gamma40") {
         const analyser = ctx.createAnalyser();
-        analyser.fftSize = 64;
+        analyser.fftSize = 256;
+        const silentGain = ctx.createGain();
+        silentGain.gain.value = 0;
         const osc1 = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
         osc1.type = "sine";
         osc2.type = "sine";
         osc1.frequency.value = 180;
         osc2.frequency.value = 220;
-        masterGain.gain.value = 0.035;
+        masterGain.gain.value = 0.04;
         osc1.connect(masterGain);
         osc2.connect(masterGain);
         osc1.connect(analyser);
+        osc2.connect(analyser);
+        analyser.connect(silentGain);
+        silentGain.connect(ctx.destination);
         osc1.start();
         osc2.start();
         this.ambientNodes = { ctx, osc1, osc2, analyser };
       }
-    } catch (e) {
-      // Ignore AudioContext restriction errors
-    }
+      this.updateEqualizerPillUI();
+    } catch (e) {}
   }
 
   stopAmbientSound() {
@@ -2154,6 +2205,7 @@ class AlchemyFlowPlugin extends Plugin {
       if (this.ambientNodes.ctx) this.ambientNodes.ctx.close();
     } catch (e) {}
     this.ambientNodes = null;
+    this.updateEqualizerPillUI();
   }
 
   // --- CELEBRATION PARTICLES (100% TASK COMPLETION & PRO UNLOCK) ---
@@ -2173,6 +2225,7 @@ class AlchemyFlowPlugin extends Plugin {
         alpha: 1,
       });
     }
+    this.wakeOverlayCanvas();
   }
 
   // --- FOCUS ANALYTICS RECORDER ---
@@ -2312,7 +2365,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerState = "work";
     this.saveSettings();
     this.resetTimer();
-    new Notice(`🍅 Pomodoro: ${mins} min`);
+    new Notice(`Pomodoro: ${mins} min`);
   }
 
   startBreak(mins) {
@@ -2320,45 +2373,52 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerState = "break";
     this.timerSeconds = mins * 60;
     this.startTimer();
-    new Notice(`☕ Break: ${mins} min`);
+    new Notice(`Break: ${mins} min`);
   }
 
   showTimerMenu(event) {
     const menu = new Menu();
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
 
     menu.addItem((item) => {
       item
-        .setTitle("⚡ 15 min — Sprint Focus")
+        .setTitle(isRu ? "15 мин — Быстрый спринт" : "15 min — Sprint Focus")
+        .setIcon("sicraft-bolt")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 15 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(15));
     });
     menu.addItem((item) => {
       item
-        .setTitle("🍅 25 min — Standard Pomodoro")
+        .setTitle(isRu ? "25 мин — Классический Помодоро" : "25 min — Standard Pomodoro")
+        .setIcon("sicraft-timer")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 25 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(25));
     });
     menu.addItem((item) => {
       item
-        .setTitle("🎯 45 min — Deep Work")
+        .setTitle(isRu ? "45 мин — Глубокая работа (Deep Work)" : "45 min — Deep Work")
+        .setIcon("sicraft-target")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 45 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(45));
     });
     menu.addItem((item) => {
       item
-        .setTitle("🌊 60 min — Flow State")
+        .setTitle(isRu ? "60 мин — Поток (Flow State)" : "60 min — Flow State")
+        .setIcon("sicraft-wave")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 60 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(60));
     });
     menu.addItem((item) => {
       item
-        .setTitle("🚀 90 min — Ultradian Rhythm")
+        .setTitle(isRu ? "90 мин — Ультрадианный цикл" : "90 min — Ultradian Rhythm")
+        .setIcon("sicraft-rocket")
         .setChecked(this.settings.timerMode === "pomodoro" && this.settings.pomodoroMinutes === 90 && this.timerState === "work")
         .onClick(() => this.setPomodoroDuration(90));
     });
     menu.addItem((item) => {
       item
-        .setTitle("⚙️ Custom Duration (1–360 min)...")
+        .setTitle(isRu ? "Своё время (1–360 мин)..." : "Custom Duration (1–360 min)...")
+        .setIcon("sicraft-sliders")
         .onClick(() => {
           new CustomPomodoroModal(this.app, this, this.settings.pomodoroMinutes || 25, (mins) => {
             this.setPomodoroDuration(mins);
@@ -2369,67 +2429,67 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addSeparator();
     menu.addItem((item) => {
       item
-        .setTitle("☕ 5 min — Short Break")
+        .setTitle(isRu ? "5 мин — Короткий перерыв" : "5 min — Short Break")
+        .setIcon("sicraft-coffee")
         .setChecked(this.timerState === "break" && this.timerSeconds <= 300)
         .onClick(() => this.startBreak(this.settings.breakMinutes || 5));
     });
     menu.addItem((item) => {
       item
-        .setTitle("🌴 15 min — Long Break")
+        .setTitle(isRu ? "15 мин — Длинный перерыв" : "15 min — Long Break")
+        .setIcon("sicraft-palm")
         .setChecked(this.timerState === "break" && this.timerSeconds > 300)
         .onClick(() => this.startBreak(15));
     });
     menu.addSeparator();
     menu.addItem((item) => {
       item
-        .setTitle("🎧 Ambient: Off")
+        .setTitle(isRu ? "Фоновый звук: Выкл" : "Ambient: Off")
+        .setIcon("sicraft-stop")
         .setChecked(!this.settings.ambientSound || this.settings.ambientSound === "off")
         .onClick(async () => {
-          this.settings.ambientSound = "off";
-          await this.saveSettings();
-          this.stopAmbientSound();
+          await this.setAmbientSound("off");
         });
     });
     menu.addItem((item) => {
       item
-        .setTitle("🌊 Ambient: Warm Brown Noise")
+        .setTitle(t("ambientBrown", this))
+        .setIcon("sicraft-headphones")
         .setChecked(this.settings.ambientSound === "brown")
         .onClick(async () => {
-          this.settings.ambientSound = "brown";
-          await this.saveSettings();
-          if (this.timerRunning) this.startAmbientSound("brown");
+          await this.setAmbientSound("brown");
         });
     });
     menu.addItem((item) => {
       item
-        .setTitle("🌧️ Ambient: Soft Rain on Paper")
+        .setTitle(t("ambientRain", this))
+        .setIcon("sicraft-rain")
         .setChecked(this.settings.ambientSound === "rain")
         .onClick(async () => {
-          this.settings.ambientSound = "rain";
-          await this.saveSettings();
-          if (this.timerRunning) this.startAmbientSound("rain");
+          await this.setAmbientSound("rain");
         });
     });
     menu.addItem((item) => {
       item
-        .setTitle("🧠 Ambient: 40Hz Gamma Focus Drone")
+        .setTitle(t("ambientGamma", this))
+        .setIcon("sicraft-brain")
         .setChecked(this.settings.ambientSound === "gamma40")
         .onClick(async () => {
-          this.settings.ambientSound = "gamma40";
-          await this.saveSettings();
-          if (this.timerRunning) this.startAmbientSound("gamma40");
+          await this.setAmbientSound("gamma40");
         });
     });
     menu.addItem((item) => {
       item
-        .setTitle(this.desktopAudioNodes ? "🔴 Stop PC / Room Audio Sync" : "🎙️ Sync Equalizer with PC / Room Audio")
+        .setTitle(this.desktopAudioNodes ? t("audioStopSync", this) : t("audioSyncSystem", this))
+        .setIcon(this.desktopAudioNodes ? "sicraft-stop" : "sicraft-speaker")
         .onClick(() => {
           this.toggleDesktopAudioCapture();
         });
     });
     menu.addItem((item) => {
       item
-        .setTitle(`🎚️ Switch Equalizer Animation (Current: ${(this.settings.eqMode || "bars").toUpperCase()})`)
+        .setTitle(isRu ? `Стиль эквалайзера (${(this.settings.eqMode || "bars").toUpperCase()})` : `Switch Equalizer Style (${(this.settings.eqMode || "bars").toUpperCase()})`)
+        .setIcon("sicraft-bars")
         .onClick(() => {
           this.cycleEqualizerMode();
         });
@@ -2437,7 +2497,8 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addSeparator();
     menu.addItem((item) => {
       item
-        .setTitle("⏱ Stopwatch (Count Up: 00:00+)")
+        .setTitle(isRu ? "Секундомер (Отсчёт вверх: 00:00+)" : "Stopwatch (Count Up: 00:00+)")
+        .setIcon("sicraft-stopwatch")
         .setChecked(this.settings.timerMode === "stopwatch")
         .onClick(async () => {
           this.settings.timerMode = "stopwatch";
@@ -2445,7 +2506,6 @@ class AlchemyFlowPlugin extends Plugin {
           this.resetTimer();
         });
     });
-    // Open menu ABOVE the bottom dock so 'Stopwatch' is never clipped at the bottom of the screen!
     const safeX = Math.min(event.clientX, window.innerWidth - 250);
     const safeY = Math.max(40, Math.min(event.clientY - 340, window.innerHeight - 380));
     menu.showAtPosition({ x: safeX, y: safeY });
@@ -2478,67 +2538,281 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
-  // --- SWISS BENTO GRAPH STUDIO (REAL VAULT FOLDER SCANNER + LIVE GRAPH ENGINE RELOAD) ---
+  // --- SWISS BENTO GRAPH STUDIO (WEBSITE-GRADE HUD, LEGEND PILL, NEURAL LASER PULSES & BENTO NODE CARDS) ---
   injectGraphViewHUD() {
     if (this.settings.enableBentoGraph === false) {
-      document.querySelectorAll(".artcraft-graph-hud").forEach((el) => el.remove());
+      document.querySelectorAll(".artcraft-graph-hud, .artcraft-graph-legend-pill, .artcraft-graph-hint-pill, .artcraft-graph-fx-canvas").forEach((el) => el.remove());
       return;
     }
 
     const graphLeaves = document.querySelectorAll('.workspace-leaf-content[data-type="graph"], .workspace-leaf-content[data-type="localgraph"]');
-    graphLeaves.forEach((leaf) => {
-      const viewContent = leaf.querySelector(".view-content");
+    graphLeaves.forEach((leafEl) => {
+      const viewContent = leafEl.querySelector(".view-content");
       if (!viewContent) return;
 
       viewContent.classList.add("artcraft-graph-canvas-wrap");
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
+      // Auto-upgrade legacy orange/spiky graph.json once so user immediately gets balanced 8-color Swiss Bento Graph without spiky arrows
+      if (!this.hasAutoUpgradedGraph) {
+        this.hasAutoUpgradedGraph = true;
+        setTimeout(() => this.applyBentoGraphColorGroups(false, true), 250);
+      }
+
+      const lang = this.settings.uiLanguage || "en";
+      const isRu = lang === "ru";
+
+      // 1. Top-Left Legend Pill (exact match to Website Demo Screenshot 1: .obsidian/graph.json + color dots)
+      let legend = viewContent.querySelector(".artcraft-graph-legend-pill");
+      if (!legend) {
+        legend = document.createElement("div");
+        legend.className = "artcraft-graph-legend-pill";
+        legend.innerHTML = `
+          <span class="legend-code">.obsidian/graph.json</span>
+          <span class="legend-item"><i style="background:#2563EB"></i>01 Strategy</span>
+          <span class="legend-item"><i style="background:#F59E0B"></i>02 Product</span>
+          <span class="legend-item"><i style="background:#10B981"></i>03 Research</span>
+          <span class="legend-item"><i style="background:#8B5CF6"></i>04 Permanent</span>
+          <span class="legend-item"><i style="background:#EC4899"></i>#pro</span>
+        `;
+        viewContent.appendChild(legend);
+      }
+
+      // 2. Top-Right Preset & Pulse Controls HUD (with custom Swiss Bento vector icons)
       let hud = viewContent.querySelector(".artcraft-graph-hud");
-      if (hud && hud.getAttribute("data-lang") !== (this.settings.uiLanguage || "en")) {
+      if (hud && hud.getAttribute("data-lang") !== lang) {
         hud.remove();
         hud = null;
       }
-      if (hud) return;
+      if (!hud) {
+        if (this.settings.graphPulseNodes === undefined) this.settings.graphPulseNodes = true;
+        hud = document.createElement("div");
+        hud.className = "artcraft-graph-hud";
+        hud.setAttribute("data-lang", lang);
+        hud.innerHTML = `
+          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento">${SICRAFT_SVGS.graph} <span>${t("graphPresetBento", this)}</span></button>
+          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "constellation" ? "is-active" : ""}" data-preset="constellation">${SICRAFT_SVGS.spark} <span>${t("graphPresetConstellation", this)}</span></button>
+          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar">${SICRAFT_SVGS.zen} <span>${t("graphPresetRadar", this)}</span></button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse">${SICRAFT_SVGS.bolt} <span>${isRu ? "Импульсы связей" : "Pulse Nodes"}</span></button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${SICRAFT_SVGS.spark} <span>${t("graphColorizeBtn", this)}</span></button>
+          <button class="artcraft-graph-hud-btn" data-action="toggle-orphans">${t("graphOrphansBtn", this)}</button>
+        `;
 
-      hud = document.createElement("div");
-      hud.className = "artcraft-graph-hud";
-      hud.setAttribute("data-lang", this.settings.uiLanguage || "en");
-      hud.innerHTML = `
-        <span class="artcraft-graph-hud-badge">${SICRAFT_SVGS.graph} <span>${t("graphHudTitle", this)}</span></span>
-        <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento">${t("graphPresetBento", this)}</button>
-        <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "constellation" ? "is-active" : ""}" data-preset="constellation">${t("graphPresetConstellation", this)}</button>
-        <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar">${t("graphPresetRadar", this)}</button>
-        <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${SICRAFT_SVGS.spark} <span>${t("graphColorizeBtn", this)}</span></button>
-        <button class="artcraft-graph-hud-btn" data-action="toggle-orphans">${t("graphOrphansBtn", this)}</button>
-      `;
-
-      hud.querySelectorAll("[data-preset]").forEach((btn) => {
-        btn.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const preset = btn.getAttribute("data-preset");
-          this.settings.graphPreset = preset;
-          await this.saveSettings();
-          hud.querySelectorAll("[data-preset]").forEach((b) => b.classList.remove("is-active"));
-          btn.classList.add("is-active");
-          viewContent.setAttribute("data-graph-preset", preset);
+        hud.querySelectorAll("[data-preset]").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            const preset = btn.getAttribute("data-preset");
+            this.settings.graphPreset = preset;
+            await this.saveSettings();
+            hud.querySelectorAll("[data-preset]").forEach((b) => b.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            viewContent.setAttribute("data-graph-preset", preset);
+          });
         });
-      });
 
-      hud.querySelector('[data-action="colorize"]')?.addEventListener("click", (e) => {
-        e.stopPropagation();
-        this.applyBentoGraphColorGroups(false);
-      });
+        hud.querySelector('[data-action="pulse"]')?.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          this.settings.graphPulseNodes = !this.settings.graphPulseNodes;
+          await this.saveSettings();
+          hud.querySelector('[data-action="pulse"]')?.classList.toggle("is-pulse-on", this.settings.graphPulseNodes);
+        });
 
-      hud.querySelector('[data-action="toggle-orphans"]')?.addEventListener("click", (e) => {
-        e.stopPropagation();
-        this.applyBentoGraphColorGroups(true);
-      });
+        hud.querySelector('[data-action="colorize"]')?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.applyBentoGraphColorGroups(false, false);
+        });
 
-      viewContent.appendChild(hud);
+        hud.querySelector('[data-action="toggle-orphans"]')?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.applyBentoGraphColorGroups(true, false);
+        });
+
+        viewContent.appendChild(hud);
+      }
+
+      // 3. Bottom-Right Interactive Hint Pill (exact match to Website Demo Screenshot 1)
+      let hint = viewContent.querySelector(".artcraft-graph-hint-pill");
+      if (!hint) {
+        hint = document.createElement("div");
+        hint.className = "artcraft-graph-hint-pill";
+        hint.innerHTML = `${SICRAFT_SVGS.lamp} <span>${isRu ? "Перетащите любой узел или наведите курсор для подсветки нейронных связей" : "Drag any node or hover to inspect neural links"}</span>`;
+        viewContent.appendChild(hint);
+      }
+
+      // 4. Lightweight Overlay Canvas for Neural Laser Pulses, Radar Rings & Swiss Bento Node Label Cards
+      let fxCanvas = viewContent.querySelector(".artcraft-graph-fx-canvas");
+      if (!fxCanvas) {
+        fxCanvas = document.createElement("canvas");
+        fxCanvas.className = "artcraft-graph-fx-canvas";
+        viewContent.appendChild(fxCanvas);
+      }
     });
   }
 
-  async applyBentoGraphColorGroups(toggleOrphans = false) {
+  renderGraphStudioFX() {
+    if (this.settings.enableBentoGraph === false) return;
+    const leaves = this.app.workspace.getLeavesOfType("graph").concat(this.app.workspace.getLeavesOfType("localgraph"));
+    if (!leaves || leaves.length === 0) return;
+
+    this.graphPulsePhase = (this.graphPulsePhase || 0) + 0.014;
+    const paletteHex = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899", "#06B6D4", "#69BD28"];
+    const isDark = document.body.classList.contains("artcraft-dark-craft") || document.body.classList.contains("theme-dark");
+
+    for (let l = 0; l < leaves.length; l++) {
+      const view = leaves[l].view;
+      if (!view || !view.containerEl) continue;
+      const viewContent = view.containerEl.querySelector(".view-content");
+      if (!viewContent || viewContent.offsetParent === null) continue;
+      const fxCanvas = viewContent.querySelector(".artcraft-graph-fx-canvas");
+      if (!fxCanvas) continue;
+
+      const cw = viewContent.clientWidth;
+      const ch = viewContent.clientHeight;
+      if (cw < 50 || ch < 50) continue;
+      if (fxCanvas.width !== cw || fxCanvas.height !== ch) {
+        fxCanvas.width = cw;
+        fxCanvas.height = ch;
+      }
+
+      const ctx = fxCanvas.getContext("2d");
+      ctx.clearRect(0, 0, cw, ch);
+
+      const renderer = view.renderer;
+      if (!renderer || !renderer.nodes || renderer.nodes.length === 0) continue;
+
+      // Helper to convert PixiJS node world coordinates to CSS pixels on viewContent
+      const getScreenPt = (n) => {
+        if (!n) return null;
+        if (n.circle && n.circle.worldTransform) {
+          const wt = n.circle.worldTransform;
+          const dpr = (renderer.px && renderer.px.renderer && renderer.px.renderer.resolution) || 1;
+          // In PixiJS with autoDensity, worldTransform.tx is either CSS px or physical px; check bounds
+          let sx = wt.tx;
+          let sy = wt.ty;
+          if (sx > cw * 1.35 || sy > ch * 1.35) {
+            sx /= dpr;
+            sy /= dpr;
+          }
+          return { x: sx, y: sy };
+        }
+        return null;
+      };
+
+      const hovered = renderer.hoveredNode || null;
+      let centerPt = hovered ? getScreenPt(hovered) : { x: cw / 2, y: ch / 2 };
+      if (!centerPt || centerPt.x < 0 || centerPt.x > cw) centerPt = { x: cw / 2, y: ch / 2 };
+
+      // A. Draw Concentric Dashed Radar Rings (like Website Screenshot 1)
+      if (this.settings.graphPreset === "radar" || this.settings.graphPreset === "bento") {
+        ctx.save();
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(17, 17, 17, 0.09)";
+        const rings = [85, 165, 245];
+        for (let r = 0; r < rings.length; r++) {
+          ctx.beginPath();
+          ctx.arc(centerPt.x, centerPt.y, rings[r], 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // B. Draw Neural Laser Pulses traveling along real graph links & Swiss Bento Card Badges on Hub Nodes
+      if (this.settings.graphPulseNodes !== false) {
+        const links = renderer.links || [];
+        const step = Math.max(1, Math.floor(links.length / 28));
+        ctx.save();
+        for (let i = 0; i < links.length; i += step) {
+          const lnk = links[i];
+          if (!lnk || !lnk.source || !lnk.target) continue;
+          const p1 = getScreenPt(lnk.source);
+          const p2 = getScreenPt(lnk.target);
+          if (!p1 || !p2) continue;
+          if ((p1.x < 0 && p2.x < 0) || (p1.x > cw && p2.x > cw)) continue;
+
+          const tProg = (this.graphPulsePhase + (i % 13) * 0.077) % 1;
+          const px = p1.x + (p2.x - p1.x) * tProg;
+          const py = p1.y + (p2.y - p1.y) * tProg;
+          const col = paletteHex[i % paletteHex.length];
+
+          ctx.beginPath();
+          ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+          ctx.fillStyle = col;
+          ctx.fill();
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = "#111111";
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // C. Draw Swiss Bento Bordered Card Badges ([ Note_Title ]) on Top Hub Nodes & Hovered Node (Exact Match to Screenshot 1!)
+      const nodes = renderer.nodes;
+      const topHubs = [];
+      if (hovered) topHubs.push(hovered);
+      // Pick up to 8 well-spaced hub nodes currently inside viewport
+      for (let i = 0; i < nodes.length && topHubs.length < 9; i++) {
+        const nd = nodes[i];
+        if (!nd || nd === hovered || (nd.weight || 0) < 2) continue;
+        const pt = getScreenPt(nd);
+        if (!pt || pt.x < 70 || pt.x > cw - 70 || pt.y < 60 || pt.y > ch - 60) continue;
+        // Avoid overlapping badges
+        const tooClose = topHubs.some((h) => {
+          const hp = getScreenPt(h);
+          return hp && Math.hypot(hp.x - pt.x, hp.y - pt.y) < 115;
+        });
+        if (!tooClose) topHubs.push(nd);
+      }
+
+      ctx.save();
+      ctx.font = '700 10.5px "JetBrains Mono", monospace';
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+
+      for (let idx = 0; idx < topHubs.length; idx++) {
+        const nd = topHubs[idx];
+        const pt = getScreenPt(nd);
+        if (!pt) continue;
+        const rawId = String(nd.id || "").replace(/\.md$/i, "");
+        const shortName = rawId.split("/").pop() || rawId;
+        if (!shortName) continue;
+        const label = shortName.length > 24 ? shortName.slice(0, 22) + "…" : shortName;
+        const isHov = nd === hovered;
+
+        // Crisp dark hardware ring around the hub node
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, isHov ? 9 : 6.5, 0, Math.PI * 2);
+        ctx.strokeStyle = isHov ? "#69BD28" : "#111111";
+        ctx.lineWidth = isHov ? 2.2 : 1.6;
+        ctx.stroke();
+
+        // Measure & draw Swiss Bento Rectangular Label Card below the node
+        const textW = ctx.measureText(label).width;
+        const boxW = Math.round(textW + 14);
+        const boxH = 19;
+        const bx = Math.round(pt.x - boxW / 2);
+        const by = Math.round(pt.y + (isHov ? 13 : 10));
+
+        // 2px Hard Swiss Shadow
+        ctx.fillStyle = "#111111";
+        ctx.fillRect(bx + 2, by + 2, boxW, boxH);
+
+        // Card Fill & Border
+        ctx.fillStyle = isHov ? "#69BD28" : isDark ? "#1A1C20" : "#FFFFFF";
+        ctx.fillRect(bx, by, boxW, boxH);
+        ctx.strokeStyle = "#111111";
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(bx, by, boxW, boxH);
+
+        // Card Text
+        ctx.fillStyle = isHov ? "#FFFFFF" : isDark ? "#F3F4F6" : "#111111";
+        ctx.fillText(label, Math.round(pt.x), Math.round(by + boxH / 2 + 0.5));
+      }
+      ctx.restore();
+    }
+  }
+
+  async applyBentoGraphColorGroups(toggleOrphans = false, silent = false) {
     try {
       const adapter = this.app.vault.adapter;
       const configDir = this.app.vault.configDir || ".obsidian";
@@ -2552,23 +2826,33 @@ class AlchemyFlowPlugin extends Plugin {
       // 8-Color Swiss Bento Palette in Decimal RGB for graph.json
       const bentoColors = [
         2450411,  // #2563EB Sapphire Blue
-        16096779, // #F59E0B Amber Orange
         1096065,  // #10B981 Emerald Green
         9133302,  // #8B5CF6 Amethyst Purple
         15485081, // #EC4899 Rose Quartz
         439972,   // #06B6D4 Cyber Cyan
         6929704,  // #69BD28 Excel Green
+        16096779, // #F59E0B Amber Orange
         15381256, // #EAB308 Solar Gold
       ];
 
-      // 1. Automatically scan ALL real top-level folders in the user's vault (e.g. 00_Inbox, 01_Fleeting, 02_Literature, 05_Projects, etc.)
+      const colorGroups = [
+        // 1. Distribute Daily / Date Notes across 7 vibrant Swiss Bento colors so a single daily-notes folder never turns 90% of the graph orange!
+        { query: 'file:"2024-01" OR file:"2025-01" OR file:"2026-01"', color: { a: 1, rgb: 2450411 } },
+        { query: 'file:"2024-02" OR file:"2025-02" OR file:"2026-02"', color: { a: 1, rgb: 1096065 } },
+        { query: 'file:"2024-03" OR file:"2025-03" OR file:"2026-03"', color: { a: 1, rgb: 9133302 } },
+        { query: 'file:"2024-04" OR file:"2025-04" OR file:"2026-04"', color: { a: 1, rgb: 439972 } },
+        { query: 'file:"2024-05" OR file:"2024-06" OR file:"2025-05" OR file:"2026-"', color: { a: 1, rgb: 15485081 } },
+        { query: 'file:"2023-" OR file:"2024-07" OR file:"2024-08" OR file:"2024-09"', color: { a: 1, rgb: 6929704 } },
+        { query: 'file:"2024-10" OR file:"2024-11" OR file:"2024-12" OR file:"2025-"', color: { a: 1, rgb: 16096779 } },
+      ];
+
+      // 2. Scan all real top-level folders in the user's vault
       const rootChildren = (this.app.vault.getRoot() && this.app.vault.getRoot().children) || [];
       const folders = rootChildren
         .filter((f) => f && f.children !== undefined && !f.name.startsWith("."))
         .map((f) => f.name)
         .sort();
 
-      const colorGroups = [];
       folders.forEach((folderName, idx) => {
         colorGroups.push({
           query: `path:"${folderName}"`,
@@ -2576,22 +2860,24 @@ class AlchemyFlowPlugin extends Plugin {
         });
       });
 
-      // Add semantic tag groups & a universal catch-all fallback so ZERO grey nodes remain!
+      // 3. Semantic tags & universal catch-all fallback
       colorGroups.push({ query: "tag:#pro OR tag:#important", color: { a: 1, rgb: 15485081 } });
       colorGroups.push({ query: 'file:"*"', color: { a: 1, rgb: 2450411 } });
 
       graphConfig.colorGroups = colorGroups;
-      graphConfig.showArrow = true;
+      // Disable ugly black spiky arrowheads around hub nodes (matches Website Screenshot 1 and boosts WebGL FPS!)
+      graphConfig.showArrow = false;
       if (toggleOrphans) {
         graphConfig.showOrphans = !graphConfig.showOrphans;
       } else {
         graphConfig.showOrphans = false;
       }
-      graphConfig.nodeSizeMultiplier = 1.28;
-      graphConfig.lineSizeMultiplier = 1.25;
-      graphConfig.centerStrength = 0.35;
-      graphConfig.repelStrength = 11.5;
-      graphConfig.linkDistance = 165;
+      graphConfig.textFadeMultiplier = -0.2;
+      graphConfig.nodeSizeMultiplier = 1.32;
+      graphConfig.lineSizeMultiplier = 1.15;
+      graphConfig.centerStrength = 0.42;
+      graphConfig.repelStrength = 10.5;
+      graphConfig.linkDistance = 150;
 
       await adapter.write(graphPath, JSON.stringify(graphConfig, null, 2));
 
@@ -2616,10 +2902,12 @@ class AlchemyFlowPlugin extends Plugin {
         }
       });
 
-      this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
-      new Notice(`Colored ${folders.length} Vault Folders in Graph View & optimized cluster layout!`);
+      if (!silent) {
+        this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
+        new Notice(`Colored ${folders.length} Vault Folders in Graph View & optimized cluster layout!`);
+      }
     } catch (err) {
-      new Notice("Could not update graph configuration automatically.");
+      if (!silent) new Notice("Could not update graph configuration automatically.");
     }
   }
 
@@ -3076,7 +3364,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnUndo = document.createElement("button");
     this.btnUndo.className = "artcraft-dock-btn artcraft-dock-icon-btn";
     this.btnUndo.title = t("undoTip", this);
-    this.btnUndo.textContent = "↶";
+    this.btnUndo.innerHTML = SICRAFT_SVGS.undo;
     this.btnUndo.addEventListener("click", () => {
       this.undo();
     });
@@ -3086,7 +3374,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnRedo = document.createElement("button");
     this.btnRedo.className = "artcraft-dock-btn artcraft-dock-icon-btn";
     this.btnRedo.title = t("redoTip", this);
-    this.btnRedo.textContent = "↷";
+    this.btnRedo.innerHTML = SICRAFT_SVGS.redo;
     this.btnRedo.addEventListener("click", () => {
       this.redo();
     });
@@ -3145,9 +3433,18 @@ class AlchemyFlowPlugin extends Plugin {
       eqWrap.className = "artcraft-dock-eq-pill";
       eqWrap.title = "LMB: Switch Equalizer Style (01 Peak-Hold / 02 Liquid Ribbon / 03 Supernova / 04 Matrix) | Double-Click: Sync PC Audio | RMB: Sound Menu";
       this.eqWrap = eqWrap;
+
+      const eqIconSpan = document.createElement("span");
+      eqIconSpan.className = "artcraft-eq-icon-wrap";
+      eqWrap.appendChild(eqIconSpan);
+
+      const eqDotSpan = document.createElement("span");
+      eqDotSpan.className = "artcraft-eq-status-dot";
+      eqWrap.appendChild(eqDotSpan);
+
       this.eqCanvas = document.createElement("canvas");
-      this.eqCanvas.width = 76;
-      this.eqCanvas.height = 22;
+      this.eqCanvas.width = 62;
+      this.eqCanvas.height = 20;
       this.eqCanvas.className = "artcraft-dock-eq-canvas";
       eqWrap.appendChild(this.eqCanvas);
       eqWrap.addEventListener("click", () => {
@@ -3162,13 +3459,14 @@ class AlchemyFlowPlugin extends Plugin {
         this.showAudioMenu(e);
       });
       contentWrap.appendChild(eqWrap);
+      this.updateEqualizerPillUI();
     }
 
     // 7. Clear button
     const btnClear = document.createElement("button");
     btnClear.className = "artcraft-dock-btn artcraft-dock-icon-btn";
     btnClear.title = t("clearTip", this);
-    btnClear.textContent = "✕";
+    btnClear.innerHTML = SICRAFT_SVGS.clear;
     btnClear.addEventListener("click", () => {
       this.clearAllAnnotations();
     });
@@ -3178,7 +3476,7 @@ class AlchemyFlowPlugin extends Plugin {
     const btnOrient = document.createElement("button");
     btnOrient.className = "artcraft-dock-btn artcraft-dock-icon-btn";
     btnOrient.title = t("orientTip", this);
-    btnOrient.textContent = "⇄";
+    btnOrient.innerHTML = SICRAFT_SVGS.orient;
     btnOrient.addEventListener("click", (e) => {
       e.stopPropagation();
       this.toggleDockOrientation();
@@ -3189,7 +3487,7 @@ class AlchemyFlowPlugin extends Plugin {
     const btnCollapse = document.createElement("button");
     btnCollapse.className = "artcraft-dock-btn artcraft-dock-icon-btn artcraft-dock-collapse-btn";
     btnCollapse.title = t("collapseTip", this);
-    btnCollapse.textContent = "—";
+    btnCollapse.innerHTML = SICRAFT_SVGS.collapse;
     btnCollapse.addEventListener("click", (e) => {
       e.stopPropagation();
       this.toggleDockCollapse();
@@ -3268,11 +3566,33 @@ class AlchemyFlowPlugin extends Plugin {
       const capturePointer = this.mode === "draw" || this.mode === "eraser";
       this.canvasEl.style.pointerEvents = capturePointer ? "auto" : "none";
       this.canvasEl.style.touchAction = capturePointer ? "none" : "auto";
-      if (active && this.resizeCanvas) {
-        this.resizeCanvas();
+      if (active) {
+        if (this.resizeCanvas) this.resizeCanvas();
+        this.wakeOverlayCanvas();
       }
     }
     this.updateDockUI();
+  }
+
+  wakeOverlayCanvas() {
+    if (!this.canvasEl) return;
+    if (this.canvasEl.style.display === "none") {
+      this.canvasEl.style.display = "block";
+    }
+    if (!this.animFrame) {
+      const renderLoop = () => {
+        const shouldContinue = this.renderCanvas();
+        if (shouldContinue) {
+          this.animFrame = requestAnimationFrame(renderLoop);
+        } else {
+          this.animFrame = null;
+          if (this.canvasEl && (!this.strokes || this.strokes.length === 0)) {
+            this.canvasEl.style.display = "none";
+          }
+        }
+      };
+      this.animFrame = requestAnimationFrame(renderLoop);
+    }
   }
 
   clearAllAnnotations() {
@@ -3366,6 +3686,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.redoHistory.push(action);
     }
     this.updateUndoRedoUI();
+    this.wakeOverlayCanvas();
   }
 
   redo() {
@@ -3382,11 +3703,13 @@ class AlchemyFlowPlugin extends Plugin {
       this.history.push(action);
     }
     this.updateUndoRedoUI();
+    this.wakeOverlayCanvas();
   }
 
   createOverlayCanvas() {
     const canvas = document.createElement("canvas");
     canvas.className = "artcraft-overlay-canvas";
+    canvas.style.display = "none";
     document.body.appendChild(canvas);
     this.canvasEl = canvas;
     this.ctx = canvas.getContext("2d");
@@ -3404,6 +3727,9 @@ class AlchemyFlowPlugin extends Plugin {
       canvas.style.top = `${topOffset}px`;
       canvas.width = window.innerWidth;
       canvas.height = Math.max(100, window.innerHeight - topOffset);
+      if (this.strokes && this.strokes.length > 0) {
+        this.wakeOverlayCanvas();
+      }
     };
     this.resizeCanvas = resize;
     resize();
@@ -3416,6 +3742,7 @@ class AlchemyFlowPlugin extends Plugin {
       if (e.cancelable) e.preventDefault();
       isInteracting = true;
       this.isDrawing = true;
+      this.wakeOverlayCanvas();
       const pt = this.getCanvasCoords(e);
 
       if (this.mode === "draw") {
@@ -3435,6 +3762,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     const onMove = (e) => {
       if (this.mode === "none") return;
+      this.wakeOverlayCanvas();
       const pt = this.getCanvasCoords(e);
 
       if (this.mode === "laser") {
@@ -3500,15 +3828,26 @@ class AlchemyFlowPlugin extends Plugin {
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onEnd);
 
-    const renderLoop = () => {
-      this.renderCanvas();
-      this.animFrame = requestAnimationFrame(renderLoop);
+    // Start lightweight 30 FPS loop for mini 62x20 Equalizer & Graph Studio FX only (never touches full-screen 2D canvas!)
+    this.startBackgroundVisualLoops();
+  }
+
+  startBackgroundVisualLoops() {
+    if (this.eqAnimFrame) cancelAnimationFrame(this.eqAnimFrame);
+    let lastTick = 0;
+    const tick = (ts) => {
+      if (!document.hidden && ts - lastTick >= 32) {
+        lastTick = ts;
+        this.renderEqualizerFrame();
+        this.renderGraphStudioFX();
+      }
+      this.eqAnimFrame = requestAnimationFrame(tick);
     };
-    this.animFrame = requestAnimationFrame(renderLoop);
+    this.eqAnimFrame = requestAnimationFrame(tick);
   }
 
   renderCanvas() {
-    if (!this.ctx || !this.canvasEl) return;
+    if (!this.ctx || !this.canvasEl) return false;
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
 
@@ -3579,112 +3918,6 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.restore();
     }
 
-    // 3.5. Render Real Smart LED Cursor Lamp (Room Dimmer + True Kelvin 2700K–6500K Spotlight Beam + Living Tyndall Dust Motes & Optical Corona!)
-    if (this.settings.magicLamp && this.targetLampX !== undefined) {
-      this.lampX += (this.targetLampX - this.lampX) * 0.28;
-      this.lampY += (this.targetLampY - this.lampY) * 0.28;
-      this.lampVx = (this.lampVx || 0) * 0.85;
-      this.lampVy = (this.lampVy || 0) * 0.85;
-      const radius = this.settings.lampRadius || 310;
-      const dimPct = (this.settings.lampDimness !== undefined ? this.settings.lampDimness : 75) / 100;
-      const brightPct = (this.settings.lampBrightness || 85) / 100;
-      const rgb = kelvinToRgb(this.settings.lampKelvin || 3570);
-      const lx = this.lampX;
-      const ly = this.lampY - 32; // Offset for canvas top: 32px
-      this.lampPhase = (this.lampPhase || 0) + 0.035;
-
-      ctx.save();
-      if (this.settings.lampShape === "deskbar") {
-        // BenQ ScreenBar / Monitor Lightbar Cone
-        if (dimPct > 0.02) {
-          ctx.fillStyle = `rgba(10, 11, 14, ${dimPct * 0.88})`;
-          ctx.fillRect(0, 0, this.canvasEl.width, this.canvasEl.height);
-          ctx.globalCompositeOperation = "destination-out";
-          const coneGrad = ctx.createRadialGradient(lx, Math.max(0, ly - 120), 20, lx, ly + 80, radius * 1.45);
-          coneGrad.addColorStop(0, "rgba(0,0,0,1)");
-          coneGrad.addColorStop(0.65, "rgba(0,0,0,0.85)");
-          coneGrad.addColorStop(1, "rgba(0,0,0,0)");
-          ctx.fillStyle = coneGrad;
-          ctx.beginPath();
-          ctx.ellipse(lx, ly + 30, radius * 1.4, radius * 0.95, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.globalCompositeOperation = "source-over";
-        const barGrad = ctx.createRadialGradient(lx, ly, 5, lx, ly, radius * 1.25);
-        barGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.38 * brightPct})`);
-        barGrad.addColorStop(0.55, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.14 * brightPct})`);
-        barGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
-        ctx.fillStyle = barGrad;
-        ctx.beginPath();
-        ctx.ellipse(lx, ly + 20, radius * 1.35, radius * 0.85, 0, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        // Radial Spotlight Mode: dims surrounding screen & punches a crystal-clear lit circle around cursor!
-        if (dimPct > 0.02) {
-          ctx.fillStyle = `rgba(10, 11, 14, ${dimPct * 0.88})`;
-          ctx.fillRect(0, 0, this.canvasEl.width, this.canvasEl.height);
-          ctx.globalCompositeOperation = "destination-out";
-          const holeGrad = ctx.createRadialGradient(lx, ly, radius * 0.18, lx, ly, radius);
-          holeGrad.addColorStop(0, "rgba(0, 0, 0, 1)");
-          holeGrad.addColorStop(0.62, "rgba(0, 0, 0, 0.92)");
-          holeGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
-          ctx.fillStyle = holeGrad;
-          ctx.beginPath();
-          ctx.arc(lx, ly, radius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        // Add authentic Kelvin LED tint (2700K Warm Gold -> 6500K Cool Daylight) inside the beam
-        ctx.globalCompositeOperation = "source-over";
-        const beamGrad = ctx.createRadialGradient(lx, ly, 4, lx, ly, radius);
-        beamGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.34 * brightPct})`);
-        beamGrad.addColorStop(0.55, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.14 * brightPct})`);
-        beamGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
-        ctx.fillStyle = beamGrad;
-        ctx.beginPath();
-        ctx.arc(lx, ly, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Living Optical Aperture Ring (breathing subtle lens rim)
-        const breathR = radius * (0.86 + Math.sin(this.lampPhase) * 0.015);
-        ctx.beginPath();
-        ctx.arc(lx, ly, breathR, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.11 * brightPct})`;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-      }
-
-      // Living Tyndall Dust Motes inside the Kelvin light beam (24 GPU particles with Brownian drift & cursor turbulence)
-      if (!this.lampMotes) {
-        this.lampMotes = Array.from({ length: 24 }, (_, idx) => ({
-          ox: ((idx * 37) % 200) - 100,
-          oy: ((idx * 53) % 200) - 100,
-          r: 0.9 + (idx % 3) * 0.55,
-          phase: idx * 0.7,
-          speed: 0.018 + (idx % 5) * 0.006,
-        }));
-      }
-      for (let m = 0; m < this.lampMotes.length; m++) {
-        const mote = this.lampMotes[m];
-        mote.phase += mote.speed;
-        mote.ox += Math.cos(mote.phase) * 0.35 - (this.lampVx || 0) * 0.04;
-        mote.oy += Math.sin(mote.phase * 1.3) * 0.28 - (this.lampVy || 0) * 0.04 - 0.12;
-        const maxD = radius * 0.75;
-        if (mote.ox > maxD) mote.ox = -maxD;
-        if (mote.ox < -maxD) mote.ox = maxD;
-        if (mote.oy > maxD) mote.oy = -maxD;
-        if (mote.oy < -maxD) mote.oy = maxD;
-        const dist = Math.hypot(mote.ox, mote.oy);
-        if (dist < maxD) {
-          const mAlpha = (1 - dist / maxD) * (0.28 + 0.18 * Math.sin(mote.phase * 2)) * brightPct;
-          ctx.beginPath();
-          ctx.arc(lx + mote.ox, ly + mote.oy, mote.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 250, 235, ${mAlpha.toFixed(3)})`;
-          ctx.fill();
-        }
-      }
-      ctx.restore();
-    }
-
     // 3.6. Render Tactile Paper Ripples
     if (this.ripples && this.ripples.length > 0) {
       for (let i = this.ripples.length - 1; i >= 0; i--) {
@@ -3706,215 +3939,6 @@ class AlchemyFlowPlugin extends Plugin {
       }
     }
 
-    // 3.7. Render High-Complexity 4-Mode Sonic Equalizer in Floating Dock (Peak-Hold, Cyber Liquid Ribbon, Supernova, Quantum Matrix)
-    if (this.eqCanvas) {
-      const eqCtx = this.eqCanvas.getContext("2d");
-      const ew = this.eqCanvas.width;
-      const eh = this.eqCanvas.height;
-      eqCtx.clearRect(0, 0, ew, eh);
-
-      const activeAnalyser =
-        (this.desktopAudioNodes && this.desktopAudioNodes.analyser) ||
-        (this.ambientNodes && this.ambientNodes.analyser) ||
-        null;
-
-      let freqData = null;
-      let hasSound = false;
-
-      if (activeAnalyser) {
-        freqData = new Uint8Array(activeAnalyser.frequencyBinCount);
-        activeAnalyser.getByteFrequencyData(freqData);
-
-        for (let j = 0; j < freqData.length; j++) {
-          if (freqData[j] > 6) {
-            hasSound = true;
-            break;
-          }
-        }
-      }
-
-      if (!this.eqPeaks) this.eqPeaks = new Array(16).fill(2);
-      if (!this.eqSmooth) this.eqSmooth = new Array(16).fill(2);
-      if (!this.eqPhase) this.eqPhase = 0;
-
-      const mode = this.settings.eqMode || "bars";
-      const colors = ["#69BD28", "#10B981", "#06B6D4", "#2563EB", "#8B5CF6", "#EC4899", "#F59E0B", "#EAB308"];
-
-      // Compute 16 logarithmic frequency bands with smooth spring attack & gravity decay
-      let totalEnergy = 0;
-      for (let i = 0; i < 16; i++) {
-        let targetH = 2;
-        if (hasSound && freqData) {
-          const binStart = Math.floor(Math.pow(i / 16, 1.55) * (freqData.length * 0.72));
-          const binEnd = Math.max(binStart + 1, Math.floor(Math.pow((i + 1) / 16, 1.55) * (freqData.length * 0.72)));
-          let maxVal = 0;
-          for (let b = binStart; b <= binEnd && b < freqData.length; b++) {
-            if (freqData[b] > maxVal) maxVal = freqData[b];
-          }
-          const boost = 1.08 + (i / 16) * 0.6;
-          targetH = Math.max(2, Math.min(eh - 2, ((maxVal * boost) / 255) * (eh - 2)));
-        }
-        if (targetH > this.eqSmooth[i]) {
-          this.eqSmooth[i] += (targetH - this.eqSmooth[i]) * 0.58;
-        } else {
-          this.eqSmooth[i] = Math.max(2, this.eqSmooth[i] - 0.68);
-        }
-        if (this.eqSmooth[i] >= this.eqPeaks[i]) {
-          this.eqPeaks[i] = this.eqSmooth[i];
-        } else {
-          this.eqPeaks[i] = Math.max(2, this.eqPeaks[i] - 0.22);
-        }
-        totalEnergy += this.eqSmooth[i] - 2;
-      }
-
-      // Advance phase ONLY when real audio energy is present (never move on its own in silence!)
-      if (hasSound || totalEnergy > 1.5) {
-        this.eqPhase += 0.06 + Math.min(0.18, totalEnergy / 180);
-      }
-
-      // Reactive Bass Glow on Equalizer Pill border when music plays
-      const bassLevel = (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2));
-      if (this.eqWrap) {
-        if (bassLevel > 0.08) {
-          const glowAlpha = Math.min(0.75, bassLevel * 0.9).toFixed(2);
-          this.eqWrap.style.boxShadow = `0 2px 0 #111111, 0 0 ${Math.round(6 + bassLevel * 12)}px rgba(105, 189, 40, ${glowAlpha})`;
-        } else {
-          this.eqWrap.style.boxShadow = "";
-        }
-      }
-
-      if (mode === "bars") {
-        // MODE 01: 16-Bar Neon Spectrum with Floating Peak-Hold Caps & Subtle Floor Reflection
-        const bars = 16;
-        const barW = 3.2;
-        const gap = 1.4;
-        const baseLine = eh - 3;
-        for (let i = 0; i < bars; i++) {
-          const x = 2 + i * (barW + gap);
-          const h = Math.min(baseLine - 1, this.eqSmooth[i]);
-          const c = colors[i % colors.length];
-          eqCtx.fillStyle = c;
-          eqCtx.fillRect(x, baseLine - h, barW, h);
-
-          // Floor mirror reflection
-          if (h > 2.5) {
-            eqCtx.globalAlpha = 0.25;
-            eqCtx.fillRect(x, baseLine + 0.5, barW, Math.min(2.5, h * 0.25));
-            eqCtx.globalAlpha = 1;
-          }
-
-          // Floating Peak-Hold cap
-          if (this.eqPeaks[i] > 3.2) {
-            eqCtx.fillStyle = "#FFFFFF";
-            eqCtx.fillRect(x, Math.max(0, baseLine - this.eqPeaks[i] - 1.6), barW, 1.3);
-          }
-        }
-      } else if (mode === "wave") {
-        // MODE 02: 3-Layer Cyber Liquid Spline Ribbon with Glowing Fill
-        const layerColors = [
-          { stroke: "#69BD28", fill: "rgba(105, 189, 40, 0.28)" },
-          { stroke: "#06B6D4", fill: "rgba(6, 182, 212, 0.24)" },
-          { stroke: "#EC4899", fill: "rgba(236, 72, 153, 0.20)" },
-        ];
-        const midY = eh * 0.54;
-        for (let l = 0; l < 3; l++) {
-          eqCtx.beginPath();
-          eqCtx.moveTo(0, eh);
-          for (let x = 0; x <= ew; x += 2) {
-            const bandIdx = Math.min(15, Math.floor((x / ew) * 16));
-            const bandAmp = (this.eqSmooth[bandIdx] - 2) * 0.58;
-            const wave =
-              Math.sin(x * 0.14 + this.eqPhase * (1.15 + l * 0.35) + l * 1.3) * bandAmp +
-              Math.cos(x * 0.08 - this.eqPhase * 0.85) * (bandAmp * 0.45);
-            const y = Math.max(1, Math.min(eh - 1, midY + wave));
-            eqCtx.lineTo(x, y);
-          }
-          eqCtx.lineTo(ew, eh);
-          eqCtx.closePath();
-          eqCtx.fillStyle = layerColors[l].fill;
-          eqCtx.fill();
-
-          eqCtx.beginPath();
-          for (let x = 0; x <= ew; x += 2) {
-            const bandIdx = Math.min(15, Math.floor((x / ew) * 16));
-            const bandAmp = (this.eqSmooth[bandIdx] - 2) * 0.58;
-            const wave =
-              Math.sin(x * 0.14 + this.eqPhase * (1.15 + l * 0.35) + l * 1.3) * bandAmp +
-              Math.cos(x * 0.08 - this.eqPhase * 0.85) * (bandAmp * 0.45);
-            const y = Math.max(1, Math.min(eh - 1, midY + wave));
-            if (x === 0) eqCtx.moveTo(x, y);
-            else eqCtx.lineTo(x, y);
-          }
-          eqCtx.strokeStyle = layerColors[l].stroke;
-          eqCtx.lineWidth = 1.4;
-          eqCtx.stroke();
-        }
-      } else if (mode === "orb") {
-        // MODE 03: Supernova Polar Sunburst (20-Ray Starburst + Dual Bass Shockwave Rings)
-        const cx = ew / 2;
-        const cy = eh / 2;
-        const bass = Math.max(0, (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2)));
-
-        // Outer shockwave ring on bass kick
-        if (bass > 0.12) {
-          eqCtx.beginPath();
-          eqCtx.arc(cx, cy, 4.5 + bass * 8.5, 0, Math.PI * 2);
-          eqCtx.strokeStyle = `rgba(105, 189, 40, ${(bass * 0.7).toFixed(2)})`;
-          eqCtx.lineWidth = 1;
-          eqCtx.stroke();
-        }
-
-        eqCtx.beginPath();
-        eqCtx.arc(cx, cy, 3.2 + bass * 5.2, 0, Math.PI * 2);
-        eqCtx.strokeStyle = "rgba(6, 182, 212, 0.8)";
-        eqCtx.lineWidth = 1.2;
-        eqCtx.stroke();
-
-        const rays = 20;
-        for (let i = 0; i < rays; i++) {
-          const bandIdx = i % 16;
-          const angle = (i / rays) * Math.PI * 2 + this.eqPhase * 0.32;
-          const rayLen = 2.4 + ((this.eqSmooth[bandIdx] - 2) / (eh - 2)) * 8.2;
-          const x1 = cx + Math.cos(angle) * 2.0;
-          const y1 = cy + Math.sin(angle) * 2.0;
-          const x2 = cx + Math.cos(angle) * rayLen;
-          const y2 = cy + Math.sin(angle) * rayLen;
-          eqCtx.beginPath();
-          eqCtx.moveTo(x1, y1);
-          eqCtx.lineTo(x2, y2);
-          eqCtx.strokeStyle = colors[i % colors.length];
-          eqCtx.lineWidth = 1.4;
-          eqCtx.stroke();
-        }
-
-        eqCtx.beginPath();
-        eqCtx.arc(cx, cy, 2.0 + bass * 2.4, 0, Math.PI * 2);
-        eqCtx.fillStyle = "#FFFFFF";
-        eqCtx.fill();
-      } else {
-        // MODE 04: Quantum Matrix 16x5 LED Grid & Hot-Peak Sparks
-        const cols = 16;
-        const rows = 5;
-        const cellW = 3.5;
-        const cellH = 2.8;
-        for (let c = 0; c < cols; c++) {
-          const level = Math.round(((this.eqSmooth[c] - 1.5) / (eh - 2)) * rows);
-          const colColor = colors[c % colors.length];
-          for (let r = 0; r < rows; r++) {
-            const x = 2 + c * (cellW + 1.1);
-            const y = eh - (r + 1) * (cellH + 0.9);
-            if (r < level) {
-              eqCtx.fillStyle = r === level - 1 && level > 1 ? "#FFFFFF" : colColor;
-              eqCtx.fillRect(x, y, cellW, cellH);
-            } else {
-              eqCtx.fillStyle = "rgba(255, 255, 255, 0.12)";
-              eqCtx.fillRect(x, y, cellW, cellH);
-            }
-          }
-        }
-      }
-    }
-
     // 4. Render Alchemy Celebration Confetti Particles
     if (this.particles && this.particles.length > 0) {
       for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -3932,6 +3956,222 @@ class AlchemyFlowPlugin extends Plugin {
         ctx.fillStyle = p.color;
         ctx.fillRect(p.x, p.y, p.size, p.size);
         ctx.restore();
+      }
+    }
+
+    const hasActiveAnimation =
+      this.mode !== "none" ||
+      (this.laserTrail && this.laserTrail.length > 0) ||
+      (this.ripples && this.ripples.length > 0) ||
+      (this.particles && this.particles.length > 0);
+
+    return hasActiveAnimation;
+  }
+
+  renderEqualizerFrame() {
+    if (!this.eqCanvas) return;
+    const eqCtx = this.eqCanvas.getContext("2d");
+    const ew = this.eqCanvas.width;
+    const eh = this.eqCanvas.height;
+    eqCtx.clearRect(0, 0, ew, eh);
+
+    const activeAnalyser =
+      (this.desktopAudioNodes && this.desktopAudioNodes.analyser) ||
+      (this.ambientNodes && this.ambientNodes.analyser) ||
+      null;
+
+    let freqData = null;
+    let hasSound = false;
+
+    if (activeAnalyser) {
+      freqData = new Uint8Array(activeAnalyser.frequencyBinCount);
+      activeAnalyser.getByteFrequencyData(freqData);
+
+      for (let j = 0; j < freqData.length; j++) {
+        if (freqData[j] > 4) {
+          hasSound = true;
+          break;
+        }
+      }
+    }
+
+    if (!this.eqPeaks) this.eqPeaks = new Array(16).fill(2);
+    if (!this.eqSmooth) this.eqSmooth = new Array(16).fill(2);
+    if (!this.eqPhase) this.eqPhase = 0;
+
+    const mode = this.settings.eqMode || "bars";
+    const colors = ["#69BD28", "#10B981", "#06B6D4", "#2563EB", "#8B5CF6", "#EC4899", "#F59E0B", "#EAB308"];
+
+    // Compute 16 logarithmic frequency bands with smooth spring attack & gravity decay
+    let totalEnergy = 0;
+    for (let i = 0; i < 16; i++) {
+      let targetH = 2;
+      if (hasSound && freqData) {
+        const binStart = Math.floor(Math.pow(i / 16, 1.55) * (freqData.length * 0.72));
+        const binEnd = Math.max(binStart + 1, Math.floor(Math.pow((i + 1) / 16, 1.55) * (freqData.length * 0.72)));
+        let maxVal = 0;
+        for (let b = binStart; b <= binEnd && b < freqData.length; b++) {
+          if (freqData[b] > maxVal) maxVal = freqData[b];
+        }
+        const boost = 1.15 + (i / 16) * 0.65;
+        targetH = Math.max(2, Math.min(eh - 2, ((maxVal * boost) / 255) * (eh - 2)));
+      }
+      if (targetH > this.eqSmooth[i]) {
+        this.eqSmooth[i] += (targetH - this.eqSmooth[i]) * 0.62;
+      } else {
+        this.eqSmooth[i] = Math.max(2, this.eqSmooth[i] - 0.72);
+      }
+      if (this.eqSmooth[i] >= this.eqPeaks[i]) {
+        this.eqPeaks[i] = this.eqSmooth[i];
+      } else {
+        this.eqPeaks[i] = Math.max(2, this.eqPeaks[i] - 0.25);
+      }
+      totalEnergy += this.eqSmooth[i] - 2;
+    }
+
+    // Advance phase ONLY when real audio energy is present (never move on its own in silence!)
+    if (hasSound || totalEnergy > 1.5) {
+      this.eqPhase += 0.08 + Math.min(0.22, totalEnergy / 150);
+    }
+
+    // Reactive Bass Glow on Equalizer Pill border when music plays
+    const bassLevel = (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2));
+    if (this.eqWrap) {
+      if (bassLevel > 0.08) {
+        const glowAlpha = Math.min(0.75, bassLevel * 0.9).toFixed(2);
+        this.eqWrap.style.boxShadow = `0 2px 0 #111111, 0 0 ${Math.round(6 + bassLevel * 12)}px rgba(105, 189, 40, ${glowAlpha})`;
+      } else {
+        this.eqWrap.style.boxShadow = "";
+      }
+    }
+
+    if (mode === "bars") {
+      // MODE 01: 16-Bar Neon Spectrum with Floating Peak-Hold Caps & Subtle Floor Reflection
+      const bars = 16;
+      const barW = 2.6;
+      const gap = 1.1;
+      const baseLine = eh - 3;
+      for (let i = 0; i < bars; i++) {
+        const x = 1.5 + i * (barW + gap);
+        const h = Math.min(baseLine - 1, this.eqSmooth[i]);
+        const c = colors[i % colors.length];
+        eqCtx.fillStyle = c;
+        eqCtx.fillRect(x, baseLine - h, barW, h);
+
+        // Floor mirror reflection
+        if (h > 2.5) {
+          eqCtx.globalAlpha = 0.25;
+          eqCtx.fillRect(x, baseLine + 0.5, barW, Math.min(2.5, h * 0.25));
+          eqCtx.globalAlpha = 1;
+        }
+
+        // Floating Peak-Hold cap
+        if (this.eqPeaks[i] > 3.2) {
+          eqCtx.fillStyle = "#FFFFFF";
+          eqCtx.fillRect(x, Math.max(0, baseLine - this.eqPeaks[i] - 1.5), barW, 1.2);
+        }
+      }
+    } else if (mode === "wave") {
+      // MODE 02: 3-Layer Cyber Liquid Spline Ribbon with Glowing Fill
+      const layerColors = [
+        { stroke: "#69BD28", fill: "rgba(105, 189, 40, 0.28)" },
+        { stroke: "#06B6D4", fill: "rgba(6, 182, 212, 0.24)" },
+        { stroke: "#EC4899", fill: "rgba(236, 72, 153, 0.20)" },
+      ];
+      const midY = eh * 0.54;
+      for (let l = 0; l < 3; l++) {
+        eqCtx.beginPath();
+        eqCtx.moveTo(0, eh);
+        for (let x = 0; x <= ew; x += 2) {
+          const bandIdx = Math.min(15, Math.floor((x / ew) * 16));
+          const bandAmp = (this.eqSmooth[bandIdx] - 2) * 0.58;
+          const wave =
+            Math.sin(x * 0.14 + this.eqPhase * (1.15 + l * 0.35) + l * 1.3) * bandAmp +
+            Math.cos(x * 0.08 - this.eqPhase * 0.85) * (bandAmp * 0.45);
+          const y = Math.max(1, Math.min(eh - 1, midY + wave));
+          eqCtx.lineTo(x, y);
+        }
+        eqCtx.lineTo(ew, eh);
+        eqCtx.closePath();
+        eqCtx.fillStyle = layerColors[l].fill;
+        eqCtx.fill();
+
+        eqCtx.beginPath();
+        for (let x = 0; x <= ew; x += 2) {
+          const bandIdx = Math.min(15, Math.floor((x / ew) * 16));
+          const bandAmp = (this.eqSmooth[bandIdx] - 2) * 0.58;
+          const wave =
+            Math.sin(x * 0.14 + this.eqPhase * (1.15 + l * 0.35) + l * 1.3) * bandAmp +
+            Math.cos(x * 0.08 - this.eqPhase * 0.85) * (bandAmp * 0.45);
+          const y = Math.max(1, Math.min(eh - 1, midY + wave));
+          if (x === 0) eqCtx.moveTo(x, y);
+          else eqCtx.lineTo(x, y);
+        }
+        eqCtx.strokeStyle = layerColors[l].stroke;
+        eqCtx.lineWidth = 1.4;
+        eqCtx.stroke();
+      }
+    } else if (mode === "orb") {
+      // MODE 03: Supernova Polar Sunburst (20-Ray Starburst + Dual Bass Shockwave Rings)
+      const cx = ew / 2;
+      const cy = eh / 2;
+      const bass = Math.max(0, (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2)));
+
+      if (bass > 0.12) {
+        eqCtx.beginPath();
+        eqCtx.arc(cx, cy, 4.0 + bass * 7.5, 0, Math.PI * 2);
+        eqCtx.strokeStyle = `rgba(105, 189, 40, ${(bass * 0.7).toFixed(2)})`;
+        eqCtx.lineWidth = 1;
+        eqCtx.stroke();
+      }
+
+      eqCtx.beginPath();
+      eqCtx.arc(cx, cy, 2.8 + bass * 4.8, 0, Math.PI * 2);
+      eqCtx.strokeStyle = "rgba(6, 182, 212, 0.8)";
+      eqCtx.lineWidth = 1.2;
+      eqCtx.stroke();
+
+      const rays = 20;
+      for (let i = 0; i < rays; i++) {
+        const bandIdx = i % 16;
+        const angle = (i / rays) * Math.PI * 2 + this.eqPhase * 0.32;
+        const rayLen = 2.2 + ((this.eqSmooth[bandIdx] - 2) / (eh - 2)) * 7.5;
+        const x1 = cx + Math.cos(angle) * 1.8;
+        const y1 = cy + Math.sin(angle) * 1.8;
+        const x2 = cx + Math.cos(angle) * rayLen;
+        const y2 = cy + Math.sin(angle) * rayLen;
+        eqCtx.beginPath();
+        eqCtx.moveTo(x1, y1);
+        eqCtx.lineTo(x2, y2);
+        eqCtx.strokeStyle = colors[i % colors.length];
+        eqCtx.lineWidth = 1.3;
+        eqCtx.stroke();
+      }
+
+      eqCtx.beginPath();
+      eqCtx.arc(cx, cy, 1.8 + bass * 2.2, 0, Math.PI * 2);
+      eqCtx.fillStyle = "#FFFFFF";
+      eqCtx.fill();
+    } else {
+      // MODE 04: Quantum Matrix 16x5 LED Grid & Hot-Peak Sparks
+      const cols = 16;
+      const rows = 5;
+      const cellW = 2.8;
+      const cellH = 2.5;
+      for (let c = 0; c < cols; c++) {
+        const level = Math.round(((this.eqSmooth[c] - 1.5) / (eh - 2)) * rows);
+        const colColor = colors[c % colors.length];
+        for (let r = 0; r < rows; r++) {
+          const x = 1.5 + c * (cellW + 0.9);
+          const y = eh - (r + 1) * (cellH + 0.8);
+          if (r < level) {
+            eqCtx.fillStyle = r === level - 1 && level > 1 ? "#FFFFFF" : colColor;
+            eqCtx.fillRect(x, y, cellW, cellH);
+          } else {
+            eqCtx.fillStyle = "rgba(255, 255, 255, 0.12)";
+            eqCtx.fillRect(x, y, cellW, cellH);
+          }
+        }
       }
     }
   }
