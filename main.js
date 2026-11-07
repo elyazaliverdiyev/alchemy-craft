@@ -4176,11 +4176,16 @@ class AlchemyFlowPlugin extends Plugin {
       return BOOK_NUTRIENTS.proteins;
     };
 
-    const stripEmoji = (str) =>
-      String(str || "")
-        .replace(/[\p{Extended_Pictographic}\u200d\ufe0f\u23f3\u270e\u270f]/gu, "")
-        .replace(/\s{2,}/g, " ")
-        .trim();
+    const cleanBookmarkText = (str) => {
+      if (!str) return "";
+      let s = String(str);
+      s = s.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+      s = s.replace(/\[\[(?:[^|\]]+\|)?([^\]]+)\]\]/g, "$1");
+      s = s.replace(/^#+\s+/gm, "");
+      s = s.replace(/[*_~`]/g, "");
+      s = s.replace(/[\p{Extended_Pictographic}\u200d\ufe0f\u23f3\u270e\u270f]/gu, "");
+      return s.replace(/\s{2,}/g, " ").trim();
+    };
 
     const bookmarksHtml =
       noteBookmarks.length > 0
@@ -4195,9 +4200,11 @@ class AlchemyFlowPlugin extends Plugin {
               .map((bm) => {
                 const n = normalizeNutrient(bm);
                 const nutName = isRu ? n.ruName : n.enName;
-                const displayMeaning = stripEmoji(bm.meaning || bm.snippet || nutName) || nutName;
-                const shortMeaning = displayMeaning.length > 34 ? displayMeaning.slice(0, 32) + "…" : displayMeaning;
-                const tooltip = `${nutName} (${isRu ? n.ruRole : n.enRole})\n${bm.meaning ? stripEmoji(bm.meaning) + "\n" : ""}«${bm.snippet || ""}»`;
+                const rawMeaning = bm.meaning || bm.snippet || nutName;
+                const cleanMeaning = cleanBookmarkText(rawMeaning) || nutName;
+                const shortMeaning = cleanMeaning.length > 24 ? cleanMeaning.slice(0, 22) + "…" : cleanMeaning;
+                const cleanSnippet = cleanBookmarkText(bm.snippet || "");
+                const tooltip = `${nutName} (${isRu ? n.ruRole : n.enRole})\n${bm.meaning ? cleanBookmarkText(bm.meaning) + "\n" : ""}«${cleanSnippet}»`;
                 return `
                   <div class="artcraft-bm-pill is-nut-${n.id}" data-bm-id="${bm.id}" data-bm-line="${bm.line || 0}" style="--bm-accent:${n.color};--bm-bg:${n.bg};--bm-border:${n.border};" title="${tooltip.replace(/"/g, "&quot;")}">
                     <span class="bm-nut-dot" style="background:${n.color}"></span>
