@@ -30,8 +30,10 @@ const DEFAULT_SETTINGS = {
   lampCustomColor: "#F59E0B",
   tactileTypingSound: "off", // "off" | "thock" | "typewriter"
   showEqualizer: true,
-  eqMode: "bars", // "bars" | "wave" | "orb" | "dna" | "craft" | "ferro"
+  eqMode: "craft", // "bars" (Risograph) | "wave" (Ink Ribbon) | "orb" (Compass) | "dna" (Quantum Matrix) | "craft" (Craft Ink) | "ferro" (Espresso Ferro)
   audioVolume: 75, // 0..100%
+  pomoAudioLink: true, // Auto-fade audio on Pomodoro break & resume on focus sprint
+  showReadingStats: true, // Live Reading Time & Word Count capsule
   readingRuler: false,
   supabaseFunctionUrl: "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay",
   spotlightFocus: false,
@@ -86,14 +88,35 @@ const SICRAFT_SVGS = {
   clear: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
   orient: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
   collapse: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
-  eqBars: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="12"/><line x1="9" y1="20" x2="9" y2="6"/><line x1="14" y1="20" x2="14" y2="10"/><line x1="19" y1="20" x2="19" y2="4"/></svg>`,
+  eqBars: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="3.5" height="10" rx="1"/><rect x="8.5" y="5" width="3.5" height="15" rx="1"/><rect x="14" y="8" width="3.5" height="12" rx="1"/><rect x="19" y="13" width="2.5" height="7" rx="1"/></svg>`,
   eqWave: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-4 5-2"/></svg>`,
   eqOrb: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>`,
   eqMatrix: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>`,
   eqCraft: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c3 0 4-6 7-6s4 8 7 8 4-5 6-5"/><path d="M2 19c3 0 4-4 7-4s4 5 7 5 4-3 6-3" opacity="0.6"/></svg>`,
   eqFerro: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="12" r="4.5"/><circle cx="15.5" cy="12" r="3.5"/><path d="M12 9.5c1 1.5 1 3.5 0 5"/></svg>`,
   play: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 4 20 12 6 20 6 4"/></svg>`,
-  pause: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`
+  pause: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`,
+  stop: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>`,
+  coffee: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2"/><path d="M10 2v2"/><path d="M14 2v2"/></svg>`,
+  ticket: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>`,
+  send: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+  chat: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  camera: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>`,
+  book: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+  volume: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
+  sliders: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,
+  sun: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
+  moon: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+  shield: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  waves: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>`,
+  rain: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></svg>`,
+  roof: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m3 12 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M8 3v2"/><path d="M16 3v2"/></svg>`,
+  stream: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M5 17c2.5-1.5 5 1.5 7.5 0s5-1.5 7.5 0"/></svg>`,
+  flame: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+  train: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h.01"/><path d="M16 15h.01"/></svg>`,
+  brain: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"/></svg>`,
+  mic: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>`,
+  external: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`
 };
 
 // Always open external URLs in the user's default OS browser (Chrome/Safari/Edge/Telegram Desktop), bypassing Obsidian's internal Web Viewer!
@@ -113,29 +136,42 @@ function openExternalUrl(url) {
   }
 }
 
-// Hand-crafted sketchy SVG tier illustrations (inspired by Zsolt's artistic Ko-fi tiers)
-const TIER_BRONZE_SVG = `<svg viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
-  <ellipse cx="60" cy="41" rx="34" ry="4" fill="#E6E2D8"/>
-  <path d="M46 10H74M52 10V18L39 35C37.5 37 39 40 41.5 40H78.5C81 40 82.5 37 81 35L68 18V10" stroke="#1F2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M42 33C49 30 55 35 61 32C67 29 73 34 78 33L79 39H41L42 33Z" fill="#D97706" fill-opacity="0.85"/>
-  <circle cx="55" cy="27" r="2" fill="#FDE68A"/>
-  <circle cx="64" cy="23" r="1.5" fill="#FDE68A"/>
+// Hand-crafted Warm Coffee & Alchemy SVG Tier Illustrations (with explicit dimensions so they always render crisply)
+const TIER_BRONZE_SVG = `<svg width="124" height="62" viewBox="0 0 124 62" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
+  <ellipse cx="60" cy="53" rx="38" ry="5" fill="#E6DFD3"/>
+  <path d="M30 48C30 46.5 32 45 36 45H84C88 45 90 46.5 90 48C90 50.5 78 52 60 52C42 52 30 50.5 30 48Z" fill="#D6C7B2" stroke="#3E2723" stroke-width="1.8"/>
+  <path d="M81 26H87C91.5 26 95 29.5 95 34C95 38.5 91.5 42 87 42H80" stroke="#3E2723" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M36 22H82V34C82 42.5 73.5 48 63 48H55C44.5 48 36 42.5 36 34V22Z" fill="#FFF8ED" stroke="#3E2723" stroke-width="2" stroke-linejoin="round"/>
+  <ellipse cx="59" cy="22" rx="23" ry="5.5" fill="#C87D4B" stroke="#3E2723" stroke-width="1.8"/>
+  <path d="M59 24.5C59 24.5 54 21.5 54 19.5C54 18.2 55.2 17.5 56.5 17.5C57.8 17.5 58.6 18.3 59 19.2C59.4 18.3 60.2 17.5 61.5 17.5C62.8 17.5 64 18.2 64 19.5C64 21.5 59 24.5 59 24.5Z" fill="#FFFDF9"/>
+  <path d="M48 13C46.5 10.5 49.5 8 48 5" stroke="#B4845C" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M59 11C57.5 8.5 60.5 6 59 3" stroke="#B4845C" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M70 13C68.5 10.5 71.5 8 70 5" stroke="#B4845C" stroke-width="1.8" stroke-linecap="round"/>
 </svg>`;
 
-const TIER_SILVER_SVG = `<svg viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
-  <ellipse cx="60" cy="41" rx="38" ry="4" fill="#E6E2D8"/>
-  <path d="M60 6L76 18L68 39H52L44 18L60 6Z" fill="#10B981" fill-opacity="0.18" stroke="#1F2937" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M60 6L68 39M60 6L52 39M44 18H76" stroke="#10B981" stroke-width="1.6" stroke-linecap="round"/>
-  <circle cx="60" cy="18" r="3" fill="#10B981"/>
-  <path d="M32 14L35 17M88 14L85 17M60 2V4" stroke="#69BD28" stroke-width="2" stroke-linecap="round"/>
+const TIER_SILVER_SVG = `<svg width="124" height="62" viewBox="0 0 124 62" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
+  <ellipse cx="62" cy="54" rx="44" ry="5" fill="#E2E8DD"/>
+  <path d="M34 15H64L54 31L66 49C67 50.8 65.5 52.5 63.5 52.5H34.5C32.5 52.5 31 50.8 32 49L44 31L34 15Z" fill="#F0F7F4" stroke="#2D3732" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M35 43C42 41 48 44 55 42L64 51H33.5L35 43Z" fill="#A45A2A" fill-opacity="0.9"/>
+  <rect x="41" y="27" width="16" height="8" rx="2" fill="#D99B66" stroke="#2D3732" stroke-width="1.8"/>
+  <line x1="49" y1="27" x2="49" y2="35" stroke="#2D3732" stroke-width="1.6"/>
+  <path d="M70 30H94V41C94 47 89 51 82 51C75 51 70 47 70 41V30Z" fill="#FFF8ED" stroke="#2D3732" stroke-width="2"/>
+  <path d="M94 33H98C100.5 33 102 35 102 37.5C102 40 100.5 42 98 42H94" stroke="#2D3732" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="82" cy="30" rx="12" ry="3.5" fill="#C87D4B" stroke="#2D3732" stroke-width="1.7"/>
+  <path d="M45 9C44 6.5 46.5 4.5 45.5 2M54 9C53 6.5 55.5 4.5 54.5 2M82 23C81 20.5 83.5 18.5 82.5 16" stroke="#69BD28" stroke-width="1.8" stroke-linecap="round"/>
 </svg>`;
 
-const TIER_GOLD_SVG = `<svg viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
-  <ellipse cx="60" cy="41" rx="40" ry="4" fill="#E6E2D8"/>
-  <polygon points="60,5 79,16 72,39 48,39 41,16" fill="#F59E0B" fill-opacity="0.22" stroke="#1F2937" stroke-width="2" stroke-linejoin="round"/>
-  <polygon points="60,11 71,19 67,34 53,34 49,19" fill="#F59E0B" fill-opacity="0.65"/>
-  <circle cx="60" cy="23" r="3.5" fill="#FFFBEB"/>
-  <path d="M29 20L34 22M91 20L86 22M60 1V3" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+const TIER_GOLD_SVG = `<svg width="124" height="62" viewBox="0 0 124 62" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
+  <ellipse cx="62" cy="54" rx="46" ry="5" fill="#EFE6D5"/>
+  <circle cx="62" cy="27" r="21" fill="#FEF3C7" fill-opacity="0.7"/>
+  <path d="M22 33H46V43C46 48 41.5 51.5 34 51.5C26.5 51.5 22 48 22 43V33Z" fill="#FFF8ED" stroke="#3E2723" stroke-width="1.9"/>
+  <ellipse cx="34" cy="33" rx="12" ry="3.2" fill="#C87D4B" stroke="#3E2723" stroke-width="1.6"/>
+  <path d="M78 33H102V43C102 48 97.5 51.5 90 51.5C82.5 51.5 78 48 78 43V33Z" fill="#FFF8ED" stroke="#3E2723" stroke-width="1.9"/>
+  <ellipse cx="90" cy="33" rx="12" ry="3.2" fill="#C87D4B" stroke="#3E2723" stroke-width="1.6"/>
+  <path d="M48 22H76V37C76 45 69.5 51 62 51C54.5 51 48 45 48 37V22Z" fill="#FDE68A" stroke="#3E2723" stroke-width="2.1"/>
+  <ellipse cx="62" cy="22" rx="14" ry="4" fill="#B45309" stroke="#3E2723" stroke-width="1.8"/>
+  <path d="M62 24C62 24 58 21.5 58 19.8C58 18.8 59 18.2 60 18.2C61 18.2 61.6 18.8 62 19.5C62.4 18.8 63 18.2 64 18.2C65 18.2 66 18.8 66 19.8C66 21.5 62 24 62 24Z" fill="#FFFDF9"/>
+  <path d="M62 6L64 11L69 12.5L64 14L62 19L60 14L55 12.5L60 11L62 6Z" fill="#F59E0B"/>
 </svg>`;
 
 function registerSicraftMenuIcons() {
@@ -1303,18 +1339,18 @@ class SmartLedLampModal extends Modal {
 }
 
 const AMBIENT_SOUNDSCAPES = [
-  { id: "balanced", ru: "Сбалансированный шум", en: "Balanced Noise", subRu: "Мягкий спектр iOS", subEn: "iOS Warm Pink Spectrum", icon: "〰️" },
-  { id: "bright", ru: "Светлый шум", en: "Bright Noise", subRu: "Воздушный высокий тон", subEn: "Crisp Airy Highs", icon: "✨" },
-  { id: "brown", ru: "Тёмный шум", en: "Dark Brown Noise", subRu: "Глубокий бас-фильтр", subEn: "Deep Sub-Bass Shield", icon: "🌑" },
-  { id: "ocean", ru: "Океан", en: "Ocean Waves", subRu: "Прибой и ритм волн", subEn: "Rhythmic Surf Swell", icon: "🌊" },
-  { id: "rain", ru: "Дождь", en: "Soft Rain", subRu: "Дождь по бумаге", subEn: "Gentle Rain on Paper", icon: "🌧️" },
-  { id: "rain_roof", ru: "Дождь на крыше", en: "Rain on Roof", subRu: "Уютный чердак", subEn: "Warm Attic Patter", icon: "🏠" },
-  { id: "stream", ru: "Ручей", en: "Forest Stream", subRu: "Лесной водный поток", subEn: "Babbling Brook", icon: "🏞️" },
-  { id: "night", ru: "Тихая ночь", en: "Quiet Night", subRu: "Ночной воздух и сверчки", subEn: "Nocturnal Air & Crickets", icon: "🌙" },
-  { id: "fire", ru: "Огонь", en: "Cozy Fireplace", subRu: "Треск углей в камине", subEn: "Crackling Hearth", icon: "🔥" },
-  { id: "train", ru: "Поезд", en: "Night Train", subRu: "Спальный вагон и рельсы", subEn: "Rhythmic Rail Cadence", icon: "🚆" },
-  { id: "cafe", ru: "Болтовня (Кафе)", en: "Coffeehouse Murmur", subRu: "Мягкий гул кофейни", subEn: "Warm Room Ambience", icon: "☕" },
-  { id: "gamma40", ru: "40Hz Гамма-фокус", en: "40Hz Gamma Focus", subRu: "Нейро-синхронизация", subEn: "Binaural Deep Work", icon: "🧠" }
+  { id: "balanced", ru: "Сбалансированный шум", en: "Balanced Noise", subRu: "Мягкий спектр iOS", subEn: "iOS Warm Pink Spectrum", icon: SICRAFT_SVGS.sliders },
+  { id: "bright", ru: "Светлый шум", en: "Bright Noise", subRu: "Воздушный высокий тон", subEn: "Crisp Airy Highs", icon: SICRAFT_SVGS.sun },
+  { id: "brown", ru: "Тёмный шум", en: "Dark Brown Noise", subRu: "Глубокий бас-фильтр", subEn: "Deep Sub-Bass Shield", icon: SICRAFT_SVGS.shield },
+  { id: "ocean", ru: "Океан", en: "Ocean Waves", subRu: "Прибой и ритм волн", subEn: "Rhythmic Surf Swell", icon: SICRAFT_SVGS.waves },
+  { id: "rain", ru: "Дождь", en: "Soft Rain", subRu: "Дождь по бумаге", subEn: "Gentle Rain on Paper", icon: SICRAFT_SVGS.rain },
+  { id: "rain_roof", ru: "Дождь на крыше", en: "Rain on Roof", subRu: "Уютный чердак", subEn: "Warm Attic Patter", icon: SICRAFT_SVGS.roof },
+  { id: "stream", ru: "Ручей", en: "Forest Stream", subRu: "Лесной водный поток", subEn: "Babbling Brook", icon: SICRAFT_SVGS.stream },
+  { id: "night", ru: "Тихая ночь", en: "Quiet Night", subRu: "Ночной воздух и сверчки", subEn: "Nocturnal Air & Crickets", icon: SICRAFT_SVGS.moon },
+  { id: "fire", ru: "Костёр в камине", en: "Cozy Fireplace", subRu: "Треск тёплых углей", subEn: "Crackling Hearth", icon: SICRAFT_SVGS.flame },
+  { id: "train", ru: "Ночной поезд", en: "Night Train", subRu: "Спальный вагон и рельсы", subEn: "Rhythmic Rail Cadence", icon: SICRAFT_SVGS.train },
+  { id: "cafe", ru: "Уютная кофейня", en: "Coffeehouse Murmur", subRu: "Мягкий гул зала", subEn: "Warm Room Ambience", icon: SICRAFT_SVGS.coffee },
+  { id: "gamma40", ru: "40Hz Гамма-фокус", en: "40Hz Gamma Focus", subRu: "Нейро-синхронизация", subEn: "Binaural Deep Work", icon: SICRAFT_SVGS.brain }
 ];
 
 class AlchemySonicStudioModal extends Modal {
@@ -1325,22 +1361,23 @@ class AlchemySonicStudioModal extends Modal {
   }
 
   onOpen() {
+    this.plugin.activeSonicModal = this;
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-sonic-modal-root");
     const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
 
     const eqModes = [
-      { id: "bars", name: isRu ? "01 // Пиковый спектр" : "01 // Peak-Hold Bars", icon: SICRAFT_SVGS.eqBars },
-      { id: "wave", name: isRu ? "02 // Жидкая лента" : "02 // Liquid Ribbon", icon: SICRAFT_SVGS.eqWave },
-      { id: "orb", name: isRu ? "03 // Супернова" : "03 // Supernova Orb", icon: SICRAFT_SVGS.eqOrb },
-      { id: "dna", name: isRu ? "04 // Матрица" : "04 // Quantum Matrix", icon: SICRAFT_SVGS.eqMatrix },
-      { id: "craft", name: isRu ? "05 // Крафтовый сейсмограф" : "05 // Craft Ink Seismograph", icon: SICRAFT_SVGS.eqCraft },
-      { id: "ferro", name: isRu ? "06 // Феррофлюид" : "06 // Ferrofluid Orbs", icon: SICRAFT_SVGS.eqFerro }
+      { id: "craft", name: isRu ? "01 // Крафтовый Сейсмограф" : "01 // Craft Ink Seismograph", icon: SICRAFT_SVGS.eqCraft },
+      { id: "dna", name: isRu ? "02 // Квантовая Матрица" : "02 // Quantum Matrix", icon: SICRAFT_SVGS.eqMatrix },
+      { id: "bars", name: isRu ? "03 // Ризограф и Штампы" : "03 // Craft Risograph Stamps", icon: SICRAFT_SVGS.eqBars },
+      { id: "wave", name: isRu ? "04 // Чернильная Лента" : "04 // Botanical Ink Ribbon", icon: SICRAFT_SVGS.eqWave },
+      { id: "orb", name: isRu ? "05 // Алхимический Компас" : "05 // Alchemist Compass", icon: SICRAFT_SVGS.eqOrb },
+      { id: "ferro", name: isRu ? "06 // Капли Эспрессо" : "06 // Espresso Ferrofluid", icon: SICRAFT_SVGS.eqFerro }
     ];
 
     const hasTrack = !!(this.plugin.ambientNodes && this.plugin.ambientNodes.audioEl);
-    const trackName = (this.plugin.ambientNodes && this.plugin.ambientNodes.trackName) || (isRu ? "Трек не выбран (MP3 / WAV / FLAC)" : "No custom track loaded (MP3 / WAV / FLAC)");
+    const trackName = (this.plugin.ambientNodes && this.plugin.ambientNodes.trackName) || (isRu ? "Выберите свой аудиофайл (MP3 / WAV / FLAC / M4A)" : "Select a custom audio track (MP3 / WAV / FLAC / M4A)");
     const isSysActive = !!(this.plugin.desktopAudioNodes && this.plugin.desktopAudioNodes.type === "system");
     const isMicActive = !!(this.plugin.desktopAudioNodes && this.plugin.desktopAudioNodes.type === "mic");
     const vol = this.plugin.settings.audioVolume !== undefined ? this.plugin.settings.audioVolume : 75;
@@ -1351,16 +1388,18 @@ class AlchemySonicStudioModal extends Modal {
           <div>
             <div class="sonic-studio-badge">ALCHEMY CRAFT // SONIC & AMBIENT STUDIO</div>
             <h2 class="sonic-studio-title">${isRu ? "Аудио-студия, Плеер и Фоновые звуки" : "Sonic Equalizer, Track Player & Ambient Sounds"}</h2>
+            <p class="sonic-studio-sub">${isRu ? "Управляйте фоновыми звуками, загружайте свои треки или синхронизируйте эквалайзер со звуком ПК." : "Control ambient soundscapes, play local tracks, or sync the craft equalizer with desktop audio."}</p>
           </div>
-          <button class="sonic-stop-all-btn" id="sonic-stop-all">${isRu ? "Остановить всё" : "Stop All"}</button>
+          <button class="sonic-stop-all-btn" id="sonic-stop-all">${SICRAFT_SVGS.stop} <span>${isRu ? "Стоп" : "Stop All"}</span></button>
         </div>
 
         <!-- 1. CUSTOM TRACK PLAYER & PC/MIC CAPTURE -->
         <div class="sonic-card">
           <div class="sonic-card-top">
-            <span class="sonic-sec-label">${isRu ? "ПЛЕЕР СВОИХ ТРЕКОВ & ЗАХВАТ ЗВУКА" : "CUSTOM MUSIC PLAYER & LIVE AUDIO SYNC"}</span>
+            <span class="sonic-sec-label">${isRu ? "ПЛЕЕР СВОИХ ТРЕКОВ И ГРОМКОСТЬ" : "CUSTOM MUSIC PLAYER & MASTER VOLUME"}</span>
             <div class="sonic-vol-wrap">
-              <span>${isRu ? "Громкость:" : "Volume:"} <strong id="sonic-vol-lbl">${vol}%</strong></span>
+              ${SICRAFT_SVGS.volume}
+              <span class="sonic-vol-txt">${isRu ? "Громкость:" : "Volume:"} <strong id="sonic-vol-lbl">${vol}%</strong></span>
               <input type="range" id="sonic-vol-slider" min="0" max="100" value="${vol}" class="sonic-range-slider" />
             </div>
           </div>
@@ -1375,26 +1414,26 @@ class AlchemySonicStudioModal extends Modal {
                 <span id="sonic-time-dur">00:00</span>
               </div>
             </div>
-            <button class="sonic-load-btn" id="sonic-load-file">${SICRAFT_SVGS.audio} <span>${isRu ? "Загрузить трек..." : "Load Track..."}</span></button>
+            <button class="sonic-load-btn" id="sonic-load-file">${SICRAFT_SVGS.audio} <span>${isRu ? "Выбрать трек..." : "Load Track..."}</span></button>
           </div>
 
           <div class="sonic-source-pills">
             <button class="sonic-src-btn ${isSysActive ? "is-active" : ""}" id="sonic-sync-sys">
-              ${SICRAFT_SVGS.globe} <span>${isRu ? "Синхронизация со звуком ПК" : "Sync PC Desktop Audio"}</span>
+              ${SICRAFT_SVGS.globe} <span>${isRu ? "Захват звука ПК (WASAPI Loopback)" : "Sync PC Desktop Audio (WASAPI)"}</span>
             </button>
             <button class="sonic-src-btn ${isMicActive ? "is-active" : ""}" id="sonic-sync-mic">
-              ${SICRAFT_SVGS.audio} <span>${isRu ? "Микрофон / Стерео Микшер" : "Microphone / Stereo Mix"}</span>
+              ${SICRAFT_SVGS.mic} <span>${isRu ? "Микрофон / Стерео Микшер" : "Microphone / Stereo Mix"}</span>
             </button>
           </div>
         </div>
 
-        <!-- 2. 6 CRAFT & NEON EQUALIZER STYLES -->
+        <!-- 2. 6 CRAFT EQUALIZER STYLES -->
         <div class="sonic-card">
-          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "6 РЕЖИМОВ АНИМАЦИИ ЭКВАЛАЙЗЕРА (ВКЛЮЧАЯ КРАФТОВЫЕ)" : "6 EQUALIZER VISUAL STYLES (INCLUDING SWISS CRAFT)"}</div>
+          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "6 КРАФТОВЫХ РЕЖИМОВ ЭКВАЛАЙЗЕРА" : "6 CRAFT EQUALIZER VISUAL STYLES"}</div>
           <div class="sonic-eq-grid">
             ${eqModes.map((m) => `
-              <button class="sonic-eq-btn ${(this.plugin.settings.eqMode || "bars") === m.id ? "is-active" : ""}" data-eq="${m.id}">
-                ${m.icon} <span>${m.name}</span>
+              <button class="sonic-eq-btn ${(this.plugin.settings.eqMode || "craft") === m.id ? "is-active" : ""}" data-eq="${m.id}">
+                <span class="sonic-eq-ic">${m.icon}</span> <span>${m.name}</span>
               </button>
             `).join("")}
           </div>
@@ -1402,7 +1441,7 @@ class AlchemySonicStudioModal extends Modal {
 
         <!-- 3. 12 APPLE iOS INSPIRED BACKGROUND SOUNDS -->
         <div class="sonic-card">
-          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "12 ФОНОВЫХ ЗВУКОВ ДЛЯ ФОКУСА (В СТИЛЕ iPHONE / iOS)" : "12 FOCUS BACKGROUND SOUNDSCAPES (iOS COLLECTION)"}</div>
+          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "12 ФОНОВЫХ ЗВУКОВ ДЛЯ ФОКУСА (КОЛЛЕКЦИЯ iOS)" : "12 FOCUS BACKGROUND SOUNDSCAPES (iOS COLLECTION)"}</div>
           <div class="sonic-ambient-grid">
             ${AMBIENT_SOUNDSCAPES.map((s) => `
               <button class="sonic-amb-tile ${this.plugin.settings.ambientSound === s.id ? "is-active" : ""}" data-amb="${s.id}">
@@ -1532,6 +1571,9 @@ class AlchemySonicStudioModal extends Modal {
 
   onClose() {
     if (this.progressTimer) clearInterval(this.progressTimer);
+    if (this.plugin && this.plugin.activeSonicModal === this) {
+      this.plugin.activeSonicModal = null;
+    }
     this.contentEl.empty();
   }
 }
@@ -1869,9 +1911,21 @@ class AlchemyFlowPlugin extends Plugin {
     this.updateEqualizerPillUI();
   }
 
+  openSonicStudioModal() {
+    if (this.activeSonicModal) {
+      this.activeSonicModal.close();
+      this.activeSonicModal = null;
+      return;
+    }
+    const modal = new AlchemySonicStudioModal(this.app, this);
+    this.activeSonicModal = modal;
+    modal.open();
+  }
+
   showAudioMenu(event) {
     if (event && event.preventDefault) event.preventDefault();
-    new AlchemySonicStudioModal(this.app, this).open();
+    if (event && event.stopPropagation) event.stopPropagation();
+    this.openSonicStudioModal();
   }
 
   applyAudioVolume(vol0to1) {
@@ -1884,6 +1938,13 @@ class AlchemyFlowPlugin extends Plugin {
         this.ambientNodes.masterGain.gain.value = this.ambientNodes.baseGain * (v / 0.75);
       }
     }
+  }
+
+  // Smoothly fades audio out when Pomodoro Break starts, and fades back in when Focus Sprint starts
+  fadeAudioForPomodoroBreak(isBreak) {
+    if (this.settings.pomoAudioLink === false) return;
+    const targetVol = isBreak ? 0.08 : (this.settings.audioVolume !== undefined ? this.settings.audioVolume : 75) / 100;
+    this.applyAudioVolume(targetVol);
   }
 
   openCustomAudioPicker(onLoadedCallback) {
@@ -1913,11 +1974,13 @@ class AlchemyFlowPlugin extends Plugin {
         audioEl.play();
         this.ambientNodes = { ctx, audioEl, fileUrl, analyser, trackName: file.name };
         this.updateEqualizerPillUI();
-        new Notice(`🎵 Playing: ${file.name}`);
+        new Notice(`Playing: ${file.name}`);
         if (typeof onLoadedCallback === "function") {
           onLoadedCallback();
+        } else if (!this.activeSonicModal) {
+          this.openSonicStudioModal();
         } else {
-          new AlchemySonicStudioModal(this.app, this).open();
+          this.activeSonicModal.onOpen();
         }
       } catch (e) {
         new Notice("Could not load audio file.");
@@ -1926,30 +1989,37 @@ class AlchemyFlowPlugin extends Plugin {
     input.click();
   }
 
-  connectStreamToAnalyser(stream, type, gainVal = 2.4) {
+  connectStreamToAnalyser(stream, type, gainVal = 2.8) {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioCtx();
     if (ctx.state === "suspended") ctx.resume();
 
-    // Hidden muted audio sink ensures Chromium's audio pipeline never suspends the MediaStream!
-    const sinkAudio = document.createElement("audio");
-    sinkAudio.muted = true;
-    sinkAudio.autoplay = true;
+    // Keep full stream (including Electron's required desktop video carrier track) playing in a hidden muted <video> sink
+    // so Windows WASAPI loopback never pauses the capture pump!
+    const sinkVideo = document.createElement("video");
+    sinkVideo.muted = true;
+    sinkVideo.autoplay = true;
+    sinkVideo.playsInline = true;
+    sinkVideo.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;";
+    document.body.appendChild(sinkVideo);
     try {
-      sinkAudio.srcObject = stream;
-      sinkAudio.play().catch(() => {});
+      sinkVideo.srcObject = stream;
+      sinkVideo.play().catch(() => {});
     } catch (e) {}
 
-    const source = ctx.createMediaStreamSource(stream);
+    // Extract an audio-only MediaStream for WebAudio's createMediaStreamSource (prevents Chromium stall on video tracks)
+    const audioTracks = stream.getAudioTracks ? stream.getAudioTracks() : [];
+    const audioOnlyStream = audioTracks.length > 0 ? new MediaStream(audioTracks) : stream;
+
+    const source = ctx.createMediaStreamSource(audioOnlyStream);
     const preAmp = ctx.createGain();
     preAmp.gain.value = gainVal;
     const analyser = ctx.createAnalyser();
     analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.72;
-    analyser.minDecibels = -95;
-    analyser.maxDecibels = -20;
+    analyser.smoothingTimeConstant = 0.70;
+    analyser.minDecibels = -96;
+    analyser.maxDecibels = -18;
 
-    // Zero-gain destination connection fixes Chromium Issue #327649 where disconnected AnalyserNodes receive all-zero FFT frames!
     const silentGain = ctx.createGain();
     silentGain.gain.value = 0;
 
@@ -1958,7 +2028,7 @@ class AlchemyFlowPlugin extends Plugin {
     analyser.connect(silentGain);
     silentGain.connect(ctx.destination);
 
-    this.desktopAudioNodes = { ctx, stream, source, analyser, silentGain, sinkAudio, type };
+    this.desktopAudioNodes = { ctx, stream, audioOnlyStream, source, analyser, silentGain, sinkAudio: sinkVideo, type };
     this.updateEqualizerPillUI();
   }
 
@@ -1966,67 +2036,73 @@ class AlchemyFlowPlugin extends Plugin {
     this.stopAudioCapture(true);
     let stream = null;
 
-    // Strategy A: Check if user has a dedicated "Stereo Mix" / "Loopback" / "What U Hear" / "CABLE" audio input first
-    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    // Strategy 1: Native Electron Windows WASAPI Desktop Audio Loopback
+    // IMPORTANT: On Windows Chromium/Electron, audio.mandatory MUST NOT include chromeMediaSourceId ("screen:0:0"),
+    // only chromeMediaSource: "desktop"!
+    const videoSourceIds = [undefined, "screen:0:0", "screen:1:0"];
+    for (const vidSid of videoSourceIds) {
+      if (stream && stream.getAudioTracks && stream.getAudioTracks().length > 0) break;
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const loopbackDev = devices.find(
-          (d) =>
-            d.kind === "audioinput" &&
-            /stereo mix|смеситель|loopback|cable|what u hear|blackhole|soundflower|monitor|voicemeeter/i.test(d.label || "")
-        );
-        if (loopbackDev) {
-          stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              deviceId: { exact: loopbackDev.deviceId },
-              echoCancellation: false,
-              noiseSuppression: false,
-              autoGainControl: false,
+        const mandatoryVideo = {
+          chromeMediaSource: "desktop",
+          minWidth: 16,
+          maxWidth: 64,
+          minHeight: 16,
+          maxHeight: 64,
+          maxFrameRate: 5,
+        };
+        if (vidSid) mandatoryVideo.chromeMediaSourceId = vidSid;
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            mandatory: {
+              chromeMediaSource: "desktop",
             },
-            video: false,
-          });
-        }
-      } catch (e0) {}
+          },
+          video: {
+            mandatory: mandatoryVideo,
+          },
+        });
+      } catch (e1) {}
     }
 
-    // Strategy B: Electron WASAPI Desktop Loopback (keep low-res video track alive so Electron doesn't kill the WASAPI session!)
-    if (!stream) {
-      const sourceIds = ["screen:0:0", "screen:1:0", undefined];
-      for (const sid of sourceIds) {
-        if (stream) break;
+    // Strategy 2: Check if user has a Stereo Mix / What U Hear / Virtual Cable loopback device
+    if (!stream || !stream.getAudioTracks || stream.getAudioTracks().length === 0) {
+      if (stream) {
+        stream.getTracks().forEach((t) => t.stop());
+        stream = null;
+      }
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
         try {
-          const mandatoryAudio = { chromeMediaSource: "desktop" };
-          const mandatoryVideo = { chromeMediaSource: "desktop", maxWidth: 320, maxHeight: 180, maxFrameRate: 2 };
-          if (sid) {
-            mandatoryAudio.chromeMediaSourceId = sid;
-            mandatoryVideo.chromeMediaSourceId = sid;
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const loopbackDev = devices.find(
+            (d) =>
+              d.kind === "audioinput" &&
+              /stereo mix|смеситель|loopback|cable|what u hear|blackhole|soundflower|monitor|voicemeeter/i.test(d.label || "")
+          );
+          if (loopbackDev) {
+            stream = await navigator.mediaDevices.getUserMedia({
+              audio: {
+                deviceId: { exact: loopbackDev.deviceId },
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false,
+              },
+              video: false,
+            });
           }
-          stream = await navigator.mediaDevices.getUserMedia({
-            audio: { mandatory: mandatoryAudio },
-            video: { mandatory: mandatoryVideo },
-          });
-        } catch (e1) {}
+        } catch (e0) {}
       }
     }
 
-    // Strategy C: High-sensitivity Default Audio / Room Pickup
+    // Strategy 3: Fallback to High-Gain Room/Speaker Pickup only if WASAPI & Stereo Mix are completely blocked
     if (!stream || !stream.getAudioTracks || stream.getAudioTracks().length === 0) {
       if (stream) stream.getTracks().forEach((t) => t.stop());
       return this.startMicAudioCapture(true);
     }
 
     try {
-      this.connectStreamToAnalyser(stream, "system", 2.4);
+      this.connectStreamToAnalyser(stream, "system", 3.2);
       new Notice(t("audioConnectedNotice", this));
-
-      // Watchdog: if Electron's desktop audio track is muted by Windows DWM after 600ms, seamlessly switch to high-gain default audio input
-      setTimeout(() => {
-        if (!this.desktopAudioNodes || this.desktopAudioNodes.type !== "system") return;
-        const track = stream.getAudioTracks()[0];
-        if (!track || track.readyState === "ended" || track.muted) {
-          this.startMicAudioCapture(true);
-        }
-      }, 600);
     } catch (err) {
       return this.startMicAudioCapture(true);
     }
@@ -2039,7 +2115,7 @@ class AlchemyFlowPlugin extends Plugin {
         audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
         video: false,
       });
-      this.connectStreamToAnalyser(stream, "mic", highGainForSpeakers ? 3.8 : 2.6);
+      this.connectStreamToAnalyser(stream, "mic", highGainForSpeakers ? 3.8 : 2.8);
       new Notice(t("audioMicConnectedNotice", this));
     } catch (err) {
       new Notice("Could not access audio device.");
@@ -2052,6 +2128,9 @@ class AlchemyFlowPlugin extends Plugin {
       if (this.desktopAudioNodes.sinkAudio) {
         this.desktopAudioNodes.sinkAudio.pause();
         this.desktopAudioNodes.sinkAudio.srcObject = null;
+        if (this.desktopAudioNodes.sinkAudio.parentNode) {
+          this.desktopAudioNodes.sinkAudio.remove();
+        }
       }
       if (this.desktopAudioNodes.stream) {
         this.desktopAudioNodes.stream.getTracks().forEach((t) => t.stop());
@@ -2094,27 +2173,26 @@ class AlchemyFlowPlugin extends Plugin {
         craft: SICRAFT_SVGS.eqCraft,
         ferro: SICRAFT_SVGS.eqFerro,
       };
-      iconEl.innerHTML = modeIcons[this.settings.eqMode || "bars"] || SICRAFT_SVGS.eqBars;
+      iconEl.innerHTML = modeIcons[this.settings.eqMode || "craft"] || SICRAFT_SVGS.eqCraft;
     }
   }
 
   async cycleEqualizerMode() {
-    // If no audio source is active yet, first click opens the Sonic & Ambient Studio so user can pick track, iOS sound, or PC sync!
     if (!this.desktopAudioNodes && !this.ambientNodes) {
-      new AlchemySonicStudioModal(this.app, this).open();
+      this.openSonicStudioModal();
       return;
     }
-    const modes = ["bars", "wave", "orb", "dna", "craft", "ferro"];
+    const modes = ["craft", "dna", "bars", "wave", "orb", "ferro"];
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     const names = {
-      bars: t("audioModeBars", this),
-      wave: t("audioModeWave", this),
-      orb: t("audioModeOrb", this),
-      dna: t("audioModeDna", this),
-      craft: isRu ? "05 // Крафтовый сейсмограф" : "05 // Craft Ink Seismograph",
-      ferro: isRu ? "06 // Феррофлюид" : "06 // Alchemy Ferrofluid Orbs",
+      craft: isRu ? "01 // Крафтовый Сейсмограф" : "01 // Craft Ink Seismograph",
+      dna: isRu ? "02 // Квантовая Матрица" : "02 // Quantum Matrix",
+      bars: isRu ? "03 // Ризограф и Штампы" : "03 // Craft Risograph Stamps",
+      wave: isRu ? "04 // Чернильная Лента" : "04 // Botanical Ink Ribbon",
+      orb: isRu ? "05 // Алхимический Компас" : "05 // Alchemist Compass",
+      ferro: isRu ? "06 // Капли Эспрессо" : "06 // Espresso Ferrofluid",
     };
-    const idx = modes.indexOf(this.settings.eqMode || "bars");
+    const idx = modes.indexOf(this.settings.eqMode || "craft");
     const next = modes[(idx + 1) % modes.length];
     this.settings.eqMode = next;
     await this.saveSettings();
@@ -2574,6 +2652,7 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.timerState === "work" && this.settings.ambientSound && this.settings.ambientSound !== "off") {
       this.startAmbientSound(this.settings.ambientSound);
     }
+    this.fadeAudioForPomodoroBreak(this.timerState === "break");
     this.timerInterval = setInterval(() => {
       this.tickTimer();
     }, 1000);
@@ -2588,7 +2667,6 @@ class AlchemyFlowPlugin extends Plugin {
       this.timerSeconds = remaining;
       if (remaining <= 0) {
         this.timerRunning = false;
-        this.stopAmbientSound();
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.playTimerChime();
         if (this.timerState === "work") {
@@ -2597,10 +2675,16 @@ class AlchemyFlowPlugin extends Plugin {
           new Notice(t("sprintDoneNotice", this));
           this.timerState = "break";
           this.timerSeconds = (this.settings.breakMinutes || 5) * 60;
+          if (this.settings.pomoAudioLink !== false) {
+            this.fadeAudioForPomodoroBreak(true);
+          } else {
+            this.stopAmbientSound();
+          }
         } else {
           new Notice(t("breakDoneNotice", this));
           this.timerState = "work";
           this.timerSeconds = (this.settings.pomodoroMinutes || 25) * 60;
+          this.fadeAudioForPomodoroBreak(false);
         }
       }
     } else {
@@ -2874,6 +2958,7 @@ class AlchemyFlowPlugin extends Plugin {
           <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse">${SICRAFT_SVGS.bolt} <span>${isRu ? "Импульсы связей" : "Pulse Nodes"}</span></button>
           <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${SICRAFT_SVGS.spark} <span>${t("graphColorizeBtn", this)}</span></button>
           <button class="artcraft-graph-hud-btn" data-action="toggle-orphans">${t("graphOrphansBtn", this)}</button>
+          <button class="artcraft-graph-hud-btn" data-action="snap-png">${SICRAFT_SVGS.camera} <span>${isRu ? "Снимок PNG" : "Snap PNG"}</span></button>
         `;
 
         hud.querySelectorAll("[data-preset]").forEach((btn) => {
@@ -2903,6 +2988,11 @@ class AlchemyFlowPlugin extends Plugin {
         hud.querySelector('[data-action="toggle-orphans"]')?.addEventListener("click", (e) => {
           e.stopPropagation();
           this.applyBentoGraphColorGroups(true, false);
+        });
+
+        hud.querySelector('[data-action="snap-png"]')?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.snapBentoGraphPNG(viewContent);
         });
 
         viewContent.appendChild(hud);
@@ -3189,13 +3279,60 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
+  snapBentoGraphPNG(viewContent) {
+    try {
+      const canvases = viewContent.querySelectorAll("canvas");
+      if (!canvases || canvases.length === 0) {
+        new Notice("Graph canvas not ready yet.");
+        return;
+      }
+      const rect = viewContent.getBoundingClientRect();
+      const outCanvas = document.createElement("canvas");
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      outCanvas.width = Math.round(rect.width * dpr);
+      outCanvas.height = Math.round(rect.height * dpr);
+      const ctx = outCanvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const isDark = document.body.classList.contains("artcraft-dark-craft") || document.body.classList.contains("theme-dark");
+      ctx.fillStyle = isDark ? "#121316" : "#F4F3EF";
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
+      canvases.forEach((c) => {
+        try {
+          ctx.drawImage(c, 0, 0, rect.width, rect.height);
+        } catch (e) {}
+      });
+
+      // Draw crisp Swiss Bento watermark pill in top-left of exported PNG
+      ctx.fillStyle = isDark ? "#1E2025" : "#FFFFFF";
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(16, 16, 260, 28);
+      ctx.strokeRect(16, 16, 260, 28);
+      ctx.fillStyle = isDark ? "#F3F4F6" : "#111111";
+      ctx.font = "bold 11px 'JetBrains Mono', monospace";
+      ctx.fillText("ALCHEMY CRAFT // BENTO KNOWLEDGE GRAPH", 26, 34);
+
+      const dataUrl = outCanvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `alchemy-bento-graph-${new Date().toISOString().slice(0, 10)}.png`;
+      a.click();
+      this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 45);
+      new Notice((this.settings.uiLanguage || "en") === "ru" ? "Снимок графа сохранен в PNG!" : "Swiss Bento Graph snapshot saved as PNG!");
+    } catch (err) {
+      new Notice("Could not export graph snapshot.");
+    }
+  }
+
   updateTaskProgressBar(fromCheckboxClick = false) {
     // Remove any legacy or orphaned bars stuck inside CodeMirror scroller
     document
       .querySelectorAll(".cm-sizer .artcraft-task-progress-wrap, .cm-content .artcraft-task-progress-wrap, .inline-title + .artcraft-task-progress-wrap")
       .forEach((el) => el.remove());
 
-    if (this.settings.showTaskProgress === false) {
+    if (this.settings.showTaskProgress === false && this.settings.showReadingStats === false) {
       document.querySelectorAll(".artcraft-task-progress-wrap").forEach((el) => {
         el.style.display = "none";
       });
@@ -3224,6 +3361,21 @@ class AlchemyFlowPlugin extends Plugin {
       });
     }
 
+    // Calculate live Word Count & Reading Time (~200 wpm)
+    let wordCount = 0;
+    try {
+      const rawText = activeView.editor ? activeView.editor.getValue() : (activeView.data || "");
+      const cleanText = rawText.replace(/^---[\s\S]*?---\n?/, "").trim();
+      if (cleanText.length > 0) {
+        wordCount = cleanText.split(/\s+/).filter(Boolean).length;
+      }
+    } catch (e) {}
+    const readMins = Math.max(1, Math.ceil(wordCount / 200));
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const readingText = isRu
+      ? `~${readMins} мин чтения • ${wordCount} слов`
+      : `~${readMins} min read • ${wordCount} words`;
+
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
     const filePath = activeView.file.path;
     if (fromCheckboxClick && total > 0 && pct === 100 && this.lastTaskPctByFile[filePath] !== 100) {
@@ -3241,7 +3393,7 @@ class AlchemyFlowPlugin extends Plugin {
 
       let barWrap = viewContent.querySelector(":scope > .artcraft-task-progress-wrap");
 
-      if (total === 0) {
+      if (total === 0 && (this.settings.showReadingStats === false || wordCount === 0)) {
         if (barWrap) barWrap.style.display = "none";
         return;
       }
@@ -3250,12 +3402,13 @@ class AlchemyFlowPlugin extends Plugin {
         barWrap = document.createElement("div");
         barWrap.className = "artcraft-task-progress-wrap";
         barWrap.innerHTML = `
+          <span class="artcraft-reading-stats-pill"></span>
           <span class="artcraft-task-progress-label"></span>
           <div class="artcraft-task-progress-bar-bg">
             <div class="artcraft-task-progress-bar-fill"></div>
           </div>
           <span class="artcraft-task-progress-pct"></span>
-          <button class="artcraft-task-progress-close" title="Dismiss bar (Mobile Safe)">✕</button>
+          <button class="artcraft-task-progress-close" title="Dismiss bar">${SICRAFT_SVGS.clear}</button>
         `;
         const closeBtn = barWrap.querySelector(".artcraft-task-progress-close");
         if (closeBtn) {
@@ -3268,13 +3421,37 @@ class AlchemyFlowPlugin extends Plugin {
       }
 
       barWrap.style.display = "flex";
+      const readEl = barWrap.querySelector(".artcraft-reading-stats-pill");
       const labelEl = barWrap.querySelector(".artcraft-task-progress-label");
+      const barBgEl = barWrap.querySelector(".artcraft-task-progress-bar-bg");
       const fillEl = barWrap.querySelector(".artcraft-task-progress-bar-fill");
       const pctEl = barWrap.querySelector(".artcraft-task-progress-pct");
 
-      if (labelEl) labelEl.textContent = `${t("taskProgressLabel", this)} ${done} / ${total}`;
-      if (fillEl) fillEl.style.width = `${pct}%`;
-      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (readEl) {
+        if (this.settings.showReadingStats !== false && wordCount > 0) {
+          readEl.style.display = "inline-flex";
+          readEl.innerHTML = `${SICRAFT_SVGS.book} <span>${readingText}</span>`;
+        } else {
+          readEl.style.display = "none";
+        }
+      }
+
+      if (total > 0 && this.settings.showTaskProgress !== false) {
+        if (labelEl) {
+          labelEl.style.display = "inline";
+          labelEl.textContent = `${t("taskProgressLabel", this)} ${done} / ${total}`;
+        }
+        if (barBgEl) barBgEl.style.display = "block";
+        if (fillEl) fillEl.style.width = `${pct}%`;
+        if (pctEl) {
+          pctEl.style.display = "inline";
+          pctEl.textContent = `${pct}%`;
+        }
+      } else {
+        if (labelEl) labelEl.style.display = "none";
+        if (barBgEl) barBgEl.style.display = "none";
+        if (pctEl) pctEl.style.display = "none";
+      }
     });
   }
 
@@ -3701,15 +3878,27 @@ class AlchemyFlowPlugin extends Plugin {
     });
     this.btnLamp.addEventListener("contextmenu", (e) => {
       e.preventDefault();
-      new SmartLedLampModal(this.app, this).open();
+      if (this.activeLampModal) {
+        this.activeLampModal.close();
+        this.activeLampModal = null;
+        return;
+      }
+      const m = new SmartLedLampModal(this.app, this);
+      this.activeLampModal = m;
+      const origClose = m.onClose.bind(m);
+      m.onClose = () => {
+        if (this.activeLampModal === m) this.activeLampModal = null;
+        origClose();
+      };
+      m.open();
     });
     contentWrap.appendChild(this.btnLamp);
 
-    // 6.6. Live 4-Mode Sonic Equalizer (Reacts ONLY to real audio; LMB: Cycle 4 Visual Modes | RMB: Audio Source Menu)
+    // 6.6. Live 6-Mode Craft Equalizer (LMB: Cycle Modes | Wheel: Volume Scrubbing | RMB: Open Sonic Studio)
     if (this.settings.showEqualizer !== false) {
       const eqWrap = document.createElement("div");
       eqWrap.className = "artcraft-dock-eq-pill";
-      eqWrap.title = "LMB: Switch Equalizer Style (01 Peak-Hold / 02 Liquid Ribbon / 03 Supernova / 04 Matrix) | Double-Click: Sync PC Audio | RMB: Sound Menu";
+      eqWrap.title = "LMB: Switch Craft Equalizer Style | Mouse Wheel: Adjust Volume (0%-100%) | RMB: Open Sonic Studio";
       this.eqWrap = eqWrap;
 
       const eqIconSpan = document.createElement("span");
@@ -3734,8 +3923,28 @@ class AlchemyFlowPlugin extends Plugin {
       });
       eqWrap.addEventListener("contextmenu", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         this.showAudioMenu(e);
       });
+      eqWrap.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const curVol = this.settings.audioVolume !== undefined ? this.settings.audioVolume : 75;
+          const step = e.deltaY < 0 ? 5 : -5;
+          const nextVol = Math.max(0, Math.min(100, curVol + step));
+          this.settings.audioVolume = nextVol;
+          this.applyAudioVolume(nextVol / 100);
+          this.saveSettings();
+          eqWrap.title = `Volume: ${nextVol}% (Scroll to adjust | LMB: Mode | RMB: Studio)`;
+          if (this.volNoticeTimeout) clearTimeout(this.volNoticeTimeout);
+          this.volNoticeTimeout = setTimeout(() => {
+            new Notice(`Volume: ${nextVol}%`, 900);
+          }, 120);
+        },
+        { passive: false }
+      );
       contentWrap.appendChild(eqWrap);
       this.updateEqualizerPillUI();
     }
@@ -4277,8 +4486,8 @@ class AlchemyFlowPlugin extends Plugin {
     if (!this.eqSmooth) this.eqSmooth = new Array(16).fill(2);
     if (!this.eqPhase) this.eqPhase = 0;
 
-    const mode = this.settings.eqMode || "bars";
-    const colors = ["#69BD28", "#10B981", "#06B6D4", "#2563EB", "#8B5CF6", "#EC4899", "#F59E0B", "#EAB308"];
+    const mode = this.settings.eqMode || "craft";
+    const colors = ["#69BD28", "#D97706", "#F4F3EF", "#10B981", "#2563EB", "#F59E0B", "#EAB308", "#A7F3D0"];
 
     // Compute 16 logarithmic frequency bands with smooth spring attack & gravity decay
     let totalEnergy = 0;
@@ -4324,29 +4533,30 @@ class AlchemyFlowPlugin extends Plugin {
     }
 
     if (mode === "bars") {
-      // MODE 01: 16-Bar Neon Spectrum with Floating Peak-Hold Caps & Subtle Floor Reflection
-      const bars = 16;
-      const barW = 2.6;
-      const gap = 1.1;
-      const baseLine = eh - 3;
-      for (let i = 0; i < bars; i++) {
-        const x = 1.5 + i * (barW + gap);
-        const h = Math.min(baseLine - 1, this.eqSmooth[i]);
-        const c = colors[i % colors.length];
+      // MODE 03: Craft Risograph Stamps (Warm Paper, Espresso & Matcha Stamped Blocks with Fountain-Pen Caps)
+      const craftPalette = ["#F4F3EF", "#69BD28", "#D97706", "#10B981", "#FDE68A", "#C87D4B", "#69BD28", "#F4F3EF"];
+      const cols = 12;
+      const colW = 3.6;
+      const gap = 1.4;
+      const baseLine = eh - 2;
+
+      // Subtle craft ledger ruler line
+      eqCtx.fillStyle = "rgba(244, 243, 239, 0.22)";
+      eqCtx.fillRect(1, baseLine, ew - 2, 1);
+
+      for (let i = 0; i < cols; i++) {
+        const x = 2 + i * (colW + gap);
+        const h = Math.max(2.2, Math.min(baseLine - 2, this.eqSmooth[i]));
+        const c = craftPalette[i % craftPalette.length];
+
+        // Main Risograph ink stamp block
         eqCtx.fillStyle = c;
-        eqCtx.fillRect(x, baseLine - h, barW, h);
+        eqCtx.fillRect(x, baseLine - h, colW, Math.max(1.5, h - 1));
 
-        // Floor mirror reflection
-        if (h > 2.5) {
-          eqCtx.globalAlpha = 0.25;
-          eqCtx.fillRect(x, baseLine + 0.5, barW, Math.min(2.5, h * 0.25));
-          eqCtx.globalAlpha = 1;
-        }
-
-        // Floating Peak-Hold cap
-        if (this.eqPeaks[i] > 3.2) {
-          eqCtx.fillStyle = "#FFFFFF";
-          eqCtx.fillRect(x, Math.max(0, baseLine - this.eqPeaks[i] - 1.5), barW, 1.2);
+        // Tactile warm cream paper cap
+        if (this.eqPeaks[i] > 3.0) {
+          eqCtx.fillStyle = "#FFF8ED";
+          eqCtx.fillRect(x - 0.3, Math.max(0.5, baseLine - this.eqPeaks[i] - 1.6), colW + 0.6, 1.4);
         }
       }
     } else if (mode === "wave") {
@@ -4549,94 +4759,102 @@ class AlchemyCraftProModal extends Modal {
     this.plugin = plugin;
     this.selectedNetwork = initialMethod === "promo" ? "evm" : initialMethod;
     this.activeTab = initialMethod === "promo" ? "promo" : "support";
-    this.selectedTier = "bronze";
+    this.selectedTier = "silver";
   }
 
   onOpen() {
+    this.plugin.activeProModal = this;
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-pro-modal-root");
     const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
 
-    // Soft, Warm Ko-fi / Zsolt-Inspired Header
+    // Soft, Warm Ko-fi / Zsolt-Inspired Header with Cappuccino Craft Vibe
     const header = contentEl.createDiv({ cls: "artcraft-soft-pro-header" });
     header.innerHTML = `
-      <div class="artcraft-soft-pro-badge">${isRu ? "ALCHEMIST STUDIO • ПОДДЕРЖКА И PRO ДОСТУП" : "ALCHEMIST STUDIO • SUPPORT & PRO PASS"}</div>
-      <h2 class="artcraft-soft-pro-title">${isRu ? "Поддержать развитие Alchemy Craft" : "Support Alchemy Craft & Unlock Pro"}</h2>
+      <div class="artcraft-soft-pro-badge"><span class="svg-inline-icon">${SICRAFT_SVGS.coffee}</span> ${
+      isRu ? "ALCHEMIST ROASTERY • ПОДДЕРЖКА И PRO ДОСТУП" : "ALCHEMIST ROASTERY • SUPPORT & PRO PASS"
+    }</div>
+      <h2 class="artcraft-soft-pro-title">${isRu ? "Угостить Капучино и открыть Alchemy Craft Pro" : "Treat a Cappuccino & Unlock Alchemy Craft Pro"}</h2>
       <p class="artcraft-soft-pro-sub">${
         isRu
-          ? "У меня много идей, как сделать визуальное мышление, звук и граф еще лучше. Выберите комфортный уровень поддержки или активируйте промокод в один клик."
-          : "I have many ideas on how to make visual thinking, soundscapes, and the graph studio even better. Choose a comfortable support tier or redeem a promo key in one click."
+          ? "Этот плагин создаётся с любовью за чашкой тёплого капучино. Выберите комфортный кофейный уровень поддержки или активируйте промокод в один клик."
+          : "Crafted with care over a warm cup of cappuccino. Choose a comfortable coffee support tier or redeem your promo key in one click."
       }</p>
     `;
 
-    // Segmented Mode Switcher: [ ✨ Выбрать уровень Pro ]  vs  [ 🎟️ Ввести промокод / ключ ]
+    // Segmented Mode Switcher with Vector SVG Icons (Zero Emojis)
     const tabBar = contentEl.createDiv({ cls: "artcraft-ko-tabs" });
     const tabSupport = tabBar.createEl("button", {
       cls: "artcraft-ko-tab" + (this.activeTab === "support" ? " is-active" : ""),
-      text: isRu ? "✨ Выбрать уровень поддержки" : "✨ Choose Support Tier",
     });
+    tabSupport.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.coffee}</span><span>${
+      isRu ? "Выбрать кофейный уровень" : "Choose Cappuccino Tier"
+    }</span>`;
+
     const tabPromo = tabBar.createEl("button", {
       cls: "artcraft-ko-tab" + (this.activeTab === "promo" ? " is-active" : ""),
-      text: isRu ? "🎟️ У меня есть промокод / ключ" : "🎟️ Redeem Promo / VIP Key",
     });
+    tabPromo.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.ticket}</span><span>${
+      isRu ? "У меня есть промокод / ключ" : "Redeem Promo / VIP Key"
+    }</span>`;
 
     const bodyContainer = contentEl.createDiv({ cls: "artcraft-soft-pro-body" });
 
     const tiers = {
       bronze: {
         id: "bronze",
-        name: isRu ? "Bronze Elixir" : "Bronze Elixir",
+        name: isRu ? "Тёплый Капучино" : "Warm Cappuccino",
         amount: "4.99",
         period: isRu ? "$4.99 • на 1 год" : "$4.99 • 1 Year Pass",
         svg: TIER_BRONZE_SVG,
         planKey: "1_year",
         desc: isRu
-          ? "Полный доступ ко всем Pro-функциям на 1 год (Midnight Dark Craft, 12 звуков фокуса, эквалайзер и 8-цветный граф)."
-          : "Full access to all Pro features for 1 year (Midnight Dark Craft, 12 ambient soundscapes, equalizer & 8-color graph).",
+          ? "Угостить автора чашкой свежего капучино и получить полный Pro-доступ на 1 год (Midnight Dark Craft, 12 фоновых звуков, крафтовый эквалайзер и 8-цветный граф)."
+          : "Treat the creator to a warm cappuccino and unlock all Pro features for 1 year (Midnight Dark Craft, 12 ambient soundscapes, craft equalizer & 8-color graph).",
       },
       silver: {
         id: "silver",
-        name: isRu ? "Silver Crucible" : "Silver Crucible",
+        name: isRu ? "Двойной Капучино и Кемекс" : "Double Cappuccino & Chemex",
         amount: "9.99",
         period: isRu ? "$9.99 • Навсегда (Lifetime)" : "$9.99 • Lifetime Pass",
-        badge: isRu ? "ХИТ ВЫБОРА" : "POPULAR",
+        badge: isRu ? "ЛЮБИМЫЙ БЛЕНД" : "FAVORITE BLEND",
         svg: TIER_SILVER_SVG,
         planKey: "lifetime",
         desc: isRu
-          ? "Вечная лицензия без повторных платежей. Все текущие и будущие Pro-обновления навсегда."
-          : "Lifetime license with zero recurring payments. Unlocks all current and future Pro studio upgrades forever.",
+          ? "Двойной капучино для глубокой работы: вечная лицензия без повторных платежей и все текущие и будущие Pro-обновления навсегда."
+          : "Double cappuccino for deep focus: Lifetime license with zero recurring payments and all current and future Pro studio upgrades forever.",
       },
       gold: {
         id: "gold",
-        name: isRu ? "Gold Philosopher" : "Gold Philosopher",
+        name: isRu ? "Кофейня Алхимика" : "Alchemist Coffee Roastery",
         amount: "19.00",
         period: isRu ? "$19 • Меценат + 3 ключа" : "$19 • Patron + 3 Keys",
         svg: TIER_GOLD_SVG,
         planKey: "patron_lifetime",
         desc: isRu
-          ? "Максимальная поддержка автора: вечная лицензия + 3 подарочных Pro-ключа для друзей и приоритет ваших идей."
-          : "Graciously support ongoing development: Lifetime Pro license + 3 gift keys for friends & priority feature requests.",
+          ? "Вдохновить кофейню Алхимика на новые идеи: вечная Pro-лицензия + 3 подарочных ключа для друзей и приоритет ваших пожеланий."
+          : "Inspire the Alchemist Roastery: Lifetime Pro license + 3 gift keys for friends & priority feature requests.",
       },
     };
 
     const renderVerificationBlock = (parentEl, isPromoView) => {
       const verifyBox = parentEl.createDiv({ cls: "artcraft-soft-verify-box" + (isPromoView ? " is-promo-hero" : "") });
       verifyBox.innerHTML = `
-        <div class="soft-verify-title">${
-          isPromoView
-            ? isRu
-              ? "🎟️ Мгновенная активация по промокоду или VIP-ключу"
-              : "🎟️ Instant Activation via Promo Code or VIP License Key"
-            : isRu
-            ? "Шаг 2 • Вставьте TXID перевода, ID чека @CryptoBot или ключ:"
-            : "Step 2 • Paste Transfer TXID, @CryptoBot Invoice ID, or Key:"
-        }</div>
+        <div class="soft-verify-title"><span class="svg-inline-icon">${isPromoView ? SICRAFT_SVGS.ticket : SICRAFT_SVGS.check}</span> <span>${
+        isPromoView
+          ? isRu
+            ? "Мгновенная активация по промокоду или VIP-ключу"
+            : "Instant Activation via Promo Code or VIP License Key"
+          : isRu
+          ? "Шаг 2 • Вставьте TXID перевода, ID чека @CryptoBot или ключ:"
+          : "Step 2 • Paste Transfer TXID, @CryptoBot Invoice ID, or Key:"
+      }</span></div>
         ${
           isPromoView
             ? `<p class="soft-verify-sub">${
                 isRu
-                  ? "Введите ваш промокод (например, выданный автором или полученный в сообществе) либо криптографический ключ формата ACPRO-XXXX. Никаких платежей не требуется."
+                  ? "Введите ваш промокод (выданный автором или полученный в сообществе) либо лицензионный ключ формата ACPRO-XXXX. Никаких платежей не требуется."
                   : "Enter your community promo code or cryptographic license key (ACPRO-XXXX). Instant activation with zero payment required."
               }</p>`
             : ""
@@ -4728,10 +4946,14 @@ class AlchemyCraftProModal extends Modal {
         const promoFooter = bodyContainer.createDiv({ cls: "artcraft-soft-support-row" });
         promoFooter.innerHTML = `
           <div class="soft-support-left">
-            <span>💬 ${isRu ? "Хотите получить промокод или оплатить картой напрямую?" : "Need a promo key or direct card link?"}</span>
+            <span class="svg-inline-icon">${SICRAFT_SVGS.chat}</span>
+            <span>${isRu ? "Хотите получить промокод или оплатить картой напрямую?" : "Need a promo key or direct card link?"}</span>
             <strong>@StratAlchemy</strong>
           </div>
-          <button class="soft-tg-link-btn" id="pro-promo-tg-btn">${isRu ? "Написать в Telegram ↗" : "Open Telegram ↗"}</button>
+          <button class="soft-tg-link-btn" id="pro-promo-tg-btn">
+            <span>${isRu ? "Написать в Telegram" : "Open Telegram"}</span>
+            <span class="svg-inline-icon">${SICRAFT_SVGS.external}</span>
+          </button>
         `;
         promoFooter.querySelector("#pro-promo-tg-btn")?.addEventListener("click", () => {
           openExternalUrl("https://t.me/StratAlchemy");
@@ -4739,7 +4961,7 @@ class AlchemyCraftProModal extends Modal {
         return;
       }
 
-      // TAB 1: KO-FI / ZSOLT-INSPIRED 3 TIER CARDS + CLEAN PAYMENT BAR
+      // TAB 1: KO-FI / ZSOLT-INSPIRED 3 CAPPUCCINO TIER CARDS + CLEAN PAYMENT BAR
       const tierGrid = bodyContainer.createDiv({ cls: "artcraft-ko-tier-grid" });
       Object.values(tiers).forEach((tObj) => {
         const card = tierGrid.createDiv({
@@ -4758,19 +4980,19 @@ class AlchemyCraftProModal extends Modal {
         };
       });
 
-      const activeTierObj = tiers[this.selectedTier] || tiers.bronze;
+      const activeTierObj = tiers[this.selectedTier] || tiers.silver;
 
-      // Clean Horizontal Payment Method Pills
+      // Clean Horizontal Payment Method Pills with Vector SVG Icons
       const methodsLabel = bodyContainer.createDiv({ cls: "artcraft-soft-section-lbl" });
       methodsLabel.setText(isRu ? "Способ оплаты (0% комиссия):" : "Select Payment Method (0% Fee):");
 
       const methodPills = bodyContainer.createDiv({ cls: "artcraft-soft-method-pills" });
       const methods = [
-        { id: "cryptobot", label: "✈️ @CryptoBot (Telegram)" },
-        { id: "evm", label: "🌐 Universal EVM (0x...)" },
-        { id: "bybit", label: "⚡ Bybit UID (0% Fee)" },
-        { id: "solana", label: "☀️ Solana (USDT/USDC)" },
-        { id: "trc20", label: "💎 TRON (TRC-20)" },
+        { id: "cryptobot", icon: SICRAFT_SVGS.send, label: "@CryptoBot (Telegram)" },
+        { id: "evm", icon: SICRAFT_SVGS.globe, label: "Universal EVM (0x...)" },
+        { id: "bybit", icon: SICRAFT_SVGS.zap, label: "Bybit UID (0% Fee)" },
+        { id: "solana", icon: SICRAFT_SVGS.sun, label: "Solana (USDT/USDC)" },
+        { id: "trc20", icon: SICRAFT_SVGS.shield, label: "TRON (TRC-20)" },
       ];
 
       const paymentDetailBox = bodyContainer.createDiv({ cls: "artcraft-soft-pay-detail" });
@@ -4792,10 +5014,14 @@ class AlchemyCraftProModal extends Modal {
             </div>
             <div class="artcraft-pay-cta-row">
               <button class="artcraft-pay-action-btn is-green" id="pro-create-api-invoice">
-                ✈️ ${isRu ? `Оплатить $${curAmount} в @CryptoBot` : `Pay $${curAmount} via @CryptoBot`} ↗
+                <span class="svg-inline-icon">${SICRAFT_SVGS.send}</span>
+                <span>${isRu ? `Оплатить $${curAmount} в @CryptoBot` : `Pay $${curAmount} via @CryptoBot`}</span>
+                <span class="svg-inline-icon">${SICRAFT_SVGS.external}</span>
               </button>
               <button class="artcraft-pay-action-btn is-soft" id="pro-open-cb-tg">
-                💬 ${isRu ? "Оплата картой / @StratAlchemy" : "Card Link / @StratAlchemy"} ↗
+                <span class="svg-inline-icon">${SICRAFT_SVGS.chat}</span>
+                <span>${isRu ? "Оплата картой / @StratAlchemy" : "Card Link / @StratAlchemy"}</span>
+                <span class="svg-inline-icon">${SICRAFT_SVGS.external}</span>
               </button>
             </div>
             <div class="soft-pay-muted-hint">${
@@ -4808,8 +5034,8 @@ class AlchemyCraftProModal extends Modal {
           const btnApiCb = paymentDetailBox.querySelector("#pro-create-api-invoice");
           if (btnApiCb) {
             btnApiCb.onclick = async () => {
-              const origText = btnApiCb.textContent;
-              btnApiCb.textContent = isRu ? "⏳ Открываем счет в браузере..." : "⏳ Opening Invoice in Browser...";
+              const origHtml = btnApiCb.innerHTML;
+              btnApiCb.textContent = isRu ? "Открываем счет в браузере..." : "Opening Invoice in Browser...";
               try {
                 const sbFuncUrl =
                   this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
@@ -4833,7 +5059,7 @@ class AlchemyCraftProModal extends Modal {
               } catch (e) {
                 openExternalUrl("https://t.me/send?start=IVdNOM8aeE7t");
               } finally {
-                btnApiCb.textContent = origText;
+                btnApiCb.innerHTML = origHtml;
               }
             };
           }
@@ -4869,12 +5095,16 @@ class AlchemyCraftProModal extends Modal {
           <div class="soft-pay-summary-row">
             <span class="soft-pay-tier-tag">${labelText}</span>
             <button class="soft-amount-copy-pill" id="pro-copy-amount-btn" title="Click to copy exact amount">
-              ${isRu ? "Сумма:" : "Amount:"} <strong>$${curAmount} USDT</strong> 📋
+              <span>${isRu ? "Сумма:" : "Amount:"} <strong>$${curAmount} USDT</strong></span>
+              <span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span>
             </button>
           </div>
           <div class="card-address-group">
             <input type="text" readonly class="card-address-input" id="pro-addr-val" value="${addrValue}" />
-            <button class="card-copy-btn" id="pro-copy-btn">📋 ${t("copyBtn", this.plugin)}</button>
+            <button class="card-copy-btn" id="pro-copy-btn">
+              <span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span>
+              <span>${t("copyBtn", this.plugin)}</span>
+            </button>
           </div>
           <div class="soft-pay-muted-hint">${noteText}</div>
         `;
@@ -4883,9 +5113,9 @@ class AlchemyCraftProModal extends Modal {
         if (copyBtn) {
           copyBtn.onclick = () => {
             navigator.clipboard.writeText(addrValue);
-            copyBtn.innerHTML = `✅ ${t("copiedBtn", this.plugin)}`;
+            copyBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.check}</span><span>${t("copiedBtn", this.plugin)}</span>`;
             setTimeout(() => {
-              copyBtn.innerHTML = `📋 ${t("copyBtn", this.plugin)}`;
+              copyBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span><span>${t("copyBtn", this.plugin)}</span>`;
             }, 1800);
           };
         }
@@ -4894,9 +5124,9 @@ class AlchemyCraftProModal extends Modal {
         if (copyAmountBtn) {
           copyAmountBtn.onclick = () => {
             navigator.clipboard.writeText(curAmount);
-            copyAmountBtn.innerHTML = `✅ ${curAmount} USDT`;
+            copyAmountBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.check}</span><strong>$${curAmount} USDT</strong>`;
             setTimeout(() => {
-              copyAmountBtn.innerHTML = `${isRu ? "Сумма:" : "Amount:"} <strong>$${curAmount} USDT</strong> 📋`;
+              copyAmountBtn.innerHTML = `<span>${isRu ? "Сумма:" : "Amount:"} <strong>$${curAmount} USDT</strong></span><span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span>`;
             }, 1800);
           };
         }
@@ -4905,8 +5135,8 @@ class AlchemyCraftProModal extends Modal {
       methods.forEach((m) => {
         const pill = methodPills.createEl("button", {
           cls: "artcraft-soft-method-pill" + (this.selectedNetwork === m.id ? " is-active" : ""),
-          text: m.label,
         });
+        pill.innerHTML = `<span class="svg-inline-icon">${m.icon}</span><span>${m.label}</span>`;
         pill.dataset.net = m.id;
         pill.onclick = () => renderMethodDetail(m.id);
       });
@@ -4918,10 +5148,14 @@ class AlchemyCraftProModal extends Modal {
       const supportRow = bodyContainer.createDiv({ cls: "artcraft-soft-support-row" });
       supportRow.innerHTML = `
         <div class="soft-support-left">
-          <span>💬 ${isRu ? "Вопросы по оплате или ручная выдача ключа:" : "Questions or instant manual key activation:"}</span>
+          <span class="svg-inline-icon">${SICRAFT_SVGS.chat}</span>
+          <span>${isRu ? "Вопросы по оплате или ручная выдача ключа:" : "Questions or instant manual key activation:"}</span>
           <strong>@StratAlchemy</strong>
         </div>
-        <button class="soft-tg-link-btn" id="pro-support-open">${isRu ? "Открыть в браузере / Telegram ↗" : "Open in Browser / Telegram ↗"}</button>
+        <button class="soft-tg-link-btn" id="pro-support-open">
+          <span>${isRu ? "Открыть в браузере / Telegram" : "Open in Browser / Telegram"}</span>
+          <span class="svg-inline-icon">${SICRAFT_SVGS.external}</span>
+        </button>
       `;
       supportRow.querySelector("#pro-support-open")?.addEventListener("click", () => {
         openExternalUrl("https://t.me/StratAlchemy");
@@ -4959,7 +5193,7 @@ class AlchemyCraftProModal extends Modal {
       if (resp.ok) {
         const data = await resp.json();
         if (data && data.success) {
-          new Notice(`🎉 Успешно! Активирован тариф: ${data.plan || "1_year"}`);
+          new Notice(`Успешно! Активирован тариф: ${data.plan || "1_year"}`);
           return true;
         }
       }
@@ -4967,10 +5201,9 @@ class AlchemyCraftProModal extends Modal {
       console.warn("Supabase network check skipped, using local fallback:", err);
     }
 
-    // 2. Built-in Master Promo Codes (Instant offline activation)
     // 1.5. Cryptographic SiCraft License Key Verification (Format: ACPRO-XXXX-XXXX-XXXX-XXXX)
     if (isValidSiCraftLicenseKey(rawCode)) {
-      new Notice("🔐 Cryptographic License Key Verified! Activating SiCraft Pro Pass...");
+      new Notice("Cryptographic License Key Verified! Activating Alchemy Craft Pro...");
       return true;
     }
 
@@ -4987,7 +5220,7 @@ class AlchemyCraftProModal extends Modal {
         if (cbRes.ok) {
           const d = await cbRes.json();
           if (d && d.paid) {
-            new Notice("✅ CryptoBot Invoice Confirmed via Supabase!");
+            new Notice("CryptoBot Invoice Confirmed via Supabase!");
             return true;
           }
         }
@@ -4996,13 +5229,13 @@ class AlchemyCraftProModal extends Modal {
 
     const MASTER_PROMOS = ["STRATALCHEMY", "ACPRO-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
     if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
-      new Notice("🎟️ Промокод успешно подтвержден! Активация Pro Pass...");
+      new Notice("Промокод успешно подтвержден! Активация Pro Pass...");
       return true;
     }
 
     // 3. CryptoBot Invoice ID check (e.g. IVdNOM8aeE7t or #IV69485245)
     if (rawCode.includes("IVDNOM") || rawCode.includes("69485245") || rawCode.startsWith("IV")) {
-      new Notice("✅ Чек CryptoBot принят к верификации!");
+      new Notice("Чек CryptoBot принят к верификации!");
       return true;
     }
 
@@ -5033,6 +5266,9 @@ class AlchemyCraftProModal extends Modal {
   }
 
   onClose() {
+    if (this.plugin.activeProModal === this) {
+      this.plugin.activeProModal = null;
+    }
     this.contentEl.empty();
   }
 }
@@ -5046,6 +5282,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
+    containerEl.addClass("artcraft-calm-settings-root");
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+
+    const createSectionGroup = (num, titleRu, titleEn, subRu, subEn, iconSvg) => {
+      const groupWrap = containerEl.createDiv({ cls: "artcraft-settings-group-card" });
+      const groupHead = groupWrap.createDiv({ cls: "artcraft-settings-group-head" });
+      groupHead.innerHTML = `
+        <div class="settings-group-badge-row">
+          <span class="settings-group-num">${num}</span>
+          <span class="settings-group-icon">${iconSvg}</span>
+          <span class="settings-group-title">${isRu ? titleRu : titleEn}</span>
+        </div>
+        <div class="settings-group-sub">${isRu ? subRu : subEn}</div>
+      `;
+      return groupWrap.createDiv({ cls: "artcraft-settings-group-items" });
+    };
 
     // Top Swiss Bento Studio Banner inside Settings
     const heroBanner = containerEl.createDiv({ cls: "artcraft-settings-bento-hero" });
@@ -5054,7 +5306,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         <div class="artcraft-settings-flask-box">${ALCHEMY_ICON_SVG}</div>
         <div>
           <div class="artcraft-settings-hero-title">${t("settingsTitle", this.plugin)}</div>
-          <div class="artcraft-settings-hero-sub">Author: Elyaz Aliverdiyev (@StratAlchemy) • Swiss Bento System</div>
+          <div class="artcraft-settings-hero-sub">Author: Elyaz Aliverdiyev (@StratAlchemy) • Swiss Bento Craft System</div>
         </div>
       </div>
       <div class="artcraft-settings-hero-actions">
@@ -5065,8 +5317,19 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       window.open("obsidian://show-plugin?id=artcraft-reader");
     });
 
-    // 1. 6-Language Global Selector
-    new Setting(containerEl)
+    // =========================================================================
+    // SECTION 01: ТИПОГРАФИКА, ЧИТАЕМОСТЬ И ШАПКА ЗАМЕТКИ
+    // =========================================================================
+    const secReadability = createSectionGroup(
+      "01",
+      "Читаемость, Типографика и Шапка заметки",
+      "Readability, Typography & Note Header",
+      "Главные настройки журнальной вёрстки Swiss Bento, языка интерфейса и индикаторов прогресса.",
+      "Core Swiss Bento editorial typography, interface language, and note header indicators.",
+      SICRAFT_SVGS.book
+    );
+
+    new Setting(secReadability)
       .setName(t("langName", this.plugin))
       .setDesc(t("langDesc", this.plugin))
       .addDropdown((drop) =>
@@ -5088,8 +5351,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       );
 
-    // 2. Swiss Bento Theme Toggle
-    new Setting(containerEl)
+    new Setting(secReadability)
       .setName(t("themeName", this.plugin))
       .setDesc(t("uiTip", this.plugin))
       .addToggle((toggle) =>
@@ -5101,26 +5363,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 2.1 Swiss Bento Graph Studio Toggle + Auto-Color Button
-    new Setting(containerEl)
-      .setName(t("bentoGraphName", this.plugin))
-      .setDesc(t("bentoGraphDesc", this.plugin))
-      .addButton((btn) =>
-        btn.setButtonText(t("graphColorizeBtn", this.plugin)).onClick(() => {
-          this.plugin.applyBentoGraphColorGroups(false);
-        })
-      )
-      .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.enableBentoGraph !== false).onChange(async (val) => {
-          this.plugin.settings.enableBentoGraph = val;
-          await this.plugin.saveSettings();
-          this.plugin.applyBodyClasses();
-          this.plugin.injectGraphViewHUD();
-        })
-      );
-
-    // 2.2 Task Progress Bar
-    new Setting(containerEl)
+    new Setting(secReadability)
       .setName(t("taskBarName", this.plugin))
       .setDesc(t("taskBarDesc", this.plugin))
       .addToggle((toggle) =>
@@ -5131,8 +5374,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 2.3 Note Header Badge Tag
-    new Setting(containerEl)
+    new Setting(secReadability)
+      .setName(isRu ? "Капсула времени чтения и объёма слов" : "Live Reading Time & Word Count Capsule")
+      .setDesc(
+        isRu
+          ? "Показывает аккуратную крафтовую капсулу (~3 мин чтения • 640 слов) рядом с прогрессом задач в шапке заметки."
+          : "Displays a calm craft pill (~3 min read • 640 words) alongside the task progress bar in the note header."
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.showReadingStats !== false).onChange(async (val) => {
+          this.plugin.settings.showReadingStats = val;
+          await this.plugin.saveSettings();
+          this.plugin.updateTaskProgressBar();
+        })
+      );
+
+    new Setting(secReadability)
       .setName(t("headerBadgeName", this.plugin))
       .setDesc(t("headerBadgeDesc", this.plugin))
       .addText((text) =>
@@ -5150,28 +5407,100 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       );
 
-    // 3. Ambient Focus Soundscape (12 iOS-Inspired Background Sounds + Studio Modal)
-    new Setting(containerEl)
-      .setName(t("ambientName", this.plugin))
-      .setDesc(t("ambientDesc", this.plugin))
+    new Setting(secReadability)
+      .setName(t("numBadgeSetName", this.plugin))
+      .setDesc(t("numBadgeSetDesc", this.plugin))
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.colorizeNumbers).onChange(async (value) => {
+          this.plugin.settings.colorizeNumbers = value;
+          await this.plugin.saveSettings();
+        })
+      );
+
+    // =========================================================================
+    // SECTION 02: КРАФТОВЫЙ ЭКВАЛАЙЗЕР И ФОНОВЫЕ ЗВУКИ
+    // =========================================================================
+    const secSonic = createSectionGroup(
+      "02",
+      "Крафтовый Эквалайзер и Фоновые Звуки (Sonic Studio)",
+      "Craft Equalizer & Ambient Soundscapes",
+      "6 крафтовых визуализаций эквалайзера, системный звук ПК, скролл громкости колёсиком мыши и 12 звуков фокуса.",
+      "6 craft equalizer styles, PC desktop audio capture, mouse-wheel volume scroll, and 12 focus soundscapes.",
+      SICRAFT_SVGS.sliders
+    );
+
+    new Setting(secSonic)
+      .setName(t("eqSetName", this.plugin))
+      .setDesc(t("eqSetDesc", this.plugin))
+      .addDropdown((drop) =>
+        drop
+          .addOption("craft", isRu ? "01 // Крафтовый Сейсмограф Чернил" : "01 // Craft Ink Seismograph")
+          .addOption("dna", isRu ? "02 // Квантовая Матрица (Quantum Matrix)" : "02 // Quantum Matrix")
+          .addOption("bars", isRu ? "03 // Ризограф-Штампы (Craft Risograph)" : "03 // Craft Risograph Stamps")
+          .addOption("wave", isRu ? "04 // Шёлковая Лента (Liquid Ribbon)" : "04 // Liquid Silk Ribbon")
+          .addOption("orb", isRu ? "05 // Солнечная Сфера (Supernova Orb)" : "05 // Supernova Polar Orb")
+          .addOption("ferro", isRu ? "06 // Феррофлюид Алхимика (Ferrofluid)" : "06 // Alchemy Ferrofluid Orbs")
+          .setValue(this.plugin.settings.eqMode || "craft")
+          .onChange(async (val) => {
+            this.plugin.settings.eqMode = val;
+            await this.plugin.saveSettings();
+          })
+      )
       .addButton((btn) =>
-        btn.setButtonText((this.plugin.settings.uiLanguage || "en") === "ru" ? "🎛️ Открыть Аудио-Пульт" : "🎛️ Open Sonic Studio").onClick(() => {
-          new AlchemySonicStudioModal(this.app, this.plugin).open();
+        btn.setButtonText(isRu ? "Открыть Аудио-Пульт" : "Open Sonic Studio").onClick(() => {
+          this.plugin.openSonicStudioModal();
         })
       )
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.showEqualizer !== false).onChange(async (val) => {
+          this.plugin.settings.showEqualizer = val;
+          await this.plugin.saveSettings();
+          this.plugin.createFloatingDock();
+        })
+      );
+
+    new Setting(secSonic)
+      .setName(t("ambientName", this.plugin))
+      .setDesc(t("ambientDesc", this.plugin))
       .addDropdown((drop) => {
-        const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
         drop.addOption("off", isRu ? "Выкл (Off)" : "Off");
         AMBIENT_SOUNDSCAPES.forEach((snd) => {
-          drop.addOption(snd.id, `${snd.icon} ${isRu ? snd.ru : snd.en}`);
+          drop.addOption(snd.id, isRu ? snd.ru : snd.en);
         });
         drop.setValue(this.plugin.settings.ambientSound || "off").onChange(async (val) => {
           await this.plugin.setAmbientSound(val);
         });
       });
 
-    // 4. Pomodoro Focus Duration
-    new Setting(containerEl)
+    new Setting(secSonic)
+      .setName(t("keySoundSetName", this.plugin))
+      .setDesc(t("keySoundSetDesc", this.plugin))
+      .addDropdown((drop) =>
+        drop
+          .addOption("off", isRu ? "Выкл (Off)" : "Off")
+          .addOption("thock", "Deep Mechanical Thock")
+          .addOption("typewriter", "Vintage Swiss Typewriter")
+          .setValue(this.plugin.settings.tactileTypingSound || "off")
+          .onChange(async (val) => {
+            this.plugin.settings.tactileTypingSound = val;
+            await this.plugin.saveSettings();
+            if (val !== "off") this.plugin.playTactileKeySound("a");
+          })
+      );
+
+    // =========================================================================
+    // SECTION 03: ФОКУС, ПОМОДОРО И УМНАЯ ЛАМПА
+    // =========================================================================
+    const secFocus = createSectionGroup(
+      "03",
+      "Фокус, Помодоро и Умная Лампа",
+      "Focus, Pomodoro & Smart LED Lamp",
+      "Таймер глубокой работы, авто-затухание звука на перерыве, тёплая настольная лампа и чистка ИИ-символов.",
+      "Deep work timer, automatic audio fade on break, warm desk lamp, and AI watermark cleaner.",
+      SICRAFT_SVGS.lamp
+    );
+
+    new Setting(secFocus)
       .setName(t("pomoDurName", this.plugin))
       .setDesc(t("pomoDurDesc", this.plugin))
       .addDropdown((drop) =>
@@ -5189,25 +5518,30 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       );
 
-    // 5. AI Cleaner Toggle
-    new Setting(containerEl)
-      .setName(t("aiCleanSetName", this.plugin))
-      .setDesc(t("aiCleanTip", this.plugin))
+    new Setting(secFocus)
+      .setName(isRu ? "Аудио-линковка с таймером Помодоро" : "Pomodoro Audio Link (Auto-Fade on Break)")
+      .setDesc(
+        isRu
+          ? "Плавно приглушает фоновый шум или музыку, когда начинается 5-минутный перерыв, и возвращает громкость при старте нового спринта."
+          : "Smoothly fades down background soundscapes or music during 5-minute breaks and restores volume when a new focus sprint begins."
+      )
       .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.enableAiCleaner).onChange(async (val) => {
-          this.plugin.settings.enableAiCleaner = val;
+        toggle.setValue(this.plugin.settings.pomoAudioLink !== false).onChange(async (val) => {
+          this.plugin.settings.pomoAudioLink = val;
           await this.plugin.saveSettings();
-          this.plugin.createFloatingDock();
         })
       );
 
-    // 5.1 Smart LED Cursor Lamp (2700K–6500K + Brightness + Room Dimmer)
-    new Setting(containerEl)
+    new Setting(secFocus)
       .setName(t("lampSetName", this.plugin))
       .setDesc(t("lampSetDesc", this.plugin))
       .addButton((btn) =>
         btn.setButtonText(t("lampConfigBtn", this.plugin)).onClick(() => {
-          new SmartLedLampModal(this.app, this.plugin).open();
+          if (this.plugin.activeLampModal) {
+            this.plugin.activeLampModal.close();
+          } else {
+            new SmartLedLampModal(this.app, this.plugin).open();
+          }
         })
       )
       .addToggle((toggle) =>
@@ -5219,56 +5553,19 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 5.15 Tactile Mechanical Keystroke Audio (ASMR Thock / Typewriter)
-    new Setting(containerEl)
-      .setName(t("keySoundSetName", this.plugin))
-      .setDesc(t("keySoundSetDesc", this.plugin))
-      .addDropdown((drop) =>
-        drop
-          .addOption("off", "Off")
-          .addOption("thock", "Deep Mechanical Thock")
-          .addOption("typewriter", "Vintage Swiss Typewriter")
-          .setValue(this.plugin.settings.tactileTypingSound || "off")
-          .onChange(async (val) => {
-            this.plugin.settings.tactileTypingSound = val;
-            await this.plugin.saveSettings();
-            if (val !== "off") this.plugin.playTactileKeySound("a");
-          })
-      );
-
-    // 5.18 Live 6-Mode Sonic Equalizer & Desktop Audio Sync
-    new Setting(containerEl)
-      .setName(t("eqSetName", this.plugin))
-      .setDesc(t("eqSetDesc", this.plugin))
-      .addDropdown((drop) =>
-        drop
-          .addOption("bars", t("audioModeBars", this.plugin))
-          .addOption("wave", t("audioModeWave", this.plugin))
-          .addOption("orb", t("audioModeOrb", this.plugin))
-          .addOption("dna", t("audioModeDna", this.plugin))
-          .addOption("craft", "05 // Craft Ink Seismograph")
-          .addOption("ferro", "06 // Alchemy Ferrofluid Orbs")
-          .setValue(this.plugin.settings.eqMode || "bars")
-          .onChange(async (val) => {
-            this.plugin.settings.eqMode = val;
-            await this.plugin.saveSettings();
-          })
-      )
-      .addButton((btn) =>
-        btn.setButtonText(t("eqSyncBtn", this.plugin)).onClick(() => {
-          new AlchemySonicStudioModal(this.app, this.plugin).open();
-        })
-      )
+    new Setting(secFocus)
+      .setName(t("sentFocusSetName", this.plugin))
+      .setDesc(t("focusTip", this.plugin))
       .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.showEqualizer !== false).onChange(async (val) => {
-          this.plugin.settings.showEqualizer = val;
+        toggle.setValue(this.plugin.settings.sentenceFocus).onChange(async (value) => {
+          this.plugin.settings.sentenceFocus = value;
           await this.plugin.saveSettings();
-          this.plugin.createFloatingDock();
+          this.plugin.applyBodyClasses();
+          this.plugin.updateDockUI();
         })
       );
 
-    // 5.2 Spotlight Focus Reading Dimmer
-    new Setting(containerEl)
+    new Setting(secFocus)
       .setName(t("spotlightSetName", this.plugin))
       .setDesc(t("spotlightSetDesc", this.plugin))
       .addToggle((toggle) =>
@@ -5279,26 +5576,43 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 6. Numbered Badges & Sentence Focus
-    new Setting(containerEl)
-      .setName(t("numBadgeSetName", this.plugin))
-      .setDesc(t("numBadgeSetDesc", this.plugin))
+    new Setting(secFocus)
+      .setName(t("aiCleanSetName", this.plugin))
+      .setDesc(t("aiCleanTip", this.plugin))
       .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.colorizeNumbers).onChange(async (value) => {
-          this.plugin.settings.colorizeNumbers = value;
+        toggle.setValue(this.plugin.settings.enableAiCleaner).onChange(async (val) => {
+          this.plugin.settings.enableAiCleaner = val;
           await this.plugin.saveSettings();
+          this.plugin.createFloatingDock();
         })
       );
 
-    new Setting(containerEl)
-      .setName(t("sentFocusSetName", this.plugin))
-      .setDesc(t("focusTip", this.plugin))
+    // =========================================================================
+    // SECTION 04: SWISS BENTO ГРАФ ЗНАНИЙ
+    // =========================================================================
+    const secGraph = createSectionGroup(
+      "04",
+      "Swiss Bento Граф Знаний и PNG-Экспорт",
+      "Swiss Bento Knowledge Graph & PNG Snapshot",
+      "8-цветная палитра папок, радар фокуса и сохранение снимка графа в PNG в 1 клик.",
+      "8-color folder palette, focus radar, and 1-click high-DPI PNG graph snapshot.",
+      SICRAFT_SVGS.camera
+    );
+
+    new Setting(secGraph)
+      .setName(t("bentoGraphName", this.plugin))
+      .setDesc(t("bentoGraphDesc", this.plugin))
+      .addButton((btn) =>
+        btn.setButtonText(t("graphColorizeBtn", this.plugin)).onClick(() => {
+          this.plugin.applyBentoGraphColorGroups(false);
+        })
+      )
       .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.sentenceFocus).onChange(async (value) => {
-          this.plugin.settings.sentenceFocus = value;
+        toggle.setValue(this.plugin.settings.enableBentoGraph !== false).onChange(async (val) => {
+          this.plugin.settings.enableBentoGraph = val;
           await this.plugin.saveSettings();
           this.plugin.applyBodyClasses();
-          this.plugin.updateDockUI();
+          this.plugin.injectGraphViewHUD();
         })
       );
 
@@ -5328,7 +5642,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     `;
 
     // --- PRO SECTION ---
-    containerEl.createEl("h3", { text: "Alchemy Craft Pro" });
+    containerEl.createEl("h3", { text: "Alchemy Craft Pro", cls: "artcraft-settings-pro-heading" });
 
     if (this.plugin.settings.isPro) {
       const activeCard = containerEl.createDiv({ cls: "artcraft-pro-active-box" });
@@ -5358,7 +5672,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       buyCard.innerHTML = `
         <div class="buy-head">
           <span class="buy-badge">${t("proBuyCardBadge", this.plugin)}</span>
-          <span class="buy-price">$4.99 / yr</span>
+          <span class="buy-price">$4.99 / yr • $9.99 Lifetime</span>
         </div>
         <h4>${t("proBuyCardTitle", this.plugin)}</h4>
         <ul class="buy-perks">
@@ -5371,24 +5685,28 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
       const btnRow = buyCard.createDiv({ cls: "artcraft-buy-btn-row" });
       const buyBtn = btnRow.createEl("button", {
-        text: t("getProBtn", this.plugin),
         cls: "artcraft-open-modal-btn",
       });
+      buyBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.coffee}</span><span>${
+        isRu ? "Угостить Капучино / Открыть Pro" : "Treat a Cappuccino / Get Pro"
+      }</span>`;
       buyBtn.onclick = () => {
+        if (this.plugin.activeProModal) this.plugin.activeProModal.close();
         new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
       };
       const promoQuickBtn = btnRow.createEl("button", {
-        text: (this.plugin.settings.uiLanguage || "en") === "ru" ? "🎟️ Ввести Промокод / Ключ" : "🎟️ Redeem Promo / Key",
         cls: "artcraft-open-promo-btn",
       });
+      promoQuickBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.ticket}</span><span>${
+        isRu ? "Ввести Промокод / Ключ" : "Redeem Promo / Key"
+      }</span>`;
       promoQuickBtn.onclick = () => {
+        if (this.plugin.activeProModal) this.plugin.activeProModal.close();
         new AlchemyCraftProModal(this.app, this.plugin, "promo").open();
       };
     }
 
     // --- GLOBAL SUPPORT & CHECKOUT ---
-    containerEl.createEl("h3", { text: t("supportHeading", this.plugin) });
-
     const supportSetting = new Setting(containerEl)
       .setName(t("supportSetName", this.plugin))
       .setDesc(t("supportSetDesc", this.plugin))
@@ -5397,26 +5715,29 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           .setButtonText("0% Fee EVM / Bybit UID")
           .setCta()
           .onClick(() => {
+            if (this.plugin.activeProModal) this.plugin.activeProModal.close();
             new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
           });
       })
       .addButton((btn) => {
-        btn.setButtonText("🎟️ Promo / VIP Key").onClick(() => {
+        btn.setButtonText("Promo / VIP Key").onClick(() => {
+          if (this.plugin.activeProModal) this.plugin.activeProModal.close();
           new AlchemyCraftProModal(this.app, this.plugin, "promo").open();
         });
       })
       .addButton((btn) => {
         btn.setButtonText("@CryptoBot (USDT/TON)").onClick(() => {
+          if (this.plugin.activeProModal) this.plugin.activeProModal.close();
           new AlchemyCraftProModal(this.app, this.plugin, "cryptobot").open();
         });
       })
       .addButton((btn) => {
-        btn.setButtonText("Telegram (@StratAlchemy) ↗").onClick(() => {
+        btn.setButtonText("Telegram (@StratAlchemy)").onClick(() => {
           openExternalUrl("https://t.me/StratAlchemy");
         });
       })
       .addButton((btn) => {
-        btn.setButtonText("GitHub Star ↗").onClick(() => {
+        btn.setButtonText("GitHub Star").onClick(() => {
           openExternalUrl("https://github.com/elyazaliverdiyev/alchemy-craft");
         });
       });
