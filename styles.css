@@ -2907,3 +2907,654 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   border-color: #374151 !important;
 }
 
+/* ==========================================================================
+   10. SONIC & AMBIENT STUDIO MODAL (PLAYER, SEEK BAR, 6 MODES, 12 iOS SOUNDS)
+   ========================================================================== */
+.artcraft-sonic-modal-root {
+  padding: 6px 4px !important;
+  max-width: 580px;
+}
+
+.artcraft-sonic-header {
+  margin-bottom: 14px;
+}
+
+.artcraft-sonic-badge {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  background: #111111;
+  color: #FFFFFF;
+  padding: 3px 8px;
+  border-radius: 5px;
+  margin-bottom: 6px;
+}
+
+.artcraft-sonic-title {
+  margin: 0 0 4px 0 !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  color: #111111;
+}
+
+.artcraft-sonic-sub {
+  margin: 0 !important;
+  font-size: 12.5px !important;
+  color: #6B7280;
+  line-height: 1.45;
+}
+
+.artcraft-sonic-player-card {
+  background: #F9F8F5;
+  border: 1.5px solid #E5E3DC;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sonic-player-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sonic-play-btn {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  background: #69BD28 !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #111111 !important;
+  box-shadow: 0 2px 0 #111111 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  flex-shrink: 0;
+}
+
+.sonic-play-btn:hover {
+  background: #5AA620 !important;
+}
+
+.sonic-track-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.sonic-track-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sonic-track-time {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #6B7280;
+  margin-top: 2px;
+}
+
+.sonic-load-btn {
+  background: #FFFFFF !important;
+  color: #111111 !important;
+  border: 1.5px solid #111111 !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 0 #111111 !important;
+  cursor: pointer !important;
+}
+
+.sonic-seek-row,
+.sonic-vol-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sonic-seek-slider,
+.sonic-vol-slider {
+  flex: 1;
+  accent-color: #69BD28;
+  cursor: pointer;
+}
+
+.sonic-vol-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4B5563;
+  min-width: 90px;
+}
+
+.sonic-vol-val {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111111;
+  min-width: 36px;
+  text-align: right;
+}
+
+.artcraft-sonic-source-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.sonic-src-btn {
+  flex: 1;
+  min-width: 140px;
+  background: #FFFFFF !important;
+  color: #1F2937 !important;
+  border: 1.5px solid #D1D5DB !important;
+  border-radius: 8px !important;
+  padding: 7px 10px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.14s ease !important;
+}
+
+.sonic-src-btn:hover {
+  border-color: #111111 !important;
+  background: #F9FAFB !important;
+}
+
+.sonic-src-btn.is-active {
+  background: #ECFDF5 !important;
+  border-color: #10B981 !important;
+  color: #065F46 !important;
+  font-weight: 700 !important;
+}
+
+.sonic-src-btn.is-stop {
+  flex: 0 0 auto;
+  min-width: 80px;
+  color: #DC2626 !important;
+}
+
+.artcraft-sonic-sec-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6B7280;
+  margin: 10px 0 8px 0;
+}
+
+.artcraft-sonic-modes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.sonic-mode-tile {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid #E5E7EB !important;
+  border-radius: 8px !important;
+  padding: 8px 10px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  cursor: pointer !important;
+  text-align: left !important;
+}
+
+.sonic-mode-tile:hover {
+  border-color: #9CA3AF !important;
+}
+
+.sonic-mode-tile.is-selected {
+  background: #111111 !important;
+  color: #FFFFFF !important;
+  border-color: #111111 !important;
+}
+
+.sonic-mode-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.artcraft-sonic-sounds-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.sonic-sound-tile {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #F9F8F5 !important;
+  border: 1.5px solid #E5E3DC !important;
+  border-radius: 9px !important;
+  padding: 8px 9px !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.14s ease !important;
+}
+
+.sonic-sound-tile:hover {
+  border-color: #9CA3AF !important;
+  background: #FFFFFF !important;
+}
+
+.sonic-sound-tile.is-selected {
+  background: #ECFDF5 !important;
+  border-color: #10B981 !important;
+  box-shadow: 0 2px 0 #10B981 !important;
+}
+
+.sonic-sound-emoji {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.sonic-sound-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sonic-sound-info strong {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #111111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sonic-sound-info span {
+  font-size: 9.5px;
+  color: #6B7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   11. SOFT, CALM, ZERO-CLUTTER KO-FI / ZSOLT-INSPIRED PRO & PROMO MODAL
+   ========================================================================== */
+.artcraft-pro-modal-root {
+  max-width: 620px !important;
+  padding: 6px 4px !important;
+}
+
+.artcraft-soft-pro-header {
+  text-align: center;
+  margin-bottom: 14px;
+  padding: 4px 10px;
+}
+
+.artcraft-soft-pro-badge {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #4B5563;
+  background: #F3F2EE;
+  border: 1px solid #E5E3DC;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.artcraft-soft-pro-title {
+  margin: 0 0 6px 0 !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #1F2937 !important;
+  letter-spacing: -0.01em;
+}
+
+.artcraft-soft-pro-sub {
+  margin: 0 auto !important;
+  max-width: 520px;
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
+  color: #78756E !important;
+  font-weight: 400 !important;
+}
+
+/* Segmented Switcher (Support Tiers vs Promo Key) */
+.artcraft-ko-tabs {
+  display: flex;
+  background: #F3F2EE;
+  border: 1px solid #E5E3DC;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.artcraft-ko-tab {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 7px !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #6B7280 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.artcraft-ko-tab:hover {
+  color: #1F2937 !important;
+}
+
+.artcraft-ko-tab.is-active {
+  background: #FFFFFF !important;
+  color: #111111 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 3 Illustrated Ko-fi / Zsolt Tier Cards */
+.artcraft-ko-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.artcraft-ko-tier-card {
+  position: relative;
+  background: #FAF9F6;
+  border: 1.5px solid #E6E4DD;
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.artcraft-ko-tier-card:hover {
+  border-color: #C7C4B8;
+  background: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.artcraft-ko-tier-card.is-selected {
+  background: #FFFFFF;
+  border-color: #69BD28;
+  box-shadow: 0 4px 14px rgba(105, 189, 40, 0.14);
+}
+
+.ko-tier-popular {
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  background: #69BD28;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.ko-tier-art {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.ko-tier-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1F2937;
+  margin-bottom: 2px;
+}
+
+.ko-tier-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #16A34A;
+  margin-bottom: 6px;
+}
+
+.ko-tier-desc {
+  margin: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  color: #78756E !important;
+}
+
+/* Soft Payment Method Pills */
+.artcraft-soft-section-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: #78756E;
+  margin-bottom: 6px;
+}
+
+.artcraft-soft-method-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.artcraft-soft-method-pill {
+  background: #FAF9F6 !important;
+  border: 1px solid #E5E3DC !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: #4B5563 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: all 0.14s ease !important;
+}
+
+.artcraft-soft-method-pill:hover {
+  border-color: #9CA3AF !important;
+  color: #111111 !important;
+}
+
+.artcraft-soft-method-pill.is-active {
+  background: #1F2937 !important;
+  color: #FFFFFF !important;
+  border-color: #1F2937 !important;
+}
+
+.artcraft-soft-pay-detail {
+  background: #FAF9F6;
+  border: 1px solid #E5E3DC;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.soft-pay-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.soft-pay-tier-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.soft-pay-direct-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #059669;
+  background: #ECFDF5;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.soft-amount-copy-pill {
+  background: #ECFDF5 !important;
+  color: #065F46 !important;
+  border: 1px solid #A7F3D0 !important;
+  border-radius: 7px !important;
+  padding: 3px 9px !important;
+  font-size: 11.5px !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.soft-pay-muted-hint {
+  margin-top: 8px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #8A867E;
+}
+
+.artcraft-pay-action-btn.is-soft {
+  background: #FFFFFF !important;
+  color: #374151 !important;
+  border: 1px solid #D1D5DB !important;
+  box-shadow: none !important;
+}
+
+.artcraft-pay-action-btn.is-soft:hover {
+  background: #F3F4F6 !important;
+}
+
+/* Soft Verification & Dedicated Promo View */
+.artcraft-soft-verify-box {
+  background: #FFFFFF;
+  border: 1px solid #E5E3DC;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.artcraft-soft-verify-box.is-promo-hero {
+  background: #FAF9F6;
+  border: 1.5px solid #D6D3C9;
+  padding: 18px 16px;
+}
+
+.soft-verify-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.soft-verify-sub {
+  margin: 0 0 12px 0 !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  color: #78756E !important;
+}
+
+.soft-verify-row {
+  display: flex;
+  gap: 8px;
+}
+
+.soft-input {
+  border: 1px solid #D1D5DB !important;
+  background: #FFFFFF !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+}
+
+.soft-btn {
+  background: #1F2937 !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 700 !important;
+}
+
+.artcraft-soft-support-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #F9F8F5;
+  border: 1px solid #EAE8E1;
+  border-radius: 10px;
+  font-size: 11.5px;
+  color: #6B7280;
+}
+
+.soft-support-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.soft-tg-link-btn {
+  background: #FFFFFF !important;
+  color: #2563EB !important;
+  border: 1px solid #BFDBFE !important;
+  border-radius: 7px !important;
+  padding: 5px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.soft-tg-link-btn:hover {
+  background: #EFF6FF !important;
+}
+
+.artcraft-open-promo-btn {
+  background: #FAF9F6 !important;
+  color: #374151 !important;
+  border: 1.5px solid #D1D5DB !important;
+  border-radius: 8px !important;
+  padding: 8px 14px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.artcraft-open-promo-btn:hover {
+  border-color: #111111 !important;
+  background: #FFFFFF !important;
+}
+
+@media (max-width: 640px) {
+  .artcraft-ko-tier-grid,
+  .artcraft-sonic-modes-grid,
+  .artcraft-sonic-sounds-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .soft-verify-row {
+    flex-direction: column;
+  }
+}
+
+

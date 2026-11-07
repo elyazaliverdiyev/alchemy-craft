@@ -30,7 +30,9 @@ const DEFAULT_SETTINGS = {
   lampCustomColor: "#F59E0B",
   tactileTypingSound: "off", // "off" | "thock" | "typewriter"
   showEqualizer: true,
-  eqMode: "bars", // "bars" | "wave" | "orb" | "dna"
+  eqMode: "bars", // "bars" | "wave" | "orb" | "dna" | "craft" | "ferro"
+  audioVolume: 75, // 0..100%
+  readingRuler: false,
   supabaseFunctionUrl: "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay",
   spotlightFocus: false,
   enableBentoGraph: true,
@@ -87,8 +89,54 @@ const SICRAFT_SVGS = {
   eqBars: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="12"/><line x1="9" y1="20" x2="9" y2="6"/><line x1="14" y1="20" x2="14" y2="10"/><line x1="19" y1="20" x2="19" y2="4"/></svg>`,
   eqWave: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-4 5-2"/></svg>`,
   eqOrb: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>`,
-  eqMatrix: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>`
+  eqMatrix: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>`,
+  eqCraft: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c3 0 4-6 7-6s4 8 7 8 4-5 6-5"/><path d="M2 19c3 0 4-4 7-4s4 5 7 5 4-3 6-3" opacity="0.6"/></svg>`,
+  eqFerro: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="12" r="4.5"/><circle cx="15.5" cy="12" r="3.5"/><path d="M12 9.5c1 1.5 1 3.5 0 5"/></svg>`,
+  play: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 4 20 12 6 20 6 4"/></svg>`,
+  pause: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`
 };
+
+// Always open external URLs in the user's default OS browser (Chrome/Safari/Edge/Telegram Desktop), bypassing Obsidian's internal Web Viewer!
+function openExternalUrl(url) {
+  if (!url) return;
+  try {
+    const electron = window.require ? window.require("electron") : require("electron");
+    if (electron && electron.shell && typeof electron.shell.openExternal === "function") {
+      electron.shell.openExternal(url);
+      return;
+    }
+  } catch (e) {}
+  try {
+    window.open(url, "_external");
+  } catch (e2) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+}
+
+// Hand-crafted sketchy SVG tier illustrations (inspired by Zsolt's artistic Ko-fi tiers)
+const TIER_BRONZE_SVG = `<svg viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
+  <ellipse cx="60" cy="41" rx="34" ry="4" fill="#E6E2D8"/>
+  <path d="M46 10H74M52 10V18L39 35C37.5 37 39 40 41.5 40H78.5C81 40 82.5 37 81 35L68 18V10" stroke="#1F2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M42 33C49 30 55 35 61 32C67 29 73 34 78 33L79 39H41L42 33Z" fill="#D97706" fill-opacity="0.85"/>
+  <circle cx="55" cy="27" r="2" fill="#FDE68A"/>
+  <circle cx="64" cy="23" r="1.5" fill="#FDE68A"/>
+</svg>`;
+
+const TIER_SILVER_SVG = `<svg viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
+  <ellipse cx="60" cy="41" rx="38" ry="4" fill="#E6E2D8"/>
+  <path d="M60 6L76 18L68 39H52L44 18L60 6Z" fill="#10B981" fill-opacity="0.18" stroke="#1F2937" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M60 6L68 39M60 6L52 39M44 18H76" stroke="#10B981" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="60" cy="18" r="3" fill="#10B981"/>
+  <path d="M32 14L35 17M88 14L85 17M60 2V4" stroke="#69BD28" stroke-width="2" stroke-linecap="round"/>
+</svg>`;
+
+const TIER_GOLD_SVG = `<svg viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
+  <ellipse cx="60" cy="41" rx="40" ry="4" fill="#E6E2D8"/>
+  <polygon points="60,5 79,16 72,39 48,39 41,16" fill="#F59E0B" fill-opacity="0.22" stroke="#1F2937" stroke-width="2" stroke-linejoin="round"/>
+  <polygon points="60,11 71,19 67,34 53,34 49,19" fill="#F59E0B" fill-opacity="0.65"/>
+  <circle cx="60" cy="23" r="3.5" fill="#FFFBEB"/>
+  <path d="M29 20L34 22M91 20L86 22M60 1V3" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+</svg>`;
 
 function registerSicraftMenuIcons() {
   if (typeof addIcon !== "function") return;
@@ -1171,9 +1219,10 @@ class SmartLedLampModal extends Modal {
             <strong id="led-rad-val">${s.lampRadius || 310} px</strong>
           </div>
           <input type="range" id="led-rad-slider" min="140" max="600" value="${s.lampRadius || 310}" class="sicraft-led-slider" />
-          <div class="sicraft-kelvin-presets" style="margin-top:8px; grid-template-columns: 1fr 1fr;">
+          <div class="sicraft-kelvin-presets" style="margin-top:8px; grid-template-columns: 1fr 1fr 1fr;">
             <button data-shape="radial" class="sicraft-shape-btn ${(s.lampShape || "radial") === "radial" ? "is-active" : ""}">${t("ledShapeRadial", this.plugin)}</button>
             <button data-shape="deskbar" class="sicraft-shape-btn ${s.lampShape === "deskbar" ? "is-active" : ""}">${t("ledShapeBar", this.plugin)}</button>
+            <button data-shape="ruler" class="sicraft-shape-btn ${s.lampShape === "ruler" ? "is-active" : ""}">${(s.uiLanguage || "en") === "ru" ? "Линейка чтения" : "Reading Ruler"}</button>
           </div>
         </div>
       </div>
@@ -1249,6 +1298,240 @@ class SmartLedLampModal extends Modal {
     });
   }
   onClose() {
+    this.contentEl.empty();
+  }
+}
+
+const AMBIENT_SOUNDSCAPES = [
+  { id: "balanced", ru: "Сбалансированный шум", en: "Balanced Noise", subRu: "Мягкий спектр iOS", subEn: "iOS Warm Pink Spectrum", icon: "〰️" },
+  { id: "bright", ru: "Светлый шум", en: "Bright Noise", subRu: "Воздушный высокий тон", subEn: "Crisp Airy Highs", icon: "✨" },
+  { id: "brown", ru: "Тёмный шум", en: "Dark Brown Noise", subRu: "Глубокий бас-фильтр", subEn: "Deep Sub-Bass Shield", icon: "🌑" },
+  { id: "ocean", ru: "Океан", en: "Ocean Waves", subRu: "Прибой и ритм волн", subEn: "Rhythmic Surf Swell", icon: "🌊" },
+  { id: "rain", ru: "Дождь", en: "Soft Rain", subRu: "Дождь по бумаге", subEn: "Gentle Rain on Paper", icon: "🌧️" },
+  { id: "rain_roof", ru: "Дождь на крыше", en: "Rain on Roof", subRu: "Уютный чердак", subEn: "Warm Attic Patter", icon: "🏠" },
+  { id: "stream", ru: "Ручей", en: "Forest Stream", subRu: "Лесной водный поток", subEn: "Babbling Brook", icon: "🏞️" },
+  { id: "night", ru: "Тихая ночь", en: "Quiet Night", subRu: "Ночной воздух и сверчки", subEn: "Nocturnal Air & Crickets", icon: "🌙" },
+  { id: "fire", ru: "Огонь", en: "Cozy Fireplace", subRu: "Треск углей в камине", subEn: "Crackling Hearth", icon: "🔥" },
+  { id: "train", ru: "Поезд", en: "Night Train", subRu: "Спальный вагон и рельсы", subEn: "Rhythmic Rail Cadence", icon: "🚆" },
+  { id: "cafe", ru: "Болтовня (Кафе)", en: "Coffeehouse Murmur", subRu: "Мягкий гул кофейни", subEn: "Warm Room Ambience", icon: "☕" },
+  { id: "gamma40", ru: "40Hz Гамма-фокус", en: "40Hz Gamma Focus", subRu: "Нейро-синхронизация", subEn: "Binaural Deep Work", icon: "🧠" }
+];
+
+class AlchemySonicStudioModal extends Modal {
+  constructor(app, plugin) {
+    super(app);
+    this.plugin = plugin;
+    this.progressTimer = null;
+  }
+
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.addClass("artcraft-sonic-modal-root");
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+
+    const eqModes = [
+      { id: "bars", name: isRu ? "01 // Пиковый спектр" : "01 // Peak-Hold Bars", icon: SICRAFT_SVGS.eqBars },
+      { id: "wave", name: isRu ? "02 // Жидкая лента" : "02 // Liquid Ribbon", icon: SICRAFT_SVGS.eqWave },
+      { id: "orb", name: isRu ? "03 // Супернова" : "03 // Supernova Orb", icon: SICRAFT_SVGS.eqOrb },
+      { id: "dna", name: isRu ? "04 // Матрица" : "04 // Quantum Matrix", icon: SICRAFT_SVGS.eqMatrix },
+      { id: "craft", name: isRu ? "05 // Крафтовый сейсмограф" : "05 // Craft Ink Seismograph", icon: SICRAFT_SVGS.eqCraft },
+      { id: "ferro", name: isRu ? "06 // Феррофлюид" : "06 // Ferrofluid Orbs", icon: SICRAFT_SVGS.eqFerro }
+    ];
+
+    const hasTrack = !!(this.plugin.ambientNodes && this.plugin.ambientNodes.audioEl);
+    const trackName = (this.plugin.ambientNodes && this.plugin.ambientNodes.trackName) || (isRu ? "Трек не выбран (MP3 / WAV / FLAC)" : "No custom track loaded (MP3 / WAV / FLAC)");
+    const isSysActive = !!(this.plugin.desktopAudioNodes && this.plugin.desktopAudioNodes.type === "system");
+    const isMicActive = !!(this.plugin.desktopAudioNodes && this.plugin.desktopAudioNodes.type === "mic");
+    const vol = this.plugin.settings.audioVolume !== undefined ? this.plugin.settings.audioVolume : 75;
+
+    contentEl.innerHTML = `
+      <div class="sonic-studio-wrap">
+        <div class="sonic-studio-head">
+          <div>
+            <div class="sonic-studio-badge">ALCHEMY CRAFT // SONIC & AMBIENT STUDIO</div>
+            <h2 class="sonic-studio-title">${isRu ? "Аудио-студия, Плеер и Фоновые звуки" : "Sonic Equalizer, Track Player & Ambient Sounds"}</h2>
+          </div>
+          <button class="sonic-stop-all-btn" id="sonic-stop-all">${isRu ? "Остановить всё" : "Stop All"}</button>
+        </div>
+
+        <!-- 1. CUSTOM TRACK PLAYER & PC/MIC CAPTURE -->
+        <div class="sonic-card">
+          <div class="sonic-card-top">
+            <span class="sonic-sec-label">${isRu ? "ПЛЕЕР СВОИХ ТРЕКОВ & ЗАХВАТ ЗВУКА" : "CUSTOM MUSIC PLAYER & LIVE AUDIO SYNC"}</span>
+            <div class="sonic-vol-wrap">
+              <span>${isRu ? "Громкость:" : "Volume:"} <strong id="sonic-vol-lbl">${vol}%</strong></span>
+              <input type="range" id="sonic-vol-slider" min="0" max="100" value="${vol}" class="sonic-range-slider" />
+            </div>
+          </div>
+
+          <div class="sonic-player-bar">
+            <button class="sonic-play-btn" id="sonic-play-toggle" title="Play / Pause">${hasTrack && !this.plugin.ambientNodes.audioEl.paused ? SICRAFT_SVGS.pause : SICRAFT_SVGS.play}</button>
+            <div class="sonic-track-meta">
+              <div class="sonic-track-title" id="sonic-track-name">${trackName}</div>
+              <div class="sonic-seek-row">
+                <span id="sonic-time-cur">00:00</span>
+                <input type="range" id="sonic-seek-slider" min="0" max="100" value="0" class="sonic-seek-input" ${hasTrack ? "" : "disabled"} />
+                <span id="sonic-time-dur">00:00</span>
+              </div>
+            </div>
+            <button class="sonic-load-btn" id="sonic-load-file">${SICRAFT_SVGS.audio} <span>${isRu ? "Загрузить трек..." : "Load Track..."}</span></button>
+          </div>
+
+          <div class="sonic-source-pills">
+            <button class="sonic-src-btn ${isSysActive ? "is-active" : ""}" id="sonic-sync-sys">
+              ${SICRAFT_SVGS.globe} <span>${isRu ? "Синхронизация со звуком ПК" : "Sync PC Desktop Audio"}</span>
+            </button>
+            <button class="sonic-src-btn ${isMicActive ? "is-active" : ""}" id="sonic-sync-mic">
+              ${SICRAFT_SVGS.audio} <span>${isRu ? "Микрофон / Стерео Микшер" : "Microphone / Stereo Mix"}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. 6 CRAFT & NEON EQUALIZER STYLES -->
+        <div class="sonic-card">
+          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "6 РЕЖИМОВ АНИМАЦИИ ЭКВАЛАЙЗЕРА (ВКЛЮЧАЯ КРАФТОВЫЕ)" : "6 EQUALIZER VISUAL STYLES (INCLUDING SWISS CRAFT)"}</div>
+          <div class="sonic-eq-grid">
+            ${eqModes.map((m) => `
+              <button class="sonic-eq-btn ${(this.plugin.settings.eqMode || "bars") === m.id ? "is-active" : ""}" data-eq="${m.id}">
+                ${m.icon} <span>${m.name}</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+
+        <!-- 3. 12 APPLE iOS INSPIRED BACKGROUND SOUNDS -->
+        <div class="sonic-card">
+          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "12 ФОНОВЫХ ЗВУКОВ ДЛЯ ФОКУСА (В СТИЛЕ iPHONE / iOS)" : "12 FOCUS BACKGROUND SOUNDSCAPES (iOS COLLECTION)"}</div>
+          <div class="sonic-ambient-grid">
+            ${AMBIENT_SOUNDSCAPES.map((s) => `
+              <button class="sonic-amb-tile ${this.plugin.settings.ambientSound === s.id ? "is-active" : ""}" data-amb="${s.id}">
+                <span class="amb-icon">${s.icon}</span>
+                <div class="amb-txt">
+                  <strong>${isRu ? s.ru : s.en}</strong>
+                  <small>${isRu ? s.subRu : s.subEn}</small>
+                </div>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Wire up Stop All
+    contentEl.querySelector("#sonic-stop-all")?.addEventListener("click", async () => {
+      this.plugin.stopAudioCapture(true);
+      await this.plugin.setAmbientSound("off");
+      this.onOpen();
+    });
+
+    // Wire up Volume Slider
+    const volSlider = contentEl.querySelector("#sonic-vol-slider");
+    const volLbl = contentEl.querySelector("#sonic-vol-lbl");
+    if (volSlider) {
+      volSlider.oninput = (e) => {
+        const v = parseInt(e.target.value, 10);
+        this.plugin.settings.audioVolume = v;
+        if (volLbl) volLbl.textContent = `${v}%`;
+        this.plugin.applyAudioVolume(v / 100);
+      };
+      volSlider.onchange = () => this.plugin.saveSettings();
+    }
+
+    // Wire up Custom Track Play/Pause & Load
+    contentEl.querySelector("#sonic-load-file")?.addEventListener("click", () => {
+      this.plugin.openCustomAudioPicker(() => this.onOpen());
+    });
+
+    const playBtn = contentEl.querySelector("#sonic-play-toggle");
+    if (playBtn) {
+      playBtn.onclick = () => {
+        if (this.plugin.ambientNodes && this.plugin.ambientNodes.audioEl) {
+          const el = this.plugin.ambientNodes.audioEl;
+          if (el.paused) {
+            if (this.plugin.ambientNodes.ctx && this.plugin.ambientNodes.ctx.state === "suspended") {
+              this.plugin.ambientNodes.ctx.resume();
+            }
+            el.play();
+            playBtn.innerHTML = SICRAFT_SVGS.pause;
+          } else {
+            el.pause();
+            playBtn.innerHTML = SICRAFT_SVGS.play;
+          }
+        } else {
+          this.plugin.openCustomAudioPicker(() => this.onOpen());
+        }
+      };
+    }
+
+    // Seek bar live sync for loaded custom track
+    const seekSlider = contentEl.querySelector("#sonic-seek-slider");
+    const curEl = contentEl.querySelector("#sonic-time-cur");
+    const durEl = contentEl.querySelector("#sonic-time-dur");
+    if (seekSlider) {
+      seekSlider.oninput = (e) => {
+        const audioEl = this.plugin.ambientNodes && this.plugin.ambientNodes.audioEl;
+        if (audioEl && audioEl.duration) {
+          audioEl.currentTime = (parseFloat(e.target.value) / 100) * audioEl.duration;
+        }
+      };
+    }
+
+    if (this.progressTimer) clearInterval(this.progressTimer);
+    this.progressTimer = setInterval(() => {
+      const audioEl = this.plugin.ambientNodes && this.plugin.ambientNodes.audioEl;
+      if (audioEl && audioEl.duration && isFinite(audioEl.duration)) {
+        const pct = (audioEl.currentTime / audioEl.duration) * 100;
+        if (seekSlider && document.activeElement !== seekSlider) seekSlider.value = String(pct);
+        if (curEl) curEl.textContent = this.plugin.formatTime(Math.floor(audioEl.currentTime));
+        if (durEl) durEl.textContent = this.plugin.formatTime(Math.floor(audioEl.duration));
+      }
+    }, 300);
+
+    // Wire up PC & Mic sync
+    contentEl.querySelector("#sonic-sync-sys")?.addEventListener("click", async () => {
+      if (this.plugin.desktopAudioNodes && this.plugin.desktopAudioNodes.type === "system") {
+        this.plugin.stopAudioCapture();
+      } else {
+        await this.plugin.startSystemAudioCapture();
+      }
+      this.onOpen();
+    });
+
+    contentEl.querySelector("#sonic-sync-mic")?.addEventListener("click", async () => {
+      if (this.plugin.desktopAudioNodes && this.plugin.desktopAudioNodes.type === "mic") {
+        this.plugin.stopAudioCapture();
+      } else {
+        await this.plugin.startMicAudioCapture();
+      }
+      this.onOpen();
+    });
+
+    // Wire up Equalizer Modes
+    contentEl.querySelectorAll(".sonic-eq-btn").forEach((btn) => {
+      btn.onclick = async () => {
+        const mode = btn.getAttribute("data-eq");
+        this.plugin.settings.eqMode = mode;
+        await this.plugin.saveSettings();
+        this.plugin.updateEqualizerPillUI();
+        contentEl.querySelectorAll(".sonic-eq-btn").forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+      };
+    });
+
+    // Wire up 12 Ambient Soundscapes
+    contentEl.querySelectorAll(".sonic-amb-tile").forEach((tile) => {
+      tile.onclick = async () => {
+        const ambId = tile.getAttribute("data-amb");
+        const next = this.plugin.settings.ambientSound === ambId ? "off" : ambId;
+        await this.plugin.setAmbientSound(next);
+        this.onOpen();
+      };
+    });
+  }
+
+  onClose() {
+    if (this.progressTimer) clearInterval(this.progressTimer);
     this.contentEl.empty();
   }
 }
@@ -1469,7 +1752,10 @@ class AlchemyFlowPlugin extends Plugin {
     const midAlpha = (0.14 * brightPct).toFixed(3);
     const rimAlpha = (0.04 * brightPct).toFixed(3);
 
-    if (this.settings.lampShape === "deskbar") {
+    if (this.settings.lampShape === "ruler") {
+      const bandH = Math.max(28, Math.round(radius * 0.22));
+      this.lampBeamEl.style.background = `linear-gradient(180deg, rgba(10, 11, 14, ${darkAlpha}) 0px, rgba(10, 11, 14, ${(dimPct * 0.65).toFixed(3)}) ${2500 - bandH * 2}px, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${midAlpha}) ${2500 - bandH}px, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${coreAlpha}) 2500px, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${midAlpha}) ${2500 + bandH}px, rgba(10, 11, 14, ${(dimPct * 0.65).toFixed(3)}) ${2500 + bandH * 2}px, rgba(10, 11, 14, ${darkAlpha}) 5000px)`;
+    } else if (this.settings.lampShape === "deskbar") {
       const rx = Math.round(radius * 1.45);
       const ry = Math.round(radius * 0.9);
       this.lampBeamEl.style.background = `radial-gradient(${rx}px ${ry}px at 2500px 2500px, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${coreAlpha}) 0%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${midAlpha}) 45%, rgba(10, 11, 14, ${(dimPct * 0.45).toFixed(3)}) 78%, rgba(10, 11, 14, ${darkAlpha}) 100%)`;
@@ -1584,115 +1870,23 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   showAudioMenu(event) {
-    const menu = new Menu();
-    const isAudioActive = !!this.desktopAudioNodes;
-
-    // 1. Primary: Native Desktop System Audio Loopback
-    menu.addItem((item) => {
-      item
-        .setTitle(isAudioActive && this.desktopAudioNodes.type === "system" ? t("audioStopSync", this) : t("audioSyncSystem", this))
-        .setIcon(isAudioActive && this.desktopAudioNodes.type === "system" ? "sicraft-stop" : "sicraft-speaker")
-        .onClick(async () => {
-          if (isAudioActive && this.desktopAudioNodes.type === "system") this.stopAudioCapture();
-          else await this.startSystemAudioCapture();
-        });
-    });
-
-    // 2. Secondary: Microphone / Stereo Mix Input
-    menu.addItem((item) => {
-      item
-        .setTitle(isAudioActive && this.desktopAudioNodes.type === "mic" ? t("audioStopSync", this) : t("audioSyncMic", this))
-        .setIcon(isAudioActive && this.desktopAudioNodes.type === "mic" ? "sicraft-stop" : "sicraft-mic")
-        .onClick(async () => {
-          if (isAudioActive && this.desktopAudioNodes.type === "mic") this.stopAudioCapture();
-          else await this.startMicAudioCapture();
-        });
-    });
-
-    menu.addSeparator();
-
-    const modes = [
-      { id: "bars", name: t("audioModeBars", this), icon: "sicraft-bars" },
-      { id: "wave", name: t("audioModeWave", this), icon: "sicraft-wave" },
-      { id: "orb", name: t("audioModeOrb", this), icon: "sicraft-orb" },
-      { id: "dna", name: t("audioModeDna", this), icon: "sicraft-matrix" },
-    ];
-    modes.forEach((m) => {
-      menu.addItem((item) => {
-        item
-          .setTitle(m.name)
-          .setIcon(m.icon)
-          .setChecked(this.settings.eqMode === m.id)
-          .onClick(async () => {
-            this.settings.eqMode = m.id;
-            await this.saveSettings();
-            this.updateEqualizerPillUI();
-            if (!this.desktopAudioNodes && !this.ambientNodes) {
-              await this.startSystemAudioCapture();
-            }
-            new Notice("Equalizer: " + m.name);
-          });
-      });
-    });
-
-    menu.addSeparator();
-
-    menu.addItem((item) => {
-      item
-        .setTitle(t("ambientRain", this))
-        .setIcon("sicraft-rain")
-        .setChecked(this.settings.ambientSound === "rain")
-        .onClick(async () => {
-          await this.setAmbientSound(this.settings.ambientSound === "rain" ? "off" : "rain");
-        });
-    });
-    menu.addItem((item) => {
-      item
-        .setTitle(t("ambientBrown", this))
-        .setIcon("sicraft-headphones")
-        .setChecked(this.settings.ambientSound === "brown")
-        .onClick(async () => {
-          await this.setAmbientSound(this.settings.ambientSound === "brown" ? "off" : "brown");
-        });
-    });
-    menu.addItem((item) => {
-      item
-        .setTitle(t("ambientGamma", this))
-        .setIcon("sicraft-brain")
-        .setChecked(this.settings.ambientSound === "gamma40")
-        .onClick(async () => {
-          await this.setAmbientSound(this.settings.ambientSound === "gamma40" ? "off" : "gamma40");
-        });
-    });
-
-    menu.addItem((item) => {
-      item
-        .setTitle((this.settings.uiLanguage || "en") === "ru" ? "Свой трек / MP3 файл..." : "Load Custom Music File (MP3/WAV)...")
-        .setIcon("sicraft-music")
-        .onClick(() => {
-          this.openCustomAudioPicker();
-        });
-    });
-
-    if (this.settings.ambientSound !== "off" || isAudioActive) {
-      menu.addSeparator();
-      menu.addItem((item) => {
-        item
-          .setTitle(t("audioStopAll", this))
-          .setIcon("sicraft-stop")
-          .onClick(async () => {
-            this.stopAudioCapture();
-            await this.setAmbientSound("off");
-          });
-      });
-    }
-
-    const safeX = Math.min(event.clientX, window.innerWidth - 260);
-    const safeY = Math.max(40, Math.min(event.clientY - 320, window.innerHeight - 360));
-    menu.showAtPosition({ x: safeX, y: safeY });
+    if (event && event.preventDefault) event.preventDefault();
+    new AlchemySonicStudioModal(this.app, this).open();
   }
 
-  openCustomAudioPicker() {
+  applyAudioVolume(vol0to1) {
+    const v = Math.max(0, Math.min(1, vol0to1));
+    if (this.ambientNodes) {
+      if (this.ambientNodes.audioEl) {
+        this.ambientNodes.audioEl.volume = v;
+      }
+      if (this.ambientNodes.masterGain && this.ambientNodes.baseGain) {
+        this.ambientNodes.masterGain.gain.value = this.ambientNodes.baseGain * (v / 0.75);
+      }
+    }
+  }
+
+  openCustomAudioPicker(onLoadedCallback) {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "audio/*,.mp3,.wav,.ogg,.flac,.m4a";
@@ -1704,10 +1898,12 @@ class AlchemyFlowPlugin extends Plugin {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         const ctx = new AudioCtx();
+        if (ctx.state === "suspended") ctx.resume();
         const fileUrl = URL.createObjectURL(file);
         const audioEl = new Audio(fileUrl);
         audioEl.loop = true;
-        audioEl.volume = 0.75;
+        const vol = (this.settings.audioVolume !== undefined ? this.settings.audioVolume : 75) / 100;
+        audioEl.volume = Math.max(0, Math.min(1, vol));
         const source = ctx.createMediaElementSource(audioEl);
         const analyser = ctx.createAnalyser();
         analyser.fftSize = 256;
@@ -1715,9 +1911,14 @@ class AlchemyFlowPlugin extends Plugin {
         source.connect(analyser);
         analyser.connect(ctx.destination);
         audioEl.play();
-        this.ambientNodes = { ctx, audioEl, fileUrl, analyser };
+        this.ambientNodes = { ctx, audioEl, fileUrl, analyser, trackName: file.name };
         this.updateEqualizerPillUI();
-        new Notice(`Playing: ${file.name}`);
+        new Notice(`🎵 Playing: ${file.name}`);
+        if (typeof onLoadedCallback === "function") {
+          onLoadedCallback();
+        } else {
+          new AlchemySonicStudioModal(this.app, this).open();
+        }
       } catch (e) {
         new Notice("Could not load audio file.");
       }
@@ -1880,30 +2081,38 @@ class AlchemyFlowPlugin extends Plugin {
     if (!this.eqWrap) return;
     const isSynced = !!(this.desktopAudioNodes || this.ambientNodes);
     this.eqWrap.classList.toggle("is-synced", isSynced);
-    if (this.eqModeIconEl) {
+    this.eqWrap.classList.toggle("is-audio-live", isSynced);
+    const dotEl = this.eqWrap.querySelector(".artcraft-eq-status-dot");
+    if (dotEl) dotEl.classList.toggle("is-live", isSynced);
+    const iconEl = this.eqWrap.querySelector(".artcraft-eq-icon-wrap") || this.eqModeIconEl;
+    if (iconEl) {
       const modeIcons = {
         bars: SICRAFT_SVGS.eqBars,
         wave: SICRAFT_SVGS.eqWave,
         orb: SICRAFT_SVGS.eqOrb,
         dna: SICRAFT_SVGS.eqMatrix,
+        craft: SICRAFT_SVGS.eqCraft,
+        ferro: SICRAFT_SVGS.eqFerro,
       };
-      this.eqModeIconEl.innerHTML = modeIcons[this.settings.eqMode || "bars"] || SICRAFT_SVGS.eqBars;
+      iconEl.innerHTML = modeIcons[this.settings.eqMode || "bars"] || SICRAFT_SVGS.eqBars;
     }
   }
 
   async cycleEqualizerMode() {
-    // If no audio source is active yet, first click automatically starts audio sync!
+    // If no audio source is active yet, first click opens the Sonic & Ambient Studio so user can pick track, iOS sound, or PC sync!
     if (!this.desktopAudioNodes && !this.ambientNodes) {
-      await this.startSystemAudioCapture();
-      this.updateEqualizerPillUI();
+      new AlchemySonicStudioModal(this.app, this).open();
       return;
     }
-    const modes = ["bars", "wave", "orb", "dna"];
+    const modes = ["bars", "wave", "orb", "dna", "craft", "ferro"];
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
     const names = {
       bars: t("audioModeBars", this),
       wave: t("audioModeWave", this),
       orb: t("audioModeOrb", this),
       dna: t("audioModeDna", this),
+      craft: isRu ? "05 // Крафтовый сейсмограф" : "05 // Craft Ink Seismograph",
+      ferro: isRu ? "06 // Феррофлюид" : "06 // Alchemy Ferrofluid Orbs",
     };
     const idx = modes.indexOf(this.settings.eqMode || "bars");
     const next = modes[(idx + 1) % modes.length];
@@ -2116,7 +2325,7 @@ class AlchemyFlowPlugin extends Plugin {
     document.querySelectorAll(".artcraft-task-progress-wrap, .artcraft-graph-hud, .artcraft-graph-legend-pill, .artcraft-graph-hint-pill, .artcraft-graph-fx-canvas").forEach((el) => el.remove());
   }
 
-  // --- AMBIENT FOCUS SOUNDSCAPE ENGINE (WEBAUDIO SYNTHESIS) ---
+  // --- AMBIENT FOCUS SOUNDSCAPE ENGINE (12 iOS-INSPIRED WEBAUDIO SYNTHESIS SOUNDSCAPES) ---
   startAmbientSound(type) {
     this.stopAmbientSound();
     if (!type || type === "off") return;
@@ -2125,68 +2334,137 @@ class AlchemyFlowPlugin extends Plugin {
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
       if (ctx.state === "suspended") ctx.resume();
+
+      const volScale = (this.settings.audioVolume !== undefined ? this.settings.audioVolume : 75) / 75;
+      const baseGain = type === "gamma40" ? 0.045 : 0.11;
       const masterGain = ctx.createGain();
-      masterGain.gain.value = 0.09;
+      masterGain.gain.value = baseGain * volScale;
       masterGain.connect(ctx.destination);
 
-      if (type === "brown" || type === "rain") {
-        const bufferSize = 2 * ctx.sampleRate;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        let lastOut = 0.0;
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          if (type === "brown") {
-            output[i] = (lastOut + 0.02 * white) / 1.02;
-            lastOut = output[i];
-            output[i] *= 3.2;
-          } else {
-            output[i] = (lastOut + 0.08 * white) / 1.08;
-            lastOut = output[i];
-            output[i] *= 1.8;
-          }
-        }
-        const whiteNoise = ctx.createBufferSource();
-        whiteNoise.buffer = noiseBuffer;
-        whiteNoise.loop = true;
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.72;
+      const silentGain = ctx.createGain();
+      silentGain.gain.value = 0;
+      analyser.connect(silentGain);
+      silentGain.connect(ctx.destination);
 
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.value = type === "brown" ? 420 : 1100;
-
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.72;
-        const silentGain = ctx.createGain();
-        silentGain.gain.value = 0;
-        whiteNoise.connect(filter);
-        filter.connect(masterGain);
-        filter.connect(analyser);
-        analyser.connect(silentGain);
-        silentGain.connect(ctx.destination);
-        whiteNoise.start(0);
-        this.ambientNodes = { ctx, source: whiteNoise, analyser };
-      } else if (type === "gamma40") {
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 256;
-        const silentGain = ctx.createGain();
-        silentGain.gain.value = 0;
+      if (type === "gamma40") {
         const osc1 = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
         osc1.type = "sine";
         osc2.type = "sine";
         osc1.frequency.value = 180;
         osc2.frequency.value = 220;
-        masterGain.gain.value = 0.04;
         osc1.connect(masterGain);
         osc2.connect(masterGain);
         osc1.connect(analyser);
         osc2.connect(analyser);
-        analyser.connect(silentGain);
-        silentGain.connect(ctx.destination);
         osc1.start();
         osc2.start();
-        this.ambientNodes = { ctx, osc1, osc2, analyser };
+        this.ambientNodes = { ctx, osc1, osc2, analyser, masterGain, baseGain };
+      } else {
+        // Procedural 4-second seamless acoustic buffer for all 11 organic iOS soundscapes
+        const bufferSize = 4 * ctx.sampleRate;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+        let b0 = 0, b1 = 0, b2 = 0;
+
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          const tSec = i / ctx.sampleRate;
+
+          if (type === "brown" || type === "ocean" || type === "train") {
+            output[i] = (lastOut + 0.025 * white) / 1.025;
+            lastOut = output[i];
+            let mod = 3.0;
+            if (type === "ocean") {
+              // Slow surf wave swell (0.25 Hz cycle)
+              mod = 1.4 + 2.2 * Math.pow(0.5 + 0.5 * Math.sin(tSec * Math.PI * 0.5), 1.6);
+            } else if (type === "train") {
+              // Sleeper train rhythmic rail cadence ("chug-chug ... chug-chug")
+              const beat = (tSec * 2.5) % 1;
+              const click = (beat < 0.08 || (beat > 0.22 && beat < 0.30)) ? 1.85 : 0.75;
+              mod = 2.2 * click;
+            }
+            output[i] *= mod;
+          } else if (type === "balanced" || type === "cafe" || type === "stream") {
+            // Kellet Pink / Balanced filter
+            b0 = 0.99765 * b0 + white * 0.0990460;
+            b1 = 0.96300 * b1 + white * 0.2965164;
+            b2 = 0.57000 * b2 + white * 1.0526913;
+            const pink = (b0 + b1 + b2 + white * 0.1848) * 0.12;
+            if (type === "stream") {
+              output[i] = pink * (0.85 + 0.45 * Math.sin(tSec * 19.0) * Math.cos(tSec * 11.0));
+            } else if (type === "cafe") {
+              output[i] = pink * (0.75 + 0.35 * Math.sin(tSec * 5.2 + Math.sin(tSec * 2.1)));
+            } else {
+              output[i] = pink;
+            }
+          } else if (type === "fire") {
+            // Warm hearth rumble + random organic ember crackle spikes
+            lastOut = (lastOut + 0.03 * white) / 1.03;
+            const crackle = Math.random() > 0.9985 ? (Math.random() * 1.6 - 0.8) : 0;
+            output[i] = lastOut * 2.4 + crackle;
+          } else {
+            // rain, rain_roof, bright, night
+            const coeff = type === "bright" ? 0.22 : 0.08;
+            output[i] = (lastOut + coeff * white) / (1 + coeff);
+            lastOut = output[i];
+            output[i] *= type === "bright" ? 1.1 : 1.8;
+          }
+        }
+
+        const noiseSource = ctx.createBufferSource();
+        noiseSource.buffer = noiseBuffer;
+        noiseSource.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        if (type === "brown") {
+          filter.type = "lowpass";
+          filter.frequency.value = 380;
+        } else if (type === "ocean") {
+          filter.type = "lowpass";
+          filter.frequency.value = 540;
+        } else if (type === "train") {
+          filter.type = "lowpass";
+          filter.frequency.value = 340;
+        } else if (type === "rain_roof") {
+          filter.type = "bandpass";
+          filter.frequency.value = 620;
+          filter.Q.value = 0.7;
+        } else if (type === "rain") {
+          filter.type = "lowpass";
+          filter.frequency.value = 1150;
+        } else if (type === "stream") {
+          filter.type = "bandpass";
+          filter.frequency.value = 950;
+          filter.Q.value = 0.8;
+        } else if (type === "bright") {
+          filter.type = "highpass";
+          filter.frequency.value = 480;
+        } else if (type === "fire") {
+          filter.type = "lowpass";
+          filter.frequency.value = 820;
+        } else if (type === "cafe") {
+          filter.type = "bandpass";
+          filter.frequency.value = 460;
+          filter.Q.value = 0.9;
+        } else if (type === "night") {
+          filter.type = "bandpass";
+          filter.frequency.value = 1650;
+          filter.Q.value = 1.4;
+        } else {
+          filter.type = "lowpass";
+          filter.frequency.value = 1400;
+        }
+
+        noiseSource.connect(filter);
+        filter.connect(masterGain);
+        filter.connect(analyser);
+        noiseSource.start(0);
+        this.ambientNodes = { ctx, source: noiseSource, analyser, masterGain, baseGain };
       }
       this.updateEqualizerPillUI();
     } catch (e) {}
@@ -4152,6 +4430,86 @@ class AlchemyFlowPlugin extends Plugin {
       eqCtx.arc(cx, cy, 1.8 + bass * 2.2, 0, Math.PI * 2);
       eqCtx.fillStyle = "#FFFFFF";
       eqCtx.fill();
+    } else if (mode === "craft") {
+      // MODE 05: Swiss Craft Ink Seismograph (4 Layered Warm Paper & Fountain-Pen Wave Ridges)
+      const craftLayers = [
+        { stroke: "#F59E0B", fill: "rgba(245, 158, 11, 0.16)", offset: 0.22 },
+        { stroke: "#2563EB", fill: "rgba(37, 99, 235, 0.20)", offset: 0.42 },
+        { stroke: "#69BD28", fill: "rgba(105, 189, 40, 0.26)", offset: 0.62 },
+        { stroke: "#F4F3EF", fill: "rgba(244, 243, 239, 0.30)", offset: 0.80 },
+      ];
+      for (let l = 0; l < craftLayers.length; l++) {
+        const lay = craftLayers[l];
+        const baseY = eh * lay.offset;
+        eqCtx.beginPath();
+        eqCtx.moveTo(0, eh);
+        for (let x = 0; x <= ew; x += 2) {
+          const bandIdx = Math.min(15, Math.floor(((x / ew) * 12 + l * 2) % 16));
+          const amp = (this.eqSmooth[bandIdx] - 2) * (0.42 + l * 0.08);
+          const env = Math.sin((x / ew) * Math.PI); // Smooth tapered edges like Joy Division / Craft Seismograph
+          const y = Math.max(1.5, Math.min(eh - 1, baseY - Math.abs(Math.sin(x * 0.18 + this.eqPhase * (0.9 + l * 0.25) + l * 1.7)) * amp * env));
+          eqCtx.lineTo(x, y);
+        }
+        eqCtx.lineTo(ew, eh);
+        eqCtx.closePath();
+        eqCtx.fillStyle = lay.fill;
+        eqCtx.fill();
+
+        eqCtx.beginPath();
+        for (let x = 0; x <= ew; x += 2) {
+          const bandIdx = Math.min(15, Math.floor(((x / ew) * 12 + l * 2) % 16));
+          const amp = (this.eqSmooth[bandIdx] - 2) * (0.42 + l * 0.08);
+          const env = Math.sin((x / ew) * Math.PI);
+          const y = Math.max(1.5, Math.min(eh - 1, baseY - Math.abs(Math.sin(x * 0.18 + this.eqPhase * (0.9 + l * 0.25) + l * 1.7)) * amp * env));
+          if (x === 0) eqCtx.moveTo(x, y);
+          else eqCtx.lineTo(x, y);
+        }
+        eqCtx.strokeStyle = lay.stroke;
+        eqCtx.lineWidth = 1.25;
+        eqCtx.stroke();
+      }
+    } else if (mode === "ferro") {
+      // MODE 06: Alchemy Ferrofluid Orbs (Harmonic Liquid Droplets & Magnetic Core)
+      const orbColors = ["#69BD28", "#06B6D4", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981", "#3B82F6"];
+      const cy = eh / 2;
+      // Subtle magnetic horizon line
+      eqCtx.beginPath();
+      eqCtx.moveTo(2, cy);
+      eqCtx.lineTo(ew - 2, cy);
+      eqCtx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+      eqCtx.lineWidth = 1;
+      eqCtx.stroke();
+
+      for (let i = 0; i < 7; i++) {
+        const bandA = this.eqSmooth[i * 2] - 2;
+        const bandB = this.eqSmooth[i * 2 + 1] - 2;
+        const energy = (bandA + bandB) / (2 * (eh - 2));
+        const x = 6 + i * ((ew - 12) / 6) + Math.sin(this.eqPhase * 0.8 + i * 1.4) * (energy * 3.2);
+        const y = cy + Math.cos(this.eqPhase * 1.15 + i * 1.1) * (energy * (eh * 0.34));
+        const r = 1.8 + energy * 4.8;
+
+        // Outer magnetic halo
+        if (energy > 0.12) {
+          eqCtx.beginPath();
+          eqCtx.arc(x, y, r + 1.8, 0, Math.PI * 2);
+          eqCtx.fillStyle = "rgba(105, 189, 40, 0.22)";
+          eqCtx.fill();
+        }
+
+        // Main ferrofluid droplet
+        eqCtx.beginPath();
+        eqCtx.arc(x, y, r, 0, Math.PI * 2);
+        eqCtx.fillStyle = orbColors[i % orbColors.length];
+        eqCtx.fill();
+
+        // Specular highlight dot
+        if (r > 2.4) {
+          eqCtx.beginPath();
+          eqCtx.arc(x - r * 0.28, y - r * 0.28, Math.max(0.7, r * 0.26), 0, Math.PI * 2);
+          eqCtx.fillStyle = "#FFFFFF";
+          eqCtx.fill();
+        }
+      }
     } else {
       // MODE 04: Quantum Matrix 16x5 LED Grid & Hot-Peak Sparks
       const cols = 16;
@@ -4189,263 +4547,397 @@ class AlchemyCraftProModal extends Modal {
   constructor(app, plugin, initialMethod = "evm") {
     super(app);
     this.plugin = plugin;
-    this.selectedNetwork = initialMethod;
+    this.selectedNetwork = initialMethod === "promo" ? "evm" : initialMethod;
+    this.activeTab = initialMethod === "promo" ? "promo" : "support";
+    this.selectedTier = "bronze";
   }
 
   onOpen() {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-pro-modal-root");
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
 
-    const header = contentEl.createDiv({ cls: "artcraft-modal-header-card" });
+    // Soft, Warm Ko-fi / Zsolt-Inspired Header
+    const header = contentEl.createDiv({ cls: "artcraft-soft-pro-header" });
     header.innerHTML = `
-      <div class="artcraft-bento-pill">${t("modalBadge", this.plugin)}</div>
-      <h2 class="artcraft-modal-title">💎 ${t("modalTitle", this.plugin)}</h2>
-      <p class="artcraft-modal-desc">${t("modalSubtitle", this.plugin)}</p>
+      <div class="artcraft-soft-pro-badge">${isRu ? "ALCHEMIST STUDIO • ПОДДЕРЖКА И PRO ДОСТУП" : "ALCHEMIST STUDIO • SUPPORT & PRO PASS"}</div>
+      <h2 class="artcraft-soft-pro-title">${isRu ? "Поддержать развитие Alchemy Craft" : "Support Alchemy Craft & Unlock Pro"}</h2>
+      <p class="artcraft-soft-pro-sub">${
+        isRu
+          ? "У меня много идей, как сделать визуальное мышление, звук и граф еще лучше. Выберите комфортный уровень поддержки или активируйте промокод в один клик."
+          : "I have many ideas on how to make visual thinking, soundscapes, and the graph studio even better. Choose a comfortable support tier or redeem a promo key in one click."
+      }</p>
     `;
 
-    const gridLabel = contentEl.createDiv({ cls: "artcraft-section-label" });
-    gridLabel.setText(t("step1Title", this.plugin));
+    // Segmented Mode Switcher: [ ✨ Выбрать уровень Pro ]  vs  [ 🎟️ Ввести промокод / ключ ]
+    const tabBar = contentEl.createDiv({ cls: "artcraft-ko-tabs" });
+    const tabSupport = tabBar.createEl("button", {
+      cls: "artcraft-ko-tab" + (this.activeTab === "support" ? " is-active" : ""),
+      text: isRu ? "✨ Выбрать уровень поддержки" : "✨ Choose Support Tier",
+    });
+    const tabPromo = tabBar.createEl("button", {
+      cls: "artcraft-ko-tab" + (this.activeTab === "promo" ? " is-active" : ""),
+      text: isRu ? "🎟️ У меня есть промокод / ключ" : "🎟️ Redeem Promo / VIP Key",
+    });
 
-    // 6-Tile Global Payment Hub (Promo/Key, @CryptoBot, Universal EVM, Bybit UID, Solana, TRON)
-    const netGrid = contentEl.createDiv({ cls: "artcraft-net-bento-grid artcraft-net-grid-6" });
-    const networks = [
-      { id: "promo", name: t("netPromo", this.plugin), hint: t("netPromoHint", this.plugin), icon: SICRAFT_SVGS.diamond, tag: "PROMO CODE" },
-      { id: "cryptobot", name: t("netCryptoBot", this.plugin), hint: t("netCryptoBotHint", this.plugin), icon: SICRAFT_SVGS.bolt, tag: "1-CLICK TG" },
-      { id: "evm", name: t("netEvm", this.plugin), hint: t("netEvmHint", this.plugin), icon: SICRAFT_SVGS.globe, tag: "ALL EVM NETS" },
-      { id: "bybit", name: t("netBybit", this.plugin), hint: t("netBybitHint", this.plugin), icon: SICRAFT_SVGS.spark, tag: "0% FEE" },
-      { id: "solana", name: t("netSol", this.plugin), hint: t("netSolHint", this.plugin), icon: SICRAFT_SVGS.laser, tag: "SOLANA" },
-      { id: "trc20", name: t("netTrc", this.plugin), hint: t("netTrcHint", this.plugin), icon: SICRAFT_SVGS.check, tag: "TRC-20" },
-    ];
+    const bodyContainer = contentEl.createDiv({ cls: "artcraft-soft-pro-body" });
 
-    const cardBox = contentEl.createDiv({ cls: "artcraft-active-payment-card" });
+    const tiers = {
+      bronze: {
+        id: "bronze",
+        name: isRu ? "Bronze Elixir" : "Bronze Elixir",
+        amount: "4.99",
+        period: isRu ? "$4.99 • на 1 год" : "$4.99 • 1 Year Pass",
+        svg: TIER_BRONZE_SVG,
+        planKey: "1_year",
+        desc: isRu
+          ? "Полный доступ ко всем Pro-функциям на 1 год (Midnight Dark Craft, 12 звуков фокуса, эквалайзер и 8-цветный граф)."
+          : "Full access to all Pro features for 1 year (Midnight Dark Craft, 12 ambient soundscapes, equalizer & 8-color graph).",
+      },
+      silver: {
+        id: "silver",
+        name: isRu ? "Silver Crucible" : "Silver Crucible",
+        amount: "9.99",
+        period: isRu ? "$9.99 • Навсегда (Lifetime)" : "$9.99 • Lifetime Pass",
+        badge: isRu ? "ХИТ ВЫБОРА" : "POPULAR",
+        svg: TIER_SILVER_SVG,
+        planKey: "lifetime",
+        desc: isRu
+          ? "Вечная лицензия без повторных платежей. Все текущие и будущие Pro-обновления навсегда."
+          : "Lifetime license with zero recurring payments. Unlocks all current and future Pro studio upgrades forever.",
+      },
+      gold: {
+        id: "gold",
+        name: isRu ? "Gold Philosopher" : "Gold Philosopher",
+        amount: "19.00",
+        period: isRu ? "$19 • Меценат + 3 ключа" : "$19 • Patron + 3 Keys",
+        svg: TIER_GOLD_SVG,
+        planKey: "patron_lifetime",
+        desc: isRu
+          ? "Максимальная поддержка автора: вечная лицензия + 3 подарочных Pro-ключа для друзей и приоритет ваших идей."
+          : "Graciously support ongoing development: Lifetime Pro license + 3 gift keys for friends & priority feature requests.",
+      },
+    };
 
-    const renderCard = (netId) => {
-      cardBox.empty();
-      this.selectedNetwork = netId;
+    const renderVerificationBlock = (parentEl, isPromoView) => {
+      const verifyBox = parentEl.createDiv({ cls: "artcraft-soft-verify-box" + (isPromoView ? " is-promo-hero" : "") });
+      verifyBox.innerHTML = `
+        <div class="soft-verify-title">${
+          isPromoView
+            ? isRu
+              ? "🎟️ Мгновенная активация по промокоду или VIP-ключу"
+              : "🎟️ Instant Activation via Promo Code or VIP License Key"
+            : isRu
+            ? "Шаг 2 • Вставьте TXID перевода, ID чека @CryptoBot или ключ:"
+            : "Step 2 • Paste Transfer TXID, @CryptoBot Invoice ID, or Key:"
+        }</div>
+        ${
+          isPromoView
+            ? `<p class="soft-verify-sub">${
+                isRu
+                  ? "Введите ваш промокод (например, выданный автором или полученный в сообществе) либо криптографический ключ формата ACPRO-XXXX. Никаких платежей не требуется."
+                  : "Enter your community promo code or cryptographic license key (ACPRO-XXXX). Instant activation with zero payment required."
+              }</p>`
+            : ""
+        }
+      `;
 
-      let labelText = t("recipientLabel", this.plugin);
-      let addrValue = "0x5df707dda91477fc7c7563f683030da9d6cde7e2";
-      let noteText = t("evmNote", this.plugin);
-      let evmBadgesHtml = "";
-      let customActionsHtml = "";
+      const inputRow = verifyBox.createDiv({ cls: "soft-verify-row" });
+      const txInput = inputRow.createEl("input", {
+        type: "text",
+        placeholder: isPromoView
+          ? isRu
+            ? "Введите промокод или ключ (например, ACPRO-...)"
+            : "Enter Promo Code or VIP Key (e.g. ACPRO-...)"
+          : isRu
+          ? "Вставьте TXID (0x...), Bybit ID или чек @CryptoBot"
+          : "Paste TXID (0x...), Bybit ID, or @CryptoBot Invoice",
+        cls: "verify-tx-input soft-input",
+      });
 
-      if (netId === "promo" || netId === "card") {
-        noteText = t("cardNote", this.plugin);
-        customActionsHtml = `
-          <div class="artcraft-pay-cta-row">
-            <button class="artcraft-pay-action-btn is-green" id="pro-open-promo-cb">✈️ Pay $4.99 via @CryptoBot (All Coins)</button>
-            <button class="artcraft-pay-action-btn is-blue" id="pro-open-card-tg">⚡ Request Direct Stripe / Card Link</button>
+      const actBtn = inputRow.createEl("button", {
+        text: isPromoView
+          ? isRu
+            ? "Активировать промокод"
+            : "Redeem Code"
+          : isRu
+          ? "Проверить и активировать"
+          : "Verify & Activate Pro",
+        cls: "verify-activate-button soft-btn",
+      });
+
+      const statusMsg = verifyBox.createDiv({ cls: "verify-status-msg" });
+
+      actBtn.onclick = async () => {
+        const val = txInput.value.trim();
+        if (!val || val.length < 4) {
+          statusMsg.setText(t("errorEmpty", this.plugin));
+          statusMsg.style.color = "#DC2626";
+          return;
+        }
+
+        actBtn.disabled = true;
+        actBtn.setText(t("checkingBtn", this.plugin));
+        statusMsg.setText(t("checkingBtn", this.plugin));
+        statusMsg.style.color = "#2563EB";
+
+        const verified = await this.verifyOnChain(val, isPromoView ? "promo" : this.selectedNetwork);
+        if (verified) {
+          const uniqueLicenseKey = isValidSiCraftLicenseKey(val) ? val.toUpperCase() : generateSiCraftLicenseKey(val);
+          this.plugin.settings.isPro = true;
+          this.plugin.settings.proTxHash = uniqueLicenseKey;
+          this.plugin.settings.proActivatedAt = Date.now();
+          this.plugin.settings.proPlan = tiers[this.selectedTier]?.planKey || "1_year";
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
+          this.plugin.createFloatingDock();
+          this.plugin.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 75);
+
+          statusMsg.setText(t("successMsg", this.plugin));
+          statusMsg.style.color = "#16A34A";
+          new Notice(t("successMsg", this.plugin));
+
+          setTimeout(() => this.close(), 1400);
+        } else {
+          actBtn.disabled = false;
+          actBtn.setText(
+            isPromoView
+              ? isRu
+                ? "Активировать промокод"
+                : "Redeem Code"
+              : isRu
+              ? "Проверить и активировать"
+              : "Verify & Activate Pro"
+          );
+          statusMsg.setText(t("errorPending", this.plugin));
+          statusMsg.style.color = "#DC2626";
+        }
+      };
+    };
+
+    const renderView = () => {
+      bodyContainer.empty();
+      tabSupport.toggleClass("is-active", this.activeTab === "support");
+      tabPromo.toggleClass("is-active", this.activeTab === "promo");
+
+      // TAB 2: DEDICATED ZERO-CLUTTER PROMO CODE & VIP KEY VIEW
+      if (this.activeTab === "promo") {
+        renderVerificationBlock(bodyContainer, true);
+
+        const promoFooter = bodyContainer.createDiv({ cls: "artcraft-soft-support-row" });
+        promoFooter.innerHTML = `
+          <div class="soft-support-left">
+            <span>💬 ${isRu ? "Хотите получить промокод или оплатить картой напрямую?" : "Need a promo key or direct card link?"}</span>
+            <strong>@StratAlchemy</strong>
           </div>
+          <button class="soft-tg-link-btn" id="pro-promo-tg-btn">${isRu ? "Написать в Telegram ↗" : "Open Telegram ↗"}</button>
         `;
-      } else if (netId === "cryptobot") {
-        noteText = "✈️ Click below to generate an official Crypto Pay API Invoice (#A668773) with full product description ('Alchemy Craft Pro Pass — 1 Year') and automatic verification!";
-        customActionsHtml = `
-          <div class="artcraft-pay-cta-row">
-            <button class="artcraft-pay-action-btn is-blue" id="pro-create-api-invoice">✈️ Pay $4.99 via @CryptoBot (With Description)</button>
-            <button class="artcraft-pay-action-btn is-dark" id="pro-open-cb-tg">💬 Support @StratAlchemy</button>
-          </div>
-        `;
-      } else if (netId === "evm") {
-        labelText = t("recipientLabel", this.plugin) + " (Universal EVM 0x...)";
-        addrValue = "0x5df707dda91477fc7c7563f683030da9d6cde7e2";
-        noteText = t("evmNote", this.plugin);
-        const chains = ["BNB Chain (BEP20)", "Arbitrum One", "Base", "Polygon (POS)", "Optimism", "Ethereum (ERC20)", "Avalanche C-Chain"];
-        evmBadgesHtml = `
-          <div class="artcraft-evm-chains-box">
-            <div class="artcraft-evm-chains-title">${t("evmChainsLabel", this.plugin)}</div>
-            <div class="artcraft-evm-badges-wrap">
-              ${chains.map((c) => `<span class="artcraft-evm-chain-pill">${c}</span>`).join("")}
-            </div>
-          </div>
-        `;
-      } else if (netId === "bybit") {
-        labelText = t("uidLabel", this.plugin);
-        addrValue = "8015849";
-        noteText = t("bybitNote", this.plugin);
-      } else if (netId === "trc20") {
-        labelText = t("recipientLabel", this.plugin) + " (TRON TRC-20)";
-        addrValue = "TLR1QhncMJghepCyPPNDZodUxWtEjs8Qjy";
-        noteText = t("trcNote", this.plugin);
-      } else if (netId === "solana") {
-        labelText = t("recipientLabel", this.plugin) + " (Solana SPL)";
-        addrValue = "7vffsVxUZbBj3iLhagyaP8qCE7pKybYrxmnHX9xdCKCs";
-        noteText = t("solNote", this.plugin);
+        promoFooter.querySelector("#pro-promo-tg-btn")?.addEventListener("click", () => {
+          openExternalUrl("https://t.me/StratAlchemy");
+        });
+        return;
       }
 
-      const addressBlockHtml = customActionsHtml
-        ? customActionsHtml
-        : `
-          <div class="card-field-label">${labelText}</div>
+      // TAB 1: KO-FI / ZSOLT-INSPIRED 3 TIER CARDS + CLEAN PAYMENT BAR
+      const tierGrid = bodyContainer.createDiv({ cls: "artcraft-ko-tier-grid" });
+      Object.values(tiers).forEach((tObj) => {
+        const card = tierGrid.createDiv({
+          cls: "artcraft-ko-tier-card" + (this.selectedTier === tObj.id ? " is-selected" : ""),
+        });
+        card.innerHTML = `
+          ${tObj.badge ? `<div class="ko-tier-popular">${tObj.badge}</div>` : ""}
+          <div class="ko-tier-art">${tObj.svg}</div>
+          <div class="ko-tier-name">${tObj.name}</div>
+          <div class="ko-tier-price">${tObj.period}</div>
+          <p class="ko-tier-desc">${tObj.desc}</p>
+        `;
+        card.onclick = () => {
+          this.selectedTier = tObj.id;
+          renderView();
+        };
+      });
+
+      const activeTierObj = tiers[this.selectedTier] || tiers.bronze;
+
+      // Clean Horizontal Payment Method Pills
+      const methodsLabel = bodyContainer.createDiv({ cls: "artcraft-soft-section-lbl" });
+      methodsLabel.setText(isRu ? "Способ оплаты (0% комиссия):" : "Select Payment Method (0% Fee):");
+
+      const methodPills = bodyContainer.createDiv({ cls: "artcraft-soft-method-pills" });
+      const methods = [
+        { id: "cryptobot", label: "✈️ @CryptoBot (Telegram)" },
+        { id: "evm", label: "🌐 Universal EVM (0x...)" },
+        { id: "bybit", label: "⚡ Bybit UID (0% Fee)" },
+        { id: "solana", label: "☀️ Solana (USDT/USDC)" },
+        { id: "trc20", label: "💎 TRON (TRC-20)" },
+      ];
+
+      const paymentDetailBox = bodyContainer.createDiv({ cls: "artcraft-soft-pay-detail" });
+
+      const renderMethodDetail = (netId) => {
+        this.selectedNetwork = netId;
+        paymentDetailBox.empty();
+        methodPills.querySelectorAll(".artcraft-soft-method-pill").forEach((el) => {
+          el.toggleClass("is-active", el.dataset.net === netId);
+        });
+
+        const curAmount = activeTierObj.amount;
+
+        if (netId === "cryptobot") {
+          paymentDetailBox.innerHTML = `
+            <div class="soft-pay-summary-row">
+              <span class="soft-pay-tier-tag">${activeTierObj.name} — <strong>$${curAmount} USDT / TON</strong></span>
+              <span class="soft-pay-direct-badge">${isRu ? "В 1 клик через Telegram" : "Instant Telegram Checkout"}</span>
+            </div>
+            <div class="artcraft-pay-cta-row">
+              <button class="artcraft-pay-action-btn is-green" id="pro-create-api-invoice">
+                ✈️ ${isRu ? `Оплатить $${curAmount} в @CryptoBot` : `Pay $${curAmount} via @CryptoBot`} ↗
+              </button>
+              <button class="artcraft-pay-action-btn is-soft" id="pro-open-cb-tg">
+                💬 ${isRu ? "Оплата картой / @StratAlchemy" : "Card Link / @StratAlchemy"} ↗
+              </button>
+            </div>
+            <div class="soft-pay-muted-hint">${
+              isRu
+                ? "Ссылка откроется в вашем браузере по умолчанию или напрямую в приложении Telegram Desktop."
+                : "Opens directly in your default OS browser or Telegram Desktop app."
+            }</div>
+          `;
+
+          const btnApiCb = paymentDetailBox.querySelector("#pro-create-api-invoice");
+          if (btnApiCb) {
+            btnApiCb.onclick = async () => {
+              const origText = btnApiCb.textContent;
+              btnApiCb.textContent = isRu ? "⏳ Открываем счет в браузере..." : "⏳ Opening Invoice in Browser...";
+              try {
+                const sbFuncUrl =
+                  this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
+                const res = await fetch(sbFuncUrl, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ action: "create_invoice", amount: curAmount }),
+                });
+                if (res.ok) {
+                  const d = await res.json();
+                  if (d && d.pay_url) {
+                    if (d.invoice_id) {
+                      const txField = this.contentEl.querySelector(".verify-tx-input");
+                      if (txField) txField.value = String(d.invoice_id);
+                    }
+                    openExternalUrl(d.pay_url);
+                    return;
+                  }
+                }
+                openExternalUrl("https://t.me/send?start=IVdNOM8aeE7t");
+              } catch (e) {
+                openExternalUrl("https://t.me/send?start=IVdNOM8aeE7t");
+              } finally {
+                btnApiCb.textContent = origText;
+              }
+            };
+          }
+          paymentDetailBox.querySelector("#pro-open-cb-tg")?.addEventListener("click", () => {
+            openExternalUrl("https://t.me/StratAlchemy");
+          });
+          return;
+        }
+
+        let labelText = "Universal EVM (BNB BEP20 • Arbitrum • Base • Polygon • Ethereum)";
+        let addrValue = "0x5df707dda91477fc7c7563f683030da9d6cde7e2";
+        let noteText = isRu
+          ? "Единый 0x-адрес принимает USDT, USDC, ETH и BNB во всех сетях EVM (BEP-20, Arbitrum, Base, Polygon)."
+          : "This single 0x address accepts USDT, USDC, ETH, or BNB across BNB Chain (BEP-20), Arbitrum, Base, and Polygon.";
+
+        if (netId === "bybit") {
+          labelText = "Bybit UID (0% Fee Internal Transfer)";
+          addrValue = "8015849";
+          noteText = isRu
+            ? "Мгновенный внутренний перевод по Bybit UID без комиссии сети."
+            : "Instant internal transfer via Bybit UID with 0% network fee.";
+        } else if (netId === "solana") {
+          labelText = "Solana Network (USDT / USDC / SOL)";
+          addrValue = "7vffsVxUZbBj3iLhagyaP8qCE7pKybYrxmnHX9xdCKCs";
+          noteText = isRu ? "Сеть Solana SPL (комиссия ~$0.001)." : "Solana SPL network (~$0.001 fee).";
+        } else if (netId === "trc20") {
+          labelText = "TRON Network (USDT TRC-20)";
+          addrValue = "TLR1QhncMJghepCyPPNDZodUxWtEjs8Qjy";
+          noteText = isRu ? "Стандартный перевод USDT в сети TRON (TRC-20)." : "Standard USDT transfer on TRON (TRC-20).";
+        }
+
+        paymentDetailBox.innerHTML = `
+          <div class="soft-pay-summary-row">
+            <span class="soft-pay-tier-tag">${labelText}</span>
+            <button class="soft-amount-copy-pill" id="pro-copy-amount-btn" title="Click to copy exact amount">
+              ${isRu ? "Сумма:" : "Amount:"} <strong>$${curAmount} USDT</strong> 📋
+            </button>
+          </div>
           <div class="card-address-group">
             <input type="text" readonly class="card-address-input" id="pro-addr-val" value="${addrValue}" />
             <button class="card-copy-btn" id="pro-copy-btn">📋 ${t("copyBtn", this.plugin)}</button>
           </div>
+          <div class="soft-pay-muted-hint">${noteText}</div>
         `;
 
-      cardBox.innerHTML = `
-        <div class="card-meta-bar">
-          <div class="card-amount-group">
-            <span class="meta-amount-label">${t("amountLabel", this.plugin)}</span>
-            <span class="meta-amount-pill"><strong>4.99 USD / USDT</strong></span>
-            <button class="card-copy-btn card-copy-amount" id="pro-copy-amount-btn">📋 ${t("copyAmountBtn", this.plugin)}</button>
-          </div>
-          <span class="meta-gas-tag">100% DIRECT</span>
-        </div>
-        ${evmBadgesHtml}
-        ${addressBlockHtml}
-        <div class="card-note-text">${noteText}</div>
-      `;
+        const copyBtn = paymentDetailBox.querySelector("#pro-copy-btn");
+        if (copyBtn) {
+          copyBtn.onclick = () => {
+            navigator.clipboard.writeText(addrValue);
+            copyBtn.innerHTML = `✅ ${t("copiedBtn", this.plugin)}`;
+            setTimeout(() => {
+              copyBtn.innerHTML = `📋 ${t("copyBtn", this.plugin)}`;
+            }, 1800);
+          };
+        }
 
-      const copyBtn = cardBox.querySelector("#pro-copy-btn");
-      if (copyBtn) {
-        copyBtn.onclick = () => {
-          navigator.clipboard.writeText(addrValue);
-          copyBtn.innerHTML = `✅ ${t("copiedBtn", this.plugin)}`;
-          setTimeout(() => {
-            copyBtn.innerHTML = `📋 ${t("copyBtn", this.plugin)}`;
-          }, 2000);
-        };
-      }
-
-      const copyAmountBtn = cardBox.querySelector("#pro-copy-amount-btn");
-      if (copyAmountBtn) {
-        copyAmountBtn.onclick = () => {
-          navigator.clipboard.writeText("4.99");
-          copyAmountBtn.innerHTML = `✅ ${t("copiedBtn", this.plugin)}`;
-          setTimeout(() => {
-            copyAmountBtn.innerHTML = `📋 ${t("copyAmountBtn", this.plugin)}`;
-          }, 2000);
-        };
-      }
-
-      const createRichCryptoBotInvoice = async (btnEl) => {
-        const origText = btnEl.textContent;
-        btnEl.textContent = "⏳ Opening Secure Invoice...";
-        try {
-          // Calls your secure Supabase Edge Function (so your Crypto-Pay-API-Token stays 100% private on Supabase server!)
-          const sbFuncUrl = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
-          const res = await fetch(sbFuncUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "create_invoice", amount: "4.99" }),
-          });
-          if (res.ok) {
-            const d = await res.json();
-            if (d && d.pay_url) {
-              if (d.invoice_id) {
-                const txField = this.contentEl.querySelector(".verify-tx-input");
-                if (txField) txField.value = String(d.invoice_id);
-              }
-              window.open(d.pay_url, "_blank");
-              return;
-            }
-          }
-          window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank");
-        } catch (e) {
-          window.open("https://t.me/send?start=IVdNOM8aeE7t", "_blank");
-        } finally {
-          btnEl.textContent = origText;
+        const copyAmountBtn = paymentDetailBox.querySelector("#pro-copy-amount-btn");
+        if (copyAmountBtn) {
+          copyAmountBtn.onclick = () => {
+            navigator.clipboard.writeText(curAmount);
+            copyAmountBtn.innerHTML = `✅ ${curAmount} USDT`;
+            setTimeout(() => {
+              copyAmountBtn.innerHTML = `${isRu ? "Сумма:" : "Amount:"} <strong>$${curAmount} USDT</strong> 📋`;
+            }, 1800);
+          };
         }
       };
 
-      const btnPromoCb = cardBox.querySelector("#pro-open-promo-cb");
-      if (btnPromoCb) btnPromoCb.addEventListener("click", () => createRichCryptoBotInvoice(btnPromoCb));
-      cardBox.querySelector("#pro-open-card-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
-      const btnApiCb = cardBox.querySelector("#pro-create-api-invoice");
-      if (btnApiCb) btnApiCb.addEventListener("click", () => createRichCryptoBotInvoice(btnApiCb));
-      cardBox.querySelector("#pro-open-cb-tg")?.addEventListener("click", () => window.open("https://t.me/StratAlchemy", "_blank"));
-    };
+      methods.forEach((m) => {
+        const pill = methodPills.createEl("button", {
+          cls: "artcraft-soft-method-pill" + (this.selectedNetwork === m.id ? " is-active" : ""),
+          text: m.label,
+        });
+        pill.dataset.net = m.id;
+        pill.onclick = () => renderMethodDetail(m.id);
+      });
 
-    networks.forEach((net) => {
-      const tile = netGrid.createDiv({ cls: "artcraft-net-tile" });
-      tile.innerHTML = `
-        <div class="tile-top"><span class="tile-icon">${net.icon}</span> <strong>${net.name}</strong></div>
-        <div class="tile-hint">${net.hint}</div>
-      `;
-      tile.onclick = () => {
-        netGrid.querySelectorAll(".artcraft-net-tile").forEach((x) => x.removeClass("is-selected"));
-        tile.addClass("is-selected");
-        renderCard(net.id);
-      };
-      if (net.id === this.selectedNetwork) tile.addClass("is-selected");
-    });
+      renderMethodDetail(this.selectedNetwork);
+      renderVerificationBlock(bodyContainer, false);
 
-    renderCard(this.selectedNetwork);
-
-    // Direct Developer Support Banner
-    const supportBanner = contentEl.createDiv({ cls: "artcraft-support-banner" });
-    supportBanner.innerHTML = `
-      <div class="support-banner-left">
-        <span class="support-icon">💬</span>
-        <div class="support-text-col">
-          <strong>${t("supportText", this.plugin)}</strong>
-          <span>${t("supportSub", this.plugin)} <strong>@StratAlchemy</strong></span>
+      // Soft Footer Link to Telegram (opens in default OS browser)
+      const supportRow = bodyContainer.createDiv({ cls: "artcraft-soft-support-row" });
+      supportRow.innerHTML = `
+        <div class="soft-support-left">
+          <span>💬 ${isRu ? "Вопросы по оплате или ручная выдача ключа:" : "Questions or instant manual key activation:"}</span>
+          <strong>@StratAlchemy</strong>
         </div>
-      </div>
-      <button class="support-tg-btn" id="pro-support-open">${t("supportTgBtn", this.plugin)}</button>
-    `;
-    supportBanner.querySelector("#pro-support-open")?.addEventListener("click", () => {
-      window.open("https://t.me/StratAlchemy", "_blank");
-    });
-
-    // Verification Step
-    const verifySection = contentEl.createDiv({ cls: "artcraft-verify-bento-card" });
-    verifySection.innerHTML = `
-      <div class="verify-step-label">${t("step2Title", this.plugin)}</div>
-    `;
-
-    const inputRow = verifySection.createDiv({ cls: "verify-action-row" });
-    const txInput = inputRow.createEl("input", {
-      type: "text",
-      placeholder: t("txPlaceholder", this.plugin),
-      cls: "verify-tx-input",
-    });
-
-    const actBtn = inputRow.createEl("button", {
-      text: t("activateBtn", this.plugin),
-      cls: "verify-activate-button",
-    });
-
-    const statusMsg = verifySection.createDiv({ cls: "verify-status-msg" });
-
-    actBtn.onclick = async () => {
-      const val = txInput.value.trim();
-      if (!val || val.length < 5) {
-        statusMsg.setText(t("errorEmpty", this.plugin));
-        statusMsg.style.color = "#DC2626";
-        return;
-      }
-
-      actBtn.disabled = true;
-      actBtn.setText(t("checkingBtn", this.plugin));
-      statusMsg.setText(t("checkingBtn", this.plugin));
-      statusMsg.style.color = "#2563EB";
-
-      const verified = await this.verifyOnChain(val, this.selectedNetwork);
-      if (verified) {
-        const uniqueLicenseKey = isValidSiCraftLicenseKey(val) ? val.toUpperCase() : generateSiCraftLicenseKey(val);
-        this.plugin.settings.isPro = true;
-        this.plugin.settings.proTxHash = uniqueLicenseKey;
-        this.plugin.settings.proActivatedAt = Date.now();
-        this.plugin.settings.proPlan = "1_year";
-        await this.plugin.saveSettings();
-        this.plugin.applyBodyClasses();
-        this.plugin.createFloatingDock();
-        this.plugin.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 75);
-
-        statusMsg.setText(t("successMsg", this.plugin));
-        statusMsg.style.color = "#16A34A";
-        new Notice(t("successMsg", this.plugin));
-
-        setTimeout(() => this.close(), 1500);
-      } else {
-        actBtn.disabled = false;
-        actBtn.setText(t("activateBtn", this.plugin));
-        statusMsg.setText(t("errorPending", this.plugin));
-        statusMsg.style.color = "#DC2626";
-      }
+        <button class="soft-tg-link-btn" id="pro-support-open">${isRu ? "Открыть в браузере / Telegram ↗" : "Open in Browser / Telegram ↗"}</button>
+      `;
+      supportRow.querySelector("#pro-support-open")?.addEventListener("click", () => {
+        openExternalUrl("https://t.me/StratAlchemy");
+      });
     };
+
+    tabSupport.onclick = () => {
+      this.activeTab = "support";
+      renderView();
+    };
+    tabPromo.onclick = () => {
+      this.activeTab = "promo";
+      renderView();
+    };
+
+    renderView();
   }
 
   async verifyOnChain(txHash, network) {
@@ -4658,21 +5150,25 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       );
 
-    // 3. Ambient Focus Soundscape
+    // 3. Ambient Focus Soundscape (12 iOS-Inspired Background Sounds + Studio Modal)
     new Setting(containerEl)
       .setName(t("ambientName", this.plugin))
       .setDesc(t("ambientDesc", this.plugin))
-      .addDropdown((drop) =>
-        drop
-          .addOption("off", "Off")
-          .addOption("brown", t("ambientBrown", this.plugin))
-          .addOption("rain", t("ambientRain", this.plugin))
-          .addOption("gamma40", t("ambientGamma", this.plugin))
-          .setValue(this.plugin.settings.ambientSound || "off")
-          .onChange(async (val) => {
-            await this.plugin.setAmbientSound(val);
-          })
-      );
+      .addButton((btn) =>
+        btn.setButtonText((this.plugin.settings.uiLanguage || "en") === "ru" ? "🎛️ Открыть Аудио-Пульт" : "🎛️ Open Sonic Studio").onClick(() => {
+          new AlchemySonicStudioModal(this.app, this.plugin).open();
+        })
+      )
+      .addDropdown((drop) => {
+        const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+        drop.addOption("off", isRu ? "Выкл (Off)" : "Off");
+        AMBIENT_SOUNDSCAPES.forEach((snd) => {
+          drop.addOption(snd.id, `${snd.icon} ${isRu ? snd.ru : snd.en}`);
+        });
+        drop.setValue(this.plugin.settings.ambientSound || "off").onChange(async (val) => {
+          await this.plugin.setAmbientSound(val);
+        });
+      });
 
     // 4. Pomodoro Focus Duration
     new Setting(containerEl)
@@ -4740,7 +5236,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       );
 
-    // 5.18 Live 4-Mode Sonic Equalizer & Desktop Audio Sync
+    // 5.18 Live 6-Mode Sonic Equalizer & Desktop Audio Sync
     new Setting(containerEl)
       .setName(t("eqSetName", this.plugin))
       .setDesc(t("eqSetDesc", this.plugin))
@@ -4750,6 +5246,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           .addOption("wave", t("audioModeWave", this.plugin))
           .addOption("orb", t("audioModeOrb", this.plugin))
           .addOption("dna", t("audioModeDna", this.plugin))
+          .addOption("craft", "05 // Craft Ink Seismograph")
+          .addOption("ferro", "06 // Alchemy Ferrofluid Orbs")
           .setValue(this.plugin.settings.eqMode || "bars")
           .onChange(async (val) => {
             this.plugin.settings.eqMode = val;
@@ -4758,7 +5256,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       )
       .addButton((btn) =>
         btn.setButtonText(t("eqSyncBtn", this.plugin)).onClick(() => {
-          this.plugin.toggleDesktopAudioCapture();
+          new AlchemySonicStudioModal(this.app, this.plugin).open();
         })
       )
       .addToggle((toggle) =>
@@ -4879,6 +5377,13 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       buyBtn.onclick = () => {
         new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
       };
+      const promoQuickBtn = btnRow.createEl("button", {
+        text: (this.plugin.settings.uiLanguage || "en") === "ru" ? "🎟️ Ввести Промокод / Ключ" : "🎟️ Redeem Promo / Key",
+        cls: "artcraft-open-promo-btn",
+      });
+      promoQuickBtn.onclick = () => {
+        new AlchemyCraftProModal(this.app, this.plugin, "promo").open();
+      };
     }
 
     // --- GLOBAL SUPPORT & CHECKOUT ---
@@ -4896,18 +5401,23 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           });
       })
       .addButton((btn) => {
+        btn.setButtonText("🎟️ Promo / VIP Key").onClick(() => {
+          new AlchemyCraftProModal(this.app, this.plugin, "promo").open();
+        });
+      })
+      .addButton((btn) => {
         btn.setButtonText("@CryptoBot (USDT/TON)").onClick(() => {
           new AlchemyCraftProModal(this.app, this.plugin, "cryptobot").open();
         });
       })
       .addButton((btn) => {
-        btn.setButtonText("Telegram (@StratAlchemy)").onClick(() => {
-          window.open("https://t.me/StratAlchemy", "_blank");
+        btn.setButtonText("Telegram (@StratAlchemy) ↗").onClick(() => {
+          openExternalUrl("https://t.me/StratAlchemy");
         });
       })
       .addButton((btn) => {
-        btn.setButtonText("GitHub Star").onClick(() => {
-          window.open("https://github.com/elyazaliverdiyev/alchemy-craft", "_blank");
+        btn.setButtonText("GitHub Star ↗").onClick(() => {
+          openExternalUrl("https://github.com/elyazaliverdiyev/alchemy-craft");
         });
       });
     supportSetting.settingEl.classList.add("artcraft-settings-full-width");
