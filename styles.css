@@ -3016,8 +3016,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 .artcraft-header-main-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   width: 100%;
 }
 
@@ -4718,18 +4719,69 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   box-shadow: none !important;
 }
 
-/* 3. Note top strip: stays on one line; bookmarks live in a compact one-line scroller */
+/* 3. Note top strip: meta group left, actions right; never drops down into awkward gap */
 .artcraft-top-bar-inner {
-  max-width: var(--file-line-width, 700px) !important;
+  max-width: var(--file-line-width, 840px) !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .artcraft-header-main-row {
-  gap: 6px 8px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.artcraft-header-meta-group {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+}
+
+.artcraft-reading-stats-pill {
+  padding: 2.5px 7px !important;
+  font-size: 10px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.artcraft-compact-task-pill {
+  padding: 2.5px 7px !important;
+  font-size: 10px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.artcraft-compact-task-pill .artcraft-task-progress-bar-bg {
+  width: 38px !important;
+  height: 5px !important;
 }
 
 .artcraft-note-craft-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
   flex-wrap: nowrap !important;
-  flex-shrink: 0;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.artcraft-craft-mini-btn {
+  padding: 2.5px 7px !important;
+  font-size: 10.5px !important;
+}
+
+.artcraft-ink-stamp-badge {
+  padding: 2px 7px !important;
+  font-size: 10px !important;
 }
 
 .artcraft-margin-bookmarks-strip {
@@ -4976,3 +5028,68 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   gap: 8px;
   max-width: 100%;
 }
+
+/* 7. Settings Hero Dynamic Version Pill & Website Link */
+.artcraft-hero-version-pill {
+  display: inline-block;
+  background: #69BD28;
+  color: #FFFFFF;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #111111;
+  box-shadow: 0 2px 0 #111111;
+  margin-left: 8px;
+  vertical-align: middle;
+  letter-spacing: 0.05em;
+}
+
+.artcraft-website-btn {
+  background: #111111 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #111111 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.artcraft-website-btn:hover {
+  background: #2563EB !important;
+  border-color: #111111 !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+}
+
+/* 8. 3D Mind-Palace & Alchemical Graph Styling */
+.artcraft-graph-canvas-wrap {
+  position: relative !important;
+  background-color: var(--bg-canvas, #F4F3EF);
+}
+
+body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
+  background-color: #111214 !important;
+}
+
+.artcraft-graph-hud-btn.artcraft-graph-resonance-btn {
+  background: #FFFBEB !important;
+  color: #92400E !important;
+  border-color: #F59E0B !important;
+}
+
+.artcraft-graph-hud-btn.artcraft-graph-resonance-btn:hover {
+  background: #FEF3C7 !important;
+}
+
+.artcraft-graph-hud-btn.artcraft-graph-walk-btn {
+  background: #EEF2FF !important;
+  color: #3730A3 !important;
+  border-color: #6366F1 !important;
+}
+
+.artcraft-graph-hud-btn.artcraft-graph-walk-btn:hover {
+  background: #E0E7FF !important;
+}
+

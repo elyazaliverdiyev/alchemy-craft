@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alchemy Craft — Swiss Bento Reader, Focus & Pointer for Obsidian</title>
+  <title>Alchemy Craft v4.4 — 3D Mind-Palace, Bento Graph Studio & 5-Nutrient Reading for Obsidian</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
@@ -319,7 +319,7 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="font-black tracking-tight text-base sm:text-lg">ALCHEMY CRAFT</span>
-            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-1.5 py-0.5 rounded border border-[#111111]">v4.3.0</span>
+            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-1.5 py-0.5 rounded border border-[#111111]">v4.4.1</span>
           </div>
           <p class="text-[11px] font-mono-code opacity-70 hidden sm:block">SICRAFT // SUPER INTELLIGENCE CRAFT STUDIO</p>
         </div>
@@ -469,7 +469,7 @@
           <div id="demoTaskFill" class="h-full bg-[#69BD28] transition-all duration-300 rounded-full" style="width: 67%;"></div>
         </div>
         <span id="demoTaskPct" class="text-[#15803D] font-extrabold">67%</span>
-        <button onclick="document.getElementById('demoProgressBarWrap').style.display='none'" title="Dismiss Progress Bar (New in v4.3 for Mobile!)" class="ml-1 px-1.5 py-0.5 rounded hover:bg-gray-200 text-gray-600 font-bold">✕</button>
+        <button onclick="document.getElementById('demoProgressBarWrap').style.display='none'" title="Dismiss Progress Bar (v4.4.1 Clean Header)" class="ml-1 px-1.5 py-0.5 rounded hover:bg-gray-200 text-gray-600 font-bold">✕</button>
       </div>
 
       <!-- Main Workspace Split: Left File Explorer + Right Markdown Editor -->
@@ -554,13 +554,69 @@
         <!-- Right Note Content Area -->
         <main class="lg:col-span-9 p-5 sm:p-8 pb-24 relative">
           
+          <!-- Note Top Bar (v4.4.1 Single-Row Meta & Actions + 5-Nutrient Bookmarks) -->
+          <div class="mb-4 space-y-2 select-none">
+            <div class="flex items-center justify-between gap-2 flex-nowrap w-full">
+              <div class="inline-flex items-center gap-2 flex-nowrap shrink-0">
+                <span class="inline-flex items-center gap-1.5 font-mono-code text-[11px] font-bold text-[#57534E] bg-[#FAF8F3] border border-[#DFDBD0] px-2.5 py-1 rounded-full shadow-sm">
+                  📖 <span>~4 min read • 820 words</span>
+                </span>
+                <span class="inline-flex items-center gap-1.5 font-mono-code text-[11px] font-bold text-[#57534E] bg-[#FAF8F3] border border-[#DFDBD0] px-2.5 py-1 rounded-full shadow-sm">
+                  <span>Tasks: <strong>2/3</strong></span>
+                  <div class="w-10 h-1.5 bg-[#E7E5E4] rounded-full overflow-hidden">
+                    <div class="h-full bg-[#16A34A]" style="width: 67%;"></div>
+                  </div>
+                  <span class="text-[#16A34A]">67%</span>
+                </span>
+              </div>
+              <div class="inline-flex items-center gap-1.5 flex-nowrap shrink-0">
+                <span class="inline-flex items-center gap-1 font-mono-code text-[10.5px] font-extrabold text-[#15803D] bg-[#F0FDF4] border border-dashed border-[#16A34A] px-2.5 py-1 rounded-md shadow-sm">
+                  🖂 APPROVED • 08.11.2026
+                </span>
+                <button onclick="showToast('🔖 5-Nutrient Bookmark Attached (Proteins, Carbs, Fats, Vitamins, Fiber)')" class="inline-flex items-center gap-1 font-mono-code text-[11px] font-bold text-[#111111] bg-white hover:bg-gray-50 border border-[#D5D3CC] px-2 py-1 rounded-md shadow-sm">
+                  🏷️ + Sticker
+                </button>
+                <button onclick="showToast('📖 Hardcover Book Page Mode toggled!')" class="inline-flex items-center gap-1 font-mono-code text-[11px] font-bold text-[#111111] bg-white hover:bg-gray-50 border border-[#D5D3CC] px-2 py-1 rounded-md shadow-sm">
+                  🕮 Book Page
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 2: 5-Nutrient Bookmarks Strip -->
+            <div class="flex items-center gap-2 flex-wrap text-xs pt-1">
+              <button onclick="showToast('📖 Book Nutrient Digest: 4 Insights')" class="inline-flex items-center gap-1 font-mono-code text-[10.5px] font-bold text-[#9A3412] bg-[#FFF7ED] border border-[#FED7AA] px-2 py-0.5 rounded-full">
+                📖 Digest · 4
+              </button>
+              <div class="inline-flex items-center gap-1.5 font-mono-code text-[10.5px] font-bold text-[#1E293B] bg-[#FEF2F2] border border-[#FECACA] border-l-4 border-l-[#DC2626] px-2 py-0.5 rounded">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626]"></span>
+                <span class="text-[#DC2626] font-extrabold">PROTEINS</span>
+                <span>Core Thesis</span>
+              </div>
+              <div class="inline-flex items-center gap-1.5 font-mono-code text-[10.5px] font-bold text-[#1E293B] bg-[#FFFBEB] border border-[#FDE68A] border-l-4 border-l-[#D97706] px-2 py-0.5 rounded">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#D97706]"></span>
+                <span class="text-[#D97706] font-extrabold">CARBS</span>
+                <span>Action Plan</span>
+              </div>
+              <div class="inline-flex items-center gap-1.5 font-mono-code text-[10.5px] font-bold text-[#1E293B] bg-[#FEFCE8] border border-[#FEF08A] border-l-4 border-l-[#CA8A04] px-2 py-0.5 rounded">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#CA8A04]"></span>
+                <span class="text-[#CA8A04] font-extrabold">FATS</span>
+                <span>Frameworks</span>
+              </div>
+              <div class="inline-flex items-center gap-1.5 font-mono-code text-[10.5px] font-bold text-[#1E293B] bg-[#F0FDF4] border border-[#BBF7D0] border-l-4 border-l-[#16A34A] px-2 py-0.5 rounded">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#16A34A]"></span>
+                <span class="text-[#16A34A] font-extrabold">VITAMINS</span>
+                <span>Quotes</span>
+              </div>
+            </div>
+          </div>
+          
           <!-- Editorial Note Title Banner -->
           <div class="bg-white text-[#111111] border-[1.5px] border-[#111111] border-l-[8px] border-l-[#69BD28] rounded-xl p-4 sm:p-5 shadow-[0_4px_0_#111111] mb-6">
             <div id="sandboxNoteBadge" class="font-mono-code text-[11px] font-extrabold bg-[#111111] text-white px-2.5 py-0.5 rounded inline-block mb-2 tracking-wider">
               STRATALCHEMY // KNOWLEDGE BRIEF
             </div>
             <h3 id="sandboxNoteTitle" class="text-xl sm:text-3xl font-black tracking-tight">
-              Alchemy Craft v4.3: Tactile Bento Studio & Smart Lamp
+              Alchemy Craft v4.4: 3D Mind-Palace, Bento Graph Studio & 5-Nutrient Reading
             </h3>
           </div>
           <div id="sandboxDynamicNoteBody">
@@ -717,23 +773,26 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
       <div>
         <div class="inline-flex items-center gap-2 bg-[#111111] text-white font-mono-code text-[11px] font-extrabold px-2.5 py-1 rounded mb-1.5 shadow-[0_2px_0_#69BD28]">
-          <span>🕸️ NEW IN v4.3.0</span>
+          <span>🕸️ NEW IN v4.4.1</span>
           <span>•</span>
-          <span>SWISS BENTO GRAPH STUDIO</span>
+          <span>3D ISOMETRIC MIND-PALACE & RESO ENGINE</span>
         </div>
         <h2 class="text-2xl sm:text-3xl font-black tracking-tight" data-i18n="graphSectionTitle">
-          Interactive Knowledge Graph with Bento HUD & Neural Laser Pulses
+          3D Isometric Mind-Palace, 432 Hz Memory Resonance & Constellation Tour
         </h2>
       </div>
       <div class="flex flex-wrap items-center gap-2">
         <button onclick="setGraphPreset('bento')" id="gPreset-bento" class="bento-btn bg-[#69BD28] text-white font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
           ⚗️ Swiss Bento
         </button>
-        <button onclick="setGraphPreset('constellation')" id="gPreset-constellation" class="bento-btn bg-white text-[#111111] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
-          ✨ Constellation
+        <button onclick="setGraphPreset('mindpalace')" id="gPreset-mindpalace" class="bento-btn bg-white text-[#111111] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
+          🏛️ 3D Mind-Palace
         </button>
-        <button onclick="setGraphPreset('radar')" id="gPreset-radar" class="bento-btn bg-white text-[#111111] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
-          🎯 Focus Radar
+        <button onclick="triggerDemoResonance()" id="gBtn-resonance" class="bento-btn bg-[#FFFBEB] text-[#92400E] border border-[#F59E0B] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
+          ✨ Резонанс (432Hz)
+        </button>
+        <button onclick="triggerDemoConstellationTour()" id="gBtn-walk" class="bento-btn bg-[#EEF2FF] text-[#3730A3] border border-[#6366F1] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
+          🚀 Созвездие-Тур
         </button>
         <button onclick="randomizeGraphImpulse()" class="bento-btn bg-[#2563EB] text-white font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg">
           ⚡ Pulse Nodes
@@ -976,7 +1035,7 @@
   </section>
 
   <!-- =====================================================================
-       NEW v4.3.0 SETTINGS TAB PREVIEW + MOBILE STUCK BAR FIX & CODE EXPORT
+       NEW v4.4.1 SETTINGS TAB PREVIEW + 3D MIND-PALACE & DYNAMIC SYNC
        ===================================================================== -->
   <section id="settings-preview" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -1039,11 +1098,11 @@
       <div class="lg:col-span-7 bento-card p-6 sm:p-8 border-2 border-[#111111]">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b-[1.5px] border-[#D5D3CC]">
           <div>
-            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-2 py-0.5 rounded">REDESIGNED SETTINGS UI v4.3.0</span>
-            <h3 class="text-xl font-black mt-1">New Obsidian Settings Page Preview (No Boosty + Multi-EVM + 6 Languages)</h3>
+            <span class="font-mono-code text-[10px] font-extrabold bg-[#69BD28] text-white px-2 py-0.5 rounded">REDESIGNED SETTINGS UI v4.4.1</span>
+            <h3 class="text-xl font-black mt-1">New Obsidian Settings Page Preview (3D Mind-Palace + Dynamic Sync)</h3>
           </div>
           <button onclick="copyUpdatedPluginPatch()" id="copyPatchBtn" class="bento-btn bg-[#111111] text-white font-mono-code text-xs font-bold px-3.5 py-2 rounded-lg">
-            📋 Copy v4.3.0 Patch for main.js
+            📋 Copy v4.4.1 Patch for main.js
           </button>
         </div>
 
@@ -1054,7 +1113,10 @@
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-lg bg-[#111111] text-white flex items-center justify-center font-black text-lg">⚗️</div>
               <div>
-                <div class="font-black text-sm">Alchemy Craft — Swiss Bento Studio (v4.3.0)</div>
+                <div class="font-black text-sm flex items-center gap-2">
+                  <span>Alchemy Craft — Swiss Bento Studio</span>
+                  <span class="bg-[#69BD28] text-white text-[10px] font-mono-code font-extrabold px-1.5 py-0.5 rounded">v4.4.1</span>
+                </div>
                 <div class="font-mono-code text-[11px] text-gray-600">Author: Elyaz Aliverdiyev (@StratAlchemy)</div>
               </div>
             </div>
@@ -1208,7 +1270,7 @@
       zh: {
         navSandbox: "在线体验",
         navFeatures: "Bento 功能",
-        navSettings: "v4.3 设置与修复",
+        navSettings: "v4.4 设置与修复",
         navPricing: "Pro 通行证 ($4.99)",
         darkBtn: "暗夜模式",
         getProNav: "获取 Pro $4.99",
@@ -1217,7 +1279,7 @@
         heroSubtitle: "护眼档案纸张背景 (#F4F3EF)、Excel 鼠尾草绿表格、01–04 方形徽章、发光激光笔、自由画笔与番茄钟悬浮球。",
         heroCtaPro: "解锁 Pro 通行证 — $4.99 / 年 (支持银行卡与加密支付)",
         heroCtaFree: "免费下载插件 (GitHub)",
-        heroCtaFix: "手机端进度条修复与 v4.3 代码",
+        heroCtaFix: "手机端进度条修复与 v4.4 代码",
         sandboxHeading: "在此直接体验 Alchemy Craft（点击句子高亮、画笔涂鸦、完成任务！）",
         sandboxHint: "下方交互式画布与工具栏已激活",
         featuresTitle: "专为深度阅读、知识管理与演示打造",
@@ -1239,7 +1301,7 @@
       ja: {
         navSandbox: "ライブデモ",
         navFeatures: "Bento 機能",
-        navSettings: "v4.3 設定と修正",
+        navSettings: "v4.4 設定と修正",
         navPricing: "Pro パス ($4.99)",
         darkBtn: "ダークモード",
         getProNav: "Proを入手 $4.99",
@@ -1248,7 +1310,7 @@
         heroSubtitle: "目に優しいアーカイブ紙 (#F4F3EF)、Excelグリーンの表、01–04 スクエアバッジ、レーザーポインター、マーカー、ポモドーロドックを搭載。",
         heroCtaPro: "Pro パスを解除 — $4.99 / 年 (カード＆暗号資産対応)",
         heroCtaFree: "無料プラグインをダウンロード",
-        heroCtaFix: "モバイル表示修正＆v4.3コード",
+        heroCtaFix: "モバイル表示修正＆v4.4コード",
         sandboxHeading: "ここで Alchemy Craft をライブ体験（文をクリック、描画、タスク完了！）",
         sandboxHint: "インタラクティブキャンバス稼働中",
         featuresTitle: "深い集中・読書・プレゼンテーションに必要なすべて",
@@ -1270,7 +1332,7 @@
       es: {
         navSandbox: "Demo en Vivo",
         navFeatures: "Funciones Bento",
-        navSettings: "Ajustes v4.3 y Fix",
+        navSettings: "Ajustes v4.4 y Fix",
         navPricing: "Pase Pro ($4.99)",
         darkBtn: "Modo Oscuro",
         getProNav: "Obtener Pro $4.99",
@@ -1279,7 +1341,7 @@
         heroSubtitle: "Papel de archivo cálido (#F4F3EF), tablas verde salvia estilo Excel, insignias 01–04, puntero láser, marcador libre y reloj Pomodoro.",
         heroCtaPro: "Desbloquear Pase Pro — $4.99 / año (Tarjeta y Cripto)",
         heroCtaFree: "Descargar Gratis (GitHub)",
-        heroCtaFix: "Solución Móvil y Código v4.3",
+        heroCtaFix: "Solución Móvil y Código v4.4",
         sandboxHeading: "Prueba Alchemy Craft en Vivo Aquí (¡Haz clic en frases, dibuja o completa tareas!)",
         sandboxHint: "Lienzo interactivo activo abajo",
         featuresTitle: "Todo lo necesario para lectura profunda y presentaciones",
@@ -1301,7 +1363,7 @@
       de: {
         navSandbox: "Live-Demo",
         navFeatures: "Bento-Funktionen",
-        navSettings: "v4.3 Setup & Fix",
+        navSettings: "v4.4 Setup & Fix",
         navPricing: "Pro-Pass ($4.99)",
         darkBtn: "Dark Craft",
         getProNav: "Pro holen $4.99",
@@ -1310,7 +1372,7 @@
         heroSubtitle: "Augenschonendes Archivpapier (#F4F3EF), Excel-Grün-Tabellen, 01–04 Badges, Laserpointer, Freihand-Marker und Pomodoro-Dock.",
         heroCtaPro: "Pro-Pass freischalten — $4.99 / Jahr (Karte & Krypto)",
         heroCtaFree: "Kostenlos herunterladen (GitHub)",
-        heroCtaFix: "Mobile-Fix & v4.3 Code",
+        heroCtaFix: "Mobile-Fix & v4.4 Code",
         sandboxHeading: "Teste Alchemy Craft hier live (Sätze anklicken, zeichnen oder Aufgaben abhaken!)",
         sandboxHint: "Interaktives Canvas unten aktiv",
         featuresTitle: "Alles für tiefen Fokus, klares Lesen & Präsentationen",
@@ -1666,7 +1728,7 @@
     const SANDBOX_NOTES = {
       brief: {
         badge: "STRATALCHEMY // KNOWLEDGE BRIEF",
-        title: "Alchemy Craft v4.3: Tactile Bento Studio & Smart Lamp",
+        title: "Alchemy Craft v4.4: 3D Mind-Palace, Bento Graph Studio & 5-Nutrient Reading",
         body: `
           <div class="space-y-4 text-sm sm:text-base leading-relaxed mb-6">
             <p>
@@ -2146,17 +2208,17 @@
       }, 900);
     }
 
-    // 6. COPY UPDATED v4.3.0 PLUGIN PATCH (WITH 6 LANGUAGES, UNIVERSAL EVM, CARD/0% FEE EVM & MOBILE FIX)
+    // 6. COPY UPDATED v4.4.1 PLUGIN PATCH (WITH 3D MIND-PALACE, 5-NUTRIENT READING, EX-LIBRIS & DYNAMIC SYNC)
     function copyUpdatedPluginPatch() {
-      const patchSummary = `// Alchemy Craft v4.3.0 — Global Update Patch (Universal EVM, Card/@CryptoBot, @CryptoBot, 6 Languages & Mobile Safe Progress Bar)
-// 1. In onunload(): cleans all .artcraft-task-progress-wrap elements so mobile bars never get stuck:
-document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remove());
-
-// 2. Universal EVM (0x5df707dda91477fc7c7563f683030da9d6cde7e2):
-// Supports BNB Chain (BEP20), Arbitrum One, Base, Polygon, Optimism, Ethereum (ERC20)
-// + Credit/Debit Card via @CryptoBot or 0% Fee EVM (https://t.me/send?start=IVdNOM8aeE7t) & @CryptoBot
-// + Boosty removed from Settings Tab!`;
-      copyTextToClipboard(patchSummary, "v4.3.0 Plugin Patch copied to clipboard!");
+      const patchSummary = `// Alchemy Craft v4.4.1 — Flagship Release
+// 1. 3D Isometric Mind-Palace with Swiss millimeter grid & 144 FPS spatial depth.
+// 2. 432 Hz Memory Resonance Engine (dual-sine chime + golden shockwave knowledge gems).
+// 3. Alchemical Constellation Walk (step-by-step path tour with laser comets).
+// 4. 5-Nutrient Bookmarking System (Proteins, Carbs, Fats, Vitamins, Fiber) & Digest.
+// 5. Approved Ex-Libris Note Seal & Classics Shelf repeat reading badge.
+// 6. Single-row note meta header alignment (Reading time + Tasks + Actions).
+// 7. Dynamic version sync with manifest.version.`;
+      copyTextToClipboard(patchSummary, "v4.4.1 Plugin Patch copied to clipboard!");
     }
 
     // 7. CELEBRATION PARTICLE ENGINE
@@ -2258,9 +2320,16 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
       });
     }
 
+    let demoResonanceWaves = [];
+    let demoResonanceHighlights = [];
+    let demoWalkActive = false;
+    let demoWalkStep = 0;
+    let demoWalkProgress = 0;
+    const DEMO_WALK_PATH = [0, 1, 3, 12, 6, 4, 10, 7, 0];
+
     function setGraphPreset(preset) {
       graphPresetMode = preset;
-      ["bento", "constellation", "radar"].forEach(p => {
+      ["bento", "mindpalace", "constellation", "radar"].forEach(p => {
         const btn = document.getElementById("gPreset-" + p);
         if (btn) {
           btn.className = p === preset
@@ -2269,7 +2338,63 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
         }
       });
       randomizeGraphImpulse();
-      showToast("🕸️ Graph Studio Preset: " + preset.toUpperCase());
+      showToast(preset === "mindpalace" ? "🏛️ 3D Mind-Palace: Isometric Depth & Swiss Grid" : "🕸️ Graph Studio Preset: " + preset.toUpperCase());
+    }
+
+    function play432HzChime() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        if (ctx.state === "suspended") ctx.resume();
+        const now = ctx.currentTime;
+        const freqs = [432, 864];
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now);
+          const baseGain = idx === 0 ? 0.22 : 0.08;
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(baseGain, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 1.85);
+        });
+      } catch (e) {
+        // AudioContext restricted or unsupported
+      }
+    }
+
+    function triggerDemoResonance() {
+      play432HzChime();
+      if (gCanvas) {
+        demoResonanceWaves.push({
+          x: gCanvas.width * 0.5,
+          y: gCanvas.height * 0.5,
+          r: 10,
+          maxR: Math.max(gCanvas.width, gCanvas.height) * 0.8,
+          alpha: 1
+        });
+      }
+      demoResonanceHighlights = [2, 5, 8, 11];
+      setTimeout(() => { demoResonanceHighlights = []; }, 4500);
+      showToast("✨ 432 Hz Memory Resonance: 4 dormant knowledge gems illuminated!");
+    }
+
+    function triggerDemoConstellationTour() {
+      demoWalkActive = !demoWalkActive;
+      demoWalkStep = 0;
+      demoWalkProgress = 0;
+      const btn = document.getElementById("gBtn-walk");
+      if (btn) {
+        btn.className = demoWalkActive
+          ? "bento-btn bg-[#6366F1] text-white font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg shadow-sm"
+          : "bento-btn bg-[#EEF2FF] text-[#3730A3] border border-[#6366F1] font-mono-code text-xs font-extrabold px-3 py-1.5 rounded-lg";
+      }
+      showToast(demoWalkActive ? "🚀 Constellation Tour ON: Traveling across knowledge path!" : "🚀 Constellation Tour Stopped");
     }
 
     function randomizeGraphImpulse() {
@@ -2332,6 +2457,25 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
       if (graphPresetMode === "constellation") {
         gCtx.fillStyle = "#0F1117";
         gCtx.fillRect(0, 0, W, H);
+      }
+
+      // Draw Blueprint Millimeter Grid if 3D Mind-Palace mode
+      if (graphPresetMode === "mindpalace") {
+        gCtx.save();
+        gCtx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.08)" : "rgba(17, 17, 17, 0.06)";
+        gCtx.lineWidth = 0.8;
+        const gridStep = 32;
+        for (let gx = 0; gx < W; gx += gridStep) {
+          gCtx.beginPath(); gCtx.moveTo(gx, 0); gCtx.lineTo(gx, H); gCtx.stroke();
+        }
+        for (let gy = 0; gy < H; gy += gridStep) {
+          gCtx.beginPath(); gCtx.moveTo(0, gy); gCtx.lineTo(W, gy); gCtx.stroke();
+        }
+        gCtx.font = "800 9px 'JetBrains Mono', monospace";
+        gCtx.fillStyle = isDark ? "rgba(105, 189, 40, 0.45)" : "rgba(17, 17, 17, 0.35)";
+        gCtx.fillText("┌ 47.3769° N // 8.5417° E [ZÜRICH BLUEPRINT]", 16, 20);
+        gCtx.fillText("ALCHEMICAL REASONING ENGINE // 144 FPS ┘", W - 260, H - 14);
+        gCtx.restore();
       }
 
       // Draw Radar Concentric Rings if radar mode
@@ -2430,9 +2574,53 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
         gCtx.fill();
       }
 
+      // Draw Resonance Expanding Shockwaves
+      for (let i = demoResonanceWaves.length - 1; i >= 0; i--) {
+        const wave = demoResonanceWaves[i];
+        wave.r += 7;
+        wave.alpha = Math.max(0, 1 - wave.r / wave.maxR);
+        if (wave.alpha <= 0) {
+          demoResonanceWaves.splice(i, 1);
+          continue;
+        }
+        gCtx.save();
+        gCtx.beginPath();
+        gCtx.arc(wave.x, wave.y, wave.r, 0, Math.PI * 2);
+        gCtx.strokeStyle = `rgba(245, 158, 11, ${wave.alpha * 0.85})`;
+        gCtx.lineWidth = 3;
+        gCtx.stroke();
+        gCtx.restore();
+      }
+
       // Draw Nodes & Swiss Bento Labels
       GRAPH_NODES.forEach(n => {
         const isHover = hoveredGraphNode === n;
+        const isReso = demoResonanceHighlights.includes(n.id);
+
+        // Isometric Floor Shadow in 3D Mind-Palace mode
+        if (graphPresetMode === "mindpalace") {
+          gCtx.save();
+          gCtx.beginPath();
+          gCtx.ellipse(n.px + 7, n.py + 12, n.r * 1.05, n.r * 0.45, -0.2, 0, Math.PI * 2);
+          gCtx.fillStyle = isDark ? "rgba(0,0,0,0.55)" : "rgba(17,17,17,0.18)";
+          gCtx.fill();
+          gCtx.restore();
+        }
+
+        // Resonance Golden Supernova Halo
+        if (isReso) {
+          gCtx.save();
+          const haloR = n.r + 9 + Math.sin(Date.now() * 0.009 + n.id) * 3;
+          gCtx.beginPath();
+          gCtx.arc(n.px, n.py, haloR, 0, Math.PI * 2);
+          gCtx.fillStyle = "rgba(245, 158, 11, 0.32)";
+          gCtx.fill();
+          gCtx.strokeStyle = "#F59E0B";
+          gCtx.lineWidth = 1.5;
+          gCtx.stroke();
+          gCtx.restore();
+        }
+
         gCtx.save();
         gCtx.beginPath();
         gCtx.arc(n.px, n.py, isHover ? n.r + 3 : n.r, 0, Math.PI * 2);
@@ -2456,6 +2644,29 @@ document.querySelectorAll(".artcraft-task-progress-wrap").forEach(el => el.remov
         gCtx.fillText(n.label, n.px - textW / 2, pillY + 12);
         gCtx.restore();
       });
+
+      // Draw Constellation Walk Traveling Comet
+      if (demoWalkActive) {
+        demoWalkProgress += 0.016;
+        if (demoWalkProgress >= 1) {
+          demoWalkProgress = 0;
+          demoWalkStep = (demoWalkStep + 1) % (DEMO_WALK_PATH.length - 1);
+        }
+        const fromNode = GRAPH_NODES[DEMO_WALK_PATH[demoWalkStep]];
+        const toNode = GRAPH_NODES[DEMO_WALK_PATH[demoWalkStep + 1]];
+        if (fromNode && toNode) {
+          const wx = fromNode.px + (toNode.px - fromNode.px) * demoWalkProgress;
+          const wy = fromNode.py + (toNode.py - fromNode.py) * demoWalkProgress;
+          gCtx.save();
+          gCtx.beginPath();
+          gCtx.arc(wx, wy, 7, 0, Math.PI * 2);
+          gCtx.fillStyle = "#6366F1";
+          gCtx.shadowColor = "#818CF8";
+          gCtx.shadowBlur = 14;
+          gCtx.fill();
+          gCtx.restore();
+        }
+      }
 
       requestAnimationFrame(animateBentoGraph);
     }
