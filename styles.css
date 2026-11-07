@@ -4712,21 +4712,33 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
 }
 
 .artcraft-margin-bookmarks-strip {
-  flex-wrap: nowrap !important;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  padding: 3px 0 2px 0 !important;
-  width: 100%;
-}
-
-.artcraft-margin-bookmarks-strip::-webkit-scrollbar {
-  display: none;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px 8px !important;
+  padding: 4px 0 2px 0 !important;
+  width: 100% !important;
+  overflow: visible !important;
 }
 
 .artcraft-bm-pill {
-  flex: 0 0 auto;
-  max-width: 270px;
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  max-width: 260px !important;
+  height: 25px !important;
+  padding: 2px 7px 2px 8px !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+}
+
+.artcraft-bm-pill .bm-tag-text {
+  max-width: 130px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .artcraft-bm-pill .bm-tag-edit,
