@@ -1,0 +1,33 @@
+name: Deploy Supabase Edge Functions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/functions/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      # The step below runs only when the SUPABASE_ACCESS_TOKEN repository secret exists
+      HAS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        if: env.HAS_TOKEN == 'true'
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy cryptobot-pay
+        if: env.HAS_TOKEN == 'true'
+        run: supabase functions deploy cryptobot-pay --project-ref tsnnckbvxokjmbgfeqdj --no-verify-jwt
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Skip notice
+        if: env.HAS_TOKEN != 'true'
+        run: echo "Add the SUPABASE_ACCESS_TOKEN repository secret to enable automatic Edge Function deploys."

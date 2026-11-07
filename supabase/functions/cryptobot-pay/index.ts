@@ -41,8 +41,16 @@ serve(async (req) => {
     const body = await req.json();
 
     if (body.action === "create_invoice") {
-      const uniqueSeed = `INV-${Date.now()}`;
+      const parsedAmount = parseFloat(String(body.amount || "4.99").replace(/[^0-9.]/g, ""));
+      const validAmount = !isNaN(parsedAmount) && parsedAmount >= 1 ? parsedAmount.toFixed(2) : "4.99";
+      const tierId = String(body.tier || "silver");
+      const uniqueSeed = `INV-${tierId.toUpperCase()}-${Date.now()}`;
       const generatedKey = generateSiCraftKey(uniqueSeed);
+
+      const customDesc =
+        typeof body.description === "string" && body.description.trim().length > 0
+          ? body.description.trim()
+          : `☕️ Alchemy Craft Pro (${validAmount} USD) — Tactile Swiss Bento Studio, Equalizer, Midnight Dark & Graph`;
 
       const cbRes = await fetch("https://pay.crypt.bot/api/createInvoice", {
         method: "POST",
@@ -53,13 +61,15 @@ serve(async (req) => {
         body: JSON.stringify({
           currency_type: "fiat",
           fiat: "USD",
-          amount: "4.99",
+          amount: validAmount,
           accepted_assets: "USDT,TON,USDC,SOL,BNB,ETH,BTC,TRX",
-          description: "💎 SiCraft // Alchemy Craft Pro Pass (1 Year License for Obsidian) — Smart LED Lamp, Equalizer, Midnight Dark & Graph Studio",
-          hidden_message: `🎉 Thank you! Your Cryptographic Pro License Key is: ${generatedKey} (Paste it in Step 2 inside Obsidian Settings)`,
+          description: customDesc,
+          hidden_message: `🎉 Спасибо за поддержку! Ваш криптографический ключ Pro: ${generatedKey} (Вставьте его в Шаге 2 в настройках плагина)`,
           paid_btn_name: "callback",
           paid_btn_url: "https://t.me/StratAlchemy",
           payload: generatedKey,
+          allow_comments: true,
+          allow_anonymous: true,
           expires_in: 3600,
         }),
       });
@@ -70,6 +80,8 @@ serve(async (req) => {
           JSON.stringify({
             ok: true,
             invoice_id: data.result.invoice_id,
+            amount: validAmount,
+            license_key: generatedKey,
             pay_url: data.result.bot_invoice_url || data.result.pay_url,
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -91,7 +103,7 @@ serve(async (req) => {
       if (paidInv) {
         const key = paidInv.payload || generateSiCraftKey(String(paidInv.invoice_id));
         return new Response(
-          JSON.stringify({ ok: true, paid: true, license_key: key }),
+          JSON.stringify({ ok: true, paid: true, license_key: key, amount: paidInv.amount }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
