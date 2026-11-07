@@ -2908,8 +2908,23 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 /* ==========================================================================
-   10. SONIC & AMBIENT STUDIO MODAL (PLAYER, SEEK BAR, 6 CRAFT MODES, 12 SOUNDS)
+   10. SONIC & AMBIENT STUDIO MODAL + WIDE CRAFT MODAL CONTAINER FIX
    ========================================================================== */
+.modal.artcraft-wide-craft-modal {
+  width: 680px !important;
+  max-width: 94vw !important;
+  padding: 20px 22px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+.modal.artcraft-wide-craft-modal .modal-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
 .svg-inline-icon {
   display: inline-flex;
   align-items: center;
@@ -2926,6 +2941,25 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   display: block;
 }
 
+/* ==========================================================================
+   NOTE HEADER STUDIO BAR: READING TIME, INK STAMP, BOOK SPREAD & BOOKMARKS
+   ========================================================================== */
+.artcraft-task-progress-wrap {
+  display: flex;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  padding: 7px 12px !important;
+}
+
+.artcraft-header-main-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
 .artcraft-reading-stats-pill {
   display: inline-flex;
   align-items: center;
@@ -2938,8 +2972,6 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   border: 1px solid #E2DDD2;
   padding: 2px 9px;
   border-radius: 999px;
-  margin-left: auto;
-  margin-right: 8px;
 }
 
 .artcraft-reading-stats-pill svg {
@@ -2948,15 +2980,188 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   color: #8C5828;
 }
 
+/* Vintage Risograph Ink Stamp ([ ИЗУЧЕНО • ДАТА ] / [ APPROVED ]) */
+.artcraft-ink-stamp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #15803D;
+  background: rgba(220, 252, 231, 0.75);
+  border: 1.8px dashed #16A34A;
+  padding: 2px 9px;
+  border-radius: 5px;
+  transform: rotate(-1.5deg);
+  box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.15);
+}
+
+.artcraft-note-craft-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.artcraft-craft-mini-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: #FAF8F3 !important;
+  color: #57534E !important;
+  border: 1px solid #DFDBD0 !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  height: 24px !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: all 0.14s ease !important;
+}
+
+.artcraft-craft-mini-btn:hover {
+  border-color: #8C5828 !important;
+  color: #1F2937 !important;
+  background: #FFFFFF !important;
+}
+
+.artcraft-craft-mini-btn.is-active {
+  background: #ECFDF5 !important;
+  border-color: #10B981 !important;
+  color: #065F46 !important;
+  font-weight: 700 !important;
+}
+
+/* Margin Craft Bookmarks Ribbon Strip */
+.artcraft-margin-bookmarks-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-top: 5px;
+  border-top: 1px dashed #E5E1D6;
+}
+
+.artcraft-bm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFFDF8;
+  border: 1px solid #E2DDD2;
+  border-left: 3.5px solid #D97706;
+  border-radius: 4px 7px 7px 4px;
+  padding: 2px 7px;
+  font-size: 10.5px;
+  color: #374151;
+  cursor: pointer;
+  max-width: 240px;
+  transition: all 0.14s ease;
+}
+
+.artcraft-bm-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+}
+
+.artcraft-bm-pill.is-key {
+  border-left-color: #D97706;
+  background: #FFFBEB;
+}
+.artcraft-bm-pill.is-idea {
+  border-left-color: #10B981;
+  background: #ECFDF5;
+}
+.artcraft-bm-pill.is-quote {
+  border-left-color: #2563EB;
+  background: #EFF6FF;
+}
+.artcraft-bm-pill.is-review {
+  border-left-color: #8B5CF6;
+  background: #F5F3FF;
+}
+
+.bm-tag-name {
+  font-weight: 700;
+  color: #1F2937;
+  flex-shrink: 0;
+}
+
+.bm-tag-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #57534E;
+}
+
+.bm-tag-del {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 2px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  color: #9CA3AF !important;
+  cursor: pointer !important;
+  height: auto !important;
+}
+
+.bm-tag-del:hover {
+  color: #DC2626 !important;
+}
+
+@keyframes artcraftBmFlash {
+  0% { background-color: rgba(245, 158, 11, 0.32); }
+  100% { background-color: transparent; }
+}
+
+.artcraft-bm-flash-highlight {
+  animation: artcraftBmFlash 1.5s ease-out;
+  border-radius: 4px;
+}
+
+/* Two-Column Open Book Spread Mode (Книжный разворот) */
+@media (min-width: 1020px) {
+  body.artcraft-book-spread .markdown-preview-sizer,
+  body.artcraft-book-spread .cm-contentContainer {
+    column-count: 2 !important;
+    column-gap: 48px !important;
+    column-rule: 1.5px solid rgba(140, 88, 40, 0.2) !important;
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+    padding: 18px 28px !important;
+    background: rgba(252, 250, 244, 0.55);
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(140, 88, 40, 0.12);
+  }
+  body.artcraft-book-spread .markdown-rendered h1,
+  body.artcraft-book-spread .markdown-rendered h2,
+  body.artcraft-book-spread .markdown-rendered pre,
+  body.artcraft-book-spread .markdown-rendered table {
+    break-inside: avoid;
+  }
+}
+
+/* ==========================================================================
+   SONIC & AMBIENT STUDIO MODAL LAYOUT (ZERO OVERFLOW)
+   ========================================================================== */
 .artcraft-sonic-modal-root {
-  padding: 6px 4px !important;
-  max-width: 620px !important;
+  padding: 4px 2px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .sonic-studio-wrap {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sonic-studio-head {
@@ -2968,6 +3173,11 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   border-bottom: 1px solid #EAE7DF;
 }
 
+.sonic-head-left {
+  flex: 1;
+  min-width: 0;
+}
+
 .sonic-badge {
   display: inline-flex;
   align-items: center;
@@ -2975,21 +3185,28 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-family: "JetBrains Mono", monospace;
   font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #78756E;
-  background: #F4F2EC;
-  border: 1px solid #E5E2D9;
+  letter-spacing: 0.05em;
+  color: #6B5744;
+  background: #F4F1EA;
+  border: 1px solid #E5DFD2;
   padding: 3px 9px;
   border-radius: 999px;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .sonic-title {
-  margin: 0 !important;
+  margin: 0 0 3px 0 !important;
   font-size: 18px !important;
   font-weight: 800 !important;
   color: #1F2937 !important;
   letter-spacing: -0.01em;
+}
+
+.sonic-studio-sub {
+  margin: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  color: #78756E !important;
 }
 
 .sonic-stop-all-btn {
@@ -3005,6 +3222,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-weight: 700 !important;
   cursor: pointer !important;
   box-shadow: none !important;
+  flex-shrink: 0;
   transition: all 0.14s ease !important;
 }
 
@@ -3017,10 +3235,56 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   background: #FAF9F5;
   border: 1px solid #E6E3DA;
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 11px 13px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.sonic-card.is-recipe-card {
+  background: linear-gradient(180deg, #FDFBF7 0%, #F7F3EA 100%);
+  border-color: #E2D9C5;
+}
+
+.sonic-recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 7px;
+  width: 100%;
+}
+
+.sonic-recipe-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 1px solid #E0D8C8 !important;
+  border-radius: 9px !important;
+  padding: 7px 9px !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  box-shadow: none !important;
+  height: auto !important;
+  transition: all 0.14s ease !important;
+}
+
+.sonic-recipe-btn:hover {
+  border-color: #A67C52 !important;
+  background: #FFFDF9 !important;
+}
+
+.sonic-recipe-btn.is-active {
+  background: #ECFDF5 !important;
+  border-color: #10B981 !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12) !important;
 }
 
 .sonic-card-top {
@@ -3032,7 +3296,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .sonic-sec-label {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -3042,7 +3306,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 .sonic-vol-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   font-size: 11.5px;
   color: #6B7280;
 }
@@ -3067,6 +3331,8 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   border: 1px solid #E6E3DA;
   border-radius: 10px;
   padding: 8px 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sonic-play-btn {
@@ -3097,7 +3363,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .sonic-track-title {
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   color: #1F2937;
   white-space: nowrap;
@@ -3120,6 +3386,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .sonic-seek-slider {
   flex: 1;
+  min-width: 0;
   accent-color: #69BD28;
   cursor: pointer;
 }
@@ -3137,6 +3404,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-weight: 600 !important;
   cursor: pointer !important;
   box-shadow: none !important;
+  flex-shrink: 0;
 }
 
 .sonic-load-btn:hover {
@@ -3145,13 +3413,18 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .sonic-source-pills {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .sonic-src-pill {
-  flex: 1;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -3160,12 +3433,18 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   color: #4B5563 !important;
   border: 1px solid #E2DFD5 !important;
   border-radius: 8px !important;
-  padding: 7px 12px !important;
+  padding: 7px 10px !important;
   font-size: 11.5px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   box-shadow: none !important;
   transition: all 0.14s ease !important;
+}
+
+.sonic-src-pill span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sonic-src-pill:hover {
@@ -3180,20 +3459,27 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-weight: 700 !important;
 }
 
+/* 2-Column Spacious Grid for 6 Craft Equalizer Modes (Zero Overflow!) */
 .sonic-eq-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 7px;
+  width: 100%;
 }
 
 .sonic-eq-btn {
   display: flex !important;
   align-items: center !important;
-  gap: 7px !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   background: #FFFFFF !important;
   border: 1px solid #E2DFD5 !important;
   border-radius: 8px !important;
-  padding: 8px 10px !important;
+  padding: 8px 11px !important;
   font-size: 11.5px !important;
   font-weight: 600 !important;
   color: #4B5563 !important;
@@ -3201,6 +3487,12 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   text-align: left !important;
   box-shadow: none !important;
   transition: all 0.14s ease !important;
+}
+
+.sonic-eq-lbl {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sonic-eq-btn:hover {
@@ -3215,20 +3507,27 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-weight: 700 !important;
 }
 
+/* 3-Column Strict Minmax Grid for 12 Focus Soundscapes */
 .sonic-ambient-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 7px;
+  width: 100%;
 }
 
 .sonic-amb-tile {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   background: #FFFFFF !important;
   border: 1px solid #E5E2D9 !important;
   border-radius: 9px !important;
-  padding: 8px 10px !important;
+  padding: 7px 9px !important;
   cursor: pointer !important;
   text-align: left !important;
   box-shadow: none !important;
@@ -3259,7 +3558,8 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   flex-shrink: 0;
 }
 
-.sonic-amb-tile.is-active .amb-icon {
+.sonic-amb-tile.is-active .amb-icon,
+.sonic-recipe-btn.is-active .amb-icon {
   background: #D1FAE5;
   color: #065F46;
 }
@@ -3273,11 +3573,13 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
   line-height: 1.25;
+  overflow: hidden;
 }
 
 .amb-txt strong {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #1F2937;
   white-space: nowrap;
@@ -3286,7 +3588,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .amb-txt small {
-  font-size: 10px;
+  font-size: 9.8px;
   color: #8A867E;
   white-space: nowrap;
   overflow: hidden;
@@ -3298,8 +3600,10 @@ body.artcraft-dark-craft .artcraft-graph-hud {
    11. SOFT, CALM, ZERO-CLUTTER CAPPUCCINO CRAFT PRO & PROMO MODAL
    ========================================================================== */
 .artcraft-pro-modal-root {
-  max-width: 630px !important;
-  padding: 6px 4px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 4px 2px !important;
+  box-sizing: border-box !important;
 }
 
 .artcraft-soft-pro-header {
@@ -3334,7 +3638,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .artcraft-soft-pro-sub {
   margin: 0 auto !important;
-  max-width: 530px;
+  max-width: 540px;
   font-size: 12.5px !important;
   line-height: 1.5 !important;
   color: #78756E !important;
@@ -3354,6 +3658,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .artcraft-ko-tab {
   flex: 1;
+  min-width: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -3381,16 +3686,20 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* 3 Illustrated Cappuccino Craft Tier Cards */
+/* 3 Illustrated Cappuccino Craft Tier Cards (Strict Minmax Grid, Zero Overflow) */
 .artcraft-ko-tier-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 10px;
   margin-bottom: 14px;
+  width: 100%;
 }
 
 .artcraft-ko-tier-card {
   position: relative;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
   background: #FAF9F5;
   border: 1.5px solid #E6E2D8;
   border-radius: 12px;
@@ -3449,6 +3758,8 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-weight: 800;
   color: #1F2937;
   margin-bottom: 3px;
+  white-space: normal !important;
+  word-break: break-word !important;
 }
 
 .ko-tier-price {
@@ -3463,6 +3774,8 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-size: 11px !important;
   line-height: 1.42 !important;
   color: #78756E !important;
+  white-space: normal !important;
+  word-break: break-word !important;
 }
 
 /* Soft Payment Method Pills */
@@ -3513,6 +3826,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   border-radius: 12px;
   padding: 12px 14px;
   margin-bottom: 12px;
+  box-sizing: border-box;
 }
 
 .soft-pay-summary-row {
@@ -3551,6 +3865,12 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-size: 11.5px !important;
   cursor: pointer !important;
   box-shadow: none !important;
+}
+
+.card-copy-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
 }
 
 .soft-pay-muted-hint {
@@ -3801,7 +4121,9 @@ body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-sub {
 @media (max-width: 640px) {
   .artcraft-ko-tier-grid,
   .sonic-eq-grid,
-  .sonic-ambient-grid {
+  .sonic-ambient-grid,
+  .sonic-recipe-grid,
+  .sonic-source-pills {
     grid-template-columns: 1fr !important;
   }
   .soft-verify-row {

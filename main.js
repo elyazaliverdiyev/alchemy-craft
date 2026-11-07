@@ -34,6 +34,9 @@ const DEFAULT_SETTINGS = {
   audioVolume: 75, // 0..100%
   pomoAudioLink: true, // Auto-fade audio on Pomodoro break & resume on focus sprint
   showReadingStats: true, // Live Reading Time & Word Count capsule
+  bookSpreadMode: false, // Two-Column Open Book Spread mode
+  stampedNotes: {}, // { [filePath]: "2026-11-07" }
+  marginBookmarks: {}, // { [filePath]: Array<{ id, type, label, snippet, line }> }
   readingRuler: false,
   supabaseFunctionUrl: "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay",
   spotlightFocus: false,
@@ -116,7 +119,11 @@ const SICRAFT_SVGS = {
   train: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h.01"/><path d="M16 15h.01"/></svg>`,
   brain: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"/></svg>`,
   mic: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>`,
-  external: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`
+  external: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`,
+  zap: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  bookmark: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>`,
+  stamp: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/></svg>`,
+  columns: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>`
 };
 
 // Always open external URLs in the user's default OS browser (Chrome/Safari/Edge/Telegram Desktop), bypassing Obsidian's internal Web Viewer!
@@ -1362,6 +1369,7 @@ class AlchemySonicStudioModal extends Modal {
 
   onOpen() {
     this.plugin.activeSonicModal = this;
+    if (this.modalEl) this.modalEl.addClass("artcraft-wide-craft-modal");
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-sonic-modal-root");
@@ -1376,6 +1384,27 @@ class AlchemySonicStudioModal extends Modal {
       { id: "ferro", name: isRu ? "06 // Капли Эспрессо" : "06 // Espresso Ferrofluid", icon: SICRAFT_SVGS.eqFerro }
     ];
 
+    const recipes = [
+      {
+        id: "morning_cappuccino",
+        icon: SICRAFT_SVGS.coffee,
+        title: isRu ? "Утренний Капучино" : "Morning Cappuccino",
+        sub: isRu ? "Кофейня • Сейсмограф • 3200K • 25м" : "Cafe • Ink Seismograph • 3200K • 25m"
+      },
+      {
+        id: "rainy_chemex",
+        icon: SICRAFT_SVGS.rain,
+        title: isRu ? "Дождливый Кемекс" : "Rainy Chemex",
+        sub: isRu ? "Дождь • Матрица • Линейка • 45м" : "Soft Rain • Matrix • Ruler • 45m"
+      },
+      {
+        id: "night_roastery",
+        icon: SICRAFT_SVGS.brain,
+        title: isRu ? "Ночная Обжарка 40Hz" : "Night Roastery 40Hz",
+        sub: isRu ? "40Hz Гамма • Эспрессо • 2700K • 60м" : "40Hz Gamma • Ferrofluid • 2700K • 60m"
+      }
+    ];
+
     const hasTrack = !!(this.plugin.ambientNodes && this.plugin.ambientNodes.audioEl);
     const trackName = (this.plugin.ambientNodes && this.plugin.ambientNodes.trackName) || (isRu ? "Выберите свой аудиофайл (MP3 / WAV / FLAC / M4A)" : "Select a custom audio track (MP3 / WAV / FLAC / M4A)");
     const isSysActive = !!(this.plugin.desktopAudioNodes && this.plugin.desktopAudioNodes.type === "system");
@@ -1385,22 +1414,38 @@ class AlchemySonicStudioModal extends Modal {
     contentEl.innerHTML = `
       <div class="sonic-studio-wrap">
         <div class="sonic-studio-head">
-          <div>
-            <div class="sonic-studio-badge">ALCHEMY CRAFT // SONIC & AMBIENT STUDIO</div>
-            <h2 class="sonic-studio-title">${isRu ? "Аудио-студия, Плеер и Фоновые звуки" : "Sonic Equalizer, Track Player & Ambient Sounds"}</h2>
-            <p class="sonic-studio-sub">${isRu ? "Управляйте фоновыми звуками, загружайте свои треки или синхронизируйте эквалайзер со звуком ПК." : "Control ambient soundscapes, play local tracks, or sync the craft equalizer with desktop audio."}</p>
+          <div class="sonic-head-left">
+            <div class="sonic-badge"><span class="svg-inline-icon">${SICRAFT_SVGS.sliders}</span> <span>ALCHEMY CRAFT // SONIC & AMBIENT STUDIO</span></div>
+            <h2 class="sonic-title">${isRu ? "Аудио-студия, Плеер и Фоновые звуки" : "Sonic Equalizer, Track Player & Ambient Sounds"}</h2>
+            <p class="sonic-studio-sub">${isRu ? "Запускайте кофейные рецепты фокуса в 1 клик, включайте фоновые звуки или синхронизируйте эквалайзер со звуком ПК." : "Launch 1-click Cappuccino focus recipes, play ambient soundscapes, or sync the craft equalizer with desktop audio."}</p>
           </div>
-          <button class="sonic-stop-all-btn" id="sonic-stop-all">${SICRAFT_SVGS.stop} <span>${isRu ? "Стоп" : "Stop All"}</span></button>
+          <button class="sonic-stop-all-btn" id="sonic-stop-all"><span class="svg-inline-icon">${SICRAFT_SVGS.stop}</span> <span>${isRu ? "Стоп" : "Stop All"}</span></button>
+        </div>
+
+        <!-- 0. ONE-CLICK CAPPUCCINO FOCUS RECIPES -->
+        <div class="sonic-card is-recipe-card">
+          <div class="sonic-sec-label">${isRu ? "РЕЦЕПТЫ ФОКУСА В 1 КЛИК (ЗВУК + ЭКВАЛАЙЗЕР + ЛАМПА + ПОМОДОРО)" : "ONE-CLICK CAPPUCCINO FOCUS RECIPES (SOUND + EQ + LAMP + POMODORO)"}</div>
+          <div class="sonic-recipe-grid">
+            ${recipes.map((r) => `
+              <button class="sonic-recipe-btn ${this.plugin.activeRecipeId === r.id ? "is-active" : ""}" data-recipe="${r.id}">
+                <span class="amb-icon">${r.icon}</span>
+                <div class="amb-txt">
+                  <strong>${r.title}</strong>
+                  <small>${r.sub}</small>
+                </div>
+              </button>
+            `).join("")}
+          </div>
         </div>
 
         <!-- 1. CUSTOM TRACK PLAYER & PC/MIC CAPTURE -->
         <div class="sonic-card">
           <div class="sonic-card-top">
             <span class="sonic-sec-label">${isRu ? "ПЛЕЕР СВОИХ ТРЕКОВ И ГРОМКОСТЬ" : "CUSTOM MUSIC PLAYER & MASTER VOLUME"}</span>
-            <div class="sonic-vol-wrap">
-              ${SICRAFT_SVGS.volume}
+            <div class="sonic-vol-row">
+              <span class="svg-inline-icon">${SICRAFT_SVGS.volume}</span>
               <span class="sonic-vol-txt">${isRu ? "Громкость:" : "Volume:"} <strong id="sonic-vol-lbl">${vol}%</strong></span>
-              <input type="range" id="sonic-vol-slider" min="0" max="100" value="${vol}" class="sonic-range-slider" />
+              <input type="range" id="sonic-vol-slider" min="0" max="100" value="${vol}" class="sonic-vol-slider" />
             </div>
           </div>
 
@@ -1409,31 +1454,31 @@ class AlchemySonicStudioModal extends Modal {
             <div class="sonic-track-meta">
               <div class="sonic-track-title" id="sonic-track-name">${trackName}</div>
               <div class="sonic-seek-row">
-                <span id="sonic-time-cur">00:00</span>
-                <input type="range" id="sonic-seek-slider" min="0" max="100" value="0" class="sonic-seek-input" ${hasTrack ? "" : "disabled"} />
-                <span id="sonic-time-dur">00:00</span>
+                <span class="sonic-time-lbl" id="sonic-time-cur">00:00</span>
+                <input type="range" id="sonic-seek-slider" min="0" max="100" value="0" class="sonic-seek-slider" ${hasTrack ? "" : "disabled"} />
+                <span class="sonic-time-lbl" id="sonic-time-dur">00:00</span>
               </div>
             </div>
-            <button class="sonic-load-btn" id="sonic-load-file">${SICRAFT_SVGS.audio} <span>${isRu ? "Выбрать трек..." : "Load Track..."}</span></button>
+            <button class="sonic-load-btn" id="sonic-load-file"><span class="svg-inline-icon">${SICRAFT_SVGS.audio}</span> <span>${isRu ? "Выбрать трек..." : "Load Track..."}</span></button>
           </div>
 
           <div class="sonic-source-pills">
-            <button class="sonic-src-btn ${isSysActive ? "is-active" : ""}" id="sonic-sync-sys">
-              ${SICRAFT_SVGS.globe} <span>${isRu ? "Захват звука ПК (WASAPI Loopback)" : "Sync PC Desktop Audio (WASAPI)"}</span>
+            <button class="sonic-src-pill ${isSysActive ? "is-active" : ""}" id="sonic-sync-sys">
+              <span class="svg-inline-icon">${SICRAFT_SVGS.globe}</span> <span>${isRu ? "Захват звука ПК (WASAPI Loopback)" : "Sync PC Desktop Audio (WASAPI)"}</span>
             </button>
-            <button class="sonic-src-btn ${isMicActive ? "is-active" : ""}" id="sonic-sync-mic">
-              ${SICRAFT_SVGS.mic} <span>${isRu ? "Микрофон / Стерео Микшер" : "Microphone / Stereo Mix"}</span>
+            <button class="sonic-src-pill ${isMicActive ? "is-active" : ""}" id="sonic-sync-mic">
+              <span class="svg-inline-icon">${SICRAFT_SVGS.mic}</span> <span>${isRu ? "Микрофон / Стерео Микшер" : "Microphone / Stereo Mix"}</span>
             </button>
           </div>
         </div>
 
         <!-- 2. 6 CRAFT EQUALIZER STYLES -->
         <div class="sonic-card">
-          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "6 КРАФТОВЫХ РЕЖИМОВ ЭКВАЛАЙЗЕРА" : "6 CRAFT EQUALIZER VISUAL STYLES"}</div>
+          <div class="sonic-sec-label">${isRu ? "6 КРАФТОВЫХ РЕЖИМОВ ЭКВАЛАЙЗЕРА" : "6 CRAFT EQUALIZER VISUAL STYLES"}</div>
           <div class="sonic-eq-grid">
             ${eqModes.map((m) => `
               <button class="sonic-eq-btn ${(this.plugin.settings.eqMode || "craft") === m.id ? "is-active" : ""}" data-eq="${m.id}">
-                <span class="sonic-eq-ic">${m.icon}</span> <span>${m.name}</span>
+                <span class="svg-inline-icon">${m.icon}</span> <span class="sonic-eq-lbl">${m.name}</span>
               </button>
             `).join("")}
           </div>
@@ -1441,7 +1486,7 @@ class AlchemySonicStudioModal extends Modal {
 
         <!-- 3. 12 APPLE iOS INSPIRED BACKGROUND SOUNDS -->
         <div class="sonic-card">
-          <div class="sonic-sec-label" style="margin-bottom:8px;">${isRu ? "12 ФОНОВЫХ ЗВУКОВ ДЛЯ ФОКУСА (КОЛЛЕКЦИЯ iOS)" : "12 FOCUS BACKGROUND SOUNDSCAPES (iOS COLLECTION)"}</div>
+          <div class="sonic-sec-label">${isRu ? "12 ФОНОВЫХ ЗВУКОВ ДЛЯ ФОКУСА (КОЛЛЕКЦИЯ iOS)" : "12 FOCUS BACKGROUND SOUNDSCAPES (iOS COLLECTION)"}</div>
           <div class="sonic-ambient-grid">
             ${AMBIENT_SOUNDSCAPES.map((s) => `
               <button class="sonic-amb-tile ${this.plugin.settings.ambientSound === s.id ? "is-active" : ""}" data-amb="${s.id}">
@@ -1459,9 +1504,19 @@ class AlchemySonicStudioModal extends Modal {
 
     // Wire up Stop All
     contentEl.querySelector("#sonic-stop-all")?.addEventListener("click", async () => {
+      this.plugin.activeRecipeId = null;
       this.plugin.stopAudioCapture(true);
       await this.plugin.setAmbientSound("off");
       this.onOpen();
+    });
+
+    // Wire up One-Click Focus Recipes
+    contentEl.querySelectorAll(".sonic-recipe-btn").forEach((btn) => {
+      btn.onclick = async () => {
+        const recipeId = btn.getAttribute("data-recipe");
+        await this.plugin.applyFocusRecipe(recipeId);
+        this.onOpen();
+      };
     });
 
     // Wire up Volume Slider
@@ -1920,6 +1975,46 @@ class AlchemyFlowPlugin extends Plugin {
     const modal = new AlchemySonicStudioModal(this.app, this);
     this.activeSonicModal = modal;
     modal.open();
+  }
+
+  async applyFocusRecipe(recipeId) {
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    this.activeRecipeId = recipeId;
+    if (recipeId === "morning_cappuccino") {
+      this.settings.eqMode = "craft";
+      this.settings.magicLamp = true;
+      this.settings.lampKelvin = 3200;
+      this.settings.lampShape = "radial";
+      this.settings.pomodoroMinutes = 25;
+      await this.setAmbientSound("cafe");
+      this.resetTimer();
+      this.startTimer();
+      new Notice(isRu ? "Рецепт активирован: Утренний Капучино (Кофейня • 3200K • 25 мин)" : "Focus Recipe Active: Morning Cappuccino (Cafe • 3200K • 25m)");
+    } else if (recipeId === "rainy_chemex") {
+      this.settings.eqMode = "dna";
+      this.settings.magicLamp = true;
+      this.settings.lampKelvin = 3500;
+      this.settings.lampShape = "ruler";
+      this.settings.pomodoroMinutes = 45;
+      await this.setAmbientSound("rain");
+      this.resetTimer();
+      this.startTimer();
+      new Notice(isRu ? "Рецепт активирован: Дождливый Кемекс (Дождь • Линейка чтения • 45 мин)" : "Focus Recipe Active: Rainy Chemex (Soft Rain • Reading Ruler • 45m)");
+    } else if (recipeId === "night_roastery") {
+      this.settings.eqMode = "ferro";
+      this.settings.magicLamp = true;
+      this.settings.lampKelvin = 2700;
+      this.settings.lampShape = "deskbar";
+      this.settings.pomodoroMinutes = 60;
+      await this.setAmbientSound("gamma40");
+      this.resetTimer();
+      this.startTimer();
+      new Notice(isRu ? "Рецепт активирован: Ночная Обжарка (40Hz Гамма • 2700K • 60 мин)" : "Focus Recipe Active: Night Roastery (40Hz Gamma • 2700K • 60m)");
+    }
+    await this.saveSettings();
+    this.applyBodyClasses();
+    this.updateDockUI();
+    this.updateEqualizerPillUI();
   }
 
   showAudioMenu(event) {
@@ -2889,6 +2984,7 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-bento-graph", this.settings.enableBentoGraph !== false);
     document.body.classList.toggle("artcraft-spotlight-mode", !!this.settings.spotlightFocus);
     document.body.classList.toggle("artcraft-magic-lamp", !!this.settings.magicLamp);
+    document.body.classList.toggle("artcraft-book-spread", !!this.settings.bookSpreadMode);
 
     const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
     const show = this.settings.showHeaderTag !== false && tag.length > 0;
@@ -3363,8 +3459,9 @@ class AlchemyFlowPlugin extends Plugin {
 
     // Calculate live Word Count & Reading Time (~200 wpm)
     let wordCount = 0;
+    let rawText = "";
     try {
-      const rawText = activeView.editor ? activeView.editor.getValue() : (activeView.data || "");
+      rawText = activeView.editor ? activeView.editor.getValue() : (activeView.data || "");
       const cleanText = rawText.replace(/^---[\s\S]*?---\n?/, "").trim();
       if (cleanText.length > 0) {
         wordCount = cleanText.split(/\s+/).filter(Boolean).length;
@@ -3378,14 +3475,22 @@ class AlchemyFlowPlugin extends Plugin {
 
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
     const filePath = activeView.file.path;
+    if (!this.settings.stampedNotes) this.settings.stampedNotes = {};
+    if (!this.settings.marginBookmarks) this.settings.marginBookmarks = {};
+
     if (fromCheckboxClick && total > 0 && pct === 100 && this.lastTaskPctByFile[filePath] !== 100) {
       this.burstParticles(window.innerWidth / 2, window.innerHeight / 4, 60);
+      this.settings.stampedNotes[filePath] = new Date().toLocaleDateString();
       if (this.settings.focusAnalytics) {
         this.settings.focusAnalytics.tasksCompleted100 = (this.settings.focusAnalytics.tasksCompleted100 || 0) + 1;
-        this.saveSettings();
       }
+      this.saveSettings();
     }
     this.lastTaskPctByFile[filePath] = pct;
+
+    const isStamped = (total > 0 && pct === 100) || !!this.settings.stampedNotes[filePath];
+    const stampDate = this.settings.stampedNotes[filePath] || new Date().toLocaleDateString();
+    const noteBookmarks = Array.isArray(this.settings.marginBookmarks[filePath]) ? this.settings.marginBookmarks[filePath] : [];
 
     document.querySelectorAll('.workspace-leaf-content[data-type="markdown"]').forEach((leaf) => {
       const viewContent = leaf.querySelector(".view-content");
@@ -3402,13 +3507,22 @@ class AlchemyFlowPlugin extends Plugin {
         barWrap = document.createElement("div");
         barWrap.className = "artcraft-task-progress-wrap";
         barWrap.innerHTML = `
-          <span class="artcraft-reading-stats-pill"></span>
-          <span class="artcraft-task-progress-label"></span>
-          <div class="artcraft-task-progress-bar-bg">
-            <div class="artcraft-task-progress-bar-fill"></div>
+          <div class="artcraft-header-main-row">
+            <span class="artcraft-reading-stats-pill"></span>
+            <span class="artcraft-task-progress-label"></span>
+            <div class="artcraft-task-progress-bar-bg">
+              <div class="artcraft-task-progress-bar-fill"></div>
+            </div>
+            <span class="artcraft-task-progress-pct"></span>
+            <span class="artcraft-ink-stamp-badge" style="display:none;"></span>
+            <div class="artcraft-note-craft-actions">
+              <button class="artcraft-craft-mini-btn" data-craft-act="bookmark" title="Add Craft Margin Bookmark"></button>
+              <button class="artcraft-craft-mini-btn" data-craft-act="spread" title="Toggle 2-Column Book Spread"></button>
+              <button class="artcraft-craft-mini-btn" data-craft-act="stamp" title="Stamp Note as Approved / Completed"></button>
+              <button class="artcraft-task-progress-close" title="Dismiss bar">${SICRAFT_SVGS.clear}</button>
+            </div>
           </div>
-          <span class="artcraft-task-progress-pct"></span>
-          <button class="artcraft-task-progress-close" title="Dismiss bar">${SICRAFT_SVGS.clear}</button>
+          <div class="artcraft-margin-bookmarks-strip" style="display:none;"></div>
         `;
         const closeBtn = barWrap.querySelector(".artcraft-task-progress-close");
         if (closeBtn) {
@@ -3417,6 +3531,54 @@ class AlchemyFlowPlugin extends Plugin {
             barWrap.style.display = "none";
           });
         }
+
+        // Wire up 1. Add Margin Craft Bookmark (+ Стикер)
+        const bmBtn = barWrap.querySelector('[data-craft-act="bookmark"]');
+        if (bmBtn) {
+          bmBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            await this.addMarginBookmarkToActiveNote();
+          });
+        }
+
+        // Wire up 2. Toggle 2-Column Book Spread (Разворот)
+        const spreadBtn = barWrap.querySelector('[data-craft-act="spread"]');
+        if (spreadBtn) {
+          spreadBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            this.settings.bookSpreadMode = !this.settings.bookSpreadMode;
+            await this.saveSettings();
+            this.applyBodyClasses();
+            this.updateTaskProgressBar();
+            const ru = (this.settings.uiLanguage || "en") === "ru";
+            new Notice(
+              this.settings.bookSpreadMode
+                ? (ru ? "Включён режим «Книжный разворот» (2 колонки)" : "Two-Column Book Spread Mode Enabled")
+                : (ru ? "Обычный режим одной колонки" : "Single-Column Reading Mode")
+            );
+          });
+        }
+
+        // Wire up 3. Toggle Vintage Risograph Ink Stamp ([ ИЗУЧЕНО / APPROVED ])
+        const stampBtn = barWrap.querySelector('[data-craft-act="stamp"]');
+        if (stampBtn) {
+          stampBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            const curView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+            if (!curView || !curView.file) return;
+            const fp = curView.file.path;
+            if (!this.settings.stampedNotes) this.settings.stampedNotes = {};
+            if (this.settings.stampedNotes[fp]) {
+              delete this.settings.stampedNotes[fp];
+            } else {
+              this.settings.stampedNotes[fp] = new Date().toLocaleDateString();
+              this.burstParticles(window.innerWidth / 2, 120, 50);
+            }
+            await this.saveSettings();
+            this.updateTaskProgressBar();
+          });
+        }
+
         viewContent.insertBefore(barWrap, viewContent.firstChild);
       }
 
@@ -3426,6 +3588,34 @@ class AlchemyFlowPlugin extends Plugin {
       const barBgEl = barWrap.querySelector(".artcraft-task-progress-bar-bg");
       const fillEl = barWrap.querySelector(".artcraft-task-progress-bar-fill");
       const pctEl = barWrap.querySelector(".artcraft-task-progress-pct");
+      const stampBadge = barWrap.querySelector(".artcraft-ink-stamp-badge");
+      const bmBtn = barWrap.querySelector('[data-craft-act="bookmark"]');
+      const spreadBtn = barWrap.querySelector('[data-craft-act="spread"]');
+      const stampBtn = barWrap.querySelector('[data-craft-act="stamp"]');
+      const bmStrip = barWrap.querySelector(".artcraft-margin-bookmarks-strip");
+
+      if (bmBtn) {
+        bmBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.bookmark}</span><span>${isRu ? "+ Стикер" : "+ Sticker"}</span>`;
+      }
+      if (spreadBtn) {
+        spreadBtn.classList.toggle("is-active", !!this.settings.bookSpreadMode);
+        spreadBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.columns}</span><span>${isRu ? "Разворот" : "Book Spread"}</span>`;
+      }
+      if (stampBtn) {
+        stampBtn.classList.toggle("is-active", isStamped);
+        stampBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.stamp}</span><span>${isRu ? "Штамп" : "Stamp"}</span>`;
+      }
+
+      if (stampBadge) {
+        if (isStamped) {
+          stampBadge.style.display = "inline-flex";
+          stampBadge.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.stamp}</span> <span>${
+            isRu ? `ИЗУЧЕНО • ${stampDate}` : `APPROVED • ${stampDate}`
+          }</span>`;
+        } else {
+          stampBadge.style.display = "none";
+        }
+      }
 
       if (readEl) {
         if (this.settings.showReadingStats !== false && wordCount > 0) {
@@ -3452,7 +3642,125 @@ class AlchemyFlowPlugin extends Plugin {
         if (barBgEl) barBgEl.style.display = "none";
         if (pctEl) pctEl.style.display = "none";
       }
+
+      // Render Margin Craft Bookmarks Strip & Margin Ribbons
+      if (bmStrip) {
+        if (noteBookmarks.length > 0) {
+          bmStrip.style.display = "flex";
+          bmStrip.innerHTML = noteBookmarks
+            .map(
+              (bm) => `
+              <div class="artcraft-bm-pill is-${bm.type || "key"}" data-bm-line="${bm.line || 0}" data-bm-id="${bm.id}">
+                <span class="bm-tag-dot"></span>
+                <strong class="bm-tag-name">${bm.label}:</strong>
+                <span class="bm-tag-text">${bm.snippet}</span>
+                <button class="bm-tag-del" data-del-id="${bm.id}" title="Remove sticker">×</button>
+              </div>
+            `
+            )
+            .join("");
+
+          bmStrip.querySelectorAll(".artcraft-bm-pill").forEach((pill) => {
+            pill.addEventListener("click", (ev) => {
+              if (ev.target.closest(".bm-tag-del")) return;
+              const targetLine = parseInt(pill.getAttribute("data-bm-line") || "0", 10);
+              this.jumpToMarginBookmark(targetLine, pill.querySelector(".bm-tag-text")?.textContent || "");
+            });
+          });
+
+          bmStrip.querySelectorAll(".bm-tag-del").forEach((delBtn) => {
+            delBtn.addEventListener("click", async (ev) => {
+              ev.stopPropagation();
+              const id = delBtn.getAttribute("data-del-id");
+              this.settings.marginBookmarks[filePath] = (this.settings.marginBookmarks[filePath] || []).filter((x) => x.id !== id);
+              await this.saveSettings();
+              this.updateTaskProgressBar();
+            });
+          });
+        } else {
+          bmStrip.style.display = "none";
+          bmStrip.innerHTML = "";
+        }
+      }
     });
+  }
+
+  async addMarginBookmarkToActiveNote() {
+    const obsidian = require("obsidian");
+    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!view || !view.file) return;
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const filePath = view.file.path;
+    if (!this.settings.marginBookmarks) this.settings.marginBookmarks = {};
+    if (!Array.isArray(this.settings.marginBookmarks[filePath])) {
+      this.settings.marginBookmarks[filePath] = [];
+    }
+
+    const types = [
+      { type: "key", ru: "Важно", en: "Key" },
+      { type: "idea", ru: "Идея", en: "Idea" },
+      { type: "quote", ru: "Цитата", en: "Quote" },
+      { type: "review", ru: "Повторить", en: "Review" }
+    ];
+    const nextIdx = this.settings.marginBookmarks[filePath].length % types.length;
+    const chosen = types[nextIdx];
+
+    let lineNum = 0;
+    let lineText = "";
+    if (view.editor) {
+      const cursor = view.editor.getCursor();
+      lineNum = cursor ? cursor.line : 0;
+      lineText = (view.editor.getLine(lineNum) || "").replace(/^[#>*\-\s]+/, "").trim();
+      if (!lineText) {
+        const lineCount = view.editor.lineCount();
+        for (let i = Math.max(0, lineNum - 3); i < Math.min(lineCount, lineNum + 8); i++) {
+          const candidate = (view.editor.getLine(i) || "").replace(/^[#>*\-\s]+/, "").trim();
+          if (candidate.length > 3) {
+            lineNum = i;
+            lineText = candidate;
+            break;
+          }
+        }
+      }
+    }
+    if (!lineText) {
+      lineText = isRu ? `Раздел заметки #${this.settings.marginBookmarks[filePath].length + 1}` : `Note Section #${this.settings.marginBookmarks[filePath].length + 1}`;
+    }
+    const snippet = lineText.length > 42 ? lineText.slice(0, 42) + "…" : lineText;
+
+    this.settings.marginBookmarks[filePath].push({
+      id: "bm_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+      type: chosen.type,
+      label: isRu ? chosen.ru : chosen.en,
+      snippet,
+      line: lineNum
+    });
+
+    await this.saveSettings();
+    this.updateTaskProgressBar();
+    new Notice(isRu ? `Прикреплён крафтовый стикер: [${chosen.ru}] ${snippet}` : `Pinned Craft Margin Sticker: [${chosen.en}] ${snippet}`);
+  }
+
+  jumpToMarginBookmark(lineNum, snippetText) {
+    const obsidian = require("obsidian");
+    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!view) return;
+    if (view.editor) {
+      view.editor.setCursor({ line: lineNum, ch: 0 });
+      view.editor.scrollIntoView({ from: { line: Math.max(0, lineNum - 2), ch: 0 }, to: { line: lineNum + 2, ch: 0 } }, true);
+    }
+    const cleanNeedle = (snippetText || "").replace(/…$/, "").trim().slice(0, 24);
+    if (cleanNeedle) {
+      const blocks = view.contentEl.querySelectorAll(".cm-line, p, h1, h2, h3, h4, li, blockquote");
+      for (const b of blocks) {
+        if (b.textContent && b.textContent.includes(cleanNeedle)) {
+          b.scrollIntoView({ behavior: "smooth", block: "center" });
+          b.classList.add("artcraft-bm-flash-highlight");
+          setTimeout(() => b.classList.remove("artcraft-bm-flash-highlight"), 1600);
+          break;
+        }
+      }
+    }
   }
 
   cleanCurrentNoteAIWatermarks() {
@@ -4764,6 +5072,7 @@ class AlchemyCraftProModal extends Modal {
 
   onOpen() {
     this.plugin.activeProModal = this;
+    if (this.modalEl) this.modalEl.addClass("artcraft-wide-craft-modal");
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-pro-modal-root");
@@ -5385,6 +5694,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         toggle.setValue(this.plugin.settings.showReadingStats !== false).onChange(async (val) => {
           this.plugin.settings.showReadingStats = val;
           await this.plugin.saveSettings();
+          this.plugin.updateTaskProgressBar();
+        })
+      );
+
+    new Setting(secReadability)
+      .setName(isRu ? "Режим «Книжный разворот» (2 колонки)" : "Two-Column Book Spread Mode")
+      .setDesc(
+        isRu
+          ? "Превращает заметку на широких мониторах в разворот открытой книги из двух колонок с крафтовым корешком посередине."
+          : "Transforms wide notes into an open two-column book spread with a warm editorial spine divider."
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(!!this.plugin.settings.bookSpreadMode).onChange(async (val) => {
+          this.plugin.settings.bookSpreadMode = val;
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
           this.plugin.updateTaskProgressBar();
         })
       );
