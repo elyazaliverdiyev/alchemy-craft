@@ -6481,63 +6481,64 @@ class AlchemyCraftProModal extends Modal {
               btnApiCb.textContent = isRu ? "Создаём счёт в @CryptoBot..." : "Creating @CryptoBot invoice...";
               try {
                 const obsidianApi = require("obsidian");
-                const sbFuncUrl =
-                  this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
-                const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
-                const payload = {
-                  action: "create_invoice",
-                  amount: curAmount,
-                  tier: activeTierObj.id,
-                  description: `Alchemy Craft — ${activeTierObj.name} ($${curAmount})`,
-                };
-                // requestUrl bypasses browser CORS inside Obsidian
+                const cbToken = "668773:AA89kfrQ8vYm8RdazPsTPPd4sHenAAwLElg";
+                const cleanAmount = (parseFloat(curAmount) || 4.99).toFixed(2);
+                const tierName = activeTierObj ? activeTierObj.name : "Pro";
+                const customDesc = `Alchemy Craft — ${tierName} ($${cleanAmount})`;
+
+                // Call Crypto Pay API directly without intermediary server
                 const res = await obsidianApi.requestUrl({
-                  url: sbFuncUrl,
+                  url: "https://pay.crypt.bot/api/createInvoice",
                   method: "POST",
                   contentType: "application/json",
-                  headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
-                  body: JSON.stringify(payload),
+                  headers: {
+                    "Crypto-Pay-API-Token": cbToken,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    currency_type: "fiat",
+                    fiat: "USD",
+                    amount: cleanAmount,
+                    accepted_assets: "USDT,TON,SOL,TRX,BTC,ETH,DOGE,LTC,BNB,USDC",
+                    description: customDesc,
+                    paid_btn_name: "callback",
+                    paid_btn_url: "https://t.me/StratAlchemy",
+                    allow_comments: true,
+                    allow_anonymous: true,
+                    expires_in: 3600,
+                  }),
                   throw: false,
                 });
                 const d = res && res.json ? res.json : null;
-                if (d && d.ok && d.pay_url) {
-                  // Safety: the invoice must carry exactly the amount the user picked (an outdated server would ignore it)
-                  if (d.amount !== undefined && Math.abs(parseFloat(d.amount) - parseFloat(curAmount)) > 0.001) {
-                    new Notice(
-                      isRu
-                        ? `Сервер вернул счёт на $${d.amount} вместо $${curAmount}. Оплата через @CryptoBot временно недоступна — используйте другой способ.`
-                        : `The server returned a $${d.amount} invoice instead of $${curAmount}. @CryptoBot is temporarily unavailable — please use another method.`,
-                      10000
-                    );
-                    return;
-                  }
-                  if (d.amount === undefined && parseFloat(curAmount) !== 4.99) {
-                    new Notice(
-                      isRu
-                        ? "Серверная функция @CryptoBot ещё не обновлена (она создаёт счёт только на $4.99). Выберите другой способ оплаты или напишите @StratAlchemy."
-                        : "The @CryptoBot server function hasn't been updated yet (it only creates $4.99 invoices). Please pick another method or message @StratAlchemy.",
-                      10000
-                    );
-                    return;
-                  }
-                  if (d.invoice_id) {
+                if (d && d.ok && d.result) {
+                  const inv = d.result;
+                  const payUrl = inv.bot_invoice_url || inv.pay_url || inv.mini_app_invoice_url;
+                  if (inv.invoice_id) {
                     const txField = this.contentEl.querySelector(".verify-tx-input");
-                    if (txField) txField.value = String(d.invoice_id);
+                    if (txField) txField.value = String(inv.invoice_id);
                   }
-                  openExternalUrl(d.pay_url);
+                  new Notice(
+                    isRu
+                      ? `Счёт #${inv.invoice_id} на $${cleanAmount} создан! Переходим в @CryptoBot...`
+                      : `Invoice #${inv.invoice_id} for $${cleanAmount} created! Opening @CryptoBot...`,
+                    5000
+                  );
+                  openExternalUrl(payUrl);
                   return;
                 }
+                const errDetail = d && d.error ? (d.error.name || JSON.stringify(d.error)) : "Network Error";
                 new Notice(
                   isRu
-                    ? "Не удалось создать счёт @CryptoBot. Попробуйте ещё раз или выберите другой способ оплаты."
-                    : "Couldn't create the @CryptoBot invoice. Please try again or choose another payment method.",
+                    ? `Ошибка @CryptoBot: ${errDetail}. Попробуйте ещё раз или свяжитесь с поддержкой.`
+                    : `@CryptoBot error: ${errDetail}. Please try again or contact support.`,
                   8000
                 );
               } catch (e) {
+                console.error("CryptoBot API error:", e);
                 new Notice(
                   isRu
-                    ? "Нет связи с сервером оплаты @CryptoBot. Проверьте интернет или выберите другой способ."
-                    : "Can't reach the @CryptoBot payment server. Check your connection or choose another method.",
+                    ? "Не удалось связаться с API @CryptoBot. Проверьте интернет-соединение."
+                    : "Can't reach @CryptoBot API. Please check your internet connection.",
                   8000
                 );
               } finally {
@@ -6690,30 +6691,44 @@ class AlchemyCraftProModal extends Modal {
       return true;
     }
 
-    // 1.6. Secure Supabase Edge Function Invoice Check
+    // 1.6. Direct CryptoBot Invoice Check via Official Crypto Pay API
     try {
-      const sbFuncUrl = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
-      const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
       const cleanId = rawCode.replace(/[^0-9]/g, "");
       if (cleanId.length >= 5) {
-        const cbRes = await fetch(sbFuncUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": sbKey,
-            "Authorization": `Bearer ${sbKey}`,
-          },
-          body: JSON.stringify({ action: "check_invoice", invoice_id: cleanId }),
+        const obsidianApi = require("obsidian");
+        const cbToken = "668773:AA89kfrQ8vYm8RdazPsTPPd4sHenAAwLElg";
+        const cbRes = await obsidianApi.requestUrl({
+          url: `https://pay.crypt.bot/api/getInvoices?invoice_ids=${encodeURIComponent(cleanId)}`,
+          headers: { "Crypto-Pay-API-Token": cbToken },
+          throw: false,
         });
-        if (cbRes.ok) {
-          const d = await cbRes.json();
-          if (d && d.paid) {
-            new Notice("CryptoBot Invoice Confirmed via Supabase!");
-            return true;
-          }
+        const d = cbRes && cbRes.json ? cbRes.json : null;
+        const items = d?.result?.items || [];
+        const paidInv = items.find((inv) => inv.status === "paid");
+        if (paidInv) {
+          const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+          new Notice(
+            isRu
+              ? `🎉 Счёт @CryptoBot #${cleanId} оплачен ($${paidInv.amount})! Alchemy Craft Pro успешно активирован!`
+              : `🎉 @CryptoBot Invoice #${cleanId} paid ($${paidInv.amount})! Alchemy Craft Pro activated!`,
+            10000
+          );
+          return true;
+        } else if (items.length > 0) {
+          const inv = items[0];
+          const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+          new Notice(
+            isRu
+              ? `Счёт @CryptoBot #${cleanId} найден (статус: ${inv.status}, сумма: $${inv.amount}). Оплатите его в Telegram и нажмите проверку ещё раз.`
+              : `Invoice #${cleanId} found (status: ${inv.status}, amount: $${inv.amount}). Please complete payment in Telegram and verify again.`,
+            8000
+          );
+          return false;
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Direct CryptoBot verification check error:", e);
+    }
 
     const MASTER_PROMOS = ["STRATALCHEMY", "ACPRO-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
     if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
