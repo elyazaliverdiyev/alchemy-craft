@@ -3612,23 +3612,28 @@ class AlchemyFlowPlugin extends Plugin {
       const lang = this.settings.uiLanguage || "en";
       const isRu = lang === "ru";
 
-      // 1. Top-Left Legend Pill (exact match to Website Demo Screenshot 1: .obsidian/graph.json + color dots)
+      // 1. Dynamic Top-Left Legend Pill (Reads real vault folders)
       let legend = viewContent.querySelector(".artcraft-graph-legend-pill");
       if (!legend) {
         legend = document.createElement("div");
         legend.className = "artcraft-graph-legend-pill";
+        const rootChildren = (this.app.vault.getRoot() && this.app.vault.getRoot().children) || [];
+        const topFolders = rootChildren
+          .filter((f) => f && f.children !== undefined && !f.name.startsWith(".") && !f.name.startsWith("_"))
+          .map((f) => f.name)
+          .slice(0, 5);
+        const paletteHex = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899"];
+        const legendItemsHtml = topFolders
+          .map((folder, i) => `<span class="legend-item"><i style="background:${paletteHex[i % paletteHex.length]}"></i>${folder}</span>`)
+          .join("");
         legend.innerHTML = `
-          <span class="legend-code">.obsidian/graph.json</span>
-          <span class="legend-item"><i style="background:#2563EB"></i>01 Strategy</span>
-          <span class="legend-item"><i style="background:#F59E0B"></i>02 Product</span>
-          <span class="legend-item"><i style="background:#10B981"></i>03 Research</span>
-          <span class="legend-item"><i style="background:#8B5CF6"></i>04 Permanent</span>
-          <span class="legend-item"><i style="background:#EC4899"></i>#pro</span>
+          <span class="legend-code">BENTO GRAPH</span>
+          ${legendItemsHtml || `<span class="legend-item"><i style="background:#2563EB"></i>Notes</span>`}
         `;
         viewContent.appendChild(legend);
       }
 
-      // 2. Top-Right Preset & Pulse Controls HUD (with custom Swiss Bento vector icons)
+      // 2. Center-Top Cockpit HUD (NEVER overlaps right-side Obsidian settings drawer)
       let hud = viewContent.querySelector(".artcraft-graph-hud");
       if (hud && hud.getAttribute("data-lang") !== lang) {
         hud.remove();
@@ -3647,6 +3652,7 @@ class AlchemyFlowPlugin extends Plugin {
           <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${SICRAFT_SVGS.spark} <span>${t("graphColorizeBtn", this)}</span></button>
           <button class="artcraft-graph-hud-btn" data-action="toggle-orphans">${t("graphOrphansBtn", this)}</button>
           <button class="artcraft-graph-hud-btn" data-action="snap-png">${SICRAFT_SVGS.camera} <span>${isRu ? "Снимок PNG" : "Snap PNG"}</span></button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-hud-toggle-btn" data-action="toggle-hud" title="${isRu ? "Свернуть / Развернуть панель" : "Minimize / Expand HUD"}">${SICRAFT_SVGS.collapse}</button>
         `;
 
         hud.querySelectorAll("[data-preset]").forEach((btn) => {
@@ -3683,6 +3689,11 @@ class AlchemyFlowPlugin extends Plugin {
           this.snapBentoGraphPNG(viewContent);
         });
 
+        hud.querySelector('[data-action="toggle-hud"]')?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          hud.classList.toggle("is-minimized");
+        });
+
         viewContent.appendChild(hud);
       }
 
@@ -3710,10 +3721,6 @@ class AlchemyFlowPlugin extends Plugin {
     const leaves = this.app.workspace.getLeavesOfType("graph").concat(this.app.workspace.getLeavesOfType("localgraph"));
     if (!leaves || leaves.length === 0) return;
 
-    this.graphPulsePhase = (this.graphPulsePhase || 0) + 0.018;
-    const paletteHex = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899", "#06B6D4", "#69BD28"];
-    const isDark = document.body.classList.contains("artcraft-dark-craft") || document.body.classList.contains("theme-dark");
-
     for (let l = 0; l < leaves.length; l++) {
       const view = leaves[l].view;
       if (!view || !view.containerEl) continue;
@@ -3730,13 +3737,31 @@ class AlchemyFlowPlugin extends Plugin {
         fxCanvas.height = ch;
       }
 
-      const ctx = fxCanvas.getContext("2d");
-      ctx.clearRect(0, 0, cw, ch);
-
       const renderer = view.renderer;
       if (!renderer || !renderer.nodes || renderer.nodes.length === 0) continue;
 
-      // Exact DPI / WebGL resolution ratio mapping so overlay coordinates match 100% on 100%, 125%, 150%, 200% displays!
+      const hovered = renderer.hoveredNode || null;
+      const isPulse = this.settings.graphPulseNodes !== false;
+      const preset = this.settings.graphPreset || "bento";
+
+      // 144 FPS Zero-Lag optimization: if nothing is hovered and no active animation, skip redraw!
+      if (!hovered && !isPulse && preset !== "radar") {
+        if (!this._graphFxCleared) {
+          const ctx = fxCanvas.getContext("2d");
+          ctx.clearRect(0, 0, cw, ch);
+          this._graphFxCleared = true;
+        }
+        continue;
+      }
+      this._graphFxCleared = false;
+
+      const ctx = fxCanvas.getContext("2d");
+      ctx.clearRect(0, 0, cw, ch);
+      this.graphPulsePhase = (this.graphPulsePhase || 0) + 0.024;
+
+      const isDark = document.body.classList.contains("artcraft-dark-craft") || document.body.classList.contains("theme-dark");
+      const paletteHex = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899", "#06B6D4", "#69BD28"];
+
       const glCanvas = viewContent.querySelector("canvas:not(.artcraft-graph-fx-canvas)");
       const scaleX = glCanvas && glCanvas.width > 0 ? cw / glCanvas.width : 1 / (window.devicePixelRatio || 1);
       const scaleY = glCanvas && glCanvas.height > 0 ? ch / glCanvas.height : 1 / (window.devicePixelRatio || 1);
@@ -3747,60 +3772,66 @@ class AlchemyFlowPlugin extends Plugin {
         return { x: wt.tx * scaleX, y: wt.ty * scaleY };
       };
 
-      const hovered = renderer.hoveredNode || null;
-      let centerPt = hovered ? getScreenPt(hovered) : { x: cw / 2, y: ch / 2 };
-      if (!centerPt || centerPt.x < 0 || centerPt.x > cw || centerPt.y < 0 || centerPt.y > ch) {
-        centerPt = { x: cw / 2, y: ch / 2 };
-      }
-
-      // A. Draw Subtle Concentric Dashed Radar Rings
-      if (this.settings.graphPreset === "radar" || this.settings.graphPreset === "bento") {
-        ctx.save();
-        ctx.setLineDash([5, 6]);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(17, 17, 17, 0.085)";
-        const rings = [95, 190, 285];
-        for (let r = 0; r < rings.length; r++) {
-          ctx.beginPath();
-          ctx.arc(centerPt.x, centerPt.y, rings[r], 0, Math.PI * 2);
-          ctx.stroke();
+      // A. Radar Concentric Range Rings
+      if (preset === "radar" || (preset === "bento" && hovered)) {
+        let centerPt = hovered ? getScreenPt(hovered) : { x: cw / 2, y: ch / 2 };
+        if (centerPt && centerPt.x >= 0 && centerPt.x <= cw && centerPt.y >= 0 && centerPt.y <= ch) {
+          ctx.save();
+          ctx.setLineDash([4, 6]);
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.09)" : "rgba(17, 17, 17, 0.08)";
+          const rings = [80, 160, 260];
+          for (let r = 0; r < rings.length; r++) {
+            ctx.beginPath();
+            ctx.arc(centerPt.x, centerPt.y, rings[r], 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          ctx.restore();
         }
-        ctx.restore();
       }
 
-      // B. Draw Neural Laser Pulses & Swiss Bento Card ONLY on Hovered Node & Its Connected Links (Zero Clutter, 144 FPS!)
+      // B. Hovered Node: Instant Cached Links, Beams, Photons & Swiss Bento Card
       if (hovered) {
         const hovPt = getScreenPt(hovered);
         if (hovPt && hovPt.x >= 0 && hovPt.x <= cw && hovPt.y >= 0 && hovPt.y <= ch) {
-          // 1. Neural Laser Pulses along links connected to the hovered node
-          if (this.settings.graphPulseNodes !== false && renderer.links) {
+          // Cache connected links only when hovered node changes (avoids scanning 50k links per frame!)
+          if (this._lastHoveredId !== hovered.id) {
+            this._lastHoveredId = hovered.id;
+            this._cachedLinks = [];
+            const allLinks = renderer.links || [];
+            for (let i = 0; i < allLinks.length && this._cachedLinks.length < 24; i++) {
+              const lnk = allLinks[i];
+              if (lnk && (lnk.source === hovered || lnk.target === hovered)) {
+                this._cachedLinks.push(lnk);
+              }
+            }
+          }
+
+          // 1. Highlighted connection lines & traveling laser photons
+          if (this._cachedLinks && this._cachedLinks.length > 0) {
             ctx.save();
-            const links = renderer.links;
-            let pulseIdx = 0;
-            for (let i = 0; i < links.length; i++) {
-              const lnk = links[i];
-              if (!lnk || (lnk.source !== hovered && lnk.target !== hovered)) continue;
+            for (let i = 0; i < this._cachedLinks.length; i++) {
+              const lnk = this._cachedLinks[i];
               const p1 = getScreenPt(lnk.source);
               const p2 = getScreenPt(lnk.target);
               if (!p1 || !p2) continue;
 
-              // Highlighted link beam
+              // Glowing connection line
               ctx.beginPath();
               ctx.moveTo(p1.x, p1.y);
               ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = "rgba(105, 189, 40, 0.35)";
-              ctx.lineWidth = 1.6;
+              ctx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.45)" : "rgba(105, 189, 40, 0.35)";
+              ctx.lineWidth = 2;
               ctx.stroke();
 
-              // Traveling laser photon
-              const tProg = (this.graphPulsePhase + pulseIdx * 0.17) % 1;
+              // Traveling photon
+              const tProg = (this.graphPulsePhase + i * 0.16) % 1;
               const px = p1.x + (p2.x - p1.x) * tProg;
               const py = p1.y + (p2.y - p1.y) * tProg;
-              const col = paletteHex[pulseIdx % paletteHex.length];
-              pulseIdx++;
+              const col = paletteHex[i % paletteHex.length];
 
               ctx.beginPath();
-              ctx.arc(px, py, 3.6, 0, Math.PI * 2);
+              ctx.arc(px, py, 3.5, 0, Math.PI * 2);
               ctx.fillStyle = col;
               ctx.fill();
               ctx.lineWidth = 1.2;
@@ -3810,40 +3841,51 @@ class AlchemyFlowPlugin extends Plugin {
             ctx.restore();
           }
 
-          // 2. Crisp Swiss Bento Card Badge on the Hovered Node
+          // 2. Pulse target halo
+          ctx.save();
+          const pulseR = 12 + Math.sin(this.graphPulsePhase * 3) * 3;
+          ctx.beginPath();
+          ctx.arc(hovPt.x, hovPt.y, pulseR, 0, Math.PI * 2);
+          ctx.strokeStyle = "#69BD28";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+
+          // 3. Swiss Bento Node Card (Card Badge with Title + Links Count)
           const rawId = String(hovered.id || "").replace(/\.md$/i, "");
-          const shortName = rawId.split("/").pop() || rawId;
-          if (shortName) {
-            const label = shortName.length > 32 ? shortName.slice(0, 30) + "…" : shortName;
-            ctx.save();
-            ctx.font = '700 11px "JetBrains Mono", monospace';
-            ctx.textBaseline = "middle";
-            ctx.textAlign = "center";
+          const parts = rawId.split("/");
+          const fileName = parts.pop() || rawId;
+          const folderName = parts.length > 0 ? parts[0] : "";
+          const linkCount = (this._cachedLinks ? this._cachedLinks.length : 0);
 
-            ctx.beginPath();
-            ctx.arc(hovPt.x, hovPt.y, 10, 0, Math.PI * 2);
-            ctx.strokeStyle = "#69BD28";
-            ctx.lineWidth = 2.4;
-            ctx.stroke();
+          ctx.save();
+          ctx.font = '700 11px "JetBrains Mono", monospace';
+          const label = fileName.length > 28 ? fileName.slice(0, 26) + "…" : fileName;
+          const folderLabel = folderName ? `[${folderName.slice(0, 14)}] ` : "";
+          const fullLabel = folderLabel + label + ` (${linkCount})`;
+          const textW = ctx.measureText(fullLabel).width;
+          const boxW = Math.round(textW + 18);
+          const boxH = 24;
+          const bx = Math.max(8, Math.min(cw - boxW - 8, Math.round(hovPt.x - boxW / 2)));
+          const by = Math.round(hovPt.y + 16);
 
-            const textW = ctx.measureText(label).width;
-            const boxW = Math.round(textW + 16);
-            const boxH = 21;
-            const bx = Math.max(8, Math.min(cw - boxW - 8, Math.round(hovPt.x - boxW / 2)));
-            const by = Math.round(hovPt.y + 14);
+          // Card shadow
+          ctx.fillStyle = "#111111";
+          ctx.fillRect(bx + 2.5, by + 2.5, boxW, boxH);
+          // Card body
+          ctx.fillStyle = isDark ? "#1F2937" : "#FFFFFF";
+          ctx.fillRect(bx, by, boxW, boxH);
+          // Card border
+          ctx.strokeStyle = isDark ? "#4B5563" : "#111111";
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(bx, by, boxW, boxH);
 
-            ctx.fillStyle = "#111111";
-            ctx.fillRect(bx + 2, by + 2, boxW, boxH);
-            ctx.fillStyle = "#69BD28";
-            ctx.fillRect(bx, by, boxW, boxH);
-            ctx.strokeStyle = "#111111";
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(bx, by, boxW, boxH);
-
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillText(label, Math.round(bx + boxW / 2), Math.round(by + boxH / 2 + 0.5));
-            ctx.restore();
-          }
+          // Text rendering
+          ctx.textBaseline = "middle";
+          ctx.textAlign = "center";
+          ctx.fillStyle = isDark ? "#F9FAFB" : "#111111";
+          ctx.fillText(fullLabel, bx + boxW / 2, by + boxH / 2);
+          ctx.restore();
         }
       }
     }
@@ -3872,24 +3914,14 @@ class AlchemyFlowPlugin extends Plugin {
         15358988, // #EA580C Terracotta Orange
       ];
 
-      const colorGroups = [
-        // 1. Distribute Daily / Date / Zettelkasten Notes across 7 vibrant Swiss Bento colors
-        { query: 'file:"2024-01" OR file:"2025-01" OR file:"2026-01" OR file:"202601" OR file:"20260201"', color: { a: 1, rgb: 2450411 } },
-        { query: 'file:"2024-02" OR file:"2025-02" OR file:"2026-02" OR file:"20260202" OR file:"20260203"', color: { a: 1, rgb: 1096065 } },
-        { query: 'file:"2024-03" OR file:"2025-03" OR file:"2026-03" OR file:"20260204" OR file:"20260205"', color: { a: 1, rgb: 9133302 } },
-        { query: 'file:"2024-04" OR file:"2025-04" OR file:"2026-04" OR file:"20260206" OR file:"20260207"', color: { a: 1, rgb: 439972 } },
-        { query: 'file:"2024-05" OR file:"2024-06" OR file:"2025-05" OR file:"20260208" OR file:"20260209"', color: { a: 1, rgb: 15485081 } },
-        { query: 'file:"2023-" OR file:"2024-07" OR file:"2024-08" OR file:"2024-09" OR file:"2026021"', color: { a: 1, rgb: 6929704 } },
-        { query: 'file:"2024-10" OR file:"2024-11" OR file:"2024-12" OR file:"2025-" OR file:"20260"', color: { a: 1, rgb: 16096779 } },
-      ];
-
-      // 2. Scan all real top-level folders in the user's vault (excluding backup/system folders)
+      // 1. Scan real top-level user folders
       const rootChildren = (this.app.vault.getRoot() && this.app.vault.getRoot().children) || [];
       const folders = rootChildren
         .filter((f) => f && f.children !== undefined && !f.name.startsWith(".") && !f.name.startsWith("_"))
         .map((f) => f.name)
         .sort();
 
+      const colorGroups = [];
       folders.forEach((folderName, idx) => {
         colorGroups.push({
           query: `path:"${folderName}"`,
@@ -3897,25 +3929,24 @@ class AlchemyFlowPlugin extends Plugin {
         });
       });
 
-      // 3. Distribute root-level notes & tags across vibrant colors (valid Obsidian search queries — no broken file:"*"!)
-      colorGroups.push({ query: "tag:#pro OR tag:#important OR file:Kaito OR file:Alchemy", color: { a: 1, rgb: 15485081 } });
-      colorGroups.push({ query: "file:а OR file:о OR file:a OR file:o", color: { a: 1, rgb: 2450411 } });
-      colorGroups.push({ query: "file:е OR file:и OR file:e OR file:i", color: { a: 1, rgb: 1096065 } });
-      colorGroups.push({ query: "path:/", color: { a: 1, rgb: 9133302 } });
+      // 2. High-priority tags and project notes
+      colorGroups.push({ query: 'tag:#pro OR tag:#important OR tag:#crypto OR tag:#strategy', color: { a: 1, rgb: 15485081 } });
+      colorGroups.push({ query: 'file:Kaito OR file:Alchemy OR file:Baraka', color: { a: 1, rgb: 6929704 } });
 
       graphConfig.colorGroups = colorGroups;
-      // Exclude duplicate cloud backup & attachment clutter so the graph is clean and fast
-      graphConfig.search = '-path:"_CloudSyncDuplicates_Backup" -path:"attachments" -path:"scripts"';
+      // Exclude heavy node_modules, build artifacts, duplicate cloud backup & attachment clutter so the graph is clean, readable and 144 FPS smooth
+      graphConfig.search = '-path:"node_modules" -path:"dist" -path:"_CloudSyncDuplicates_Backup" -path:"attachments" -path:"scripts" -path:".trash"';
       graphConfig.showArrow = false;
       graphConfig.showTags = false;
       graphConfig.showAttachments = false;
+      graphConfig.hideUnresolved = true;
       if (toggleOrphans) {
         graphConfig.showOrphans = !graphConfig.showOrphans;
       } else {
         graphConfig.showOrphans = false;
       }
       graphConfig.textFadeMultiplier = -0.5;
-      graphConfig.nodeSizeMultiplier = 1.28;
+      graphConfig.nodeSizeMultiplier = 1.35;
       graphConfig.lineSizeMultiplier = 1.05;
       graphConfig.centerStrength = 0.45;
       graphConfig.repelStrength = 11.0;
@@ -4179,8 +4210,10 @@ class AlchemyFlowPlugin extends Plugin {
     const cleanBookmarkText = (str) => {
       if (!str) return "";
       let s = String(str);
-      s = s.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+      s = s.replace(/\[([^\]]+)\]\([^\)]*\)/g, "$1");
       s = s.replace(/\[\[(?:[^|\]]+\|)?([^\]]+)\]\]/g, "$1");
+      s = s.replace(/\[([^\]]+)\]/g, "$1");
+      s = s.replace(/https?:\/\/[^\s\)]+/gi, "");
       s = s.replace(/^#+\s+/gm, "");
       s = s.replace(/[*_~`]/g, "");
       s = s.replace(/[\p{Extended_Pictographic}\u200d\ufe0f\u23f3\u270e\u270f]/gu, "");
