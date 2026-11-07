@@ -1,4 +1,4 @@
-# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.1)
+# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.2)
 
 > **A warm, tactile Swiss Bento reading, focus, presentation, and visual studio plugin.**
 
@@ -7,22 +7,23 @@
 
 ---
 
-## ✨ What's New in v4.3.1
+## ✨ What's New in v4.3.2
 
-- **⚡ 144 FPS Hardware-Accelerated GPU Lamp:** The 2700K–6500K Smart LED Cursor Lamp now runs on a hardware-accelerated GPU layer with 0% CPU consumption and zero lag.
-- **🎚️ Fixed WebAudio Loopback & Live Equalizer:** Fixed Chromium WebAudio stream termination and WASAPI audio capture so the equalizer reliably dances to Telegram, Spotify, and browser music.
-- **🕸️ Dynamic Swiss Bento Graph Studio:** Eliminates spiky black arrows and orange node clumps, auto-distributes daily notes across Swiss Bento palette colors, and renders neural laser pulses along links.
-- **✒️ Minimalist Vector SVG Icon System:** All legacy emojis and text symbols replaced with crisp geometric vector SVG icons across all menus and the dock.
-- **🔊 Native Desktop System Audio Loopback (Telegram / Spotify / Browser):** Automatically captures desktop system audio in Electron via `chromeMediaSource: "desktop"` / `desktopCapturer`.
-- **🎛️ 4 High-Complexity Physics Equalizer Modes:**
-  1. `01 // Peak-Hold Neon Spectrum` — 16 neon gradient bars with floating gravity-defying peak caps and specular reflection.
-  2. `02 // Cyber Liquid Spline Ribbon` — 3-layer phase-shifted harmonic Bezier ribbons with glowing sub-bass fill.
-  3. `03 // Supernova Polar Sunburst` — 24 radial frequency spikes orbiting a pulsing reactive bass core with shockwave rings.
-  4. `04 // Quantum Matrix Rain` — Mirrored digital frequency rain with glowing particle heads.
-- **🕸️ Dynamic Vault Graph Studio & Orphan Toggle:** Automatically scans all top-level folders in your vault (e.g., `00_Inbox`, `01_Fleeting`, `02_Literature`, `03_Permanent`, `04_MOCs`, `05_Projects`, etc.), assigns balanced 8-color Swiss Bento groups plus a universal fallback (`file:"*"`), hides disconnected orphan rings with 1 click (`Orphans: OFF`), and reloads the Graph View renderer live.
-- **✒️ Custom Minimalist Vector SVG Icon System:** Crisp geometric 1.8px stroke SVG icons across the entire floating dock, Pomodoro timer, Smart LED Lamp, and settings cards.
-- **🌍 Complete 6-Language Localization (`EN`, `RU`, `ZH`, `JA`, `ES`, `DE`):** Instant full-interface translation across all settings, tooltips, modals, Graph HUD, and notifications.
-- **💡 Smart LED Cursor Lamp (2700K–6500K):** Hardware-inspired dark controller with real-time Kelvin color temperature, Lumen intensity, ambient focus veil, and 3 optical beam geometries (`Radial`, `Desk Cone`, `Cyber Ring`).
+- **🎛️ Sonic & Ambient Studio Modal:** Interactive audio control center with Play/Pause, Track Title, Interactive Seek/Scrub Bar, Master Volume Slider (`0%–100%`), and direct audio file loading.
+- **🎧 12 iOS-Inspired Background Soundscapes:** Procedural WebAudio ambient generators with zero audio assets needed — Balanced Noise, Bright Noise, Dark Noise, Ocean Waves, Rain, Rain on Roof, Mountain Stream, Quiet Night, Fireplace / Wood Crackle, Night Train, Cozy Cafe, and 40Hz Gamma Focus.
+- **🌊 6 Living Equalizer Visual Modes (Added 2 New Craft Modes):**
+  1. `01 // Peak-Hold Neon Spectrum` — 16 neon gradient bars with floating gravity caps and specular mirror reflection.
+  2. `02 // Cyber Liquid Spline Ribbon` — 3-layer harmonic Bezier ribbons with glowing sub-bass fill.
+  3. `03 // Supernova Polar Sunburst` — 24 radial frequency spikes orbiting a reactive bass shockwave core.
+  4. `04 // Quantum Matrix Rain` — Mirrored digital frequency rain with glowing spark heads.
+  5. `05 // Craft Ink Seismograph` — 4-layer warm paper & fountain-pen wave ridges with tapered edges.
+  6. `06 // Alchemy Ferrofluid Orbs` — Organic magnetic liquid droplets dancing to bass and harmonic frequencies.
+- **☕ Soft Ko-fi / Zsolt-Inspired Support Modal & Dedicated Promo View:** Calm, distraction-free checkout with 3 illustrated tiers (Bronze Elixir $4.99/yr, Silver Crucible $9.99 Lifetime, Gold Philosopher $19 Patron) and a dedicated zero-clutter Promo Code / VIP Key view.
+- **🌐 Default OS Browser & Telegram Desktop Navigation:** All external links now open via `electron.shell.openExternal` in the user's default browser or desktop apps, bypassing the internal webviewer.
+- **📏 Reading Ruler Mode for Smart LED Lamp:** Added a 3rd GPU-accelerated horizontal reading ruler beam to maintain reading line focus without fatigue.
+- **⚡ 144 FPS Hardware-Accelerated GPU Lamp:** The 2700K–6500K Smart LED Cursor Lamp runs on a hardware-accelerated GPU layer with 0% CPU consumption and zero lag.
+- **🕸️ Dynamic Swiss Bento Graph Studio:** Auto-distributes vault folders across Swiss Bento palette colors, renders neural laser pulses, and toggles orphan nodes.
+- **🌍 Complete 6-Language Localization (`EN`, `RU`, `ZH`, `JA`, `ES`, `DE`):** Full-interface translation across settings, dock, modals, and Graph HUD.
 
 ---
 
