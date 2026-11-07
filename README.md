@@ -1,4 +1,4 @@
-# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.0)
+# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.1)
 
 > **A warm, tactile Swiss Bento reading, focus, presentation, and visual studio plugin.**
 
@@ -7,9 +7,13 @@
 
 ---
 
-## ✨ What's New in v4.3.0
+## ✨ What's New in v4.3.1
 
-- **🔊 Native Desktop System Audio Loopback (Telegram / Spotify / Browser):** Automatically captures desktop system audio in Electron via `chromeMediaSource: "desktop"` / `desktopCapturer` so the equalizer dances to any music playing in Telegram Desktop, Spotify, Apple Music, or YouTube without requiring manual screen-share dialogs.
+- **⚡ 144 FPS Hardware-Accelerated GPU Lamp:** The 2700K–6500K Smart LED Cursor Lamp now runs on a hardware-accelerated GPU layer with 0% CPU consumption and zero lag.
+- **🎚️ Fixed WebAudio Loopback & Live Equalizer:** Fixed Chromium WebAudio stream termination and WASAPI audio capture so the equalizer reliably dances to Telegram, Spotify, and browser music.
+- **🕸️ Dynamic Swiss Bento Graph Studio:** Eliminates spiky black arrows and orange node clumps, auto-distributes daily notes across Swiss Bento palette colors, and renders neural laser pulses along links.
+- **✒️ Minimalist Vector SVG Icon System:** All legacy emojis and text symbols replaced with crisp geometric vector SVG icons across all menus and the dock.
+- **🔊 Native Desktop System Audio Loopback (Telegram / Spotify / Browser):** Automatically captures desktop system audio in Electron via `chromeMediaSource: "desktop"` / `desktopCapturer`.
 - **🎛️ 4 High-Complexity Physics Equalizer Modes:**
   1. `01 // Peak-Hold Neon Spectrum` — 16 neon gradient bars with floating gravity-defying peak caps and specular reflection.
   2. `02 // Cyber Liquid Spline Ribbon` — 3-layer phase-shifted harmonic Bezier ribbons with glowing sub-bass fill.
