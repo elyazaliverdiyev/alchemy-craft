@@ -3867,8 +3867,12 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   updateTaskProgressBar(fromCheckboxClick = false) {
-    // 1. Remove any legacy wide top toolbar (.artcraft-task-progress-wrap) so the top of the pane is 100% clean!
-    document.querySelectorAll(".artcraft-task-progress-wrap").forEach((el) => el.remove());
+    // Clean up any legacy or floating elements that previously caused layout overlap in Live Preview or Reading Mode
+    document
+      .querySelectorAll(
+        ".artcraft-exlibris-corner-seal, .artcraft-quiet-meta-line, .artcraft-nutrient-margin-dock"
+      )
+      .forEach((el) => el.remove());
 
     const obsidian = require("obsidian");
     const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
@@ -3889,9 +3893,8 @@ class AlchemyFlowPlugin extends Plugin {
 
     // Calculate live Word Count & Reading Time (~200 wpm)
     let wordCount = 0;
-    let rawText = "";
     try {
-      rawText = activeView.editor ? activeView.editor.getValue() : activeView.data || "";
+      const rawText = activeView.editor ? activeView.editor.getValue() : activeView.data || "";
       const cleanText = rawText.replace(/^---[\s\S]*?---\n?/, "").trim();
       if (cleanText.length > 0) {
         wordCount = cleanText.split(/\s+/).filter(Boolean).length;
@@ -3918,7 +3921,9 @@ class AlchemyFlowPlugin extends Plugin {
     }
     this.lastTaskPctByFile[filePath] = pct;
 
-    const stampRec = this.getNoteStampRecord(filePath) || (total > 0 && pct === 100 ? { dates: [new Date().toLocaleDateString()], count: 1 } : null);
+    const stampRec =
+      this.getNoteStampRecord(filePath) ||
+      (total > 0 && pct === 100 ? { dates: [new Date().toLocaleDateString()], count: 1 } : null);
     const isStamped = !!stampRec;
     const isClassics = stampRec && stampRec.count >= 2;
     const latestDate = stampRec ? stampRec.dates[stampRec.dates.length - 1] : "";
@@ -3927,134 +3932,21 @@ class AlchemyFlowPlugin extends Plugin {
     const viewContent = activeView.containerEl.querySelector(".view-content");
     if (!viewContent) return;
 
-    // A. CLEAN UPPER-RIGHT EX-LIBRIS STAMP & SIGNATURE SEAL (Placed in the airy top-right whitespace of the note itself!)
-    const sizerCandidates = viewContent.querySelectorAll(".cm-sizer, .markdown-preview-sizer");
-    sizerCandidates.forEach((sizer) => {
-      sizer.style.position = "relative";
+    const showStats = this.settings.showReadingStats !== false && wordCount > 0;
+    const showTasks = this.settings.showTaskProgress !== false && total > 0;
+    const showStamp = this.settings.showCornerStamp !== false;
 
-      let cornerSeal = sizer.querySelector(":scope > .artcraft-exlibris-corner-seal");
-      if (this.settings.showCornerStamp === false) {
-        if (cornerSeal) cornerSeal.remove();
-      } else {
-        if (!cornerSeal) {
-          cornerSeal = document.createElement("div");
-          cornerSeal.className = "artcraft-exlibris-corner-seal";
-          cornerSeal.addEventListener("click", (ev) => {
-            ev.stopPropagation();
-            if (!this.getNoteStampRecord(filePath)) {
-              this.stampNoteReading(filePath, "add");
-            } else {
-              this.showCornerStampMenu(ev, filePath);
-            }
-          });
-          cornerSeal.addEventListener("contextmenu", (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this.showCornerStampMenu(ev, filePath);
-          });
-          sizer.insertBefore(cornerSeal, sizer.firstChild);
-        }
+    let wrap = viewContent.querySelector(":scope > .artcraft-task-progress-wrap");
+    if (!showStats && !showTasks && !showStamp && noteBookmarks.length === 0) {
+      if (wrap) wrap.remove();
+      return;
+    }
 
-        cornerSeal.classList.toggle("is-stamped", isStamped);
-        cornerSeal.classList.toggle("is-classics", !!isClassics);
-        if (this.lastStampedFileAnim === filePath) {
-          cornerSeal.classList.add("is-stamp-anim");
-          setTimeout(() => cornerSeal.classList.remove("is-stamp-anim"), 700);
-        }
-
-        if (!isStamped) {
-          cornerSeal.title = isRu
-            ? "Нажмите, чтобы поставить штамп «Изучено» и дату прочтения (ПКМ — меню)"
-            : "Click to stamp note as Read/Approved with today's date (RMB — menu)";
-          cornerSeal.innerHTML = `
-            <span class="seal-icon">${SICRAFT_SVGS.stamp}</span>
-            <span class="seal-unstamped-lbl">${isRu ? "Поставить штамп" : "Stamp Note"}</span>
-          `;
-        } else if (isClassics) {
-          cornerSeal.title = isRu
-            ? `Полка «Классика»! Прочитано ${stampRec.count} раз(а): ${stampRec.dates.join(", ")}. Нажмите для меню.`
-            : `Classics Shelf! Read ${stampRec.count} times: ${stampRec.dates.join(", ")}. Click for menu.`;
-          cornerSeal.innerHTML = `
-            <div class="seal-top-micro">★ ${isRu ? `ПОЛКА: КЛАССИКА • ЧТЕНИЕ #${stampRec.count}` : `CLASSICS SHELF • READ #${stampRec.count}`}</div>
-            <div class="seal-main-row">
-              <span class="seal-icon">${SICRAFT_SVGS.stamp}</span>
-              <span class="seal-main-text">${isRu ? "ИЗУЧЕНО" : "APPROVED"} • ${latestDate}</span>
-            </div>
-          `;
-        } else {
-          cornerSeal.title = isRu
-            ? `Изучено: ${latestDate} (Прочтение #1). Прочитайте 2-й раз, чтобы перенести на полку «Классика»!`
-            : `Approved: ${latestDate} (Read #1). Stamp a 2nd time to promote to the Classics Shelf!`;
-          cornerSeal.innerHTML = `
-            <div class="seal-top-micro">${isRu ? "ALCHEMIST EX-LIBRIS • ЧТЕНИЕ #1" : "ALCHEMIST EX-LIBRIS • READ #1"}</div>
-            <div class="seal-main-row">
-              <span class="seal-icon">${SICRAFT_SVGS.stamp}</span>
-              <span class="seal-main-text">${isRu ? "ИЗУЧЕНО" : "APPROVED"} • ${latestDate}</span>
-            </div>
-          `;
-        }
-      }
-
-      // B. QUIET EDITORIAL SUB-HEADER LINE (Soft, unobtrusive line right under .inline-title; toggleable via Focus menu)
-      const inlineTitle = sizer.querySelector(".inline-title");
-      let quietLine = sizer.querySelector(".artcraft-quiet-meta-line");
-      const showQuietMeta = (this.settings.showReadingStats !== false && wordCount > 0) || (this.settings.showTaskProgress !== false && total > 0);
-
-      if (!showQuietMeta || !inlineTitle) {
-        if (quietLine) quietLine.remove();
-      } else {
-        if (!quietLine) {
-          quietLine = document.createElement("div");
-          quietLine.className = "artcraft-quiet-meta-line";
-          inlineTitle.insertAdjacentElement("afterend", quietLine);
-        }
-        const parts = [];
-        if (this.settings.showReadingStats !== false && wordCount > 0) {
-          parts.push(`<span class="quiet-meta-item">${SICRAFT_SVGS.book} <span>${readingText}</span></span>`);
-        }
-        if (this.settings.showTaskProgress !== false && total > 0) {
-          parts.push(`
-            <span class="quiet-meta-item quiet-task-item">
-              <span>${isRu ? "Задачи:" : "Tasks:"} <strong>${done}/${total}</strong> (${pct}%)</span>
-              <span class="quiet-mini-bar"><i style="width:${pct}%"></i></span>
-            </span>
-          `);
-        }
-        if (noteBookmarks.length > 0) {
-          parts.push(`
-            <button class="quiet-meta-btn" data-quiet-act="digest" title="${isRu ? "Открыть дайджест закладок книги" : "Open Book Nutrient Digest"}">
-              ${SICRAFT_SVGS.bookmark} <span>${isRu ? `Закладок: ${noteBookmarks.length} (Дайджест)` : `${noteBookmarks.length} Stickers (Digest)`}</span>
-            </button>
-          `);
-        }
-        if (this.settings.bookSpreadMode) {
-          parts.push(`
-            <button class="quiet-meta-btn is-spread-btn" data-quiet-act="split-spread" title="${
-              isRu ? "Открыть вторую страницу рядом (Книжный разворот 2 страниц)" : "Open 2nd Page Side-by-Side (True Book Spread)"
-            }">
-              ${SICRAFT_SVGS.columns} <span>${isRu ? "Открыть 2-ю страницу рядом" : "Open 2-Page Spread"}</span>
-            </button>
-          `);
-        }
-        quietLine.innerHTML = parts.join(`<span class="quiet-meta-sep">•</span>`);
-        quietLine.querySelector('[data-quiet-act="digest"]')?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          this.openBookNutrientDigestModal();
-        });
-        quietLine.querySelector('[data-quiet-act="split-spread"]')?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          this.openTrueTwoPageBookSpread();
-        });
-      }
-    });
-    this.lastStampedFileAnim = null;
-
-    // C. 5-NUTRIENT PHYSICAL STICKY TABS ON TOP, RIGHT & BOTTOM MARGINS OF THE NOTE VIEW
-    this.renderPhysicalNutrientMarginTabs(viewContent, filePath, noteBookmarks);
-  }
-
-  renderPhysicalNutrientMarginTabs(viewContent, filePath, noteBookmarks) {
-    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "artcraft-task-progress-wrap";
+      viewContent.insertBefore(wrap, viewContent.firstChild);
+    }
 
     // Normalize legacy bookmark types to the 5 Book Nutrients
     const normalizeNutrient = (bm) => {
@@ -4066,135 +3958,213 @@ class AlchemyFlowPlugin extends Plugin {
       return BOOK_NUTRIENTS.proteins;
     };
 
-    const topStickers = [];
-    const rightStickers = [];
-    const bottomStickers = [];
+    const bookmarksHtml =
+      noteBookmarks.length > 0
+        ? `<div class="artcraft-margin-bookmarks-strip">
+            ${noteBookmarks
+              .map((bm) => {
+                const n = normalizeNutrient(bm);
+                const nutName = isRu ? n.ruName : n.enName;
+                const displayMeaning = bm.meaning || bm.snippet || nutName;
+                const shortMeaning = displayMeaning.length > 42 ? displayMeaning.slice(0, 40) + "…" : displayMeaning;
+                const tooltip = `${nutName} (${isRu ? n.ruRole : n.enRole})\n${bm.meaning ? bm.meaning + "\n" : ""}«${bm.snippet || ""}»`;
+                return `
+                  <div class="artcraft-bm-pill is-nut-${n.id}" data-bm-id="${bm.id}" data-bm-line="${bm.line || 0}" style="--bm-accent:${n.color};--bm-bg:${n.bg};--bm-border:${n.border};" title="${tooltip.replace(/"/g, "&quot;")}">
+                    <span class="bm-nut-dot" style="background:${n.color}"></span>
+                    <span class="bm-tag-name" style="color:${n.color}">${nutName}:</span>
+                    <span class="bm-tag-text">${shortMeaning}</span>
+                    <button class="bm-tag-edit" data-bm-edit="${bm.id}" title="${isRu ? "Изменить закладку" : "Edit sticker"}">✎</button>
+                    <button class="bm-tag-del" data-bm-del="${bm.id}" title="${isRu ? "Удалить закладку" : "Delete sticker"}">×</button>
+                  </div>
+                `;
+              })
+              .join("")}
+          </div>`
+        : "";
 
-    noteBookmarks.forEach((bm) => {
-      const nObj = normalizeNutrient(bm);
-      const enriched = Object.assign({}, bm, { nutrient: nObj });
-      if (nObj.edge === "top") topStickers.push(enriched);
-      else if (nObj.edge === "bottom") bottomStickers.push(enriched);
-      else rightStickers.push(enriched);
-    });
+    const animClass = this.lastStampedFileAnim === filePath ? " is-stamp-pressing" : "";
+    this.lastStampedFileAnim = null;
 
-    const ensureDock = (cls) => {
-      let d = viewContent.querySelector(`:scope > .${cls}`);
-      if (!d) {
-        d = document.createElement("div");
-        d.className = `artcraft-nutrient-margin-dock ${cls}`;
-        viewContent.appendChild(d);
-      }
-      return d;
-    };
-
-    const topDock = ensureDock("artcraft-margin-dock-top");
-    const rightDock = ensureDock("artcraft-margin-dock-right");
-    const bottomDock = ensureDock("artcraft-margin-dock-bottom");
-
-    const buildTabHtml = (bm) => {
-      const n = bm.nutrient;
-      const name = isRu ? n.ruName : n.enName;
-      const role = isRu ? n.ruRole : n.enRole;
-      const titleText = bm.meaning || bm.snippet || name;
-      const shortTitle = titleText.length > 26 ? titleText.slice(0, 24) + "…" : titleText;
-      return `
-        <div class="artcraft-physical-sticky-tab is-edge-${n.edge} is-nut-${n.id}" data-bm-id="${bm.id}" data-bm-line="${bm.line || 0}" style="--nut-color:${n.color};--nut-bg:${n.bg};--nut-border:${n.border};">
-          <div class="sticky-tab-folded">
-            <span class="sticky-tab-color-tip"></span>
-            <span class="sticky-tab-nut-tag">${name}</span>
-            <span class="sticky-tab-short">${shortTitle}</span>
-          </div>
-          <div class="sticky-tab-unfolded-card">
-            <div class="sticky-card-head">
-              <span class="sticky-card-badge">${name} • ${role}</span>
-              <div class="sticky-card-actions">
-                <button class="sticky-card-act" data-act="edit" title="${isRu ? "Изменить смысл закладки" : "Edit Sticker"}">✎</button>
-                <button class="sticky-card-act" data-act="del" title="${isRu ? "Удалить закладку" : "Remove Sticker"}">×</button>
-              </div>
-            </div>
-            <div class="sticky-card-meaning">${bm.meaning || role}</div>
-            <div class="sticky-card-quote">«${bm.snippet}»</div>
-          </div>
-        </div>
-      `;
-    };
-
-    topDock.innerHTML = topStickers.map(buildTabHtml).join("");
-    bottomDock.innerHTML = bottomStickers.map(buildTabHtml).join("");
-
-    // Right margin also has a subtle craft "+ Закладка" & "Дайджест" launcher tab when Book Folio mode is active or stickers exist
-    let rightControlsHtml = "";
-    if (this.settings.bookSpreadMode || noteBookmarks.length > 0) {
-      rightControlsHtml = `
-        <div class="artcraft-margin-launcher-group">
-          <button class="artcraft-margin-launcher-btn" data-launch="add" title="${
-            isRu ? "Прикрепить закладку-нутриент (Белки / Углеводы / Жиры / Витамины / Клетчатка)" : "Attach 5-Nutrient Bookmark"
+    let stampBadgeHtml = "";
+    if (showStamp) {
+      if (isStamped && isClassics) {
+        stampBadgeHtml = `
+          <span class="artcraft-ink-stamp-badge is-classics${animClass}" data-act="stamp-menu" title="${
+            isRu
+              ? `Полка «Классика»! Прочитано ${stampRec.count} раз(а): ${stampRec.dates.join(", ")}. Нажмите для меню.`
+              : `Classics Shelf! Read ${stampRec.count} times: ${stampRec.dates.join(", ")}. Click for menu.`
           }">
-            ${SICRAFT_SVGS.bookmark} <span>+ ${isRu ? "Закладка" : "Sticker"}</span>
+            ${SICRAFT_SVGS.stamp}
+            <span>★ ${isRu ? `КЛАССИКА #${stampRec.count}` : `CLASSICS #${stampRec.count}`} • ${latestDate}</span>
+          </span>
+        `;
+      } else if (isStamped) {
+        stampBadgeHtml = `
+          <span class="artcraft-ink-stamp-badge${animClass}" data-act="stamp-menu" title="${
+            isRu
+              ? `Изучено: ${latestDate} (Чтение #1). Нажмите, чтобы отметить 2-е прочтение (Полка «Классика») или снять штамп.`
+              : `Approved: ${latestDate} (Read #1). Click to add 2nd read (Classics Shelf) or remove stamp.`
+          }">
+            ${SICRAFT_SVGS.stamp}
+            <span>${isRu ? "ИЗУЧЕНО" : "APPROVED"} • ${latestDate}</span>
+          </span>
+        `;
+      } else {
+        stampBadgeHtml = `
+          <button class="artcraft-craft-mini-btn" data-act="stamp-now" title="${
+            isRu ? "Поставить штамп «Изучено» (APPROVED) с сегодняшней датой" : "Stamp note as APPROVED with today's date"
+          }">
+            ${SICRAFT_SVGS.stamp}
+            <span>${isRu ? "Штамп" : "Stamp"}</span>
           </button>
+        `;
+      }
+    }
+
+    wrap.innerHTML = `
+      <div class="artcraft-top-bar-inner">
+        <div class="artcraft-header-main-row">
           ${
-            noteBookmarks.length > 0
-              ? `<button class="artcraft-margin-launcher-btn is-digest" data-launch="digest" title="${
-                  isRu ? "Усвоение книги: выписать Белки и Углеводы" : "Book Nutrient Digest"
-                }">
-                  ${SICRAFT_SVGS.book} <span>${noteBookmarks.length}</span>
-                </button>`
+            showStats
+              ? `<span class="artcraft-reading-stats-pill" title="${
+                  isRu ? "Расчетное время чтения (~200 слов/мин)" : "Estimated reading time (~200 wpm)"
+                }">${SICRAFT_SVGS.book}<span>${readingText}</span></span>`
               : ""
           }
+          ${
+            showTasks
+              ? `<div class="artcraft-compact-task-pill" title="${isRu ? "Прогресс выполнения задач" : "Task completion progress"}">
+                  <span class="task-pill-lbl">${isRu ? "Задачи:" : "Tasks:"} <strong>${done}/${total}</strong></span>
+                  <div class="artcraft-task-progress-bar-bg">
+                    <div class="artcraft-task-progress-bar-fill" style="width: ${pct}%"></div>
+                  </div>
+                  <span class="task-pill-pct">${pct}%</span>
+                </div>`
+              : ""
+          }
+          <div class="artcraft-note-craft-actions">
+            ${stampBadgeHtml}
+            <button class="artcraft-craft-mini-btn" data-act="bookmark" title="${
+              isRu
+                ? "Прикрепить крафтовую закладку-нутриент (Белки, Углеводы, Жиры, Витамины, Клетчатка)"
+                : "Attach 5-Nutrient Bookmark (Proteins, Carbs, Fats, Vitamins, Fiber)"
+            }">
+              ${SICRAFT_SVGS.bookmark}
+              <span>+ ${isRu ? "Закладка" : "Sticker"}</span>
+            </button>
+            ${
+              noteBookmarks.length > 0
+                ? `<button class="artcraft-craft-mini-btn is-digest-btn" data-act="digest" title="${
+                    isRu ? "Открыть дайджест книги (Белки и Углеводы)" : "Open Book Nutrient Digest (Proteins & Carbs)"
+                  }">
+                    ${SICRAFT_SVGS.book}
+                    <span>${isRu ? `Дайджест (${noteBookmarks.length})` : `Digest (${noteBookmarks.length})`}</span>
+                  </button>`
+                : ""
+            }
+            <button class="artcraft-craft-mini-btn ${this.settings.bookSpreadMode ? "is-active" : ""}" data-act="spread" title="${
+              isRu
+                ? "ЛКМ: Книжный лист (Book Folio) | ПКМ: Открыть 2-страничный разворот рядом"
+                : "LMB: Hardcover Book Page | RMB: Open 2-Page Side-by-Side Spread"
+            }">
+              ${SICRAFT_SVGS.columns}
+              <span>${isRu ? "Книжный лист" : "Book Page"}</span>
+            </button>
+          </div>
         </div>
-      `;
-    }
-    rightDock.innerHTML = rightControlsHtml + rightStickers.map(buildTabHtml).join("");
+        ${bookmarksHtml}
+      </div>
+    `;
 
-    // Wire up interactions on all 3 margin docks
-    [topDock, rightDock, bottomDock].forEach((dock) => {
-      dock.querySelectorAll(".artcraft-physical-sticky-tab").forEach((tabEl) => {
-        const bmId = tabEl.getAttribute("data-bm-id");
+    // Wire up header actions
+    wrap.querySelector('[data-act="stamp-now"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.stampNoteReading(filePath, "add");
+    });
+
+    wrap.querySelector('[data-act="stamp-menu"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.showCornerStampMenu(e, filePath);
+    });
+
+    wrap.querySelector('[data-act="stamp-menu"]')?.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.showCornerStampMenu(e, filePath);
+    });
+
+    wrap.querySelector('[data-act="bookmark"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.addMarginBookmarkToActiveNote();
+    });
+
+    wrap.querySelector('[data-act="digest"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.openBookNutrientDigestModal();
+    });
+
+    const spreadBtn = wrap.querySelector('[data-act="spread"]');
+    if (spreadBtn) {
+      spreadBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        this.settings.bookSpreadMode = !this.settings.bookSpreadMode;
+        await this.saveSettings();
+        this.applyBodyClasses();
+        this.updateDockUI();
+        this.updateTaskProgressBar();
+      });
+      spreadBtn.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.openTrueTwoPageBookSpread();
+      });
+    }
+
+    // Wire up 5-Nutrient Bookmark pills (Click to jump, ✎ to edit, × to delete)
+    wrap.querySelectorAll(".artcraft-bm-pill").forEach((pillEl) => {
+      const bmId = pillEl.getAttribute("data-bm-id");
+      const bmObj = noteBookmarks.find((x) => x.id === bmId);
+      if (!bmObj) return;
+
+      pillEl.addEventListener("click", (e) => {
+        if (e.target.closest(".bm-tag-del") || e.target.closest(".bm-tag-edit")) return;
+        e.stopPropagation();
+        this.jumpToMarginBookmark(bmObj.line || 0, bmObj.snippet || "");
+      });
+    });
+
+    wrap.querySelectorAll("[data-bm-edit]").forEach((editBtn) => {
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const bmId = editBtn.getAttribute("data-bm-edit");
         const bmObj = noteBookmarks.find((x) => x.id === bmId);
         if (!bmObj) return;
-
-        tabEl.addEventListener("click", (ev) => {
-          if (ev.target.closest(".sticky-card-act")) return;
-          ev.stopPropagation();
-          this.jumpToMarginBookmark(bmObj.line || 0, bmObj.snippet || "");
-        });
-
-        tabEl.querySelector('[data-act="edit"]')?.addEventListener("click", (ev) => {
-          ev.stopPropagation();
-          new NutrientStickerModal(
-            this.app,
-            this,
-            Object.assign({}, bmObj, {
-              onDelete: async () => {
-                this.settings.marginBookmarks[filePath] = (this.settings.marginBookmarks[filePath] || []).filter((x) => x.id !== bmId);
-                await this.saveSettings();
-                this.updateTaskProgressBar();
-              },
-            }),
-            async (updated) => {
-              Object.assign(bmObj, updated);
+        new NutrientStickerModal(
+          this.app,
+          this,
+          Object.assign({}, bmObj, {
+            onDelete: async () => {
+              this.settings.marginBookmarks[filePath] = (this.settings.marginBookmarks[filePath] || []).filter((x) => x.id !== bmId);
               await this.saveSettings();
               this.updateTaskProgressBar();
-            }
-          ).open();
-        });
-
-        tabEl.querySelector('[data-act="del"]')?.addEventListener("click", async (ev) => {
-          ev.stopPropagation();
-          this.settings.marginBookmarks[filePath] = (this.settings.marginBookmarks[filePath] || []).filter((x) => x.id !== bmId);
-          await this.saveSettings();
-          this.updateTaskProgressBar();
-        });
+            },
+          }),
+          async (updated) => {
+            Object.assign(bmObj, updated);
+            await this.saveSettings();
+            this.updateTaskProgressBar();
+          }
+        ).open();
       });
+    });
 
-      dock.querySelector('[data-launch="add"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        this.addMarginBookmarkToActiveNote();
-      });
-      dock.querySelector('[data-launch="digest"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        this.openBookNutrientDigestModal();
+    wrap.querySelectorAll("[data-bm-del]").forEach((delBtn) => {
+      delBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const bmId = delBtn.getAttribute("data-bm-del");
+        this.settings.marginBookmarks[filePath] = (this.settings.marginBookmarks[filePath] || []).filter((x) => x.id !== bmId);
+        await this.saveSettings();
+        this.updateTaskProgressBar();
       });
     });
   }
@@ -4605,8 +4575,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   enhanceMarkdownElement(rootEl) {
-    this.updateTaskProgressBar();
-    const blocks = rootEl.querySelectorAll("p, li, td, h1, h2, h3, h4, blockquote p");
+    const blocks = rootEl.querySelectorAll("p, li, td, h1, h2, h3, h4");
     blocks.forEach((block) => {
       if (block.dataset.artcraftProcessed === "true") return;
       this.enhanceSingleBlock(block, false);
@@ -4626,7 +4595,19 @@ class AlchemyFlowPlugin extends Plugin {
     const textNodes = [];
     let node;
     while ((node = walker.nextNode())) {
-      if (node.parentElement && node.parentElement.tagName === "CODE") continue;
+      const pEl = node.parentElement;
+      if (!pEl) continue;
+      if (
+        pEl.closest(
+          "code, pre, a, button, svg, .inline-title, .callout-title, .artcraft-sentence, .artcraft-step-badge, .artcraft-pill-number, .artcraft-capsule-link, .artcraft-capsule-crypto, .artcraft-task-date, .artcraft-check-circle"
+        )
+      ) {
+        continue;
+      }
+      // If block is a <li> that contains child <p> or nested <ul>/<ol>, only process direct text nodes of this <li>
+      if (block.tagName === "LI" && pEl.closest("p, ul, ol") && pEl.closest("li") === block && pEl !== block) {
+        continue;
+      }
       textNodes.push(node);
     }
 

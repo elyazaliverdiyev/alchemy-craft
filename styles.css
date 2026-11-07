@@ -138,7 +138,7 @@ body.artcraft-theme-active .markdown-rendered ol > li {
 }
 
 body.artcraft-theme-active .markdown-rendered ol > li::before {
-  content: "0" counter(artcraft-counter) !important;
+  content: counter(artcraft-counter, decimal-leading-zero) !important;
   position: absolute !important;
   left: 4px !important;
   top: 2px !important;
@@ -2949,403 +2949,285 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 /* ==========================================================================
-   1. CLEAN UPPER-RIGHT EX-LIBRIS STAMP & CLASSICS SHELF SEAL (NO TOP BAR!)
+   1. CLEAN CENTERED NOTE TOP STUDIO STRIP: READING TIME, RISOGAPH STAMP & STICKERS
+   (No intrusive full-width bar — aligned cleanly with the centered note title!)
    ========================================================================== */
 @keyframes artcraftStampImpact {
   0% {
-    transform: scale(1.75) rotate(-12deg);
-    opacity: 0.2;
+    transform: scale(1.6) rotate(-10deg);
+    opacity: 0.25;
   }
-  55% {
-    transform: scale(0.92) rotate(-2.5deg);
+  60% {
+    transform: scale(0.94) rotate(-2deg);
     opacity: 1;
-  }
-  80% {
-    transform: scale(1.04) rotate(-3.5deg);
   }
   100% {
-    transform: scale(1) rotate(-3deg);
+    transform: scale(1) rotate(-1.5deg);
     opacity: 1;
   }
 }
 
-.artcraft-exlibris-corner-seal {
-  position: absolute;
-  top: 10px;
-  right: 18px;
-  z-index: 18;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease, filter 0.2s ease;
-}
-
-.artcraft-exlibris-corner-seal.is-stamp-pressing {
-  animation: artcraftStampImpact 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Ghost outline in clean upper-right whitespace when unstamped */
-.artcraft-exlibris-corner-seal.is-ghost {
-  opacity: 0.36;
-  transform: rotate(-1.5deg);
-}
-
-.artcraft-exlibris-corner-seal.is-ghost:hover {
-  opacity: 0.95;
-  transform: rotate(-2deg) translateY(-1px);
-}
-
-.exlibris-ghost-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  border: 1.5px dashed #B8B0A0;
-  background: rgba(250, 248, 243, 0.75);
-  color: #78716C;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.exlibris-ghost-pill svg {
-  width: 12px;
-  height: 12px;
-  color: #8C5828;
-}
-
-/* Stamped Risograph Ink Seal (Read #1) */
-.artcraft-exlibris-corner-seal.is-stamped {
-  transform: rotate(-3deg);
-}
-
-.artcraft-exlibris-corner-seal.is-stamped:hover {
-  transform: rotate(-1.5deg) scale(1.03);
-}
-
-.exlibris-seal-frame {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 5px 12px;
-  border-radius: 6px;
-  border: 2px solid #15803D;
-  outline: 1px dashed rgba(21, 128, 61, 0.45);
-  outline-offset: -4px;
-  background: rgba(236, 253, 245, 0.88);
-  box-shadow: 0 3px 10px rgba(21, 128, 61, 0.12);
-  color: #14532D;
-  font-family: "JetBrains Mono", monospace;
-}
-
-.exlibris-seal-top {
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: #15803D;
-  opacity: 0.85;
-}
-
-.exlibris-seal-main {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.07em;
-  color: #14532D;
-  margin: 1px 0;
-}
-
-.exlibris-seal-main svg {
-  width: 12px;
-  height: 12px;
-}
-
-.exlibris-seal-sub {
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #166534;
-  border-top: 1px solid rgba(21, 128, 61, 0.25);
-  padding-top: 1px;
-}
-
-/* Golden Classics Shelf Wax Seal (Read #2+: "Полка Классики") */
-.artcraft-exlibris-corner-seal.is-classics .exlibris-seal-frame {
-  border-color: #B45309;
-  outline-color: rgba(180, 83, 9, 0.48);
-  background: linear-gradient(135deg, rgba(254, 243, 199, 0.94), rgba(253, 230, 138, 0.88));
-  box-shadow: 0 4px 14px rgba(180, 83, 9, 0.22);
-  color: #78350F;
-}
-
-.artcraft-exlibris-corner-seal.is-classics .exlibris-seal-top {
-  color: #92400E;
-}
-
-.artcraft-exlibris-corner-seal.is-classics .exlibris-seal-main {
-  color: #78350F;
-}
-
-.artcraft-exlibris-corner-seal.is-classics .exlibris-seal-sub {
-  color: #92400E;
-  border-top-color: rgba(180, 83, 9, 0.3);
-}
-
-/* ==========================================================================
-   2. QUIET EDITORIAL SUB-HEADER LINE BELOW NOTE TITLE
-   ========================================================================== */
-.artcraft-quiet-meta-line {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: -4px 0 14px 0;
-  padding: 4px 0 8px 0;
-  border-bottom: 1px dashed rgba(140, 88, 40, 0.18);
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  color: #78716C;
-}
-
-.quiet-meta-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: #6B665E;
-  font-weight: 600;
-}
-
-.quiet-meta-item svg {
-  width: 12px;
-  height: 12px;
-  color: #8C5828;
-}
-
-.quiet-meta-sep {
-  color: #C7C1B4;
-}
-
-.quiet-mini-bar {
-  display: inline-block;
-  width: 46px;
-  height: 5px;
-  background: #E6E2D6;
-  border-radius: 99px;
-  overflow: hidden;
-  vertical-align: middle;
-}
-
-.quiet-mini-bar > i {
-  display: block;
-  height: 100%;
-  background: #69BD28;
-  border-radius: 99px;
-  transition: width 0.25s ease;
-}
-
-.quiet-meta-pct {
-  font-weight: 700;
-  color: #3F6212;
-}
-
-.quiet-meta-act-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  padding: 2px 8px !important;
-  height: 21px !important;
-  font-family: "JetBrains Mono", monospace !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  color: #57534E !important;
-  background: rgba(244, 241, 234, 0.85) !important;
-  border: 1px solid #DFDBD0 !important;
-  border-radius: 999px !important;
-  box-shadow: none !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-}
-
-.quiet-meta-act-btn:hover {
-  color: #1F2937 !important;
-  border-color: #8C5828 !important;
-  background: #FFFFFF !important;
-}
-
-.quiet-meta-act-btn.is-digest {
-  color: #9A3412 !important;
-  background: #FFF7ED !important;
-  border-color: #FDBA74 !important;
-}
-
-.quiet-meta-act-btn svg {
-  width: 11px;
-  height: 11px;
-}
-
-/* ==========================================================================
-   3. 5-NUTRIENT PHYSICAL STICKY BOOK TABS (TOP: CARBS, RIGHT: FATS/VITAMINS/FIBER, BOTTOM: PROTEINS)
-   ========================================================================== */
-.artcraft-nutrient-margin-dock {
-  position: absolute;
-  z-index: 24;
-  pointer-events: none;
-  display: flex;
-  gap: 6px;
-}
-
-/* Top Edge: 🟠 Carbs (Углеводы — Энергия и инсайты «К размышлению») */
-.artcraft-margin-dock-top {
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  flex-direction: row;
-  align-items: flex-start;
-  max-width: 72%;
-  flex-wrap: wrap;
-}
-
-/* Right Edge: 🟡 Fats, 🟢 Vitamins, 🔵 Fiber */
-.artcraft-margin-dock-right {
-  top: 92px;
-  right: 8px;
-  flex-direction: column;
-  align-items: flex-end;
-  max-height: calc(100% - 170px);
-}
-
-/* Bottom Edge: 🔴 Proteins (Белки — Лайфхаки и действия «Немедленно внедрить») */
-.artcraft-margin-dock-bottom {
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  flex-direction: row;
-  align-items: flex-end;
-  max-width: 76%;
-  flex-wrap: wrap;
-}
-
-.artcraft-physical-sticky-tab {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--tab-bg, #FFFBEB);
-  border: 1.5px solid var(--tab-border, #FDE68A);
-  border-left: 5px solid var(--tab-accent, #D97706);
-  border-radius: 4px 8px 8px 4px;
-  padding: 4px 9px;
-  box-shadow: 0 3px 8px rgba(24, 24, 27, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  max-width: 175px;
-  transition: max-width 0.26s cubic-bezier(0.22, 1, 0.36, 1), transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
-  overflow: hidden;
-}
-
-.artcraft-margin-dock-top .artcraft-physical-sticky-tab {
-  border-left-width: 1.5px;
-  border-top: 5px solid var(--tab-accent, #EA580C);
-  border-radius: 4px 4px 8px 8px;
-}
-
-.artcraft-margin-dock-bottom .artcraft-physical-sticky-tab {
-  border-left-width: 1.5px;
-  border-bottom: 5px solid var(--tab-accent, #DC2626);
-  border-radius: 8px 8px 4px 4px;
-}
-
-.artcraft-physical-sticky-tab:hover {
-  max-width: 340px;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(24, 24, 27, 0.16);
-  z-index: 30;
-}
-
-.sticky-tab-grip {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--tab-accent, #D97706);
-  flex-shrink: 0;
-}
-
-.sticky-tab-body {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  line-height: 1.25;
-}
-
-.sticky-tab-head {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 9.5px;
-  font-weight: 800;
-}
-
-.sticky-tab-nutrient {
-  color: var(--tab-accent, #D97706);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.sticky-tab-zone {
-  color: #78716C;
-  font-weight: 600;
-  display: none;
-}
-
-.artcraft-physical-sticky-tab:hover .sticky-tab-zone {
-  display: inline;
-}
-
-.sticky-tab-meaning {
-  font-size: 11px;
-  font-weight: 700;
-  color: #1F2937;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sticky-tab-snippet {
-  font-size: 10px;
-  color: #57534E;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: none;
-  margin-top: 2px;
-}
-
-.artcraft-physical-sticky-tab:hover .sticky-tab-snippet {
-  display: block;
-}
-
-.sticky-tab-del {
+.artcraft-task-progress-wrap {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding: 0 3px !important;
-  height: auto !important;
-  font-size: 13px !important;
+  padding: 10px 28px 0 28px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  z-index: 6;
+  flex-shrink: 0;
+}
+
+body.artcraft-dark-craft .artcraft-task-progress-wrap {
+  background: transparent !important;
+  border: none !important;
+}
+
+.artcraft-top-bar-inner {
+  max-width: var(--line-width, 52rem);
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.artcraft-header-main-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Reading Time & Words Capsule */
+.artcraft-reading-stats-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #57534E;
+  background: #FAF8F3;
+  border: 1px solid #DFDBD0;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.artcraft-reading-stats-pill svg {
+  width: 12px;
+  height: 12px;
+  color: #8C5828;
+  flex-shrink: 0;
+}
+
+/* Compact Task Progress Pill */
+.artcraft-compact-task-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #57534E;
+  background: #FAF8F3;
+  border: 1px solid #DFDBD0;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.artcraft-compact-task-pill .artcraft-task-progress-bar-bg {
+  width: 58px;
+  flex: none;
+  height: 6px;
+  background: #E5E1D6;
+  border-radius: 999px;
+  overflow: hidden;
+  border: none;
+}
+
+.artcraft-compact-task-pill .task-pill-pct {
+  font-weight: 800;
+  color: #15803D;
+}
+
+/* Beloved Crisp Green Dashed Risograph Ink Stamp ([ APPROVED • DATE ] / [ ИЗУЧЕНО • ДАТА ]) */
+.artcraft-ink-stamp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #15803D;
+  background: rgba(220, 252, 231, 0.88);
+  border: 1.8px dashed #16A34A;
+  padding: 3px 10px;
+  border-radius: 6px;
+  transform: rotate(-1.5deg);
+  box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.14), 0 2px 5px rgba(22, 163, 74, 0.1);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.artcraft-ink-stamp-badge:hover {
+  transform: rotate(0deg) translateY(-1px);
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.18);
+}
+
+.artcraft-ink-stamp-badge svg {
+  width: 12px;
+  height: 12px;
+  color: currentColor;
+  flex-shrink: 0;
+}
+
+.artcraft-ink-stamp-badge.is-stamp-pressing {
+  animation: artcraftStampImpact 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Golden Classics Shelf Stamp (2nd+ Read: ★ CLASSICS #2) */
+.artcraft-ink-stamp-badge.is-classics {
+  color: #92400E;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-color: #D97706;
+  box-shadow: inset 0 0 0 1px rgba(217, 119, 6, 0.2), 0 2px 8px rgba(217, 119, 6, 0.18);
+}
+
+.artcraft-note-craft-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.artcraft-craft-mini-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: #FAF8F3 !important;
+  color: #44403C !important;
+  border: 1px solid #DFDBD0 !important;
+  border-radius: 7px !important;
+  padding: 3px 9px !important;
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  height: 25px !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.14s ease !important;
+}
+
+.artcraft-craft-mini-btn svg {
+  width: 12px !important;
+  height: 12px !important;
+  color: #8C5828 !important;
+  flex-shrink: 0;
+}
+
+.artcraft-craft-mini-btn:hover {
+  border-color: #8C5828 !important;
+  color: #18181B !important;
+  background: #FFFFFF !important;
+  transform: translateY(-1px);
+}
+
+.artcraft-craft-mini-btn.is-active {
+  background: #ECFDF5 !important;
+  border-color: #10B981 !important;
+  color: #065F46 !important;
+}
+
+.artcraft-craft-mini-btn.is-active svg {
+  color: #059669 !important;
+}
+
+.artcraft-craft-mini-btn.is-digest-btn {
+  background: #FFF7ED !important;
+  border-color: #FDBA74 !important;
+  color: #9A3412 !important;
+}
+
+/* ==========================================================================
+   2. 5-NUTRIENT CRAFT BOOKMARK STRIP (PROTEINS, CARBS, FATS, VITAMINS, FIBER)
+   ========================================================================== */
+.artcraft-margin-bookmarks-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.artcraft-bm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bm-bg, #FFFDF8);
+  border: 1px solid var(--bm-border, #E2DDD2);
+  border-left: 4px solid var(--bm-accent, #DC2626);
+  border-radius: 5px 8px 8px 5px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: #1F2937;
+  cursor: pointer;
+  max-width: 310px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.artcraft-bm-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.bm-nut-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bm-tag-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.bm-tag-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  color: #374151;
+}
+
+.bm-tag-edit,
+.bm-tag-del {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 2px !important;
+  font-size: 11.5px !important;
+  line-height: 1 !important;
   color: #9CA3AF !important;
   cursor: pointer !important;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  height: auto !important;
 }
 
-.artcraft-physical-sticky-tab:hover .sticky-tab-del {
-  opacity: 1;
+.bm-tag-edit:hover {
+  color: #2563EB !important;
 }
 
-.sticky-tab-del:hover {
+.bm-tag-del:hover {
   color: #DC2626 !important;
 }
 
@@ -3360,35 +3242,21 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 /* ==========================================================================
-   4. HARDCOVER BOOK FOLIO PAGE MODE (NO BROKEN COLUMN-COUNT ON CODEMIRROR!)
+   3. HARDCOVER BOOK FOLIO PAGE MODE (SAFE FOR BOTH LIVE PREVIEW & READING VIEW!)
+   Never overrides .cm-sizer or .markdown-preview-sizer internal virtual scroll math!
    ========================================================================== */
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content {
-  background: radial-gradient(circle at 50% 25%, #EFECE2 0%, #E3DEC9 100%) !important;
-  padding-top: 18px !important;
-  padding-bottom: 28px !important;
-}
-
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  max-width: 780px !important;
-  margin: 12px auto 36px auto !important;
-  padding: 46px 58px 54px 64px !important;
-  background: linear-gradient(90deg, #F0ECE0 0%, #FCF9F2 4.5%, #FFFDF8 95%, #F5F1E5 100%) !important;
-  border: 1px solid #D8D1C0 !important;
-  border-left: 7px solid #8C5828 !important;
-  border-radius: 4px 14px 14px 4px !important;
+  background: linear-gradient(90deg, #E8E2D2 0%, #FAF7F0 3.5%, #FCF9F2 96%, #EFEAD8 100%) !important;
+  border-left: 6px solid #8C5828 !important;
   box-shadow:
-    inset 18px 0 26px -14px rgba(100, 65, 30, 0.18),
-    3px 0 0 #F4F0E4,
-    4px 0 0 #D0C9B8,
-    7px 0 0 #EFECE0,
-    8px 0 0 #C8C0AE,
-    0 16px 38px rgba(28, 25, 23, 0.12) !important;
-  position: relative !important;
+    inset 22px 0 32px -14px rgba(100, 65, 30, 0.16),
+    inset -5px 0 0 #E6DFCE,
+    inset -9px 0 0 #FAF7F0,
+    inset -11px 0 0 #D8D0BC !important;
 }
 
 /* ==========================================================================
-   5. FOCUS & BOOK STUDIO SUBMENU POPOVER (CHECKBOXES + QUICK BOOK TOOLS)
+   4. FOCUS & BOOK STUDIO SUBMENU POPOVER (CHECKBOXES + QUICK BOOK TOOLS)
    ========================================================================== */
 .artcraft-dock-btn .artcraft-btn-caret {
   font-size: 9px;
@@ -3579,232 +3447,189 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
 }
 
 /* ==========================================================================
-   6. 5-NUTRIENT STICKER MODAL & BOOK DIGEST MODAL STYLES
+   5. 5-NUTRIENT STICKER MODAL & BOOK DIGEST MODAL STYLES (100% MATCHED CLASSES)
    ========================================================================== */
-.artcraft-nutrient-modal-root,
-.artcraft-digest-modal-root {
+.artcraft-nutrient-modal-root {
   padding: 6px 4px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.artcraft-nutrient-header {
+.nutrient-modal-head {
   margin-bottom: 14px;
 }
 
-.nutrient-badge-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: #F3EFE6;
-  border: 1px solid #DFDBD0;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 800;
-  color: #78350F;
-  margin-bottom: 6px;
-}
-
-.nutrient-badge-pill svg {
-  width: 12px;
-  height: 12px;
-}
-
-.artcraft-nutrient-header h2 {
-  margin: 0 0 4px 0;
-  font-size: 19px;
-  font-weight: 800;
-  color: #18181B;
-}
-
-.artcraft-nutrient-header p {
-  margin: 0;
-  font-size: 12.5px;
-  color: #57534E;
-}
-
-.artcraft-nutrient-grid {
+.nutrient-type-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-  gap: 8px;
-  margin-bottom: 14px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 12px;
 }
 
-.artcraft-nutrient-card {
+@media (max-width: 680px) {
+  .nutrient-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.nutrient-type-card {
   display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  text-align: left !important;
-  padding: 10px 11px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 9px 10px !important;
   height: auto !important;
-  border-radius: 11px !important;
+  border-radius: 10px !important;
   background: #FFFFFF !important;
-  border: 1.5px solid #E5E1D6 !important;
-  border-left: 5px solid var(--nut-color, #DC2626) !important;
+  border: 1.5px solid #E2DDD2 !important;
   cursor: pointer !important;
   box-shadow: none !important;
-  white-space: normal !important;
-  transition: all 0.15s ease !important;
+  text-align: left !important;
+  transition: all 0.14s ease !important;
 }
 
-.artcraft-nutrient-card.is-active {
-  background: var(--nut-bg, #FEF2F2) !important;
-  border-color: var(--nut-color, #DC2626) !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
+.nutrient-type-card:hover {
+  border-color: #8C5828 !important;
+  transform: translateY(-1px);
 }
 
-.nut-card-top {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  margin-bottom: 3px;
+.nutrient-type-card.is-selected {
+  border-color: #18181B !important;
+  background: #FAF8F3 !important;
+  box-shadow: 0 3px 0 #18181B !important;
 }
 
-.nut-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--nut-color, #DC2626);
+.nutrient-color-tab {
+  width: 6px;
+  height: 26px;
+  border-radius: 4px;
   flex-shrink: 0;
 }
 
-.nut-title {
-  font-size: 12.5px;
+.nutrient-card-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.nutrient-card-txt strong {
+  font-size: 12px;
   font-weight: 800;
   color: #18181B;
 }
 
-.nut-zone {
-  margin-left: auto;
-  font-family: "JetBrains Mono", monospace;
+.nutrient-card-txt small {
   font-size: 9.5px;
-  font-weight: 700;
   color: #78716C;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.nut-role {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--nut-color, #DC2626);
-  margin-bottom: 2px;
+.nutrient-role-banner {
+  border: 1.5px solid #FCA5A5;
+  border-radius: 11px;
+  padding: 10px 13px;
+  margin-bottom: 12px;
 }
 
-.nut-desc {
-  font-size: 10.5px;
-  color: #57534E;
-  line-height: 1.3;
-}
-
-.artcraft-nutrient-form {
+.nutrient-banner-top {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.nutrient-edge-pill {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.nutrient-banner-desc {
+  font-size: 11.5px;
+  color: #44403C;
+  line-height: 1.4;
+}
+
+.nutrient-form-wrap {
   background: #F6F3EC;
   border: 1px solid #E2DDD2;
   border-radius: 12px;
   padding: 12px;
+  margin-bottom: 12px;
 }
 
-.nut-field-label {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #57534E;
-  margin-top: 4px;
-}
-
-.nut-input {
+.nutrient-text-input,
+.nutrient-quote-textarea {
   width: 100% !important;
-  padding: 8px 10px !important;
-  border-radius: 8px !important;
   border: 1.5px solid #D6D1C4 !important;
+  border-radius: 8px !important;
   background: #FFFFFF !important;
+  padding: 8px 10px !important;
   font-size: 12.5px !important;
+  color: #18181B !important;
+  margin-top: 4px !important;
 }
 
-.nut-actions-row {
+.nutrient-modal-footer {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 10px;
 }
 
-.nut-cancel-btn {
-  padding: 7px 14px !important;
-  border-radius: 8px !important;
-  border: 1px solid #D6D1C4 !important;
-  background: #FFFFFF !important;
-  color: #57534E !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-}
-
-.nut-save-btn {
-  padding: 7px 16px !important;
-  border-radius: 8px !important;
-  border: 1.5px solid #18181B !important;
-  background: #69BD28 !important;
-  color: #FFFFFF !important;
-  font-weight: 800 !important;
-  box-shadow: 0 2px 0 #18181B !important;
-  cursor: pointer !important;
-}
-
-.artcraft-digest-columns {
+.nutrient-digest-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 390px;
+  max-height: 360px;
   overflow-y: auto;
-  padding-right: 4px;
+  margin-bottom: 14px;
 }
 
-.digest-sec-card {
-  background: #FFFFFF;
-  border: 1.5px solid #E5E1D6;
-  border-left: 5px solid var(--nut-color, #DC2626);
+.nutrient-digest-group {
+  border: 1px solid #E5E1D6;
+  border-left: 5px solid #DC2626;
   border-radius: 10px;
   padding: 10px 12px;
 }
 
-.digest-sec-head {
+.nutrient-digest-group-title {
   display: flex;
   align-items: center;
-  gap: 7px;
+  justify-content: space-between;
+  font-size: 12px;
   margin-bottom: 6px;
 }
 
-.digest-sec-count {
-  margin-left: auto;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 1px 7px;
-  border-radius: 99px;
-  background: #F4F1EA;
-}
-
-.digest-sec-list {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.digest-item-row {
-  padding: 6px 8px;
+.nutrient-digest-row {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 7px;
-  background: #FAF8F3;
+  padding: 6px 9px;
+  margin-top: 5px;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  transition: background 0.14s ease;
 }
 
-.digest-item-row:hover {
-  background: #F0ECE1;
+.nutrient-digest-row:hover {
+  background: #FFFFFF;
+}
+
+.digest-row-meaning {
+  font-size: 12px;
+  color: #18181B;
+}
+
+.digest-row-quote {
+  font-size: 11px;
+  color: #57534E;
+  font-style: italic;
+  margin-top: 2px;
 }
 
 /* ==========================================================================
