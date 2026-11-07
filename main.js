@@ -70,9 +70,16 @@ const SICRAFT_SVGS = {
   focus: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3"/><path d="M20 7V4h-3"/><path d="M4 17v3h3"/><path d="M20 17v3h-3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`,
   audio: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>`,
   card: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>`,
-  spark: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>`
+  spark: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>`,
+  timer: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/></svg>`,
+  graph: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><line x1="8.7" y1="7.5" x2="10.8" y2="15.5"/><line x1="15.3" y1="7.5" x2="13.2" y2="15.5"/><line x1="9" y1="6" x2="15" y2="6"/></svg>`,
+  diamond: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/></svg>`,
+  bolt: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  copy: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+  check: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  globe: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  ruler: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="2"/><line x1="6" y1="8" x2="6" y2="12"/><line x1="10" y1="8" x2="10" y2="14"/><line x1="14" y1="8" x2="14" y2="12"/><line x1="18" y1="8" x2="18" y2="14"/></svg>`
 };
-
 const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
   <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
@@ -84,22 +91,23 @@ const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fi
 
 const TRANSLATIONS = {
   en: {
-    eqTip: "LMB: Cycle 4 Visual Styles | RMB: Audio Menu & Sync PC Music/Mic",
-    audioSyncMic: "🎙️ Sync PC Audio / Stereo Mix / Mic",
-    audioStopSync: "⏹️ Stop Live Audio Sync",
-    audioSysLoopback: "🔊 System Screen Audio Loopback (Experimental)",
-    audioModeBars: "📊 16-Bar Spectrum Analyzer",
-    audioModeWave: "🌊 Dual Liquid Sine Wave",
-    audioModeOrb: "🔮 Radial Alchemy Resonance",
-    audioModeDna: "🧬 Harmonic DNA Matrix",
-    ambientRain: "🌧️ Ambient: Gentle Rain",
-    ambientBrown: "☕ Ambient: Deep Brown Noise",
-    ambientGamma: "🧠 Ambient: 40Hz Gamma Focus",
-    audioStopAll: "⏹️ Stop All Audio",
-    audioConnectedNotice: "🎙️ PC Audio / Stereo Mix synced to Equalizer!",
-    audioStoppedNotice: "🔇 Audio sync stopped.",
-    dockCollapseTip: "Click to collapse/expand Alchemy Dock",
-    timerTip: "LMB: Start/Pause | RMB: Presets & Ambient Audio | Double Click: Reset",
+    eqTip: "LMB: Cycle 4 Pro Visualizers | RMB: Audio Menu & Sync Desktop Music (Telegram/Spotify/YouTube)",
+    audioSyncSystem: "Desktop Audio Loopback (Telegram / YouTube / Spotify)",
+    audioSyncMic: "Microphone / Stereo Mix Input",
+    audioStopSync: "Stop Live Audio Sync",
+    audioModeBars: "01 // Peak-Hold Neon Spectrum",
+    audioModeWave: "02 // Cyber Liquid Spline Ribbon",
+    audioModeOrb: "03 // Supernova Polar Sunburst",
+    audioModeDna: "04 // Quantum Matrix Rain",
+    ambientRain: "Ambient: Soft Rain on Paper",
+    ambientBrown: "Ambient: Deep Warm Brown Noise",
+    ambientGamma: "Ambient: 40Hz Gamma Focus Drone",
+    audioStopAll: "Stop All Audio",
+    audioConnectedNotice: "Desktop Audio Loopback connected! Equalizer now reacts to Telegram, Spotify & system music.",
+    audioMicConnectedNotice: "Audio input connected to Equalizer!",
+    audioStoppedNotice: "Audio sync stopped.",
+    dockCollapseTip: "Click to collapse/expand Alchemy Craft Dock",
+    timerTip: "LMB: Start/Pause | RMB: Presets & Audio | Double Click: Reset",
     uiBtn: "UI",
     uiTip: "Swiss Bento UI Theme (Warm Paper #F4F3EF + Sage Green Tables)",
     zenBtn: "Zen",
@@ -111,7 +119,12 @@ const TRANSLATIONS = {
     drawBtn: "Draw",
     drawTip: "Freehand Marker Draw on note (Esc to exit)",
     eraserBtn: "Eraser",
-    eraserTip: "Eraser — erase drawings under cursor or finger (Esc to exit)",
+    eraserTip: "Eraser — erase drawings under cursor (Esc to exit)",
+    lampBtn: "Lamp",
+    lampBtnFull: "Smart LED Lamp",
+    lampTip: "LMB: Toggle Smart LED Lamp | RMB: Configure Brightness, Kelvin (2700K–6500K) & Room Dimmer",
+    rulerBtn: "Ruler",
+    rulerTip: "Toggle Laser Reading Ruler Line",
     undoTip: "Undo last stroke (Ctrl+Z)",
     redoTip: "Redo stroke (Ctrl+Y)",
     aiCleanBtn: "AI Clean",
@@ -119,21 +132,29 @@ const TRANSLATIONS = {
     clearTip: "Clear all drawings and highlighted sentences",
     orientTip: "Toggle Orientation (Bottom Bar / Right Side Pillar)",
     collapseTip: "Collapse into floating orb",
-    taskProgressLabel: "⚡ TASK PROGRESS:",
-    sprintDoneNotice: "⚡ Alchemy Craft: Focus sprint completed! +1 Sprint recorded in Analytics.",
-    breakDoneNotice: "☕ Alchemy Craft: Break finished! Ready for the next focus sprint?",
-    customPomodoroTitle: "⏱ Custom Focus Sprint Duration",
+    taskProgressLabel: "TASK PROGRESS:",
+    sprintDoneNotice: "Alchemy Craft: Focus sprint completed! +1 Sprint recorded in Analytics.",
+    breakDoneNotice: "Alchemy Craft: Break finished! Ready for the next focus sprint?",
+    customPomodoroTitle: "Custom Focus Sprint Duration",
     customPomodoroDesc: "Set your custom Pomodoro sprint duration in minutes (1 to 360):",
     customPomodoroStart: "Start Sprint",
     customPomodoroErr: "Please enter a number between 1 and 360 minutes.",
+    ledModalSubtitle: "ALCHEMY CRAFT // LUMINA STUDIO",
+    ledModalTitle: "Smart LED Cursor Lamp",
+    ledBrightness: "Brightness (Glow Intensity)",
+    ledKelvin: "Color Temperature",
+    ledDimmer: "Surrounding Room Dimmer",
+    ledRadius: "Beam Radius & Shape",
+    ledShapeRadial: "Radial Spotlight",
+    ledShapeBar: "Desk Lightbar",
     modalBadge: "ALCHEMIST PRO • 1 YEAR PASS",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). Instant activation via Bank Card, @CryptoBot, or Universal EVM.",
-    step1Title: "STEP 1: SELECT PAYMENT METHOD (USA / EU CARD OR CRYPTO)",
-    netCard: "Bank Card / Apple Pay",
-    netCardHint: "0% Fee Web3 / @CryptoBot",
+    modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). Instant activation via 0% Fee EVM, Bybit UID, @CryptoBot, or Promo Key.",
+    step1Title: "STEP 1: SELECT PAYMENT METHOD",
+    netPromo: "Promo / VIP Key",
+    netPromoHint: "Instant Code Activation",
     netCryptoBot: "@CryptoBot Pay",
-    netCryptoBotHint: "1-Click Telegram (USDT/TON)",
+    netCryptoBotHint: "1-Click Telegram (All Coins)",
     netEvm: "Universal EVM (0x...)",
     netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
     netBybit: "Bybit UID Transfer",
@@ -148,72 +169,100 @@ const TRANSLATIONS = {
     uidLabel: "BYBIT RECIPIENT UID:",
     copyBtn: "Copy Address",
     copiedBtn: "Copied!",
-    evmChainsLabel: "✓ SUPPORTED EVM NETWORKS FOR THIS 0x ADDRESS:",
-    cardNote: "Pay effortlessly with any US, European, or global Visa / MasterCard / Apple Pay via @CryptoBot or Direct 0% EVM or request a direct Stripe/Polar checkout link. Then paste your Receipt/Order ID in Step 2.",
-    cryptobotNote: "Click below to open @CryptoBot in Telegram and send 4.99 USDT/TON in 1 click, or message @StratAlchemy for an automated invoice.",
-    evmNote: "This single Universal EVM 0x address accepts 4.99 USDT, USDC, DAI, ETH, or BNB on BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism, and Ethereum! L2 gas fee is ~$0.01.",
-    bybitNote: "In Bybit App: Assets → Withdraw → Internal Transfer (0% Fee) → enter UID 8015849 and 4.99 USDT. Instant & fee-free.",
+    evmChainsLabel: "SUPPORTED EVM NETWORKS FOR THIS 0x ADDRESS:",
+    cardNote: "Enter your Promo Code, VIP Key, or @CryptoBot Invoice ID in Step 2 below, or click below to pay $4.99 via @CryptoBot.",
+    cryptobotNote: "Click below to generate an official @CryptoBot invoice ($4.99) with full product description and instant verification.",
+    evmNote: "This single Universal EVM 0x address accepts 4.99 USDT, USDC, DAI, ETH, or BNB on BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism, and Ethereum!",
+    bybitNote: "In Bybit App: Assets -> Withdraw -> Internal Transfer (0% Fee) -> enter UID 8015849 and 4.99 USDT.",
     trcNote: "Send 4.99 USDT via TRON network (TRC-20) from any wallet or exchange.",
     solNote: "Send 4.99 USDT or USDC on Solana network.",
     supportText: "Need assistance or instant manual activation?",
     supportSub: "Direct Telegram contact:",
     supportTgBtn: "Open @StratAlchemy",
-    step2Title: "STEP 2: ENTER TRANSACTION HASH (TXID), BYBIT ID, OR CARD RECEIPT CODE:",
-    txPlaceholder: "Paste TXID (0x...), Bybit Order ID, or Card Receipt #...",
-    activateBtn: "⚡ Verify & Activate Pro",
-    checkingBtn: "⏳ Verifying payment...",
-    successMsg: "🎉 Success! Alchemy Craft Pro is now active for 365 days!",
-    errorEmpty: "❌ Please enter a valid TXID, Order ID, or Card Receipt code.",
-    errorPending: "⚠️ Transaction is still confirming. Please wait 1 minute and click again.",
+    step2Title: "STEP 2: ENTER TXID, BYBIT ID, OR LICENSE / PROMO KEY:",
+    txPlaceholder: "Paste TXID (0x...), Bybit ID, or ACPRO-... Key",
+    activateBtn: "Verify & Activate Pro",
+    checkingBtn: "Verifying payment...",
+    successMsg: "Success! Alchemy Craft Pro is now active for 365 days!",
+    errorEmpty: "Please enter a valid TXID, Order ID, or License Key.",
+    errorPending: "Transaction is still confirming. Please wait 1 minute and click again.",
     proActiveTitle: "PRO ACTIVE",
     proExpiresOn: "Annual Pass Active Until:",
-    proMidnightName: "🌙 Midnight Dark Craft Mode",
+    proMidnightName: "Midnight Dark Craft Mode",
     proMidnightDesc: "Full Swiss dark mode engineered for late-night reading, Graph View, and coding.",
     proBuyCardBadge: "ALCHEMIST PRO PASS",
     proBuyCardTitle: "Unlock All Pro Features in Alchemy Craft",
-    proPerk1: "🌙 Midnight Dark Craft — full Swiss dark theme for notes, tables, callouts & Graph",
-    proPerk2: "🎨 Expanded 8-Color Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
-    proPerk3: "🕸️ Swiss Bento Graph Studio — interactive Graph View HUD, color groups & laser pulses",
-    proPerk4: "🎧 Ambient Focus Soundscapes & Analytics — Brown Noise, Rain, 40Hz Gamma & streak stats",
-    getProBtn: "💎 Get Alchemy Craft Pro ($4.99 / yr)",
-    graphHudTitle: "⚗️ ALCHEMY BENTO GRAPH",
+    proPerk1: "Midnight Dark Craft — full Swiss dark theme for notes, tables, callouts & Graph",
+    proPerk2: "Expanded 8-Color Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
+    proPerk3: "Swiss Bento Graph Studio — automatic vault folder coloring, orphan filter & live HUD",
+    proPerk4: "Smart LED Lamp & 4-Mode Equalizer — 2700K–6500K spotlight & desktop audio sync",
+    getProBtn: "Get Alchemy Craft Pro ($4.99 / yr)",
+    graphHudTitle: "ALCHEMY BENTO GRAPH",
     graphPresetBento: "Swiss Bento",
     graphPresetConstellation: "Constellation",
     graphPresetRadar: "Focus Radar",
-    graphColorizeBtn: "🎨 Auto-Color Nodes",
-    graphFitBtn: "🎯 Center",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
-    checkUpdatesBtn: "🔄 Check Updates",
-    officialSiteBtn: "🌐 Official Website & Checkout",
-    langName: "🌐 Interface Language (6 Global Languages)",
-    langDesc: "Instant localization for the floating dock, settings, Graph HUD, and Pro checkout.",
-    bentoGraphName: "🕸️ Swiss Bento Graph Studio & HUD",
-    bentoGraphDesc: "Upgrades Obsidian's built-in Graph View with a warm Bento grid, floating HUD presets, glowing node rings, and 1-click folder color groups.",
-    ambientName: "🎧 Ambient Focus Soundscape (WebAudio)",
-    ambientDesc: "Synthesized zero-latency background audio during Pomodoro sprints (Brown Noise, Soft Rain, or 40Hz Gamma Binaural Focus).",
-    analyticsTitle: "📊 Focus Flow Analytics & Streak"
+    graphColorizeBtn: "Colorize My Vault",
+    graphOrphansBtn: "Hide Orphans",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.0)",
+    checkUpdatesBtn: "Check Updates",
+    langName: "Interface Language (6 Global Languages)",
+    langDesc: "Instantly translates all settings, floating dock buttons, Graph HUD, and modals.",
+    themeName: "Swiss Bento UI Theme (#F4F3EF + #69BD28 Tables)",
+    bentoGraphName: "Swiss Bento Graph Studio & Auto-Coloring",
+    bentoGraphDesc: "Scans your actual vault folders and colors every node in the Graph View with Swiss Bento palette + adds Constellation & Radar HUD.",
+    taskBarName: "Sticky Task Progress Bar (Mobile Safe + Dismiss)",
+    taskBarDesc: "Shows task completion % at the top of checklist notes with a tap-to-close button and 100% confetti.",
+    headerBadgeName: "Note Header Badge Text",
+    headerBadgeDesc: "Editorial pill above the note title (e.g. 'STRATALCHEMY // KNOWLEDGE BRIEF'). Clear text to hide.",
+    ambientName: "Ambient Focus Soundscape (WebAudio)",
+    ambientDesc: "Synthesized zero-latency background audio during Pomodoro sprints (Brown Noise, Soft Rain, or 40Hz Gamma).",
+    pomoDurName: "Default Pomodoro Duration (Minutes)",
+    pomoDurDesc: "Right-click the timer in the dock anytime for 15m, 25m, 45m, 60m, 90m, or custom duration.",
+    aiCleanSetName: "Show AI Watermark Cleaner in Dock",
+    lampSetName: "Smart LED Cursor Lamp (2700K–6500K Kelvin & Room Dimmer)",
+    lampSetDesc: "Dims the surrounding workspace while your cursor shines a warm 2700K–6500K LED spotlight over your notes.",
+    lampConfigBtn: "Configure Lamp",
+    keySoundSetName: "Tactile Keystroke Sound (Mechanical Switch ASMR)",
+    keySoundSetDesc: "Zero-latency WebAudio mechanical keyboard sound while typing (Deep Topre Thock or Vintage Swiss Typewriter).",
+    eqSetName: "Live 4-Mode Sonic Equalizer (Desktop Audio Sync)",
+    eqSetDesc: "Syncs directly with desktop music (Telegram, YouTube, Spotify) or built-in soundscapes with 4 complex visualizers.",
+    eqSyncBtn: "Sync Desktop Audio",
+    spotlightSetName: "Spotlight Paragraph Focus Dimmer",
+    spotlightSetDesc: "Gently dims inactive paragraphs to 42% opacity while keeping your active paragraph at 100% contrast.",
+    numBadgeSetName: "Square Number Badges (01–04) & Crypto/Money Capsules",
+    numBadgeSetDesc: "Transforms numbered lists, [01]–[04] markers, $ amounts, and 0x EVM addresses into Swiss capsules.",
+    sentFocusSetName: "Sentence Focus Highlighting",
+    analyticsTitle: "Focus Flow Analytics & Streak",
+    statSprints: "Sprints",
+    statDeepWork: "Deep Work",
+    statChecklists: "100% Lists",
+    statStreak: "Day Streak",
+    supportHeading: "Direct 0%-Fee Checkout, @CryptoBot & Community",
+    supportSetName: "Global Payment & Direct Author Contact",
+    supportSetDesc: "Pay with 0% fee via Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20), Bybit UID 8015849, or 1-Click @CryptoBot."
   },
   ru: {
-    eqTip: "ЛКМ: Смена 4 стилей | ПКМ: Аудио-меню и синхронизация звука ПК/микрофона",
-    audioSyncMic: "🎙️ Синхронизация звука ПК / Стерео микшер / Микрофон",
-    audioStopSync: "⏹️ Отключить синхронизацию звука",
-    audioSysLoopback: "🔊 Захват звука экрана системы (Экспериментально)",
-    audioModeBars: "📊 16-полосный спектроанализатор",
-    audioModeWave: "🌊 Двойная жидкая синусоида",
-    audioModeOrb: "🔮 Радиальный резонанс алхимии",
-    audioModeDna: "🧬 Гармоническая матрица ДНК",
-    ambientRain: "🌧️ Эмбиент: Мягкий дождь",
-    ambientBrown: "☕ Эмбиент: Глубокий Brown Noise",
-    ambientGamma: "🧠 Эмбиент: 40Hz Gamma Focus",
-    audioStopAll: "⏹️ Остановить все звуки",
-    audioConnectedNotice: "🎙️ Звук ПК / Стерео микшер синхронизирован с эквалайзером!",
-    audioStoppedNotice: "🔇 Синхронизация звука отключена.",
+    eqTip: "ЛКМ: Смена 4 визуализаторов | ПКМ: Подключить звук ПК (Telegram/YouTube/Spotify) или Эмбиент",
+    audioSyncSystem: "Системный звук ПК (Telegram / YouTube / Spotify)",
+    audioSyncMic: "Микрофон / Стерео микшер",
+    audioStopSync: "Остановить синхронизацию звука",
+    audioModeBars: "01 // Спектроанализатор с пиками (Peak-Hold)",
+    audioModeWave: "02 // Кибер-жидкая неоновая волна (3 слоя)",
+    audioModeOrb: "03 // Полярная сверхновая (Supernova Rays)",
+    audioModeDna: "04 // Квантовая матрица (Quantum Matrix)",
+    ambientRain: "Эмбиент: Мягкий дождь по бумаге",
+    ambientBrown: "Эмбиент: Глубокий коричневый шум",
+    ambientGamma: "Эмбиент: 40Hz Гамма-ритм фокуса",
+    audioStopAll: "Выключить все звуки",
+    audioConnectedNotice: "Системный звук ПК подключен! Теперь эквалайзер играет в такт музыке из Telegram, YouTube и Spotify.",
+    audioMicConnectedNotice: "Аудиовход подключен к эквалайзеру!",
+    audioStoppedNotice: "Синхронизация звука остановлена.",
     dockCollapseTip: "Клик для сворачивания/разворачивания панели",
-    timerTip: "ЛКМ: Старт/Пауза | ПКМ: Пресеты и Фоновый Звук | Двойной клик: Сброс",
+    timerTip: "ЛКМ: Старт/Пауза | ПКМ: Пресеты и Звук | Двойной клик: Сброс",
     uiBtn: "UI",
-    uiTip: "Теплый бумажный режим Swiss Bento UI + светло-зеленые шапки Excel",
+    uiTip: "Теплый бумажный режим Swiss Bento UI (#F4F3EF) + зеленые таблицы",
     zenBtn: "Дзен",
-    zenTip: "Режим Дзен — скрыть боковые панели для чистого фокуса или записи экрана",
+    zenTip: "Режим Дзен — скрыть боковые панели для чистого фокуса",
     focusBtn: "Фокус",
     focusTip: "Выделение предложений выбранным цветом (клик по тексту)",
     laserBtn: "Указка",
@@ -221,29 +270,42 @@ const TRANSLATIONS = {
     drawBtn: "Маркер",
     drawTip: "Рисование маркером поверх заметки (Esc для выхода)",
     eraserBtn: "Ластик",
-    eraserTip: "Ластик — стирать рисунки касанием или мышью (Esc для выхода)",
+    eraserTip: "Ластик — стирать рисунки (Esc для выхода)",
+    lampBtn: "Лампа",
+    lampBtnFull: "Умная Лампа",
+    lampTip: "ЛКМ: Вкл/Выкл Умную Лампу | ПКМ: Настроить яркость, Кельвины (2700K–6500K) и затемнение",
+    rulerBtn: "Линейка",
+    rulerTip: "Включить лазерную линейку чтения",
     undoTip: "Отменить последний штрих (Ctrl+Z)",
-    redoTip: "Повторить отмененный штрих (Ctrl+Y)",
-    aiCleanBtn: "AI Clean",
-    aiCleanTip: "Очистить текст заметки от невидимых ИИ-символов (Zero-Width) и скопировать",
-    clearTip: "Очистить рисунки и выделенные предложения",
+    redoTip: "Повторить штрих (Ctrl+Y)",
+    aiCleanBtn: "AI Очистка",
+    aiCleanTip: "Очистить заметку от невидимых ИИ-символов (Zero-Width) и скопировать",
+    clearTip: "Очистить все рисунки и выделенные предложения",
     orientTip: "Сменить расположение: Снизу / Справа у края",
     collapseTip: "Свернуть панель в плавающую сферу",
-    taskProgressLabel: "⚡ ПРОГРЕСС ЗАДАЧ:",
-    sprintDoneNotice: "⚡ Alchemy Craft: Фокус-сессия завершена! +1 спринт записан в статистику.",
-    breakDoneNotice: "☕ Alchemy Craft: Перерыв окончен! Готовы к следующему фокус-спринту?",
-    customPomodoroTitle: "⏱ Настройка времени фокуса",
+    taskProgressLabel: "ПРОГРЕСС ЗАДАЧ:",
+    sprintDoneNotice: "Alchemy Craft: Фокус-сессия завершена! +1 спринт записан в статистику.",
+    breakDoneNotice: "Alchemy Craft: Перерыв окончен! Готовы к следующему спринту?",
+    customPomodoroTitle: "Настройка времени фокуса",
     customPomodoroDesc: "Задайте свою длительность Pomodoro-спринта в минутах (от 1 до 360):",
     customPomodoroStart: "Запустить спринт",
     customPomodoroErr: "Пожалуйста, введите число от 1 до 360 минут.",
+    ledModalSubtitle: "ALCHEMY CRAFT // СТУДИЯ СВЕТА",
+    ledModalTitle: "Умная светодиодная лампа курсора",
+    ledBrightness: "Яркость свечения",
+    ledKelvin: "Цветовая температура (Кельвины)",
+    ledDimmer: "Затемнение комнаты вокруг луча",
+    ledRadius: "Радиус и форма луча",
+    ledShapeRadial: "Круглый прожектор",
+    ledShapeBar: "Настольная лампа BenQ",
     modalBadge: "ALCHEMIST PRO • ГОДОВОЙ ПАСС",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Оплата любой картой банка (@CryptoBot / 0% EVM), @CryptoBot или через универсальный EVM.",
-    step1Title: "ШАГ 1: ВЫБЕРИТЕ СПОСОБ ОПЛАТЫ (КАРТА БАНКА ИЛИ КРИПТОВАЛЮТА)",
-    netCard: "Карта Банка / Apple Pay",
-    netCardHint: "0% Fee Web3 / @CryptoBot",
+    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Мгновенная активация через 0% EVM, Bybit UID, @CryptoBot или Промокод.",
+    step1Title: "ШАГ 1: ВЫБЕРИТЕ УДОБНЫЙ СПОСОБ ОПЛАТЫ",
+    netPromo: "Промокод / VIP Ключ",
+    netPromoHint: "Активация по коду",
     netCryptoBot: "@CryptoBot Оплата",
-    netCryptoBotHint: "В 1 клик в Telegram (USDT/TON)",
+    netCryptoBotHint: "В 1 клик в Telegram (Все монеты)",
     netEvm: "Universal EVM (0x...)",
     netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
     netBybit: "Bybit UID Перевод",
@@ -258,80 +320,113 @@ const TRANSLATIONS = {
     uidLabel: "BYBIT UID ПОЛУЧАТЕЛЯ:",
     copyBtn: "Скопировать адрес",
     copiedBtn: "Скопировано!",
-    evmChainsLabel: "✓ ПОДДЕРЖИВАЕМЫЕ EVM СЕТИ ДЛЯ ЭТОГО 0x АДРЕСА:",
-    cardNote: "Удобная оплата любой картой (США, Европа, СНГ, Мир — Visa / MasterCard / Apple Pay) через @CryptoBot или 0% EVM или по прямой ссылке. После оплаты вставьте номер квитанции во 2-м шаге.",
-    cryptobotNote: "Нажмите кнопку ниже для оплаты 4.99 USDT/TON в 1 клик через @CryptoBot, либо запросите инвойс у @StratAlchemy.",
-    evmNote: "Этот единый 0x EVM-адрес принимает 4.99 USDT, USDC, DAI, ETH или BNB в сетях BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism и Ethereum! Комиссия в L2 сетях всего ~$0.01.",
-    bybitNote: "В приложении Bybit: Активы → Вывод → Внутренний перевод (0% комиссии) → укажите UID 8015849 и 4.99 USDT. Мгновенно.",
+    evmChainsLabel: "ПОДДЕРЖИВАЕМЫЕ EVM СЕТИ ДЛЯ ЭТОГО 0x АДРЕСА:",
+    cardNote: "Введите ваш промокод, VIP-ключ или номер чека @CryptoBot во 2-м шаге ниже, либо нажмите кнопку для оплаты $4.99 через @CryptoBot.",
+    cryptobotNote: "Нажмите кнопку ниже для оплаты $4.99 через @CryptoBot в 1 клик с полным описанием товара.",
+    evmNote: "Этот единый 0x EVM-адрес принимает 4.99 USDT, USDC, DAI, ETH или BNB в сетях BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism и Ethereum!",
+    bybitNote: "В приложении Bybit: Активы -> Вывод -> Внутренний перевод (0% комиссии) -> укажите UID 8015849 и 4.99 USDT.",
     trcNote: "Отправьте 4.99 USDT в сети TRON (TRC-20) с любого кошелька или биржи.",
     solNote: "Отправьте 4.99 USDT или USDC в сети Solana.",
     supportText: "Нужна помощь с оплатой или мгновенная ручная активация?",
     supportSub: "Прямая связь с автором в Telegram:",
     supportTgBtn: "Написать @StratAlchemy",
-    step2Title: "ШАГ 2: ВВЕДИТЕ ХЭШ ТРАНЗАКЦИИ (TXID), BYBIT ID ИЛИ КОД КВИТАНЦИИ КАРТЫ:",
-    txPlaceholder: "Вставьте TXID (0x...), номер перевода Bybit или чек карты...",
-    activateBtn: "⚡ Проверить и Активировать Pro",
-    checkingBtn: "⏳ Проверка оплаты...",
-    successMsg: "🎉 Поздравляем! Alchemy Craft Pro успешно активирован на 365 дней!",
-    errorEmpty: "❌ Пожалуйста, введите корректный TXID, номер перевода или код чека.",
-    errorPending: "⚠️ Транзакция ещё подтверждается сетью. Подождите 1 минуту и нажмите снова.",
+    step2Title: "ШАГ 2: ВВЕДИТЕ TXID, BYBIT ID ИЛИ ЛИЦЕНЗИОННЫЙ КЛЮЧ:",
+    txPlaceholder: "Вставьте TXID (0x...), ID Bybit или ключ ACPRO-...",
+    activateBtn: "Проверить и Активировать Pro",
+    checkingBtn: "Проверка оплаты...",
+    successMsg: "Поздравляем! Alchemy Craft Pro активирован на 365 дней!",
+    errorEmpty: "Пожалуйста, введите корректный TXID, ID перевода или ключ.",
+    errorPending: "Транзакция ещё подтверждается. Подождите 1 минуту и нажмите снова.",
     proActiveTitle: "PRO АКТИВЕН",
     proExpiresOn: "Годовой доступ активен до:",
-    proMidnightName: "🌙 Ночной режим Midnight Dark Craft",
+    proMidnightName: "Ночной режим Midnight Dark Craft",
     proMidnightDesc: "Полная швейцарская темная тема для ночного чтения, таблиц, карточек и Графа.",
     proBuyCardBadge: "ALCHEMIST PRO PASS",
     proBuyCardTitle: "Разблокируйте все Pro функции Alchemy Craft",
-    proPerk1: "🌙 Midnight Dark Craft — полная темная тема для заметок, таблиц и Графа",
-    proPerk2: "🎨 Расширенная палитра (8 цветов) — Rose Quartz, Cyber Cyan, Ruby Crimson и Solar Gold",
-    proPerk3: "🕸️ Swiss Bento Graph Studio — панель управления Графом Obsidian, цвета папок и пресеты",
-    proPerk4: "🎧 Фоновые звуки фокуса и Аналитика — Коричневый шум, Дождь, 40Hz Гамма и трекер спринтов",
-    getProBtn: "💎 Получить Alchemy Craft Pro ($4.99 / год)",
-    graphHudTitle: "⚗️ ALCHEMY BENTO ГРАФ",
+    proPerk1: "Midnight Dark Craft — полная темная тема для заметок, таблиц и Графа",
+    proPerk2: "Расширенная палитра (8 цветов) — Rose Quartz, Cyber Cyan, Ruby Crimson и Solar Gold",
+    proPerk3: "Swiss Bento Graph Studio — авто-раскраска всех папок вашей базы и скрытие мусорных точек",
+    proPerk4: "Умная Лампа 2700K–6500K и 4-режимный Эквалайзер со звуком ПК (Telegram/Spotify)",
+    getProBtn: "Получить Alchemy Craft Pro ($4.99 / год)",
+    graphHudTitle: "ALCHEMY BENTO ГРАФ",
     graphPresetBento: "Swiss Bento",
     graphPresetConstellation: "Созвездие",
     graphPresetRadar: "Фокус Радар",
-    graphColorizeBtn: "🎨 Раскрасить узлы",
-    graphFitBtn: "🎯 В центр",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
-    checkUpdatesBtn: "🔄 Проверить обновления",
-    officialSiteBtn: "🌐 Официальный сайт и оплата",
-    langName: "🌐 Язык интерфейса (6 мировых языков)",
-    langDesc: "Мгновенный перевод панели управления, настроек, HUD графа и окна оплаты.",
-    bentoGraphName: "🕸️ Улучшенный Граф Obsidian (Swiss Bento Graph Studio)",
-    bentoGraphDesc: "Преображает встроенный Граф Obsidian: теплая сетка Bento, плавающий HUD-контроллер, раскраска узлов по папкам в 1 клик и пресеты физики.",
-    ambientName: "🎧 Фоновые звуки для глубокого фокуса (WebAudio)",
-    ambientDesc: "Встроенный генератор приятного фонового звука во время таймера (Коричневый шум, Шум дождя, Бинауральный ритм 40Hz).",
-    analyticsTitle: "📊 Статистика Фокуса и Серии (Pro Analytics)"
+    graphColorizeBtn: "Раскрасить мои папки",
+    graphOrphansBtn: "Без одиночек",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.0)",
+    checkUpdatesBtn: "Проверить обновления",
+    langName: "Язык интерфейса (6 мировых языков)",
+    langDesc: "Мгновенно переводит все настройки, кнопки панели, Граф и окно оплаты на выбранный язык.",
+    themeName: "Стиль Swiss Bento UI (Теплая бумага #F4F3EF + зеленые таблицы)",
+    bentoGraphName: "Улучшенный Граф (Swiss Bento Graph Studio)",
+    bentoGraphDesc: "Автоматически сканирует реальные папки вашей базы и раскрашивает все узлы Графа в 8 фирменных цветов + добавляет режимы Созвездия и Радара.",
+    taskBarName: "Верхняя полоса прогресса задач (с кнопкой закрытия)",
+    taskBarDesc: "Показывает процент выполненных задач вверху заметки и запускает салют при 100%.",
+    headerBadgeName: "Текст верхнего бейджа над заголовком заметки",
+    headerBadgeDesc: "Черная плашка над заголовком (например, 'STRATALCHEMY // KNOWLEDGE BRIEF'). Очистите поле, чтобы скрыть.",
+    ambientName: "Фоновые звуки для глубокого фокуса (WebAudio)",
+    ambientDesc: "Встроенный генератор звука во время Помодоро (Коричневый шум, Мягкий дождь, 40Hz Гамма-ритм).",
+    pomoDurName: "Длительность Помодоро по умолчанию (минут)",
+    pomoDurDesc: "Правый клик по таймеру в панели открывает быстрый выбор: 15м, 25м, 45м, 60м, 90м или свое время.",
+    aiCleanSetName: "Показывать кнопку AI Очистки в панели",
+    lampSetName: "Умная светодиодная лампа курсора (2700K–6500K и затемнение)",
+    lampSetDesc: "Погружает экран в уютный полумрак, а вокруг курсора светит теплый или дневной луч (2700K–6500K).",
+    lampConfigBtn: "Настроить лампу",
+    keySoundSetName: "Тактильный звук клавиш при печати (Механика / Печатная машинка)",
+    keySoundSetDesc: "Мгновенный синтез приятного звука механических свитчей (Deep Thock) или винтажной машинки при наборе текста.",
+    eqSetName: "Живой 4-режимный Эквалайзер (Синхронизация со звуком ПК)",
+    eqSetDesc: "Считывает системный звук компьютера (музыка из Telegram, YouTube, Spotify) без микрофона и анимирует 4 сложных визуализатора.",
+    eqSyncBtn: "Подключить звук ПК",
+    spotlightSetName: "Фокус-затемнение неактивных абзацев (Spotlight)",
+    spotlightSetDesc: "Мягко приглушает соседние абзацы до 42%, оставляя на 100% яркости только текущий абзац.",
+    numBadgeSetName: "Квадратные цветные бейджи цифр (01–04) и капсулы сумм ($)",
+    numBadgeSetDesc: "Превращает нумерованные списки, маркеры [01]–[04], суммы и криптоадреса в четкие капсулы.",
+    sentFocusSetName: "Интерактивное выделение предложений кликом (Sentence Focus)",
+    analyticsTitle: "Статистика Фокуса и Серии Дней",
+    statSprints: "Спринты",
+    statDeepWork: "В потоке",
+    statChecklists: "100% Списки",
+    statStreak: "Серия дней",
+    supportHeading: "Прямая оплата 0% комиссии, @CryptoBot и Сообщество",
+    supportSetName: "Глобальная оплата и связь с автором",
+    supportSetDesc: "Оплата без комиссии через Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 или в 1 клик через @CryptoBot."
   },
   zh: {
-    eqTip: "左键: 切换4种视觉风格 | 右键: 音频菜单与电脑音乐同步",
-    audioSyncMic: "🎙️ 同步电脑音频 / 立体声混音 / 麦克风",
-    audioStopSync: "⏹️ 停止实时音频同步",
-    audioSysLoopback: "🔊 系统屏幕音频回环 (实验性)",
-    audioModeBars: "📊 16频段频谱分析仪",
-    audioModeWave: "🌊 双重液体正弦波",
-    audioModeOrb: "🔮 放射状炼金共鸣环",
-    audioModeDna: "🧬 和声 DNA 矩阵点",
-    ambientRain: "🌧️ 环境白噪音: 淅沥雨声",
-    ambientBrown: "☕ 环境白噪音: 深度棕色噪音",
-    ambientGamma: "🧠 环境音: 40Hz 伽马专注波",
-    audioStopAll: "⏹️ 停止所有音频",
-    audioConnectedNotice: "🎙️ 电脑音频 / 混音已同步至均衡器！",
-    audioStoppedNotice: "🔇 音频同步已停止。",
-    dockCollapseTip: "点击折叠/展开 Alchemy 工具栏",
-    timerTip: "左键: 开始/暂停 | 右键: 预设与白噪音 | 双击: 重置",
+    eqTip: "左键: 切换4种高级频谱动画 | 右键: 同步电脑系统音乐 (Telegram/Spotify/YouTube)",
+    audioSyncSystem: "同步电脑系统音频 (Telegram / YouTube / Spotify)",
+    audioSyncMic: "麦克风 / 立体声混音输入",
+    audioStopSync: "停止音频同步",
+    audioModeBars: "01 // 峰值保持霓虹频谱 (Peak-Hold)",
+    audioModeWave: "02 // 赛博流体三层波浪 (Liquid Ribbon)",
+    audioModeOrb: "03 // 超新星极坐标光芒 (Supernova)",
+    audioModeDna: "04 // 量子矩阵数字雨 (Quantum Matrix)",
+    ambientRain: "环境音: 纸上淅沥雨声",
+    ambientBrown: "环境音: 深度温暖棕噪音",
+    ambientGamma: "环境音: 40Hz 伽马专注波",
+    audioStopAll: "停止所有音频",
+    audioConnectedNotice: "电脑系统音频已连接！均衡器现在随 Telegram、Spotify 等音乐实时律动。",
+    audioMicConnectedNotice: "音频输入已连接至均衡器！",
+    audioStoppedNotice: "音频同步已停止。",
+    dockCollapseTip: "点击折叠/展开工具栏",
+    timerTip: "左键: 开始/暂停 | 右键: 预设与音频 | 双击: 重置",
     uiBtn: "UI",
     uiTip: "瑞士 Bento 护眼纸张主题 (#F4F3EF) 与鼠尾草绿表格",
     zenBtn: "禅定",
     zenTip: "禅定模式 — 隐藏侧边栏，享受纯粹专注",
     focusBtn: "聚焦",
-    focusTip: "句子高亮聚焦（悬停并点击句子以固定调色板颜色）",
+    focusTip: "句子高亮聚焦（点击句子以固定调色板颜色）",
     laserBtn: "激光",
-    laserTip: "激光指示器（发光轨迹，按 Esc 退出）",
+    laserTip: "激光指示器（按 Esc 退出）",
     drawBtn: "画笔",
     drawTip: "自由马克笔标注（按 Esc 退出）",
     eraserBtn: "橡皮",
     eraserTip: "橡皮擦 — 擦除画笔轨迹（按 Esc 退出）",
+    lampBtn: "神灯",
+    lampBtnFull: "智能台灯",
+    lampTip: "左键: 开关智能光标台灯 | 右键: 调节亮度、色温 (2700K–6500K) 与环境暗度",
+    rulerBtn: "标尺",
+    rulerTip: "开启激光阅读辅助标尺",
     undoTip: "撤销上一笔 (Ctrl+Z)",
     redoTip: "重做 (Ctrl+Y)",
     aiCleanBtn: "AI 清理",
@@ -339,21 +434,29 @@ const TRANSLATIONS = {
     clearTip: "清除所有涂鸦与句子高亮",
     orientTip: "切换工具栏方向（底部横栏 / 右侧竖栏）",
     collapseTip: "折叠为炼金术悬浮球",
-    taskProgressLabel: "⚡ 任务进度:",
-    sprintDoneNotice: "⚡ Alchemy Craft: 专注冲刺完成！已记录到专注统计。",
-    breakDoneNotice: "☕ Alchemy Craft: 休息结束！准备好开始下一轮专注了吗？",
-    customPomodoroTitle: "⏱ 自定义番茄钟时长",
+    taskProgressLabel: "任务进度:",
+    sprintDoneNotice: "Alchemy Craft: 专注冲刺完成！已记录到专注统计。",
+    breakDoneNotice: "Alchemy Craft: 休息结束！准备好开始下一轮专注了吗？",
+    customPomodoroTitle: "自定义番茄钟时长",
     customPomodoroDesc: "输入自定义专注时长（1 至 360 分钟）：",
     customPomodoroStart: "开始专注",
     customPomodoroErr: "请输入 1 到 360 之间的分钟数。",
+    ledModalSubtitle: "ALCHEMY CRAFT // 智能光学工作室",
+    ledModalTitle: "智能 LED 光标台灯控制器",
+    ledBrightness: "发光亮度 (Brightness)",
+    ledKelvin: "色温调节 (2700K 暖光 – 6500K 冷白)",
+    ledDimmer: "周围环境暗化程度",
+    ledRadius: "光束半径与形状",
+    ledShapeRadial: "圆形聚光灯",
+    ledShapeBar: "显示器挂灯模式",
     modalBadge: "ALCHEMIST PRO • 年度通行证",
     modalTitle: "Alchemy Craft Pro 专业版",
-    modalSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)。支持全球银行卡、@CryptoBot 及全链 EVM 激活。",
-    step1Title: "第 1 步：选择支付方式（银行卡 / APPLE PAY / 加密货币）",
-    netCard: "银行卡 / Apple Pay",
-    netCardHint: "0% Fee Web3 / @CryptoBot",
+    modalSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)。支持 0% 手续费 EVM、Bybit UID、@CryptoBot 及激活码。",
+    step1Title: "第 1 步：选择支付方式",
+    netPromo: "激活码 / VIP 密钥",
+    netPromoHint: "使用代码即时激活",
     netCryptoBot: "@CryptoBot 支付",
-    netCryptoBotHint: "Telegram 一键支付 (USDT/TON)",
+    netCryptoBotHint: "Telegram 一键支付",
     netEvm: "Universal EVM (0x...)",
     netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
     netBybit: "Bybit UID 转账",
@@ -368,102 +471,143 @@ const TRANSLATIONS = {
     uidLabel: "BYBIT 收款 UID:",
     copyBtn: "复制地址",
     copiedBtn: "已复制!",
-    evmChainsLabel: "✓ 此 0x 地址支持的 EVM 网络：",
-    cardNote: "支持全球 Visa / MasterCard / Apple Pay（通过 @CryptoBot 或 0% EVM 或直接联系获取 Stripe 链接）。支付后请在第 2 步粘贴收据单号。",
-    cryptobotNote: "点击下方按钮通过 Telegram @CryptoBot 一键支付 4.99 USDT/TON，或联系 @StratAlchemy 获取账单。",
+    evmChainsLabel: "此 0x 地址支持的 EVM 网络：",
+    cardNote: "请在下方第 2 步输入您的激活码或 @CryptoBot 账单号，或点击下方按钮支付 $4.99。",
+    cryptobotNote: "点击下方按钮通过 Telegram @CryptoBot 一键支付 $4.99。",
     evmNote: "此通用 0x EVM 地址支持 BNB Chain (BEP20)、Arbitrum One、Base、Polygon、Optimism 和 Ethereum 网络发送 4.99 USDT/USDC！",
-    bybitNote: "在 Bybit App 中：资产 → 提现 → 内部转账（0 手续费）→ 输入 UID 8015849 和 4.99 USDT。",
+    bybitNote: "在 Bybit App 中：资产 -> 提现 -> 内部转账（0 手续费）-> 输入 UID 8015849 和 4.99 USDT。",
     trcNote: "通过 TRON (TRC-20) 网络发送 4.99 USDT。",
     solNote: "通过 Solana 网络发送 4.99 USDT 或 USDC。",
     supportText: "需要帮助或人工即时激活？",
     supportSub: "直接联系作者 Telegram:",
     supportTgBtn: "打开 @StratAlchemy",
-    step2Title: "第 2 步：输入交易哈希 (TXID)、BYBIT 订单号或银行卡收据代码：",
-    txPlaceholder: "粘贴 TXID (0x...)、Bybit 订单号或银行卡收据号...",
-    activateBtn: "⚡ 验证并激活 Pro",
-    checkingBtn: "⏳ 正在验证支付...",
-    successMsg: "🎉 激活成功！Alchemy Craft Pro 已开启 365 天权限！",
-    errorEmpty: "❌ 请输入有效的 TXID、订单号或收据代码。",
-    errorPending: "⚠️ 交易正在确认中，请等待 1 分钟后重试。",
+    step2Title: "第 2 步：输入 TXID、BYBIT 订单号或 ACPRO 激活密钥：",
+    txPlaceholder: "粘贴 TXID (0x...)、Bybit 订单号或 ACPRO-... 密钥",
+    activateBtn: "验证并激活 Pro",
+    checkingBtn: "正在验证支付...",
+    successMsg: "激活成功！Alchemy Craft Pro 已开启 365 天权限！",
+    errorEmpty: "请输入有效的 TXID、订单号或激活密钥。",
+    errorPending: "交易正在确认中，请等待 1 分钟后重试。",
     proActiveTitle: "PRO 已激活",
     proExpiresOn: "年度通行证有效期至：",
-    proMidnightName: "🌙 午夜暗黑模式 (Midnight Dark Craft)",
+    proMidnightName: "午夜暗黑模式 (Midnight Dark Craft)",
     proMidnightDesc: "专为夜间阅读、知识图谱与编程打造的瑞士暗黑主题。",
     proBuyCardBadge: "ALCHEMIST PRO 通行证",
     proBuyCardTitle: "解锁 Alchemy Craft Pro 全部高级功能",
-    proPerk1: "🌙 Midnight Dark Craft — 完整的瑞士暗黑模式（支持笔记、表格与知识图谱）",
-    proPerk2: "🎨 8 色高级调色板 — 新增玫瑰粉、赛博青、深红与日曜金",
-    proPerk3: "🕸️ 瑞士 Bento 知识图谱工作室 — 图谱悬浮控制器、文件夹自动配色与物理预设",
-    proPerk4: "🎧 专注白噪音与统计分析 — 棕噪音、雨声、40Hz 伽马波与专注打卡统计",
-    getProBtn: "💎 获取 Alchemy Craft Pro ($4.99 / 年)",
-    graphHudTitle: "⚗️ ALCHEMY BENTO 知识图谱",
+    proPerk1: "Midnight Dark Craft — 完整的瑞士暗黑模式（支持笔记、表格与知识图谱）",
+    proPerk2: "8 色高级调色板 — 新增玫瑰粉、赛博青、深红与日曜金",
+    proPerk3: "瑞士 Bento 知识图谱工作室 — 自动扫描文件夹配色与悬浮控制器",
+    proPerk4: "2700K–6500K 智能光标台灯与 4 模式电脑音频均衡器",
+    getProBtn: "获取 Alchemy Craft Pro ($4.99 / 年)",
+    graphHudTitle: "ALCHEMY BENTO 知识图谱",
     graphPresetBento: "瑞士 Bento",
     graphPresetConstellation: "星群模式",
     graphPresetRadar: "焦点雷达",
-    graphColorizeBtn: "🎨 节点自动配色",
-    graphFitBtn: "🎯 居中",
-    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.2.5)",
-    checkUpdatesBtn: "🔄 检查更新",
-    officialSiteBtn: "🌐 官方网站与收银台",
-    langName: "🌐 界面语言 (支持 6 种国际语言)",
-    langDesc: "即时切换工具栏、设置面板、图谱控制器与收银台语言。",
-    bentoGraphName: "🕸️ 瑞士 Bento 知识图谱增强 (Graph Studio)",
-    bentoGraphDesc: "美化 Obsidian 内置关系图谱：Bento 点阵背景、顶部悬浮控制器与一键文件夹配色。",
-    ambientName: "🎧 专注背景白噪音 (WebAudio)",
+    graphColorizeBtn: "一键配色我的文件夹",
+    graphOrphansBtn: "隐藏孤立点",
+    settingsTitle: "Alchemy Craft — 瑞士 Bento 阅读、图谱与专注系统 (v4.3.0)",
+    checkUpdatesBtn: "检查更新",
+    langName: "界面语言 (支持 6 种国际语言)",
+    langDesc: "即时切换所有设置项、工具栏、图谱控制器与收银台语言。",
+    themeName: "瑞士 Bento UI 主题 (#F4F3EF 暖纸 + #69BD28 表格)",
+    bentoGraphName: "瑞士 Bento 知识图谱工作室 (自动文件夹配色)",
+    bentoGraphDesc: "自动扫描您仓库中的真实文件夹并分配 8 种瑞士 Bento 色彩，告别灰暗凌乱的图谱。",
+    taskBarName: "顶部任务进度条 (支持一键关闭与 100% 礼花)",
+    taskBarDesc: "在包含任务列表的笔记顶部显示完成百分比。",
+    headerBadgeName: "笔记标题上方徽章文本",
+    headerBadgeDesc: "显示在笔记标题上方的标签（清空文本即可隐藏）。",
+    ambientName: "专注背景白噪音 (WebAudio)",
     ambientDesc: "无需联网的合成背景音（棕噪音、纸上雨声、40Hz 专注伽马波）。",
-    analyticsTitle: "📊 专注时长与连续打卡统计"
+    pomoDurName: "默认番茄钟时长 (分钟)",
+    pomoDurDesc: "右键点击工具栏计时器可随时切换 15、25、45、60、90 分钟或自定义时长。",
+    aiCleanSetName: "在工具栏显示 AI 隐形水印清理按钮",
+    lampSetName: "智能 LED 光标台灯 (2700K–6500K 色温与环境调光)",
+    lampSetDesc: "暗化周围屏幕区域，让鼠标化作一束可调色温与亮度的聚光灯照亮文字。",
+    lampConfigBtn: "调节台灯参数",
+    keySoundSetName: "机械键盘打字音效 (Topre Thock / 复古打字机)",
+    keySoundSetDesc: "打字时实时合成清脆舒适的机械轴体声效。",
+    eqSetName: "4 模式实时音频均衡器 (同步电脑系统音乐)",
+    eqSetDesc: "直接捕获电脑正在播放的音乐（Telegram、YouTube、Spotify），内置 4 种高复杂度频谱动画。",
+    eqSyncBtn: "同步电脑系统音频",
+    spotlightSetName: "段落聚光灯暗化模式 (Spotlight)",
+    spotlightSetDesc: "将非活动段落柔和暗化至 42% 不透明度，突出当前阅读段落。",
+    numBadgeSetName: "方形彩色数字徽章 (01–04) 与金额胶囊",
+    numBadgeSetDesc: "将编号列表、[01]–[04]、金额与 0x 地址自动转换为瑞士胶囊徽章。",
+    sentFocusSetName: "句子点击高亮固定 (Sentence Focus)",
+    analyticsTitle: "专注时长与连续打卡统计",
+    statSprints: "完成番茄",
+    statDeepWork: "深度专注",
+    statChecklists: "满分清单",
+    statStreak: "连续天数",
+    supportHeading: "0% 手续费直付、@CryptoBot 与社区支持",
+    supportSetName: "全球支付与直接联系作者",
+    supportSetDesc: "支持 Universal EVM (BEP20, Arbitrum, Base, Polygon)、Bybit UID 8015849 或 @CryptoBot。"
   },
   ja: {
-    eqTip: "左クリック: 4種のスタイル切替 | 右クリック: 音声メニューとPC同期",
-    audioSyncMic: "🎙️ PCオーディオ / ステレオミキサー / マイク同期",
-    audioStopSync: "⏹️ リアルタイム音声同期を停止",
-    audioSysLoopback: "🔊 システム画面オーディオ (実験的)",
-    audioModeBars: "📊 16バンド・スペクトラムアナライザー",
-    audioModeWave: "🌊 デュアル・リキッドサイン波",
-    audioModeOrb: "🔮 放射状アルケミー共鳴リング",
-    audioModeDna: "🧬 ハーモニックDNAマトリックス",
-    ambientRain: "🌧️ 環境音: 優しい雨音",
-    ambientBrown: "☕ 環境音: ディープ・ブラウンノイズ",
-    ambientGamma: "🧠 環境音: 40Hzガンマ集中波",
-    audioStopAll: "⏹️ すべての音声を停止",
-    audioConnectedNotice: "🎙️ PCオーディオ / ミキサーがイコライザーに同期されました！",
-    audioStoppedNotice: "🔇 音声同期を停止しました。",
+    eqTip: "左クリック: 4種のスペクトラム切替 | 右クリック: PCシステム音声同期 (Telegram/Spotify/YouTube)",
+    audioSyncSystem: "PCシステム音声ループバック (Telegram / YouTube / Spotify)",
+    audioSyncMic: "マイク / ステレオミキサー入力",
+    audioStopSync: "音声同期を停止",
+    audioModeBars: "01 // ピークホールド・ネオンスペクトラム",
+    audioModeWave: "02 // サイバーリキッド・3層リボン波",
+    audioModeOrb: "03 // スーパーノヴァ・極座標サンバースト",
+    audioModeDna: "04 // クォンタム・マトリックスレイン",
+    ambientRain: "環境音: 紙の上の優しい雨音",
+    ambientBrown: "環境音: ディープ・ブラウンノイズ",
+    ambientGamma: "環境音: 40Hz ガンマ集中ドローン",
+    audioStopAll: "すべての音声を停止",
+    audioConnectedNotice: "PCシステム音声が接続されました！TelegramやSpotifyの音楽に合わせてイコライザーが動きます。",
+    audioMicConnectedNotice: "音声入力がイコライザーに接続されました！",
+    audioStoppedNotice: "音声同期を停止しました。",
     dockCollapseTip: "クリックしてドックを折りたたみ/展開",
-    timerTip: "左クリック: 開始/一時停止 | 右クリック: プリセット＆環境音 | ダブルクリック: リセット",
+    timerTip: "左: 開始/一時停止 | 右: プリセット＆音声 | ダブルクリック: リセット",
     uiBtn: "UI",
-    uiTip: "Swiss Bento UI テーマ（目に優しいアーカイブ紙 #F4F3EF ＆ Excelグリーン表）",
+    uiTip: "Swiss Bento UI テーマ（アーカイブ紙 #F4F3EF ＆ Excelグリーン表）",
     zenBtn: "禅",
     zenTip: "禅モード — サイドバーを隠して深い集中へ",
     focusBtn: "フォーカス",
     focusTip: "文フォーカス（文をクリックして選択中のパレット色でピン留め）",
     laserBtn: "レーザー",
-    laserTip: "レーザーポインター（光る軌跡、Escで終了）",
+    laserTip: "レーザーポインター（Escで終了）",
     drawBtn: "マーカー",
-    drawTip: "ノート上にフリーハンド描画（Escで終了）",
+    drawTip: "フリーハンドマーカー描画（Escで終了）",
     eraserBtn: "消しゴム",
     eraserTip: "消しゴム — 描画を消去（Escで終了）",
+    lampBtn: "ランプ",
+    lampBtnFull: "スマートLEDランプ",
+    lampTip: "左: スマートLEDランプ切替 | 右: 輝度・色温度 (2700K–6500K)・周囲減光の設定",
+    rulerBtn: "ルーラー",
+    rulerTip: "レーザー読書ルーラーを表示",
     undoTip: "元に戻す (Ctrl+Z)",
     redoTip: "やり直し (Ctrl+Y)",
     aiCleanBtn: "AI クリーン",
-    aiCleanTip: "不可視のAIゼロ幅スペースを除去してクリップボードにコピー",
+    aiCleanTip: "不可視のAIゼロ幅スペースを除去してコピー",
     clearTip: "すべての描画とハイライトを消去",
     orientTip: "ドックの向きを切り替え（下部バー / 右側ピラー）",
     collapseTip: "錬金術オーブに折りたたむ",
-    taskProgressLabel: "⚡ タスク進捗:",
-    sprintDoneNotice: "⚡ Alchemy Craft: 集中スプリント完了！統計に記録されました。",
-    breakDoneNotice: "☕ Alchemy Craft: 休憩終了！次のスプリントを始めましょう。",
-    customPomodoroTitle: "⏱ カスタム集中タイマー設定",
+    taskProgressLabel: "タスク進捗:",
+    sprintDoneNotice: "Alchemy Craft: 集中スプリント完了！統計に記録されました。",
+    breakDoneNotice: "Alchemy Craft: 休憩終了！次のスプリントを始めましょう。",
+    customPomodoroTitle: "カスタム集中タイマー設定",
     customPomodoroDesc: "ポモドーロの分数（1〜360分）を入力してください：",
     customPomodoroStart: "スプリント開始",
     customPomodoroErr: "1〜360の数値を入力してください。",
+    ledModalSubtitle: "ALCHEMY CRAFT // LUMINA STUDIO",
+    ledModalTitle: "スマートLEDカーソルランプ設定",
+    ledBrightness: "明るさ (Brightness)",
+    ledKelvin: "色温度 (2700K 電球色 – 6500K 昼光色)",
+    ledDimmer: "周囲の部屋の暗さ (Room Dimmer)",
+    ledRadius: "ビーム半径と形状",
+    ledShapeRadial: "円形スポットライト",
+    ledShapeBar: "デスクライトバー",
     modalBadge: "ALCHEMIST PRO • 1年間パス",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。クレジットカード、@CryptoBot、全EVMネットワークで即座に有効化。",
-    step1Title: "ステップ 1: 支払い方法を選択 (カード / APPLE PAY / 暗号資産)",
-    netCard: "クレジットカード / Apple Pay",
-    netCardHint: "0% Fee Web3 / @CryptoBot",
+    modalSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。0%手数料EVM、Bybit UID、@CryptoBot、プロモコードで即座に有効化。",
+    step1Title: "ステップ 1: 支払い方法を選択",
+    netPromo: "プロモ / VIPキー",
+    netPromoHint: "コードで即時有効化",
     netCryptoBot: "@CryptoBot 決済",
-    netCryptoBotHint: "Telegram 1クリック (USDT/TON)",
+    netCryptoBotHint: "Telegram 1クリック決済",
     netEvm: "Universal EVM (0x...)",
     netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
     netBybit: "Bybit UID 送金",
@@ -478,68 +622,96 @@ const TRANSLATIONS = {
     uidLabel: "BYBIT 受取 UID:",
     copyBtn: "アドレスをコピー",
     copiedBtn: "コピー完了!",
-    evmChainsLabel: "✓ この 0x アドレスが対応する全 EVM ネットワーク:",
-    cardNote: "@CryptoBot または 0% EVMで世界中のVisa / MasterCard / Apple Payでお支払いいただけます。決済後、ステップ2にレシートIDを入力してください。",
-    cryptobotNote: "下のボタンからTelegram @CryptoBotを開き、1クリックで4.99 USDT/TONを送金できます。",
+    evmChainsLabel: "この 0x アドレスが対応する全 EVM ネットワーク:",
+    cardNote: "下のステップ2にプロモコードまたは @CryptoBot 請求書IDを入力するか、下のボタンから $4.99 をお支払いください。",
+    cryptobotNote: "下のボタンから @CryptoBot を開き、1クリックで $4.99 を決済できます。",
     evmNote: "この単一の0x EVMアドレスは、BNB Chain (BEP20)、Arbitrum、Base、Polygon、Optimism、Ethereum上の4.99 USDT/USDCに対応しています。",
-    bybitNote: "Bybitアプリ：資産 → 出金 → 内部振替（手数料0%）→ UID 8015849 と 4.99 USDT を入力。",
+    bybitNote: "Bybitアプリ：資産 -> 出金 -> 内部振替（手数料0%）-> UID 8015849 と 4.99 USDT を入力。",
     trcNote: "TRON (TRC-20) ネットワークで 4.99 USDT を送金してください。",
     solNote: "Solana ネットワークで 4.99 USDT または USDC を送金してください。",
     supportText: "サポートや手動アクティベーションが必要ですか？",
     supportSub: "開発者へTelegramで直接連絡:",
     supportTgBtn: "@StratAlchemy を開く",
-    step2Title: "ステップ 2: トランザクションID (TXID)、BYBIT ID、またはカード決済コードを入力:",
-    txPlaceholder: "TXID (0x...)、Bybit ID、またはカードレシート番号を貼り付け...",
-    activateBtn: "⚡ 確認して Pro を有効化",
-    checkingBtn: "⏳ 決済を確認中...",
-    successMsg: "🎉 成功！Alchemy Craft Pro が365日間有効化されました！",
-    errorEmpty: "❌ 有効なTXID、注文ID、またはレシート番号を入力してください。",
-    errorPending: "⚠️ トランザクションを確認中です。1分後にもう一度お試しください。",
+    step2Title: "ステップ 2: TXID、BYBIT ID、またはライセンスキーを入力:",
+    txPlaceholder: "TXID (0x...)、Bybit ID、または ACPRO-... キーを貼り付け",
+    activateBtn: "確認して Pro を有効化",
+    checkingBtn: "決済を確認中...",
+    successMsg: "成功！Alchemy Craft Pro が365日間有効化されました！",
+    errorEmpty: "有効なTXID、注文ID、またはキーを入力してください。",
+    errorPending: "トランザクションを確認中です。1分後にもう一度お試しください。",
     proActiveTitle: "PRO 有効",
     proExpiresOn: "年間パス有効期限:",
-    proMidnightName: "🌙 Midnight Dark Craft モード",
+    proMidnightName: "Midnight Dark Craft モード",
     proMidnightDesc: "夜間の読書、グラフビュー、コーディング向けに設計されたスイス・ダークテーマ。",
     proBuyCardBadge: "ALCHEMIST PRO パス",
     proBuyCardTitle: "Alchemy Craft Pro の全機能をアンロック",
-    proPerk1: "🌙 Midnight Dark Craft — ノート、表、グラフ対応の完全ダークモード",
-    proPerk2: "🎨 8色拡張パレット — ローズ、サイバーシアン、クリムゾン、ソーラーゴールド",
-    proPerk3: "🕸️ Swiss Bento グラフスタジオ — グラフビュー専用HUD＆自動カラーリング",
-    proPerk4: "🎧 環境音サウンド＆集中統計 — ブラウンノイズ、雨音、40Hzガンマ波＆記録",
-    getProBtn: "💎 Alchemy Craft Pro を入手 ($4.99 / 年)",
-    graphHudTitle: "⚗️ ALCHEMY BENTO グラフ",
+    proPerk1: "Midnight Dark Craft — ノート、表、グラフ対応の完全ダークモード",
+    proPerk2: "8色拡張パレット — ローズ、サイバーシアン、クリムゾン、ソーラーゴールド",
+    proPerk3: "Swiss Bento グラフスタジオ — フォルダ自動カラーリング＆専用HUD",
+    proPerk4: "2700K–6500K スマートLEDランプ＆PC音楽連動4モードイコライザー",
+    getProBtn: "Alchemy Craft Pro を入手 ($4.99 / 年)",
+    graphHudTitle: "ALCHEMY BENTO グラフ",
     graphPresetBento: "Swiss Bento",
     graphPresetConstellation: "星座モード",
     graphPresetRadar: "レーダー",
-    graphColorizeBtn: "🎨 自動カラー適用",
-    graphFitBtn: "🎯 中央揃え",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
-    checkUpdatesBtn: "🔄 アップデート確認",
-    officialSiteBtn: "🌐 公式サイト＆決済ページ",
-    langName: "🌐 インターフェース言語 (6ヶ国語対応)",
-    langDesc: "ドック、設定、グラフHUD、決済画面の言語を即座に切り替えます。",
-    bentoGraphName: "🕸️ Swiss Bento グラフスタジオ (Graph View 強化)",
-    bentoGraphDesc: "Obsidian標準のグラフビューをBentoスタイルに刷新し、専用HUDコントロールを追加します。",
-    ambientName: "🎧 集中環境音ジェネレーター (WebAudio)",
-    ambientDesc: "ポモドーロ中に再生できる心地よい合成環境音（ブラウンノイズ、雨音、40Hzバイノーラル）。",
-    analyticsTitle: "📊 集中セッション統計＆ストリーク"
+    graphColorizeBtn: "フォルダ自動色分け",
+    graphOrphansBtn: "孤立ノード非表示",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.0)",
+    checkUpdatesBtn: "アップデート確認",
+    langName: "インターフェース言語 (6ヶ国語対応)",
+    langDesc: "すべての設定項目、ドック、グラフHUD、決済画面を選択した言語に切り替えます。",
+    themeName: "Swiss Bento UI テーマ (#F4F3EF 紙キャンバス + #69BD28 表)",
+    bentoGraphName: "Swiss Bento グラフスタジオ (自動フォルダ色分け)",
+    bentoGraphDesc: "保管庫内の実際のフォルダを自動スキャンして8色のBentoカラーを割り当て、美しいグラフを生成します。",
+    taskBarName: "上部タスク進捗バー (閉じるボタン＆100%紙吹雪付き)",
+    taskBarDesc: "チェックリスト付きノートの上部に進捗率を表示します。",
+    headerBadgeName: "ノートタイトル上のバッジテキスト",
+    headerBadgeDesc: "タイトルの上に表示されるラベル（空欄にすると非表示になります）。",
+    ambientName: "集中環境音ジェネレーター (WebAudio)",
+    ambientDesc: "ポモドーロ中に再生できる合成環境音（ブラウンノイズ、雨音、40Hzガンマ波）。",
+    pomoDurName: "デフォルトのポモドーロ時間 (分)",
+    pomoDurDesc: "ドックのタイマーを右クリックすると、15分〜90分やカスタム時間をいつでも選択できます。",
+    aiCleanSetName: "ドックに AI 透かしクリーナーボタンを表示",
+    lampSetName: "スマートLEDカーソルランプ (2700K–6500K 色温度＆周囲減光)",
+    lampSetDesc: "周囲を暗くし、カーソル周りを2700K〜6500Kのスポットライトで美しく照らします。",
+    lampConfigBtn: "ランプ設定を開く",
+    keySoundSetName: "メカニカル打鍵音 (Topre Thock / タイプライター)",
+    keySoundSetDesc: "タイピング時に心地よいメカニカルスイッチ音をリアルタイム合成します。",
+    eqSetName: "4モード・ソニックイコライザー (PCシステム音声同期)",
+    eqSetDesc: "Telegram、YouTube、SpotifyなどPCで再生中の音楽を直接読み取り、4種類の高度なアニメーションを表示します。",
+    eqSyncBtn: "PC音声を同期",
+    spotlightSetName: "スポットライト段落減光モード",
+    spotlightSetDesc: "選択していない段落を42%に減光し、現在読んでいる段落に集中させます。",
+    numBadgeSetName: "スクエア数字バッジ (01–04) ＆ 金額カプセル",
+    numBadgeSetDesc: "番号付きリスト、[01]–[04]、金額、0xアドレスをスイスのカプセルバッジに変換します。",
+    sentFocusSetName: "文クリック・ハイライト固定 (Sentence Focus)",
+    analyticsTitle: "集中セッション統計＆ストリーク",
+    statSprints: "スプリント",
+    statDeepWork: "集中時間",
+    statChecklists: "100%達成",
+    statStreak: "連続日数",
+    supportHeading: "手数料0%決済、@CryptoBot ＆ コミュニティ",
+    supportSetName: "グローバル決済＆開発者への直接連絡",
+    supportSetDesc: "Universal EVM (BEP20, Arbitrum, Base, Polygon)、Bybit UID 8015849、または @CryptoBot で決済可能。"
   },
   es: {
-    eqTip: "Clic izq: Cambiar 4 estilos | Clic der: Menú de audio y sincronización",
-    audioSyncMic: "🎙️ Sincronizar audio de PC / Mezcla estéreo / Mic",
-    audioStopSync: "⏹️ Detener sincronización de audio",
-    audioSysLoopback: "🔊 Bucle de audio de pantalla del sistema (Experimental)",
-    audioModeBars: "📊 Analizador de espectro de 16 barras",
-    audioModeWave: "🌊 Onda sinusoidal líquida dual",
-    audioModeOrb: "🔮 Resonancia alquímica radial",
-    audioModeDna: "🧬 Matriz de ADN armónica",
-    ambientRain: "🌧️ Ambiente: Lluvia suave",
-    ambientBrown: "☕ Ambiente: Ruido marrón profundo",
-    ambientGamma: "🧠 Ambiente: Enfoque gamma de 40Hz",
-    audioStopAll: "⏹️ Detener todo el audio",
-    audioConnectedNotice: "🎙️ ¡Audio de PC / Mezcla estéreo sincronizado con el ecualizador!",
-    audioStoppedNotice: "🔇 Sincronización de audio detenida.",
-    dockCollapseTip: "Clic para plegar/desplegar el panel Alchemy",
-    timerTip: "Clic Izq: Iniciar/Pausar | Clic Der: Ajustes y Sonido Ambiente | Doble Clic: Reiniciar",
+    eqTip: "Clic izq: Cambiar 4 visualizadores | Clic der: Sincronizar música de PC (Telegram/Spotify/YouTube)",
+    audioSyncSystem: "Audio del Sistema PC (Telegram / YouTube / Spotify)",
+    audioSyncMic: "Entrada de Micrófono / Mezcla Estéreo",
+    audioStopSync: "Detener sincronización de audio",
+    audioModeBars: "01 // Espectro Neón con Retención de Picos",
+    audioModeWave: "02 // Cinta Líquida Ciber de 3 Capas",
+    audioModeOrb: "03 // Supernova Polar Radial",
+    audioModeDna: "04 // Matriz Cuántica Digital",
+    ambientRain: "Ambiente: Lluvia suave sobre papel",
+    ambientBrown: "Ambiente: Ruido marrón profundo",
+    ambientGamma: "Ambiente: Enfoque gamma de 40Hz",
+    audioStopAll: "Detener todo el audio",
+    audioConnectedNotice: "¡Audio del sistema PC conectado! El ecualizador ahora reacciona a Telegram, Spotify y YouTube.",
+    audioMicConnectedNotice: "¡Entrada de audio conectada al ecualizador!",
+    audioStoppedNotice: "Sincronización de audio detenida.",
+    dockCollapseTip: "Clic para plegar/desplegar el panel Alchemy Craft",
+    timerTip: "Clic Izq: Iniciar/Pausar | Clic Der: Ajustes y Audio | Doble Clic: Reiniciar",
     uiBtn: "UI",
     uiTip: "Tema Swiss Bento UI (Papel cálido #F4F3EF + Tablas verde salvia)",
     zenBtn: "Zen",
@@ -547,11 +719,16 @@ const TRANSLATIONS = {
     focusBtn: "Enfoque",
     focusTip: "Resaltado de frases (haz clic en cualquier frase para fijar el color activo)",
     laserBtn: "Láser",
-    laserTip: "Puntero Láser (rastro brillante, Esc para salir)",
+    laserTip: "Puntero Láser (Esc para salir)",
     drawBtn: "Trazar",
     drawTip: "Marcador de dibujo libre sobre la nota (Esc para salir)",
     eraserBtn: "Borrar",
     eraserTip: "Borrador — elimina trazos bajo el cursor (Esc para salir)",
+    lampBtn: "Lámpara",
+    lampBtnFull: "Lámpara LED",
+    lampTip: "Clic Izq: Encender/Apagar Lámpara LED | Clic Der: Ajustar Brillo, Kelvin (2700K–6500K) y Atenuador",
+    rulerBtn: "Regla",
+    rulerTip: "Mostrar regla láser de lectura",
     undoTip: "Deshacer último trazo (Ctrl+Z)",
     redoTip: "Rehacer trazo (Ctrl+Y)",
     aiCleanBtn: "AI Clean",
@@ -559,21 +736,29 @@ const TRANSLATIONS = {
     clearTip: "Borrar todos los dibujos y frases resaltadas",
     orientTip: "Cambiar orientación (Barra inferior / Pilar lateral derecho)",
     collapseTip: "Plegar en esfera flotante",
-    taskProgressLabel: "⚡ PROGRESO DE TAREAS:",
-    sprintDoneNotice: "⚡ Alchemy Craft: ¡Sprint de enfoque completado! Registrado en tus estadísticas.",
-    breakDoneNotice: "☕ Alchemy Craft: ¡Descanso terminado! ¿Listo para el siguiente sprint?",
-    customPomodoroTitle: "⏱ Duración Personalizada de Pomodoro",
+    taskProgressLabel: "PROGRESO DE TAREAS:",
+    sprintDoneNotice: "Alchemy Craft: ¡Sprint de enfoque completado! Registrado en tus estadísticas.",
+    breakDoneNotice: "Alchemy Craft: ¡Descanso terminado! ¿Listo para el siguiente sprint?",
+    customPomodoroTitle: "Duración Personalizada de Pomodoro",
     customPomodoroDesc: "Define los minutos de tu sprint de enfoque (de 1 a 360):",
     customPomodoroStart: "Iniciar Sprint",
     customPomodoroErr: "Por favor ingresa un número entre 1 y 360 minutos.",
+    ledModalSubtitle: "ALCHEMY CRAFT // LUMINA STUDIO",
+    ledModalTitle: "Lámpara LED Inteligente del Cursor",
+    ledBrightness: "Brillo (Intensidad de Luz)",
+    ledKelvin: "Temperatura de Color (2700K – 6500K)",
+    ledDimmer: "Atenuador de Habitación Circundante",
+    ledRadius: "Radio y Forma del Haz",
+    ledShapeRadial: "Foco Radial",
+    ledShapeBar: "Barra de Escritorio",
     modalBadge: "ALCHEMIST PRO • PASE DE 1 AÑO",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago con Tarjeta Bancaria, @CryptoBot o redes EVM.",
-    step1Title: "PASO 1: SELECCIONA MÉTODO DE PAGO (TARJETA BANCARIA O CRIPTO)",
-    netCard: "Tarjeta / Apple Pay",
-    netCardHint: "0% Fee Web3 / @CryptoBot",
+    modalSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago directo 0% comisión vía EVM, Bybit UID, @CryptoBot o Código Promo.",
+    step1Title: "PASO 1: SELECCIONA MÉTODO DE PAGO",
+    netPromo: "Código Promo / VIP",
+    netPromoHint: "Activación por código",
     netCryptoBot: "@CryptoBot Pay",
-    netCryptoBotHint: "1-Clic en Telegram (USDT/TON)",
+    netCryptoBotHint: "1-Clic en Telegram",
     netEvm: "Universal EVM (0x...)",
     netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
     netBybit: "Bybit UID Transfer",
@@ -588,68 +773,96 @@ const TRANSLATIONS = {
     uidLabel: "BYBIT UID DE DESTINO:",
     copyBtn: "Copiar Dirección",
     copiedBtn: "¡Copiado!",
-    evmChainsLabel: "✓ REDES EVM COMPATIBLES CON ESTA DIRECCIÓN 0x:",
-    cardNote: "Paga con cualquier tarjeta Visa / MasterCard / Apple Pay de EE.UU., Europa o el mundo vía @CryptoBot o 0% EVM. Luego pega tu número de recibo en el Paso 2.",
-    cryptobotNote: "Haz clic abajo para abrir @CryptoBot en Telegram y pagar 4.99 USDT/TON en 1 clic.",
+    evmChainsLabel: "REDES EVM COMPATIBLES CON ESTA DIRECCIÓN 0x:",
+    cardNote: "Ingresa tu código promocional o ID de recibo @CryptoBot en el Paso 2 abajo, o haz clic para pagar $4.99 vía @CryptoBot.",
+    cryptobotNote: "Haz clic abajo para abrir @CryptoBot en Telegram y pagar $4.99 en 1 clic.",
     evmNote: "Esta dirección 0x Universal EVM acepta 4.99 USDT, USDC, DAI, ETH o BNB en BNB Chain (BEP-20), Arbitrum, Base, Polygon, Optimism y Ethereum.",
-    bybitNote: "En la App de Bybit: Activos → Retirar → Transferencia Interna (0% comisión) → ingresa UID 8015849 y 4.99 USDT.",
+    bybitNote: "En la App de Bybit: Activos -> Retirar -> Transferencia Interna (0% comisión) -> ingresa UID 8015849 y 4.99 USDT.",
     trcNote: "Envía 4.99 USDT mediante la red TRON (TRC-20).",
     solNote: "Envía 4.99 USDT o USDC en la red Solana.",
     supportText: "¿Necesitas ayuda o activación manual instantánea?",
     supportSub: "Contacto directo en Telegram:",
     supportTgBtn: "Abrir @StratAlchemy",
-    step2Title: "PASO 2: INGRESA EL HASH (TXID), ID DE BYBIT O CÓDIGO DE RECIBO DE TARJETA:",
-    txPlaceholder: "Pega tu TXID (0x...), ID de Bybit o recibo de tarjeta...",
-    activateBtn: "⚡ Verificar y Activar Pro",
-    checkingBtn: "⏳ Verificando pago...",
-    successMsg: "🎉 ¡Éxito! Alchemy Craft Pro está activo por 365 días.",
-    errorEmpty: "❌ Ingresa un TXID, ID de orden o recibo válido.",
-    errorPending: "⚠️ Transacción en confirmación. Espera 1 minuto e intenta de nuevo.",
+    step2Title: "PASO 2: INGRESA TXID, ID DE BYBIT O CLAVE DE LICENCIA:",
+    txPlaceholder: "Pega tu TXID (0x...), ID de Bybit o clave ACPRO-...",
+    activateBtn: "Verificar y Activar Pro",
+    checkingBtn: "Verificando pago...",
+    successMsg: "¡Éxito! Alchemy Craft Pro está activo por 365 días.",
+    errorEmpty: "Ingresa un TXID, ID de orden o clave válida.",
+    errorPending: "Transacción en confirmación. Espera 1 minuto e intenta de nuevo.",
     proActiveTitle: "PRO ACTIVO",
     proExpiresOn: "Pase anual activo hasta:",
-    proMidnightName: "🌙 Modo Oscuro Midnight Dark Craft",
+    proMidnightName: "Modo Oscuro Midnight Dark Craft",
     proMidnightDesc: "Tema oscuro suizo diseñado para lectura nocturna, Grafo y programación.",
     proBuyCardBadge: "PASE ALCHEMIST PRO",
     proBuyCardTitle: "Desbloquea Todas las Funciones Pro en Alchemy Craft",
-    proPerk1: "🌙 Midnight Dark Craft — tema oscuro completo para notas, tablas y Grafo",
-    proPerk2: "🎨 Paleta Expandida de 8 Colores — Rosa, Cian, Carmesí y Oro Solar",
-    proPerk3: "🕸️ Swiss Bento Graph Studio — panel HUD interactivo y colores para el Grafo",
-    proPerk4: "🎧 Sonidos Ambiente y Analíticas — Ruido Marrón, Lluvia, 40Hz Gamma y rachas",
-    getProBtn: "💎 Obtener Alchemy Craft Pro ($4.99 / año)",
-    graphHudTitle: "⚗️ GRAFO ALCHEMY BENTO",
+    proPerk1: "Midnight Dark Craft — tema oscuro completo para notas, tablas y Grafo",
+    proPerk2: "Paleta Expandida de 8 Colores — Rosa, Cian, Carmesí y Oro Solar",
+    proPerk3: "Swiss Bento Graph Studio — coloreado automático de tus carpetas reales y HUD",
+    proPerk4: "Lámpara LED 2700K–6500K y Ecualizador de 4 Modos con Audio del PC",
+    getProBtn: "Obtener Alchemy Craft Pro ($4.99 / año)",
+    graphHudTitle: "GRAFO ALCHEMY BENTO",
     graphPresetBento: "Swiss Bento",
     graphPresetConstellation: "Constelación",
     graphPresetRadar: "Radar Focus",
-    graphColorizeBtn: "🎨 Colorear Nodos",
-    graphFitBtn: "🎯 Centrar",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
-    checkUpdatesBtn: "🔄 Buscar Actualizaciones",
-    officialSiteBtn: "🌐 Sitio Oficial y Pagos",
-    langName: "🌐 Idioma de la Interfaz (6 Idiomas Globales)",
-    langDesc: "Traducción instantánea para la barra flotante, ajustes, Grafo y pagos.",
-    bentoGraphName: "🕸️ Swiss Bento Graph Studio (Mejora del Grafo)",
-    bentoGraphDesc: "Transforma el Grafo de Obsidian con cuadrícula Bento, controles HUD y grupos de colores.",
-    ambientName: "🎧 Sonido Ambiente de Enfoque (WebAudio)",
+    graphColorizeBtn: "Colorear Mis Carpetas",
+    graphOrphansBtn: "Ocultar Huérfanos",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.0)",
+    checkUpdatesBtn: "Buscar Actualizaciones",
+    langName: "Idioma de la Interfaz (6 Idiomas Globales)",
+    langDesc: "Traduce al instante todos los ajustes, botones de la barra, Grafo y ventana de pago.",
+    themeName: "Tema Swiss Bento UI (Papel cálido #F4F3EF + Tablas verdes)",
+    bentoGraphName: "Swiss Bento Graph Studio (Coloreado Automático de Carpetas)",
+    bentoGraphDesc: "Escanea las carpetas reales de tu bóveda y asigna los 8 colores Swiss Bento a todos los nodos del Grafo.",
+    taskBarName: "Barra Superior de Progreso de Tareas (Con botón cerrar)",
+    taskBarDesc: "Muestra el % de tareas completadas arriba de la nota con confeti al llegar al 100%.",
+    headerBadgeName: "Texto de Insignia Superior de Nota",
+    headerBadgeDesc: "Etiqueta editorial sobre el título de la nota (vacía el campo para ocultar).",
+    ambientName: "Sonido Ambiente de Enfoque (WebAudio)",
     ambientDesc: "Generador de sonido relajante durante sprints Pomodoro (Ruido Marrón, Lluvia, 40Hz Gamma).",
-    analyticsTitle: "📊 Analíticas de Enfoque y Rachas"
+    pomoDurName: "Duración Pomodoro por Defecto (Minutos)",
+    pomoDurDesc: "Haz clic derecho en el temporizador para elegir 15m, 25m, 45m, 60m, 90m o duración personalizada.",
+    aiCleanSetName: "Mostrar Botón Limpiador de IA en la Barra",
+    lampSetName: "Lámpara LED Inteligente del Cursor (2700K–6500K y Atenuador)",
+    lampSetDesc: "Atenúa la habitación alrededor mientras tu cursor ilumina el texto con luz cálida o fría (2700K–6500K).",
+    lampConfigBtn: "Configurar Lámpara",
+    keySoundSetName: "Sonido Táctil de Teclado Mecánico (Topre Thock / Máquina de Escribir)",
+    keySoundSetDesc: "Sonido acústico de interruptores mecánicos en tiempo real mientras escribes.",
+    eqSetName: "Ecualizador Sónico de 4 Modos (Sincronizado con Audio del PC)",
+    eqSetDesc: "Reacciona directamente a la música de tu PC (Telegram, YouTube, Spotify) con 4 animaciones avanzadas.",
+    eqSyncBtn: "Sincronizar Audio PC",
+    spotlightSetName: "Atenuador de Párrafos Inactivos (Spotlight)",
+    spotlightSetDesc: "Atenúa suavemente los párrafos inactivos al 42% manteniendo el párrafo actual al 100%.",
+    numBadgeSetName: "Insignias Cuadradas de Números (01–04) y Cápsulas de Dinero",
+    numBadgeSetDesc: "Transforma listas numeradas, [01]–[04], montos $ y direcciones 0x en cápsulas suizas.",
+    sentFocusSetName: "Resaltado Interactivo de Frases con Clic (Sentence Focus)",
+    analyticsTitle: "Analíticas de Enfoque y Rachas",
+    statSprints: "Sprints",
+    statDeepWork: "Enfoque",
+    statChecklists: "Listas 100%",
+    statStreak: "Racha Días",
+    supportHeading: "Pago Directo 0% Comisión, @CryptoBot y Comunidad",
+    supportSetName: "Pago Global y Contacto Directo con el Autor",
+    supportSetDesc: "Paga con 0% comisión vía Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 o @CryptoBot."
   },
   de: {
-    eqTip: "L-Klick: 4 Stile wechseln | R-Klick: Audiomenü & PC-Synchronisation",
-    audioSyncMic: "🎙️ PC-Audio / Stereomix / Mikrofon synchronisieren",
-    audioStopSync: "⏹️ Live-Audio-Synchronisation stoppen",
-    audioSysLoopback: "🔊 System-Bildschirm-Audio-Loopback (Experimentell)",
-    audioModeBars: "📊 16-Band-Spektrumanalysator",
-    audioModeWave: "🌊 Duale flüssige Sinuswelle",
-    audioModeOrb: "🔮 Radiale Alchemie-Resonanz",
-    audioModeDna: "🧬 Harmonische DNA-Matrix",
-    ambientRain: "🌧️ Atmosphäre: Sanfter Regen",
-    ambientBrown: "☕ Atmosphäre: Tiefes braunes Rauschen",
-    ambientGamma: "🧠 Atmosphäre: 40Hz Gamma-Fokus",
-    audioStopAll: "⏹️ Alle Audios stoppen",
-    audioConnectedNotice: "🎙️ PC-Audio / Stereomix mit Equalizer synchronisiert!",
-    audioStoppedNotice: "🔇 Audiosynchronisation beendet.",
-    dockCollapseTip: "Klicken zum Ein-/Ausklappen des Alchemy-Docks",
-    timerTip: "Links: Start/Pause | Rechts: Presets & Ambient-Sound | Doppelklick: Reset",
+    eqTip: "L-Klick: 4 Pro-Visualizer wechseln | R-Klick: PC-System-Audio synchronisieren (Telegram/Spotify/YouTube)",
+    audioSyncSystem: "PC-System-Audio Loopback (Telegram / YouTube / Spotify)",
+    audioSyncMic: "Mikrofon / Stereomix-Eingang",
+    audioStopSync: "Live-Audio-Synchronisation stoppen",
+    audioModeBars: "01 // Peak-Hold Neon-Spektrumanalysator",
+    audioModeWave: "02 // Cyber-Liquid 3-Schicht-Sinusband",
+    audioModeOrb: "03 // Supernova Polar-Strahlenkranz",
+    audioModeDna: "04 // Quanten-Matrix Digital-Regen",
+    ambientRain: "Atmosphäre: Sanfter Regen auf Papier",
+    ambientBrown: "Atmosphäre: Tiefes warmes Brown-Rauschen",
+    ambientGamma: "Atmosphäre: 40Hz Gamma-Fokus",
+    audioStopAll: "Alle Audios stoppen",
+    audioConnectedNotice: "PC-System-Audio verbunden! Der Equalizer reagiert jetzt live auf Telegram, Spotify & YouTube.",
+    audioMicConnectedNotice: "Audioeingang mit Equalizer verbunden!",
+    audioStoppedNotice: "Audiosynchronisation beendet.",
+    dockCollapseTip: "Klicken zum Ein-/Ausklappen des Alchemy Craft Docks",
+    timerTip: "Links: Start/Pause | Rechts: Presets & Audio | Doppelklick: Reset",
     uiBtn: "UI",
     uiTip: "Swiss Bento UI-Theme (Warmes Papier #F4F3EF + Salbeigrüne Tabellen)",
     zenBtn: "Zen",
@@ -657,11 +870,16 @@ const TRANSLATIONS = {
     focusBtn: "Fokus",
     focusTip: "Satz-Fokus (Satz anklicken, um aktive Palettenfarbe anzuheften)",
     laserBtn: "Laser",
-    laserTip: "Laserpointer (leuchtender Schweif, Esc zum Beenden)",
+    laserTip: "Laserpointer (Esc zum Beenden)",
     drawBtn: "Marker",
     drawTip: "Freihand-Marker auf der Notiz (Esc zum Beenden)",
     eraserBtn: "Radierer",
     eraserTip: "Radierer — Zeichnungen löschen (Esc zum Beenden)",
+    lampBtn: "Lampe",
+    lampBtnFull: "Smart LED Lampe",
+    lampTip: "Links: Smart LED Lampe ein/aus | Rechts: Helligkeit, Kelvin (2700K–6500K) & Raum-Dimmer einstellen",
+    rulerBtn: "Lineal",
+    rulerTip: "Laser-Leselineal ein-/ausblenden",
     undoTip: "Rückgängig (Ctrl+Z)",
     redoTip: "Wiederholen (Ctrl+Y)",
     aiCleanBtn: "AI Clean",
@@ -669,21 +887,29 @@ const TRANSLATIONS = {
     clearTip: "Alle Zeichnungen und Markierungen löschen",
     orientTip: "Ausrichtung wechseln (Unten / Rechte Seitenleiste)",
     collapseTip: "Zur schwebenden Kugel einklappen",
-    taskProgressLabel: "⚡ AUFGABEN-FORTSCHRITT:",
-    sprintDoneNotice: "⚡ Alchemy Craft: Fokus-Sprint abgeschlossen! In deiner Statistik gespeichert.",
-    breakDoneNotice: "☕ Alchemy Craft: Pause beendet! Bereit für den nächsten Sprint?",
-    customPomodoroTitle: "⏱ Eigene Fokus-Dauer einstellen",
+    taskProgressLabel: "AUFGABEN-FORTSCHRITT:",
+    sprintDoneNotice: "Alchemy Craft: Fokus-Sprint abgeschlossen! In deiner Statistik gespeichert.",
+    breakDoneNotice: "Alchemy Craft: Pause beendet! Bereit für den nächsten Sprint?",
+    customPomodoroTitle: "Eigene Fokus-Dauer einstellen",
     customPomodoroDesc: "Gib deine gewünschte Pomodoro-Dauer in Minuten ein (1 bis 360):",
     customPomodoroStart: "Sprint starten",
     customPomodoroErr: "Bitte gib eine Zahl zwischen 1 und 360 Minuten ein.",
+    ledModalSubtitle: "ALCHEMY CRAFT // LUMINA STUDIO",
+    ledModalTitle: "Smart LED Cursor-Lampe",
+    ledBrightness: "Helligkeit (Leuchtstärke)",
+    ledKelvin: "Farbtemperatur (2700K Warm – 6500K Tageslicht)",
+    ledDimmer: "Umgebungs-Raumdimmer",
+    ledRadius: "Lichtkegel-Radius & Form",
+    ledShapeRadial: "Radialer Spot",
+    ledShapeBar: "Schreibtisch-Lightbar",
     modalBadge: "ALCHEMIST PRO • 1-JAHRES-PASS",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Zahlung per Kreditkarte, @CryptoBot oder Universal EVM.",
-    step1Title: "SCHRITT 1: ZAHLUNGSMETHODE WÄHLEN (BANKKARTE ODER KRYPTO)",
-    netCard: "Kreditkarte / Apple Pay",
-    netCardHint: "0% Fee Web3 / @CryptoBot",
+    modalSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Sofortige Aktivierung via 0% EVM, Bybit UID, @CryptoBot oder Promo-Key.",
+    step1Title: "SCHRITT 1: ZAHLUNGSMETHODE WÄHLEN",
+    netPromo: "Promo / VIP-Key",
+    netPromoHint: "Sofortige Code-Aktivierung",
     netCryptoBot: "@CryptoBot Pay",
-    netCryptoBotHint: "1-Klick in Telegram (USDT/TON)",
+    netCryptoBotHint: "1-Klick in Telegram",
     netEvm: "Universal EVM (0x...)",
     netEvmHint: "BEP20 • Arbitrum • Base • Polygon",
     netBybit: "Bybit UID Transfer",
@@ -698,53 +924,79 @@ const TRANSLATIONS = {
     uidLabel: "BYBIT EMPFÄNGER-UID:",
     copyBtn: "Adresse kopieren",
     copiedBtn: "Kopiert!",
-    evmChainsLabel: "✓ UNTERSTÜTZTE EVM-NETZWERKE FÜR DIESE 0x-ADRESSE:",
-    cardNote: "Bezahle bequem mit jeder Visa / MasterCard / Apple Pay über @CryptoBot oder 0% EVM. Füge danach deinen Beleg-Code in Schritt 2 ein.",
-    cryptobotNote: "Klicke unten, um @CryptoBot in Telegram zu öffnen und 4.99 USDT/TON mit 1 Klick zu senden.",
+    evmChainsLabel: "UNTERSTÜTZTE EVM-NETZWERKE FÜR DIESE 0x-ADRESSE:",
+    cardNote: "Gib deinen Promo-Code oder @CryptoBot Beleg in Schritt 2 unten ein, oder klicke unten, um $4.99 via @CryptoBot zu zahlen.",
+    cryptobotNote: "Klicke unten, um @CryptoBot in Telegram zu öffnen und $4.99 mit 1 Klick zu senden.",
     evmNote: "Diese universelle 0x EVM-Adresse akzeptiert 4.99 USDT, USDC, DAI, ETH oder BNB auf BNB Chain (BEP20), Arbitrum, Base, Polygon, Optimism und Ethereum!",
-    bybitNote: "In der Bybit-App: Assets → Auszahlen → Interner Transfer (0% Gebühr) → UID 8015849 und 4.99 USDT eingeben.",
+    bybitNote: "In der Bybit-App: Assets -> Auszahlen -> Interner Transfer (0% Gebühr) -> UID 8015849 und 4.99 USDT eingeben.",
     trcNote: "Sende 4.99 USDT über das TRON-Netzwerk (TRC-20).",
     solNote: "Sende 4.99 USDT oder USDC im Solana-Netzwerk.",
     supportText: "Hilfe oder sofortige manuelle Aktivierung benötigt?",
     supportSub: "Direkter Telegram-Kontakt:",
     supportTgBtn: "@StratAlchemy öffnen",
-    step2Title: "SCHRITT 2: TRANSAKTIONS-HASH (TXID), BYBIT-ID ODER KARTENBELEG EINGEBEN:",
-    txPlaceholder: "TXID (0x...), Bybit-ID oder Kartenbeleg-Nr. einfügen...",
-    activateBtn: "⚡ Prüfen & Pro aktivieren",
-    checkingBtn: "⏳ Zahlung wird geprüft...",
-    successMsg: "🎉 Erfolg! Alchemy Craft Pro ist jetzt für 365 Tage aktiviert!",
-    errorEmpty: "❌ Bitte gib eine gültige TXID, Bestell-ID oder Belegnummer ein.",
-    errorPending: "⚠️ Transaktion wird noch bestätigt. Bitte 1 Minute warten.",
+    step2Title: "SCHRITT 2: TXID, BYBIT-ID ODER LIZENZSCHLÜSSEL EINGEBEN:",
+    txPlaceholder: "TXID (0x...), Bybit-ID oder ACPRO-... Key einfügen",
+    activateBtn: "Prüfen & Pro aktivieren",
+    checkingBtn: "Zahlung wird geprüft...",
+    successMsg: "Erfolg! Alchemy Craft Pro ist jetzt für 365 Tage aktiviert!",
+    errorEmpty: "Bitte gib eine gültige TXID, Bestell-ID oder Lizenznummer ein.",
+    errorPending: "Transaktion wird noch bestätigt. Bitte 1 Minute warten.",
     proActiveTitle: "PRO AKTIV",
     proExpiresOn: "Jahrespass aktiv bis:",
-    proMidnightName: "🌙 Midnight Dark Craft Modus",
+    proMidnightName: "Midnight Dark Craft Modus",
     proMidnightDesc: "Schweizer Dark-Mode für nächtliches Lesen, Graph-Ansicht und Coding.",
     proBuyCardBadge: "ALCHEMIST PRO PASS",
     proBuyCardTitle: "Alle Pro-Funktionen in Alchemy Craft freischalten",
-    proPerk1: "🌙 Midnight Dark Craft — komplettes Schweizer Dark-Theme für Notizen, Tabellen & Graph",
-    proPerk2: "🎨 Erweiterte 8-Farben-Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
-    proPerk3: "🕸️ Swiss Bento Graph Studio — interaktives Graph-HUD & Ordner-Farbgruppen",
-    proPerk4: "🎧 Ambient-Fokus-Sounds & Statistik — Brown Noise, Regen, 40Hz Gamma & Streaks",
-    getProBtn: "💎 Alchemy Craft Pro holen ($4.99 / Jahr)",
-    graphHudTitle: "⚗️ ALCHEMY BENTO GRAPH",
+    proPerk1: "Midnight Dark Craft — komplettes Schweizer Dark-Theme für Notizen, Tabellen & Graph",
+    proPerk2: "Erweiterte 8-Farben-Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
+    proPerk3: "Swiss Bento Graph Studio — automatische Ordner-Farbgruppen & Live-HUD",
+    proPerk4: "Smart LED Lampe (2700K–6500K) & 4-Modus PC-Audio-Equalizer",
+    getProBtn: "Alchemy Craft Pro holen ($4.99 / Jahr)",
+    graphHudTitle: "ALCHEMY BENTO GRAPH",
     graphPresetBento: "Swiss Bento",
     graphPresetConstellation: "Konstellation",
     graphPresetRadar: "Fokus-Radar",
-    graphColorizeBtn: "🎨 Knoten färben",
-    graphFitBtn: "🎯 Zentrieren",
-    settingsTitle: "SiCraft // Alchemy Craft — Tactile Bento Studio (v4.2.5)",
-    checkUpdatesBtn: "🔄 Updates prüfen",
-    officialSiteBtn: "🌐 Offizielle Website & Checkout",
-    langName: "🌐 Oberflächensprache (6 Weltsprachen)",
-    langDesc: "Sofortige Übersetzung für Dock, Einstellungen, Graph-HUD und Checkout.",
-    bentoGraphName: "🕸️ Swiss Bento Graph Studio (Graph-Ansicht Upgrade)",
-    bentoGraphDesc: "Verwandelt Obsidians Graph-Ansicht mit Bento-Raster, schwebendem HUD und 1-Klick-Farbgruppen.",
-    ambientName: "🎧 Ambient-Fokus-Klangwelten (WebAudio)",
+    graphColorizeBtn: "Meine Ordner färben",
+    graphOrphansBtn: "Waisen ausblenden",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.0)",
+    checkUpdatesBtn: "Updates prüfen",
+    langName: "Oberflächensprache (6 Weltsprachen)",
+    langDesc: "Übersetzt sofort alle Einstellungen, Dock-Buttons, Graph-HUD und das Checkout-Fenster.",
+    themeName: "Swiss Bento UI-Theme (#F4F3EF Papier + #69BD28 Tabellen)",
+    bentoGraphName: "Swiss Bento Graph Studio (Automatische Ordner-Farben)",
+    bentoGraphDesc: "Scannt deine echten Ordner und weist jedem Knoten im Graphen automatisch die 8 Swiss Bento Farben zu.",
+    taskBarName: "Obere Aufgaben-Fortschrittsleiste (Mit Schließen-Button)",
+    taskBarDesc: "Zeigt den Fortschritt von Checklisten oben in der Notiz mit 100%-Konfetti.",
+    headerBadgeName: "Text des oberen Notiz-Badges",
+    headerBadgeDesc: "Label über dem Notiztitel (Feld leeren zum Ausblenden).",
+    ambientName: "Ambient-Fokus-Klangwelten (WebAudio)",
     ambientDesc: "Synthetische Hintergrundklänge während Pomodoro-Sprints (Brown Noise, Regen, 40Hz Gamma).",
-    analyticsTitle: "📊 Fokus-Statistiken & Serien"
+    pomoDurName: "Standard-Pomodoro-Dauer (Minuten)",
+    pomoDurDesc: "Rechtsklick auf den Timer im Dock für 15m, 25m, 45m, 60m, 90m oder eigene Dauer.",
+    aiCleanSetName: "KI-Wasserzeichen-Reiniger im Dock anzeigen",
+    lampSetName: "Smart LED Cursor-Lampe (2700K–6500K Kelvin & Raum-Dimmer)",
+    lampSetDesc: "Dimmt den umgebenden Bildschirm, während dein Cursor den Text mit 2700K–6500K beleuchtet.",
+    lampConfigBtn: "Lampe einstellen",
+    keySoundSetName: "Mechanischer Tastatur-Klang (Topre Thock / Schreibmaschine)",
+    keySoundSetDesc: "Synthetischer Akustik-Sound mechanischer Switches beim Tippen.",
+    eqSetName: "Live 4-Modus Sonic Equalizer (PC-System-Audio Sync)",
+    eqSetDesc: "Reagiert direkt auf PC-Musik (Telegram, YouTube, Spotify) mit 4 komplexen Spektrum-Animationen.",
+    eqSyncBtn: "PC-Audio verbinden",
+    spotlightSetName: "Spotlight Absatz-Fokus-Dimmer",
+    spotlightSetDesc: "Dimmt inaktive Absätze sanft auf 42% Deckkraft.",
+    numBadgeSetName: "Quadratische Zahlen-Badges (01–04) & Betrags-Kapseln",
+    numBadgeSetDesc: "Verwandelt nummerierte Listen, [01]–[04], $-Beträge und 0x-Adressen in Schweizer Kapseln.",
+    sentFocusSetName: "Satz-Fokus-Hervorhebung per Klick (Sentence Focus)",
+    analyticsTitle: "Fokus-Statistiken & Serien",
+    statSprints: "Sprints",
+    statDeepWork: "Deep Work",
+    statChecklists: "100% Listen",
+    statStreak: "Tages-Serie",
+    supportHeading: "Direkter 0%-Checkout, @CryptoBot & Community",
+    supportSetName: "Globale Zahlung & Direkter Autorenkontakt",
+    supportSetDesc: "0% Gebühr via Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 oder @CryptoBot."
   }
 };
-
 function getLocale(plugin) {
   const lang = plugin?.settings?.uiLanguage || "en";
   return TRANSLATIONS[lang] ? lang : "en";
@@ -810,11 +1062,11 @@ function generateSiCraftLicenseKey(seedStr) {
   const combined = b1 + b2 + b3;
   for (let i = 0; i < combined.length; i++) chk = (chk + combined.charCodeAt(i) * (i + 1)) % 9999;
   const b4 = String(chk).padStart(4, "0");
-  return `SICRAFT-${b1}-${b2}-${b3}-${b4}`;
+  return `ACPRO-${b1}-${b2}-${b3}-${b4}`;
 }
 
 function isValidSiCraftLicenseKey(codeStr) {
-  const m = (codeStr || "").trim().toUpperCase().match(/^SICRAFT-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})-(\d{4})$/);
+  const m = (codeStr || "").trim().toUpperCase().match(/^ACPRO-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})-(\d{4})$/);
   if (!m) return false;
   const combined = m[1] + m[2] + m[3];
   let chk = 0;
@@ -839,8 +1091,8 @@ class SmartLedLampModal extends Modal {
       <div class="sicraft-led-panel">
         <div class="sicraft-led-header">
           <div>
-            <div class="artcraft-bento-pill">SICRAFT // LUMINA STUDIO</div>
-            <h3 class="artcraft-modal-title">🏮 Smart LED Cursor Lamp</h3>
+            <div class="artcraft-bento-pill">${t("ledModalSubtitle", this.plugin)}</div>
+            <h3 class="artcraft-modal-title">${SICRAFT_SVGS.lamp} ${t("ledModalTitle", this.plugin)}</h3>
           </div>
           <button id="led-power-btn" class="sicraft-led-power-btn ${s.magicLamp ? "is-on" : ""}">
             <span class="power-dot">⏻</span>
@@ -848,54 +1100,49 @@ class SmartLedLampModal extends Modal {
           </button>
         </div>
 
-        <!-- Brightness Card (like user screenshot) -->
         <div class="sicraft-led-card">
           <div class="sicraft-led-card-top">
-            <span>☀️ Brightness (Glow Intensity)</span>
+            <span>${t("ledBrightness", this.plugin)}</span>
             <strong id="led-bright-val">${s.lampBrightness || 85}%</strong>
           </div>
           <input type="range" id="led-bright-slider" min="10" max="100" value="${s.lampBrightness || 85}" class="sicraft-led-slider sicraft-slider-bright" />
         </div>
 
-        <!-- Color Temperature Card (2700K Warm Gold -> 3570K Neutral -> 6500K Daylight) -->
         <div class="sicraft-led-card">
           <div class="sicraft-led-card-top">
-            <span>🌡️ Color Temperature</span>
+            <span>${t("ledKelvin", this.plugin)}</span>
             <strong id="led-kelvin-val">${s.lampKelvin || 3570} K</strong>
           </div>
           <input type="range" id="led-kelvin-slider" min="2700" max="6500" step="10" value="${s.lampKelvin || 3570}" class="sicraft-led-slider sicraft-slider-kelvin" />
           <div class="sicraft-kelvin-presets">
-            <button data-k="2700" class="sicraft-k-btn">🕯️ 2700K Warm</button>
-            <button data-k="3570" class="sicraft-k-btn">💡 3570K Studio</button>
-            <button data-k="4800" class="sicraft-k-btn">☀️ 4800K Pure</button>
-            <button data-k="6500" class="sicraft-k-btn">❄️ 6500K Cool</button>
+            <button data-k="2700" class="sicraft-k-btn">2700K Warm</button>
+            <button data-k="3570" class="sicraft-k-btn">3570K Studio</button>
+            <button data-k="4800" class="sicraft-k-btn">4800K Pure</button>
+            <button data-k="6500" class="sicraft-k-btn">6500K Cool</button>
           </div>
         </div>
 
-        <!-- Ambient Room Dimness (Darkness outside the lamp beam) -->
         <div class="sicraft-led-card">
           <div class="sicraft-led-card-top">
-            <span>🌑 Surrounding Room Dimmer</span>
+            <span>${t("ledDimmer", this.plugin)}</span>
             <strong id="led-dim-val">${s.lampDimness !== undefined ? s.lampDimness : 75}%</strong>
           </div>
           <input type="range" id="led-dim-slider" min="0" max="92" value="${s.lampDimness !== undefined ? s.lampDimness : 75}" class="sicraft-led-slider" />
         </div>
 
-        <!-- Beam Radius & Lamp Shape -->
         <div class="sicraft-led-card">
           <div class="sicraft-led-card-top">
-            <span>🔦 Beam Radius & Shape</span>
+            <span>${t("ledRadius", this.plugin)}</span>
             <strong id="led-rad-val">${s.lampRadius || 310} px</strong>
           </div>
           <input type="range" id="led-rad-slider" min="140" max="600" value="${s.lampRadius || 310}" class="sicraft-led-slider" />
-          <div class="sicraft-kelvin-presets" style="margin-top:8px;">
-            <button data-shape="radial" class="sicraft-shape-btn ${(s.lampShape || "radial") === "radial" ? "is-active" : ""}">⭕ Radial Spotlight</button>
-            <button data-shape="deskbar" class="sicraft-shape-btn ${s.lampShape === "deskbar" ? "is-active" : ""}">➖ BenQ Desk Lightbar</button>
+          <div class="sicraft-kelvin-presets" style="margin-top:8px; grid-template-columns: 1fr 1fr;">
+            <button data-shape="radial" class="sicraft-shape-btn ${(s.lampShape || "radial") === "radial" ? "is-active" : ""}">${t("ledShapeRadial", this.plugin)}</button>
+            <button data-shape="deskbar" class="sicraft-shape-btn ${s.lampShape === "deskbar" ? "is-active" : ""}">${t("ledShapeBar", this.plugin)}</button>
           </div>
         </div>
       </div>
     `;
-
     const powerBtn = contentEl.querySelector("#led-power-btn");
     const powerTxt = contentEl.querySelector("#led-power-text");
     powerBtn.onclick = async () => {
@@ -1155,6 +1402,8 @@ class AlchemyFlowPlugin extends Plugin {
     this.lampY = window.innerHeight / 2;
     this.targetLampX = this.lampX;
     this.targetLampY = this.lampY;
+    this.lampVx = 0;
+    this.lampVy = 0;
 
     this.registerDomEvent(window, "mousemove", (e) => {
       // Smart Auto-Cursor Pass-Through: when in Draw/Eraser mode, if the user moves the mouse over the Left File Explorer, Right Sidebar, Tab Header, or Floating Dock, temporarily disable canvas pointer capture so they can click folders/notes normally!
@@ -1162,13 +1411,47 @@ class AlchemyFlowPlugin extends Plugin {
         const isOverNoteArea = this.isPointInsideActiveNoteArea(e.clientX, e.clientY);
         this.canvasEl.style.pointerEvents = isOverNoteArea ? "auto" : "none";
       }
+      this.lampVx = e.clientX - (this.targetLampX || e.clientX);
+      this.lampVy = e.clientY - (this.targetLampY || e.clientY);
       this.targetLampX = e.clientX;
       this.targetLampY = e.clientY;
+      if (this.settings.magicLamp) {
+        document.documentElement.style.setProperty("--sicraft-lamp-x", `${e.clientX}px`);
+        document.documentElement.style.setProperty("--sicraft-lamp-y", `${e.clientY}px`);
+      }
     });
   }
 
   updateReactiveLightShadows(lx, ly) {
-    // Zero-overhead: GPU Canvas handles the entire lighting beam at 144 FPS
+    // Elements near the Magic Lamp cast physical directional shadows away from the light source and glow warmly!
+    const targets = document.querySelectorAll(
+      ".markdown-rendered p, .markdown-rendered table, .markdown-rendered .callout, .inline-title, .cm-line"
+    );
+    const radius = this.settings.lampRadius || 280;
+    for (let i = 0; i < targets.length; i++) {
+      const el = targets[i];
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) continue;
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = cx - lx;
+      const dy = cy - ly;
+      const dist = Math.hypot(dx, dy);
+      if (dist < radius * 1.35) {
+        const intensity = Math.max(0, 1 - dist / (radius * 1.35));
+        const sx = Math.round((dx / radius) * 7 * intensity);
+        const sy = Math.round((dy / radius) * 7 * intensity);
+        el.style.setProperty("--sicraft-light-intensity", intensity.toFixed(2));
+        el.style.setProperty("--sicraft-shadow-x", `${sx}px`);
+        el.style.setProperty("--sicraft-shadow-y", `${sy}px`);
+        el.classList.add("is-lamp-lit");
+      } else if (el.classList.contains("is-lamp-lit")) {
+        el.classList.remove("is-lamp-lit");
+        el.style.removeProperty("--sicraft-light-intensity");
+        el.style.removeProperty("--sicraft-shadow-x");
+        el.style.removeProperty("--sicraft-shadow-y");
+      }
+    }
   }
 
   async toggleMagicLamp() {
@@ -1247,48 +1530,14 @@ class AlchemyFlowPlugin extends Plugin {
     this.ripples.push({ x, y, r: 4, maxR: 38, alpha: 0.65, color: this.settings.strokeColor || "#69BD28" });
   }
 
-  // --- 🎚️ 3. REAL-TIME DESKTOP / SYSTEM AUDIO CAPTURE & 4-MODE SONIC EQUALIZER ---
-  async toggleDesktopAudioCapture() {
-    if (this.desktopAudioNodes) {
-      this.stopDesktopAudioCapture();
-      new Notice("🔇 Live Audio Sync stopped.");
-      return;
-    }
-    try {
-      let stream = null;
-      // Try microphone / system loopback input first
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-            video: false,
-          });
-        } catch (e) {}
-      }
-      if (!stream && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-        try {
-          stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        } catch (e) {}
-      }
-      if (!stream) {
-        new Notice("⚠️ Audio permission was declined or not available.");
-        return;
-      }
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioCtx();
-      if (ctx.state === "suspended") {
-        await ctx.resume();
-      }
-      const source = ctx.createMediaStreamSource(stream);
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 64;
-      analyser.smoothingTimeConstant = 0.68;
-      source.connect(analyser);
-      this.desktopAudioNodes = { ctx, stream, source, analyser };
-      new Notice("🎙️ Sonic Equalizer synced to Live Audio! Right-click for options.");
-    } catch (err) {
-      console.warn("Audio sync error:", err);
-      new Notice("💡 Allow microphone or audio capture in Obsidian to sync live PC music.");
+  // --- 🎚️ 3. NATIVE ELECTRON DESKTOP SYSTEM AUDIO LOOPBACK (TELEGRAM / YOUTUBE / SPOTIFY) & 4-MODE EQUALIZER ---
+  async setAmbientSound(val) {
+    this.settings.ambientSound = val;
+    await this.saveSettings();
+    if (val === "off") {
+      this.stopAmbientSound();
+    } else {
+      this.startAmbientSound(val);
     }
   }
 
@@ -1298,24 +1547,25 @@ class AlchemyFlowPlugin extends Plugin {
 
     const isAudioActive = !!this.desktopAudioNodes;
 
-    // 1. Primary: PC Audio / Stereo Mix / Microphone (Works 100% natively in Obsidian)
+    // 1. Primary: Native Desktop System Audio Loopback (Captures Telegram, YouTube, Spotify, Browser, Games directly via Electron desktopCapturer!)
     menu.addItem((item) => {
       item
-        .setTitle(isAudioActive ? t("audioStopSync", this) : t("audioSyncMic", this))
-        .setIcon(isAudioActive ? "cross" : "microphone")
+        .setTitle(isAudioActive && this.desktopAudioNodes.type === "system" ? t("audioStopSync", this) : t("audioSyncSystem", this))
+        .setIcon(isAudioActive && this.desktopAudioNodes.type === "system" ? "cross" : "volume-2")
         .onClick(async () => {
-          if (isAudioActive) this.stopAudioCapture();
-          else await this.startMicAudioCapture();
+          if (isAudioActive && this.desktopAudioNodes.type === "system") this.stopAudioCapture();
+          else await this.startSystemAudioCapture();
         });
     });
 
-    // 2. Secondary: System Screen Audio Loopback (requires browser display media support)
+    // 2. Secondary: Microphone / Stereo Mix Input
     menu.addItem((item) => {
       item
-        .setTitle(t("audioSysLoopback", this))
-        .setIcon("audio-file")
+        .setTitle(isAudioActive && this.desktopAudioNodes.type === "mic" ? t("audioStopSync", this) : t("audioSyncMic", this))
+        .setIcon(isAudioActive && this.desktopAudioNodes.type === "mic" ? "cross" : "microphone")
         .onClick(async () => {
-          await this.startSystemAudioCapture();
+          if (isAudioActive && this.desktopAudioNodes.type === "mic") this.stopAudioCapture();
+          else await this.startMicAudioCapture();
         });
     });
 
@@ -1325,7 +1575,7 @@ class AlchemyFlowPlugin extends Plugin {
       { id: "bars", name: t("audioModeBars", this) },
       { id: "wave", name: t("audioModeWave", this) },
       { id: "orb", name: t("audioModeOrb", this) },
-      { id: "dna", name: t("audioModeDna", this) }
+      { id: "dna", name: t("audioModeDna", this) },
     ];
     modes.forEach((m) => {
       menu.addItem((item) => {
@@ -1335,7 +1585,7 @@ class AlchemyFlowPlugin extends Plugin {
           .onClick(async () => {
             this.settings.eqMode = m.id;
             await this.saveSettings();
-            new Notice("🎚️ Mode: " + m.name);
+            new Notice("Equalizer: " + m.name);
           });
       });
     });
@@ -1367,6 +1617,15 @@ class AlchemyFlowPlugin extends Plugin {
         });
     });
 
+    menu.addItem((item) => {
+      item
+        .setTitle((this.settings.uiLanguage || "en") === "ru" ? "🎵 Свой трек / MP3 файл..." : "🎵 Load Custom Music File (MP3/WAV)...")
+        .setIcon("music")
+        .onClick(() => {
+          this.openCustomAudioPicker();
+        });
+    });
+
     if (this.settings.ambientSound !== "off" || isAudioActive) {
       menu.addSeparator();
       menu.addItem((item) => {
@@ -1376,98 +1635,202 @@ class AlchemyFlowPlugin extends Plugin {
           .onClick(async () => {
             this.stopAudioCapture();
             await this.setAmbientSound("off");
-            new Notice(t("audioStoppedNotice", this));
           });
       });
     }
 
-    menu.showAtMouseEvent(event);
+    const safeX = Math.min(event.clientX, window.innerWidth - 260);
+    const safeY = Math.max(40, Math.min(event.clientY - 320, window.innerHeight - 360));
+    menu.showAtPosition({ x: safeX, y: safeY });
+  }
+
+  openCustomAudioPicker() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "audio/*,.mp3,.wav,.ogg,.flac,.m4a";
+    input.addEventListener("change", () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      this.stopAmbientSound();
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const fileUrl = URL.createObjectURL(file);
+        const audioEl = new Audio(fileUrl);
+        audioEl.loop = true;
+        audioEl.volume = 0.75;
+        const source = ctx.createMediaElementSource(audioEl);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.74;
+        source.connect(analyser);
+        analyser.connect(ctx.destination);
+        audioEl.play();
+        this.ambientNodes = { ctx, audioEl, fileUrl, analyser };
+        new Notice(`🎵 Playing: ${file.name}`);
+      } catch (e) {
+        new Notice("Could not load audio file.");
+      }
+    });
+    input.click();
   }
 
   async startSystemAudioCapture() {
-    this.stopAudioCapture();
+    this.stopAudioCapture(true);
+    let stream = null;
+
+    // Strategy A1: Pure Electron WASAPI Desktop Loopback (NO maxWidth:1 constraint that breaks Windows DWM!)
     try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        new Notice("⚠️ Capture not supported.");
-        return;
-      }
-      new Notice("🔊 В окне выбора нажмите 'Весь экран' и отметьте галочку 'Поделиться системным звуком'!");
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false,
+          mandatory: {
+            chromeMediaSource: "desktop",
+          },
+        },
+        video: {
+          mandatory: {
+            chromeMediaSource: "desktop",
+          },
         },
       });
+    } catch (e1) {
+      // Strategy A2: Electron desktopCapturer source ID with safe bounds
+      try {
+        const electron = window.require ? window.require("electron") : null;
+        const capturer = electron && (electron.desktopCapturer || (electron.remote && electron.remote.desktopCapturer));
+        if (capturer) {
+          const sources = await capturer.getSources({ types: ["screen", "window"] });
+          if (sources && sources.length > 0) {
+            stream = await navigator.mediaDevices.getUserMedia({
+              audio: {
+                mandatory: {
+                  chromeMediaSource: "desktop",
+                  chromeMediaSourceId: sources[0].id,
+                },
+              },
+              video: {
+                mandatory: {
+                  chromeMediaSource: "desktop",
+                  chromeMediaSourceId: sources[0].id,
+                },
+              },
+            });
+          }
+        }
+      } catch (e2) {}
+    }
 
+    // Strategy B: Check if user has a "Stereo Mix" / "Loopback" / "What U Hear" / "CABLE" audio device
+    if (!stream && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const loopbackDev = devices.find(
+          (d) =>
+            d.kind === "audioinput" &&
+            /stereo mix|смеситель|loopback|cable|what u hear|blackhole|soundflower|monitor|voicemeeter/i.test(d.label || "")
+        );
+        if (loopbackDev) {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              deviceId: { exact: loopbackDev.deviceId },
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false,
+            },
+            video: false,
+          });
+        }
+      } catch (e3) {}
+    }
+
+    // Strategy C: Standard getDisplayMedia fallback with systemAudio: "include"
+    if (!stream && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      try {
+        stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            systemAudio: "include",
+          },
+          systemAudio: "include",
+        });
+      } catch (e4) {}
+    }
+
+    // Strategy D: High-sensitivity Room/Speaker Acoustic Pickup (with 3.2x Pre-Amp Gain so music from speakers/headphones drives all 16 bars!)
+    if (!stream) {
+      return this.startMicAudioCapture(true);
+    }
+
+    try {
       const audioTracks = stream.getAudioTracks();
       if (!audioTracks || audioTracks.length === 0) {
         stream.getTracks().forEach((t) => t.stop());
-        new Notice("⚠️ В окне выбора не была включена галочка 'Поделиться системным звуком'!");
-        return;
+        return this.startMicAudioCapture(true);
       }
 
-      // Stop video immediately to save 100% resources
+      // Immediately stop video track so 0% GPU is used on screen video
       stream.getVideoTracks().forEach((vt) => vt.stop());
 
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioCtx();
-      if (ctx.state === "suspended") {
-        await ctx.resume();
-      }
+      if (ctx.state === "suspended") await ctx.resume();
 
       const audioStream = new MediaStream([audioTracks[0]]);
       const source = ctx.createMediaStreamSource(audioStream);
+      const preAmp = ctx.createGain();
+      preAmp.gain.value = 1.85;
       const analyser = ctx.createAnalyser();
-      analyser.fftSize = 128;
-      analyser.smoothingTimeConstant = 0.70;
-      source.connect(analyser);
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.72;
+      analyser.minDecibels = -92;
+      analyser.maxDecibels = -18;
+
+      source.connect(preAmp);
+      preAmp.connect(analyser);
 
       this.desktopAudioNodes = { ctx, stream: audioStream, source, analyser, type: "system" };
-      new Notice("🔊 Системный звук ПК подключен! Эквалайзер считывает звук в такт музыке.");
-
-      audioTracks[0].onended = () => {
-        this.stopAudioCapture();
-      };
+      new Notice(t("audioConnectedNotice", this));
     } catch (err) {
-      console.warn("System audio capture error:", err);
+      return this.startMicAudioCapture(true);
     }
   }
 
-  async startMicAudioCapture() {
-    this.stopAudioCapture();
+  async startMicAudioCapture(highGainForSpeakers = false) {
+    this.stopAudioCapture(true);
     try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        new Notice("⚠️ Microphone not supported.");
-        return;
-      }
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
         video: false,
       });
 
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioCtx();
-      if (ctx.state === "suspended") {
-        await ctx.resume();
-      }
+      if (ctx.state === "suspended") await ctx.resume();
 
       const source = ctx.createMediaStreamSource(stream);
+      const preAmp = ctx.createGain();
+      preAmp.gain.value = highGainForSpeakers ? 3.2 : 2.2;
       const analyser = ctx.createAnalyser();
-      analyser.fftSize = 128;
-      analyser.smoothingTimeConstant = 0.70;
-      source.connect(analyser);
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.72;
+      analyser.minDecibels = -95;
+      analyser.maxDecibels = -22;
+
+      source.connect(preAmp);
+      preAmp.connect(analyser);
 
       this.desktopAudioNodes = { ctx, stream, source, analyser, type: "mic" };
-      new Notice(t("audioConnectedNotice", this));
+      new Notice(t("audioMicConnectedNotice", this));
     } catch (err) {
-      console.warn("Mic error:", err);
-      new Notice("⚠️ Не удалось подключить устройство записи.");
+      new Notice("Could not access audio device.");
     }
   }
 
-  stopAudioCapture() {
+  stopAudioCapture(silent = false) {
     if (!this.desktopAudioNodes) return;
     try {
       if (this.desktopAudioNodes.stream) {
@@ -1478,11 +1841,11 @@ class AlchemyFlowPlugin extends Plugin {
       }
     } catch (e) {}
     this.desktopAudioNodes = null;
-    new Notice(t("audioStoppedNotice", this));
+    if (!silent) new Notice(t("audioStoppedNotice", this));
   }
 
   stopDesktopAudioCapture() {
-    this.stopAudioCapture();
+    this.stopAudioCapture(true);
   }
 
   toggleDesktopAudioCapture() {
@@ -1496,24 +1859,23 @@ class AlchemyFlowPlugin extends Plugin {
   async cycleEqualizerMode() {
     const modes = ["bars", "wave", "orb", "dna"];
     const names = {
-      bars: "01 // 16-Bar Spectrum Analyzer",
-      wave: "02 // Dual Liquid Sine Wave",
-      orb: "03 // Radial Alchemy Resonance",
-      dna: "04 // Harmonic DNA Matrix",
+      bars: t("audioModeBars", this),
+      wave: t("audioModeWave", this),
+      orb: t("audioModeOrb", this),
+      dna: t("audioModeDna", this),
     };
     const idx = modes.indexOf(this.settings.eqMode || "bars");
     const next = modes[(idx + 1) % modes.length];
     this.settings.eqMode = next;
     await this.saveSettings();
-    new Notice(`🎚️ Equalizer Style: ${names[next]}`);
+    new Notice(`Equalizer: ${names[next]}`);
   }
-
   // --- 📸 4. 1-CLICK SWISS BENTO QUOTE CARD EXPORTER ---
   async exportSelectionAsBentoCard() {
     const obsidian = require("obsidian");
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
     let text = "";
-    let title = "STRATALCHEMY // SICRAFT BRIEF";
+    let title = "STRATALCHEMY // KNOWLEDGE BRIEF";
     if (view && view.file) {
       title = view.file.basename.toUpperCase();
       if (view.editor && view.editor.somethingSelected()) {
@@ -1531,7 +1893,7 @@ class AlchemyFlowPlugin extends Plugin {
       text = view.editor.getValue().split("\n").filter((l) => l.trim().length > 20)[0] || "Deep work in Swiss Bento clarity.";
     }
 
-    const cardMarkdown = `> [!NOTE] ⚗️ ${title} — SICRAFT // ALCHEMY CRAFT
+    const cardMarkdown = `> [!NOTE] ⚗️ ${title} — ALCHEMY CRAFT // STUDIO
 > **"${text.replace(/\n+/g, " ")}"**
 > 
 > \`01 // FOCUS\` • \`#F4F3EF ARCHIVAL PAPER\` • \`@StratAlchemy\``;
@@ -2093,13 +2455,7 @@ class AlchemyFlowPlugin extends Plugin {
     if (!this.timerEl || !this.timerTextEl) return;
     this.timerEl.classList.toggle("is-running", this.timerRunning);
     this.timerEl.classList.toggle("is-break", this.timerState === "break");
-    let icon = "🍅";
-    if (this.settings.timerMode === "stopwatch") {
-      icon = "⏱";
-    } else if (this.timerState === "break") {
-      icon = "☕";
-    }
-    this.timerTextEl.textContent = `${icon} ${this.formatTime(this.timerSeconds)}`;
+    this.timerTextEl.innerHTML = `${SICRAFT_SVGS.timer}<span>${this.formatTime(this.timerSeconds)}</span>`;
   }
 
   applyBodyClasses() {
@@ -2122,7 +2478,7 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
-  // --- SWISS BENTO GRAPH STUDIO (ENHANCES OBSIDIAN BUILT-IN GRAPH VIEW) ---
+  // --- SWISS BENTO GRAPH STUDIO (REAL VAULT FOLDER SCANNER + LIVE GRAPH ENGINE RELOAD) ---
   injectGraphViewHUD() {
     if (this.settings.enableBentoGraph === false) {
       document.querySelectorAll(".artcraft-graph-hud").forEach((el) => el.remove());
@@ -2137,16 +2493,23 @@ class AlchemyFlowPlugin extends Plugin {
       viewContent.classList.add("artcraft-graph-canvas-wrap");
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
-      if (viewContent.querySelector(".artcraft-graph-hud")) return;
+      let hud = viewContent.querySelector(".artcraft-graph-hud");
+      if (hud && hud.getAttribute("data-lang") !== (this.settings.uiLanguage || "en")) {
+        hud.remove();
+        hud = null;
+      }
+      if (hud) return;
 
-      const hud = document.createElement("div");
+      hud = document.createElement("div");
       hud.className = "artcraft-graph-hud";
+      hud.setAttribute("data-lang", this.settings.uiLanguage || "en");
       hud.innerHTML = `
-        <span class="artcraft-graph-hud-badge">${t("graphHudTitle", this)}</span>
+        <span class="artcraft-graph-hud-badge">${SICRAFT_SVGS.graph} <span>${t("graphHudTitle", this)}</span></span>
         <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento">${t("graphPresetBento", this)}</button>
         <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "constellation" ? "is-active" : ""}" data-preset="constellation">${t("graphPresetConstellation", this)}</button>
         <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar">${t("graphPresetRadar", this)}</button>
-        <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${t("graphColorizeBtn", this)}</button>
+        <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${SICRAFT_SVGS.spark} <span>${t("graphColorizeBtn", this)}</span></button>
+        <button class="artcraft-graph-hud-btn" data-action="toggle-orphans">${t("graphOrphansBtn", this)}</button>
       `;
 
       hud.querySelectorAll("[data-preset]").forEach((btn) => {
@@ -2158,23 +2521,24 @@ class AlchemyFlowPlugin extends Plugin {
           hud.querySelectorAll("[data-preset]").forEach((b) => b.classList.remove("is-active"));
           btn.classList.add("is-active");
           viewContent.setAttribute("data-graph-preset", preset);
-          new Notice(`🕸️ Alchemy Graph Preset: ${btn.textContent}`);
         });
       });
 
-      const colorBtn = hud.querySelector('[data-action="colorize"]');
-      if (colorBtn) {
-        colorBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          this.applyBentoGraphColorGroups();
-        });
-      }
+      hud.querySelector('[data-action="colorize"]')?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.applyBentoGraphColorGroups(false);
+      });
+
+      hud.querySelector('[data-action="toggle-orphans"]')?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.applyBentoGraphColorGroups(true);
+      });
 
       viewContent.appendChild(hud);
     });
   }
 
-  async applyBentoGraphColorGroups() {
+  async applyBentoGraphColorGroups(toggleOrphans = false) {
     try {
       const adapter = this.app.vault.adapter;
       const configDir = this.app.vault.configDir || ".obsidian";
@@ -2185,24 +2549,77 @@ class AlchemyFlowPlugin extends Plugin {
         graphConfig = JSON.parse(raw);
       }
 
-      // Swiss Bento 6-color semantic node groups (0x2563EB, 0xF59E0B, 0x10B981, 0x8B5CF6, 0xEC4899, 0x69BD28)
-      graphConfig.colorGroups = [
-        { query: 'path:"01" OR tag:#strategy OR tag:#01', color: { a: 1, rgb: 2450411 } }, // #2563EB Sapphire
-        { query: 'path:"02" OR tag:#product OR tag:#02', color: { a: 1, rgb: 16096779 } }, // #F59E0B Amber
-        { query: 'path:"03" OR tag:#research OR tag:#03', color: { a: 1, rgb: 1096065 } }, // #10B981 Emerald
-        { query: 'path:"04" OR tag:#archive OR tag:#04', color: { a: 1, rgb: 9133302 } }, // #8B5CF6 Amethyst
-        { query: "tag:#pro OR tag:#important", color: { a: 1, rgb: 15485081 } }, // #EC4899 Rose
-        { query: "file:README OR tag:#done", color: { a: 1, rgb: 6929704 } }, // #69BD28 Excel Green
+      // 8-Color Swiss Bento Palette in Decimal RGB for graph.json
+      const bentoColors = [
+        2450411,  // #2563EB Sapphire Blue
+        16096779, // #F59E0B Amber Orange
+        1096065,  // #10B981 Emerald Green
+        9133302,  // #8B5CF6 Amethyst Purple
+        15485081, // #EC4899 Rose Quartz
+        439972,   // #06B6D4 Cyber Cyan
+        6929704,  // #69BD28 Excel Green
+        15381256, // #EAB308 Solar Gold
       ];
+
+      // 1. Automatically scan ALL real top-level folders in the user's vault (e.g. 00_Inbox, 01_Fleeting, 02_Literature, 05_Projects, etc.)
+      const rootChildren = (this.app.vault.getRoot() && this.app.vault.getRoot().children) || [];
+      const folders = rootChildren
+        .filter((f) => f && f.children !== undefined && !f.name.startsWith("."))
+        .map((f) => f.name)
+        .sort();
+
+      const colorGroups = [];
+      folders.forEach((folderName, idx) => {
+        colorGroups.push({
+          query: `path:"${folderName}"`,
+          color: { a: 1, rgb: bentoColors[idx % bentoColors.length] },
+        });
+      });
+
+      // Add semantic tag groups & a universal catch-all fallback so ZERO grey nodes remain!
+      colorGroups.push({ query: "tag:#pro OR tag:#important", color: { a: 1, rgb: 15485081 } });
+      colorGroups.push({ query: 'file:"*"', color: { a: 1, rgb: 2450411 } });
+
+      graphConfig.colorGroups = colorGroups;
       graphConfig.showArrow = true;
-      graphConfig.nodeSizeMultiplier = 1.18;
-      graphConfig.lineSizeMultiplier = 1.15;
+      if (toggleOrphans) {
+        graphConfig.showOrphans = !graphConfig.showOrphans;
+      } else {
+        graphConfig.showOrphans = false;
+      }
+      graphConfig.nodeSizeMultiplier = 1.28;
+      graphConfig.lineSizeMultiplier = 1.25;
+      graphConfig.centerStrength = 0.35;
+      graphConfig.repelStrength = 11.5;
+      graphConfig.linkDistance = 165;
 
       await adapter.write(graphPath, JSON.stringify(graphConfig, null, 2));
-      this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 40);
-      new Notice("🎨 Swiss Bento Graph Color Groups applied to .obsidian/graph.json!");
+
+      // Apply live to any currently open Graph View leaf without requiring a restart!
+      const graphPlugin = this.app.internalPlugins?.plugins?.graph?.instance;
+      if (graphPlugin && graphPlugin.options) {
+        Object.assign(graphPlugin.options, graphConfig);
+      }
+      const leaves = this.app.workspace.getLeavesOfType("graph").concat(this.app.workspace.getLeavesOfType("localgraph"));
+      leaves.forEach((leaf) => {
+        const view = leaf.view;
+        if (view) {
+          try {
+            if (view.dataEngine) {
+              view.dataEngine.setOptions(graphConfig);
+              view.dataEngine.render();
+            }
+            if (view.renderer && typeof view.renderer.changed === "function") {
+              view.renderer.changed();
+            }
+          } catch (e) {}
+        }
+      });
+
+      this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
+      new Notice(`Colored ${folders.length} Vault Folders in Graph View & optimized cluster layout!`);
     } catch (err) {
-      new Notice("⚠️ Could not update graph.json automatically.");
+      new Notice("Could not update graph configuration automatically.");
     }
   }
 
@@ -2710,10 +3127,9 @@ class AlchemyFlowPlugin extends Plugin {
 
     // 6.5. Smart LED Cursor Lamp Button (LMB: Toggle | RMB: Open 2700K-6500K Smart LED Controller)
     this.btnLamp = document.createElement("button");
-    const isLampSolo = !this.settings.enableAiCleaner;
-    this.btnLamp.className = `artcraft-dock-btn is-lamp-btn ${isLampSolo ? "is-full-row" : ""}`;
-    this.btnLamp.title = "LMB: Toggle Smart LED Lamp | RMB: Configure Brightness, Kelvin (2700K–6500K) & Room Dimmer";
-    this.btnLamp.innerHTML = `${SICRAFT_SVGS.lamp}<span class="artcraft-btn-label">${isLampSolo ? "Smart LED Lamp" : "Lamp"}</span>`;
+    this.btnLamp.className = this.settings.enableAiCleaner ? "artcraft-dock-btn" : "artcraft-dock-btn is-full-row";
+    this.btnLamp.title = t("lampTip", this);
+    this.btnLamp.innerHTML = `${SICRAFT_SVGS.lamp}<span class="artcraft-btn-label">${t("lampBtn", this)}</span>`;
     this.btnLamp.addEventListener("click", () => {
       this.toggleMagicLamp();
     });
@@ -2727,10 +3143,11 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.settings.showEqualizer !== false) {
       const eqWrap = document.createElement("div");
       eqWrap.className = "artcraft-dock-eq-pill";
-      eqWrap.title = t("eqTip", this);
+      eqWrap.title = "LMB: Switch Equalizer Style (01 Peak-Hold / 02 Liquid Ribbon / 03 Supernova / 04 Matrix) | Double-Click: Sync PC Audio | RMB: Sound Menu";
+      this.eqWrap = eqWrap;
       this.eqCanvas = document.createElement("canvas");
-      this.eqCanvas.width = 56;
-      this.eqCanvas.height = 20;
+      this.eqCanvas.width = 76;
+      this.eqCanvas.height = 22;
       this.eqCanvas.className = "artcraft-dock-eq-canvas";
       eqWrap.appendChild(this.eqCanvas);
       eqWrap.addEventListener("click", () => {
@@ -3162,16 +3579,19 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.restore();
     }
 
-    // 3.5. Render Real Smart LED Cursor Lamp (Room Dimmer + True Kelvin 2700K–6500K Spotlight Beam!)
+    // 3.5. Render Real Smart LED Cursor Lamp (Room Dimmer + True Kelvin 2700K–6500K Spotlight Beam + Living Tyndall Dust Motes & Optical Corona!)
     if (this.settings.magicLamp && this.targetLampX !== undefined) {
-      this.lampX += (this.targetLampX - this.lampX) * 0.25;
-      this.lampY += (this.targetLampY - this.lampY) * 0.25;
+      this.lampX += (this.targetLampX - this.lampX) * 0.28;
+      this.lampY += (this.targetLampY - this.lampY) * 0.28;
+      this.lampVx = (this.lampVx || 0) * 0.85;
+      this.lampVy = (this.lampVy || 0) * 0.85;
       const radius = this.settings.lampRadius || 310;
       const dimPct = (this.settings.lampDimness !== undefined ? this.settings.lampDimness : 75) / 100;
       const brightPct = (this.settings.lampBrightness || 85) / 100;
       const rgb = kelvinToRgb(this.settings.lampKelvin || 3570);
       const lx = this.lampX;
       const ly = this.lampY - 32; // Offset for canvas top: 32px
+      this.lampPhase = (this.lampPhase || 0) + 0.035;
 
       ctx.save();
       if (this.settings.lampShape === "deskbar") {
@@ -3190,7 +3610,6 @@ class AlchemyFlowPlugin extends Plugin {
           ctx.fill();
         }
         ctx.globalCompositeOperation = "source-over";
-        // Draw sleek physical LED bar above cursor + warm Kelvin beam
         const barGrad = ctx.createRadialGradient(lx, ly, 5, lx, ly, radius * 1.25);
         barGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.38 * brightPct})`);
         barGrad.addColorStop(0.55, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.14 * brightPct})`);
@@ -3224,6 +3643,44 @@ class AlchemyFlowPlugin extends Plugin {
         ctx.beginPath();
         ctx.arc(lx, ly, radius, 0, Math.PI * 2);
         ctx.fill();
+
+        // Living Optical Aperture Ring (breathing subtle lens rim)
+        const breathR = radius * (0.86 + Math.sin(this.lampPhase) * 0.015);
+        ctx.beginPath();
+        ctx.arc(lx, ly, breathR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.11 * brightPct})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+
+      // Living Tyndall Dust Motes inside the Kelvin light beam (24 GPU particles with Brownian drift & cursor turbulence)
+      if (!this.lampMotes) {
+        this.lampMotes = Array.from({ length: 24 }, (_, idx) => ({
+          ox: ((idx * 37) % 200) - 100,
+          oy: ((idx * 53) % 200) - 100,
+          r: 0.9 + (idx % 3) * 0.55,
+          phase: idx * 0.7,
+          speed: 0.018 + (idx % 5) * 0.006,
+        }));
+      }
+      for (let m = 0; m < this.lampMotes.length; m++) {
+        const mote = this.lampMotes[m];
+        mote.phase += mote.speed;
+        mote.ox += Math.cos(mote.phase) * 0.35 - (this.lampVx || 0) * 0.04;
+        mote.oy += Math.sin(mote.phase * 1.3) * 0.28 - (this.lampVy || 0) * 0.04 - 0.12;
+        const maxD = radius * 0.75;
+        if (mote.ox > maxD) mote.ox = -maxD;
+        if (mote.ox < -maxD) mote.ox = maxD;
+        if (mote.oy > maxD) mote.oy = -maxD;
+        if (mote.oy < -maxD) mote.oy = maxD;
+        const dist = Math.hypot(mote.ox, mote.oy);
+        if (dist < maxD) {
+          const mAlpha = (1 - dist / maxD) * (0.28 + 0.18 * Math.sin(mote.phase * 2)) * brightPct;
+          ctx.beginPath();
+          ctx.arc(lx + mote.ox, ly + mote.oy, mote.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 250, 235, ${mAlpha.toFixed(3)})`;
+          ctx.fill();
+        }
       }
       ctx.restore();
     }
@@ -3249,7 +3706,7 @@ class AlchemyFlowPlugin extends Plugin {
       }
     }
 
-    // 3.7. Render Real-Time 4-Mode Sonic Equalizer in Floating Dock (Strictly Audio-Reactive!)
+    // 3.7. Render High-Complexity 4-Mode Sonic Equalizer in Floating Dock (Peak-Hold, Cyber Liquid Ribbon, Supernova, Quantum Matrix)
     if (this.eqCanvas) {
       const eqCtx = this.eqCanvas.getContext("2d");
       const ew = this.eqCanvas.width;
@@ -3262,119 +3719,198 @@ class AlchemyFlowPlugin extends Plugin {
         null;
 
       let freqData = null;
-      let timeData = null;
       let hasSound = false;
 
       if (activeAnalyser) {
         freqData = new Uint8Array(activeAnalyser.frequencyBinCount);
-        timeData = new Uint8Array(activeAnalyser.frequencyBinCount);
         activeAnalyser.getByteFrequencyData(freqData);
-        activeAnalyser.getByteTimeDomainData(timeData);
 
         for (let j = 0; j < freqData.length; j++) {
-          if (freqData[j] > 8) {
+          if (freqData[j] > 6) {
             hasSound = true;
             break;
           }
         }
       }
 
+      if (!this.eqPeaks) this.eqPeaks = new Array(16).fill(2);
+      if (!this.eqSmooth) this.eqSmooth = new Array(16).fill(2);
+      if (!this.eqPhase) this.eqPhase = 0;
+
       const mode = this.settings.eqMode || "bars";
-      const colors = ["#69BD28", "#2563EB", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"];
+      const colors = ["#69BD28", "#10B981", "#06B6D4", "#2563EB", "#8B5CF6", "#EC4899", "#F59E0B", "#EAB308"];
+
+      // Compute 16 logarithmic frequency bands with smooth spring attack & gravity decay
+      let totalEnergy = 0;
+      for (let i = 0; i < 16; i++) {
+        let targetH = 2;
+        if (hasSound && freqData) {
+          const binStart = Math.floor(Math.pow(i / 16, 1.55) * (freqData.length * 0.72));
+          const binEnd = Math.max(binStart + 1, Math.floor(Math.pow((i + 1) / 16, 1.55) * (freqData.length * 0.72)));
+          let maxVal = 0;
+          for (let b = binStart; b <= binEnd && b < freqData.length; b++) {
+            if (freqData[b] > maxVal) maxVal = freqData[b];
+          }
+          const boost = 1.08 + (i / 16) * 0.6;
+          targetH = Math.max(2, Math.min(eh - 2, ((maxVal * boost) / 255) * (eh - 2)));
+        }
+        if (targetH > this.eqSmooth[i]) {
+          this.eqSmooth[i] += (targetH - this.eqSmooth[i]) * 0.58;
+        } else {
+          this.eqSmooth[i] = Math.max(2, this.eqSmooth[i] - 0.68);
+        }
+        if (this.eqSmooth[i] >= this.eqPeaks[i]) {
+          this.eqPeaks[i] = this.eqSmooth[i];
+        } else {
+          this.eqPeaks[i] = Math.max(2, this.eqPeaks[i] - 0.22);
+        }
+        totalEnergy += this.eqSmooth[i] - 2;
+      }
+
+      // Advance phase ONLY when real audio energy is present (never move on its own in silence!)
+      if (hasSound || totalEnergy > 1.5) {
+        this.eqPhase += 0.06 + Math.min(0.18, totalEnergy / 180);
+      }
+
+      // Reactive Bass Glow on Equalizer Pill border when music plays
+      const bassLevel = (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2));
+      if (this.eqWrap) {
+        if (bassLevel > 0.08) {
+          const glowAlpha = Math.min(0.75, bassLevel * 0.9).toFixed(2);
+          this.eqWrap.style.boxShadow = `0 2px 0 #111111, 0 0 ${Math.round(6 + bassLevel * 12)}px rgba(105, 189, 40, ${glowAlpha})`;
+        } else {
+          this.eqWrap.style.boxShadow = "";
+        }
+      }
 
       if (mode === "bars") {
-        const bars = 14;
-        const barW = 2.8;
-        const gap = 1.2;
-        // Real Musical Frequency Bands mapping from 64 bins (375Hz to 18000Hz)
-        const bandRanges = [
-          [1, 1],   // Sub-bass / Kick (375 Hz)
-          [2, 2],   // Bass (750 Hz)
-          [3, 3],   // Low Mid (1125 Hz)
-          [4, 4],   // Mid (1500 Hz)
-          [5, 5],   // Mid (1875 Hz)
-          [6, 7],   // Mid-High (2250-2625 Hz)
-          [8, 9],   // Upper Mid (3000-3375 Hz)
-          [10, 12], // Presence (3750-4500 Hz)
-          [13, 16], // Presence (4875-6000 Hz)
-          [17, 21], // Treble (6375-7875 Hz)
-          [22, 27], // High Treble (8250-10125 Hz)
-          [28, 35], // High Treble (10500-13125 Hz)
-          [36, 45], // Air (13500-16875 Hz)
-          [46, 58], // Shimmer (17250-21750 Hz)
-        ];
-
+        // MODE 01: 16-Bar Neon Spectrum with Floating Peak-Hold Caps & Subtle Floor Reflection
+        const bars = 16;
+        const barW = 3.2;
+        const gap = 1.4;
+        const baseLine = eh - 3;
         for (let i = 0; i < bars; i++) {
-          let h = 2; // Real resting baseline when silent
-          if (hasSound && freqData) {
-            const [bStart, bEnd] = bandRanges[i];
-            let maxVal = 0;
-            for (let b = bStart; b <= bEnd && b < freqData.length; b++) {
-              if (freqData[b] > maxVal) maxVal = freqData[b];
-            }
-            const trebleBoost = 1.0 + (i / bars) * 0.45;
-            const normalized = Math.min(255, maxVal * trebleBoost);
-            h = Math.max(2, (normalized / 255) * (eh - 2));
+          const x = 2 + i * (barW + gap);
+          const h = Math.min(baseLine - 1, this.eqSmooth[i]);
+          const c = colors[i % colors.length];
+          eqCtx.fillStyle = c;
+          eqCtx.fillRect(x, baseLine - h, barW, h);
+
+          // Floor mirror reflection
+          if (h > 2.5) {
+            eqCtx.globalAlpha = 0.25;
+            eqCtx.fillRect(x, baseLine + 0.5, barW, Math.min(2.5, h * 0.25));
+            eqCtx.globalAlpha = 1;
           }
-          eqCtx.fillStyle = colors[i % colors.length];
-          eqCtx.fillRect(i * (barW + gap), eh - h, barW, h);
+
+          // Floating Peak-Hold cap
+          if (this.eqPeaks[i] > 3.2) {
+            eqCtx.fillStyle = "#FFFFFF";
+            eqCtx.fillRect(x, Math.max(0, baseLine - this.eqPeaks[i] - 1.6), barW, 1.3);
+          }
         }
       } else if (mode === "wave") {
-        // Dual Liquid Sine Wave (Real Oscilloscope)
-        for (let w = 0; w < 2; w++) {
+        // MODE 02: 3-Layer Cyber Liquid Spline Ribbon with Glowing Fill
+        const layerColors = [
+          { stroke: "#69BD28", fill: "rgba(105, 189, 40, 0.28)" },
+          { stroke: "#06B6D4", fill: "rgba(6, 182, 212, 0.24)" },
+          { stroke: "#EC4899", fill: "rgba(236, 72, 153, 0.20)" },
+        ];
+        const midY = eh * 0.54;
+        for (let l = 0; l < 3; l++) {
           eqCtx.beginPath();
-          eqCtx.strokeStyle = w === 0 ? "#69BD28" : "#2563EB";
-          eqCtx.lineWidth = 1.6;
-          for (let x = 0; x < ew; x++) {
-            let amp = 0;
-            if (hasSound && timeData) {
-              const idx = Math.floor((x / ew) * timeData.length);
-              amp = ((timeData[idx] - 128) / 128) * (eh * 0.45);
-            }
-            const y = eh / 2 + amp * (w === 0 ? 1 : -0.7);
+          eqCtx.moveTo(0, eh);
+          for (let x = 0; x <= ew; x += 2) {
+            const bandIdx = Math.min(15, Math.floor((x / ew) * 16));
+            const bandAmp = (this.eqSmooth[bandIdx] - 2) * 0.58;
+            const wave =
+              Math.sin(x * 0.14 + this.eqPhase * (1.15 + l * 0.35) + l * 1.3) * bandAmp +
+              Math.cos(x * 0.08 - this.eqPhase * 0.85) * (bandAmp * 0.45);
+            const y = Math.max(1, Math.min(eh - 1, midY + wave));
+            eqCtx.lineTo(x, y);
+          }
+          eqCtx.lineTo(ew, eh);
+          eqCtx.closePath();
+          eqCtx.fillStyle = layerColors[l].fill;
+          eqCtx.fill();
+
+          eqCtx.beginPath();
+          for (let x = 0; x <= ew; x += 2) {
+            const bandIdx = Math.min(15, Math.floor((x / ew) * 16));
+            const bandAmp = (this.eqSmooth[bandIdx] - 2) * 0.58;
+            const wave =
+              Math.sin(x * 0.14 + this.eqPhase * (1.15 + l * 0.35) + l * 1.3) * bandAmp +
+              Math.cos(x * 0.08 - this.eqPhase * 0.85) * (bandAmp * 0.45);
+            const y = Math.max(1, Math.min(eh - 1, midY + wave));
             if (x === 0) eqCtx.moveTo(x, y);
             else eqCtx.lineTo(x, y);
           }
+          eqCtx.strokeStyle = layerColors[l].stroke;
+          eqCtx.lineWidth = 1.4;
           eqCtx.stroke();
         }
       } else if (mode === "orb") {
-        // Radial Alchemy Resonance Rings
+        // MODE 03: Supernova Polar Sunburst (20-Ray Starburst + Dual Bass Shockwave Rings)
         const cx = ew / 2;
         const cy = eh / 2;
-        let avg = 0;
-        if (hasSound && freqData) {
-          for (let i = 0; i < 12; i++) avg += freqData[i];
-          avg = avg / (12 * 255);
+        const bass = Math.max(0, (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2)));
+
+        // Outer shockwave ring on bass kick
+        if (bass > 0.12) {
+          eqCtx.beginPath();
+          eqCtx.arc(cx, cy, 4.5 + bass * 8.5, 0, Math.PI * 2);
+          eqCtx.strokeStyle = `rgba(105, 189, 40, ${(bass * 0.7).toFixed(2)})`;
+          eqCtx.lineWidth = 1;
+          eqCtx.stroke();
         }
-        const r1 = 3 + avg * 6.5;
-        const r2 = 5 + avg * 8.5;
+
         eqCtx.beginPath();
-        eqCtx.arc(cx, cy, r2, 0, Math.PI * 2);
-        eqCtx.strokeStyle = "rgba(37, 99, 235, 0.7)";
-        eqCtx.lineWidth = 1.3;
+        eqCtx.arc(cx, cy, 3.2 + bass * 5.2, 0, Math.PI * 2);
+        eqCtx.strokeStyle = "rgba(6, 182, 212, 0.8)";
+        eqCtx.lineWidth = 1.2;
         eqCtx.stroke();
+
+        const rays = 20;
+        for (let i = 0; i < rays; i++) {
+          const bandIdx = i % 16;
+          const angle = (i / rays) * Math.PI * 2 + this.eqPhase * 0.32;
+          const rayLen = 2.4 + ((this.eqSmooth[bandIdx] - 2) / (eh - 2)) * 8.2;
+          const x1 = cx + Math.cos(angle) * 2.0;
+          const y1 = cy + Math.sin(angle) * 2.0;
+          const x2 = cx + Math.cos(angle) * rayLen;
+          const y2 = cy + Math.sin(angle) * rayLen;
+          eqCtx.beginPath();
+          eqCtx.moveTo(x1, y1);
+          eqCtx.lineTo(x2, y2);
+          eqCtx.strokeStyle = colors[i % colors.length];
+          eqCtx.lineWidth = 1.4;
+          eqCtx.stroke();
+        }
+
         eqCtx.beginPath();
-        eqCtx.arc(cx, cy, r1, 0, Math.PI * 2);
-        eqCtx.fillStyle = "#69BD28";
+        eqCtx.arc(cx, cy, 2.0 + bass * 2.4, 0, Math.PI * 2);
+        eqCtx.fillStyle = "#FFFFFF";
         eqCtx.fill();
       } else {
-        // Harmonic DNA Matrix Dots
-        const cols = 10;
-        for (let i = 0; i < cols; i++) {
-          let spread = 0;
-          if (hasSound && freqData) {
-            const val = freqData[i * 2] / 255;
-            spread = val * (eh * 0.42);
+        // MODE 04: Quantum Matrix 16x5 LED Grid & Hot-Peak Sparks
+        const cols = 16;
+        const rows = 5;
+        const cellW = 3.5;
+        const cellH = 2.8;
+        for (let c = 0; c < cols; c++) {
+          const level = Math.round(((this.eqSmooth[c] - 1.5) / (eh - 2)) * rows);
+          const colColor = colors[c % colors.length];
+          for (let r = 0; r < rows; r++) {
+            const x = 2 + c * (cellW + 1.1);
+            const y = eh - (r + 1) * (cellH + 0.9);
+            if (r < level) {
+              eqCtx.fillStyle = r === level - 1 && level > 1 ? "#FFFFFF" : colColor;
+              eqCtx.fillRect(x, y, cellW, cellH);
+            } else {
+              eqCtx.fillStyle = "rgba(255, 255, 255, 0.12)";
+              eqCtx.fillRect(x, y, cellW, cellH);
+            }
           }
-          const x = 4 + i * 5.2;
-          eqCtx.fillStyle = "#69BD28";
-          eqCtx.beginPath();
-          eqCtx.arc(x, eh / 2 - spread, 1.7, 0, Math.PI * 2);
-          eqCtx.fill();
-          eqCtx.fillStyle = "#EC4899";
-          eqCtx.beginPath();
-          eqCtx.arc(x, eh / 2 + spread, 1.7, 0, Math.PI * 2);
-          eqCtx.fill();
         }
       }
     }
@@ -3434,12 +3970,12 @@ class AlchemyCraftProModal extends Modal {
     // 6-Tile Global Payment Hub (Promo/Key, @CryptoBot, Universal EVM, Bybit UID, Solana, TRON)
     const netGrid = contentEl.createDiv({ cls: "artcraft-net-bento-grid artcraft-net-grid-6" });
     const networks = [
-      { id: "promo", name: "Промокод / VIP Ключ", hint: "Активация по коду", icon: "🎟️", tag: "PROMO CODE" },
-      { id: "cryptobot", name: t("netCryptoBot", this.plugin), hint: t("netCryptoBotHint", this.plugin), icon: "✈️", tag: "1-CLICK TG" },
-      { id: "evm", name: t("netEvm", this.plugin), hint: t("netEvmHint", this.plugin), icon: "🌐", tag: "ALL EVM NETS" },
-      { id: "bybit", name: t("netBybit", this.plugin), hint: t("netBybitHint", this.plugin), icon: "🟡", tag: "0% FEE" },
-      { id: "solana", name: t("netSol", this.plugin), hint: t("netSolHint", this.plugin), icon: "🟣", tag: "SOLANA" },
-      { id: "trc20", name: t("netTrc", this.plugin), hint: t("netTrcHint", this.plugin), icon: "🟢", tag: "TRC-20" },
+      { id: "promo", name: t("netPromo", this.plugin), hint: t("netPromoHint", this.plugin), icon: SICRAFT_SVGS.diamond, tag: "PROMO CODE" },
+      { id: "cryptobot", name: t("netCryptoBot", this.plugin), hint: t("netCryptoBotHint", this.plugin), icon: SICRAFT_SVGS.bolt, tag: "1-CLICK TG" },
+      { id: "evm", name: t("netEvm", this.plugin), hint: t("netEvmHint", this.plugin), icon: SICRAFT_SVGS.globe, tag: "ALL EVM NETS" },
+      { id: "bybit", name: t("netBybit", this.plugin), hint: t("netBybitHint", this.plugin), icon: SICRAFT_SVGS.spark, tag: "0% FEE" },
+      { id: "solana", name: t("netSol", this.plugin), hint: t("netSolHint", this.plugin), icon: SICRAFT_SVGS.laser, tag: "SOLANA" },
+      { id: "trc20", name: t("netTrc", this.plugin), hint: t("netTrcHint", this.plugin), icon: SICRAFT_SVGS.check, tag: "TRC-20" },
     ];
 
     const cardBox = contentEl.createDiv({ cls: "artcraft-active-payment-card" });
@@ -3463,7 +3999,7 @@ class AlchemyCraftProModal extends Modal {
           </div>
         `;
       } else if (netId === "cryptobot") {
-        noteText = "✈️ Click below to generate an official Crypto Pay API Invoice (#A668773) with full product description ('SiCraft // Alchemy Craft Pro Pass — 1 Year') and automatic verification!";
+        noteText = "✈️ Click below to generate an official Crypto Pay API Invoice (#A668773) with full product description ('Alchemy Craft Pro Pass — 1 Year') and automatic verification!";
         customActionsHtml = `
           <div class="artcraft-pay-cta-row">
             <button class="artcraft-pay-action-btn is-blue" id="pro-create-api-invoice">✈️ Pay $4.99 via @CryptoBot (With Description)</button>
@@ -3700,7 +4236,7 @@ class AlchemyCraftProModal extends Modal {
     }
 
     // 2. Built-in Master Promo Codes (Instant offline activation)
-    // 1.5. Cryptographic SiCraft License Key Verification (Format: SICRAFT-XXXX-XXXX-XXXX-XXXX)
+    // 1.5. Cryptographic SiCraft License Key Verification (Format: ACPRO-XXXX-XXXX-XXXX-XXXX)
     if (isValidSiCraftLicenseKey(rawCode)) {
       new Notice("🔐 Cryptographic License Key Verified! Activating SiCraft Pro Pass...");
       return true;
@@ -3726,7 +4262,7 @@ class AlchemyCraftProModal extends Modal {
       }
     } catch (e) {}
 
-    const MASTER_PROMOS = ["STRATALCHEMY", "SICRAFT-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
+    const MASTER_PROMOS = ["STRATALCHEMY", "ACPRO-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
     if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
       new Notice("🎟️ Промокод успешно подтвержден! Активация Pro Pass...");
       return true;
@@ -3795,7 +4331,6 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     `;
     heroBanner.querySelector("#artcraft-check-rel-btn")?.addEventListener("click", () => {
       window.open("obsidian://show-plugin?id=artcraft-reader");
-      new Notice("🔄 Opening Alchemy Craft in Obsidian Community Plugins...");
     });
 
     // 1. 6-Language Global Selector
@@ -3804,12 +4339,12 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       .setDesc(t("langDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("en", "🇺🇸 English (Default)")
-          .addOption("ru", "🇷🇺 Русский")
-          .addOption("zh", "🇨🇳 中文 (Chinese)")
-          .addOption("ja", "🇯🇵 日本語 (Japanese)")
-          .addOption("es", "🇪🇸 Español")
-          .addOption("de", "🇩🇪 Deutsch")
+          .addOption("en", "EN — English")
+          .addOption("ru", "RU — Русский")
+          .addOption("zh", "ZH — 中文 (Chinese)")
+          .addOption("ja", "JA — 日本語 (Japanese)")
+          .addOption("es", "ES — Español")
+          .addOption("de", "DE — Deutsch")
           .setValue(this.plugin.settings.uiLanguage || "en")
           .onChange(async (val) => {
             this.plugin.settings.uiLanguage = val;
@@ -3823,7 +4358,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 2. Swiss Bento Theme Toggle
     new Setting(containerEl)
-      .setName("Swiss Bento UI Theme (#F4F3EF + #69BD28 Tables)")
+      .setName(t("themeName", this.plugin))
       .setDesc(t("uiTip", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.artcraftTheme).onChange(async (value) => {
@@ -3840,7 +4375,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       .setDesc(t("bentoGraphDesc", this.plugin))
       .addButton((btn) =>
         btn.setButtonText(t("graphColorizeBtn", this.plugin)).onClick(() => {
-          this.plugin.applyBentoGraphColorGroups();
+          this.plugin.applyBentoGraphColorGroups(false);
         })
       )
       .addToggle((toggle) =>
@@ -3852,10 +4387,10 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // 2.2 Task Progress Bar (Mobile Safe + Dismiss Button)
+    // 2.2 Task Progress Bar
     new Setting(containerEl)
-      .setName("📊 Sticky Task Progress Bar (Mobile Safe + ✕ Dismiss)")
-      .setDesc("Shows task completion % at the top of checklist notes with a tap-to-close '✕' button and 100% confetti.")
+      .setName(t("taskBarName", this.plugin))
+      .setDesc(t("taskBarDesc", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.showTaskProgress !== false).onChange(async (val) => {
           this.plugin.settings.showTaskProgress = val;
@@ -3866,8 +4401,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 2.3 Note Header Badge Tag
     new Setting(containerEl)
-      .setName("🏷️ Note Header Badge Text")
-      .setDesc("Editorial pill above the note title (e.g. 'STRATALCHEMY // KNOWLEDGE BRIEF'). Clear text to hide.")
+      .setName(t("headerBadgeName", this.plugin))
+      .setDesc(t("headerBadgeDesc", this.plugin))
       .addText((text) =>
         text
           .setPlaceholder("STRATALCHEMY // KNOWLEDGE BRIEF")
@@ -3889,33 +4424,27 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       .setDesc(t("ambientDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("off", "🔇 Off")
-          .addOption("brown", "🌊 Warm Brown Noise")
-          .addOption("rain", "🌧️ Soft Rain on Paper")
-          .addOption("gamma40", "🧠 40Hz Gamma Focus Drone")
+          .addOption("off", "Off")
+          .addOption("brown", t("ambientBrown", this.plugin))
+          .addOption("rain", t("ambientRain", this.plugin))
+          .addOption("gamma40", t("ambientGamma", this.plugin))
           .setValue(this.plugin.settings.ambientSound || "off")
           .onChange(async (val) => {
-            this.plugin.settings.ambientSound = val;
-            await this.plugin.saveSettings();
-            if (val === "off") {
-              this.plugin.stopAmbientSound();
-            } else if (this.plugin.timerRunning) {
-              this.plugin.startAmbientSound(val);
-            }
+            await this.plugin.setAmbientSound(val);
           })
       );
 
     // 4. Pomodoro Focus Duration
     new Setting(containerEl)
-      .setName("🍅 Default Pomodoro Duration (Minutes)")
-      .setDesc("Right-click the timer in the dock anytime for 15m, 25m, 45m, 60m, 90m, or custom duration.")
+      .setName(t("pomoDurName", this.plugin))
+      .setDesc(t("pomoDurDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("15", "15 min (Sprint Focus)")
-          .addOption("25", "25 min (Standard Pomodoro)")
-          .addOption("45", "45 min (Deep Work)")
-          .addOption("60", "60 min (Flow State)")
-          .addOption("90", "90 min (Ultradian Cycle)")
+          .addOption("15", "15 min")
+          .addOption("25", "25 min")
+          .addOption("45", "45 min")
+          .addOption("60", "60 min")
+          .addOption("90", "90 min")
           .setValue(String(this.plugin.settings.pomodoroMinutes || 25))
           .onChange(async (val) => {
             this.plugin.settings.pomodoroMinutes = parseInt(val, 10);
@@ -3926,7 +4455,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 5. AI Cleaner Toggle
     new Setting(containerEl)
-      .setName("✨ AI Watermark Cleaner Button in Dock")
+      .setName(t("aiCleanSetName", this.plugin))
       .setDesc(t("aiCleanTip", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.enableAiCleaner).onChange(async (val) => {
@@ -3938,10 +4467,10 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 5.1 Smart LED Cursor Lamp (2700K–6500K + Brightness + Room Dimmer)
     new Setting(containerEl)
-      .setName("🏮 Smart LED Cursor Lamp (2700K–6500K Kelvin, Brightness & Room Dimmer)")
-      .setDesc("Dims the surrounding screen like a dark study room while your cursor shines a warm 2700K–6500K LED spotlight or BenQ Lightbar over your text.")
+      .setName(t("lampSetName", this.plugin))
+      .setDesc(t("lampSetDesc", this.plugin))
       .addButton((btn) =>
-        btn.setButtonText("🎛️ Configure Lamp (Kelvin & Dimmer)").onClick(() => {
+        btn.setButtonText(t("lampConfigBtn", this.plugin)).onClick(() => {
           new SmartLedLampModal(this.app, this.plugin).open();
         })
       )
@@ -3956,13 +4485,13 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 5.15 Tactile Mechanical Keystroke Audio (ASMR Thock / Typewriter)
     new Setting(containerEl)
-      .setName("⌨️ Tactile Keystroke Sound (Mechanical Switch ASMR)")
-      .setDesc("Zero-latency WebAudio mechanical keyboard sound while typing notes (Deep Topre Thock or Vintage Swiss Typewriter).")
+      .setName(t("keySoundSetName", this.plugin))
+      .setDesc(t("keySoundSetDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("off", "🔇 Off")
-          .addOption("thock", "🎹 Deep Mechanical Thock")
-          .addOption("typewriter", "📠 Vintage Swiss Typewriter")
+          .addOption("off", "Off")
+          .addOption("thock", "Deep Mechanical Thock")
+          .addOption("typewriter", "Vintage Swiss Typewriter")
           .setValue(this.plugin.settings.tactileTypingSound || "off")
           .onChange(async (val) => {
             this.plugin.settings.tactileTypingSound = val;
@@ -3973,14 +4502,14 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 5.18 Live 4-Mode Sonic Equalizer & Desktop Audio Sync
     new Setting(containerEl)
-      .setName("🎚️ Live 4-Mode Sonic Equalizer (Desktop Audio & Soundscape Reactive)")
-      .setDesc("Reacts strictly to real audio (PC/System audio or built-in Rain/Brown Noise). Click the equalizer in the dock to switch between 4 animations: Spectrum Bars, Dual Liquid Wave, Radial Orb, and Harmonic DNA.")
+      .setName(t("eqSetName", this.plugin))
+      .setDesc(t("eqSetDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("bars", "01 // 14-Bar Spectrum")
-          .addOption("wave", "02 // Dual Liquid Sine Wave")
-          .addOption("orb", "03 // Radial Alchemy Orb")
-          .addOption("dna", "04 // Harmonic DNA Matrix")
+          .addOption("bars", t("audioModeBars", this.plugin))
+          .addOption("wave", t("audioModeWave", this.plugin))
+          .addOption("orb", t("audioModeOrb", this.plugin))
+          .addOption("dna", t("audioModeDna", this.plugin))
           .setValue(this.plugin.settings.eqMode || "bars")
           .onChange(async (val) => {
             this.plugin.settings.eqMode = val;
@@ -3988,7 +4517,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           })
       )
       .addButton((btn) =>
-        btn.setButtonText("🎙️ Sync PC Audio").onClick(() => {
+        btn.setButtonText(t("eqSyncBtn", this.plugin)).onClick(() => {
           this.plugin.toggleDesktopAudioCapture();
         })
       )
@@ -4002,8 +4531,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 5.2 Spotlight Focus Reading Dimmer
     new Setting(containerEl)
-      .setName("🔦 Spotlight Paragraph Focus Dimmer")
-      .setDesc("Gently dims inactive paragraphs to 45% opacity while keeping your hovered or active paragraph at 100% crisp contrast.")
+      .setName(t("spotlightSetName", this.plugin))
+      .setDesc(t("spotlightSetDesc", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(!!this.plugin.settings.spotlightFocus).onChange(async (val) => {
           this.plugin.settings.spotlightFocus = val;
@@ -4014,8 +4543,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     // 6. Numbered Badges & Sentence Focus
     new Setting(containerEl)
-      .setName("🔢 Square Number Badges (01–04) & Crypto/Money Capsules")
-      .setDesc("Transforms numbered lists, [01]–[04] markers, $ amounts, and 0x EVM addresses into Swiss capsules.")
+      .setName(t("numBadgeSetName", this.plugin))
+      .setDesc(t("numBadgeSetDesc", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.colorizeNumbers).onChange(async (value) => {
           this.plugin.settings.colorizeNumbers = value;
@@ -4024,7 +4553,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("🎯 Sentence Focus Highlighting")
+      .setName(t("sentFocusSetName", this.plugin))
       .setDesc(t("focusTip", this.plugin))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.sentenceFocus).onChange(async (value) => {
@@ -4035,7 +4564,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // --- 📊 FOCUS ANALYTICS BENTO SCORECARD ---
+    // --- FOCUS ANALYTICS BENTO SCORECARD ---
     const fa = this.plugin.settings.focusAnalytics || { completedSprints: 0, totalFocusMinutes: 0, tasksCompleted100: 0, currentStreak: 0 };
     const analyticsCard = containerEl.createDiv({ cls: "artcraft-analytics-bento-card" });
     analyticsCard.innerHTML = `
@@ -4043,25 +4572,25 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       <div class="artcraft-analytics-grid">
         <div class="artcraft-stat-box">
           <span class="stat-val">${fa.completedSprints || 0}</span>
-          <span class="stat-lbl">🍅 Sprints</span>
+          <span class="stat-lbl">${t("statSprints", this.plugin)}</span>
         </div>
         <div class="artcraft-stat-box">
           <span class="stat-val">${fa.totalFocusMinutes || 0}m</span>
-          <span class="stat-lbl">⏱ Deep Work</span>
+          <span class="stat-lbl">${t("statDeepWork", this.plugin)}</span>
         </div>
         <div class="artcraft-stat-box">
           <span class="stat-val">${fa.tasksCompleted100 || 0}</span>
-          <span class="stat-lbl">✅ 100% Checklists</span>
+          <span class="stat-lbl">${t("statChecklists", this.plugin)}</span>
         </div>
         <div class="artcraft-stat-box">
-          <span class="stat-val">${fa.currentStreak || 0}🔥</span>
-          <span class="stat-lbl">Day Streak</span>
+          <span class="stat-val">${fa.currentStreak || 0}</span>
+          <span class="stat-lbl">${t("statStreak", this.plugin)}</span>
         </div>
       </div>
     `;
 
-    // --- 💎 PRO SECTION (WITH HOLOGRAPHIC SHIMMER, PROMO/KEY, CRYPTOBOT & UNIVERSAL EVM) ---
-    containerEl.createEl("h3", { text: "💎 Alchemy Craft Pro" });
+    // --- PRO SECTION ---
+    containerEl.createEl("h3", { text: "Alchemy Craft Pro" });
 
     if (this.plugin.settings.isPro) {
       const activeCard = containerEl.createDiv({ cls: "artcraft-pro-active-box" });
@@ -4073,7 +4602,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           <span class="pro-tag">${t("proActiveTitle", this.plugin)}</span>
           <strong>${t("proExpiresOn", this.plugin)} ${expDate}</strong>
         </div>
-        <div class="pro-tx">TXID / Order ID: <code>${this.plugin.settings.proTxHash || "Verified"}</code></div>
+        <div class="pro-tx">License / TXID: <code>${this.plugin.settings.proTxHash || "Verified"}</code></div>
       `;
 
       new Setting(containerEl)
@@ -4112,32 +4641,32 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       };
     }
 
-    // --- ⭐ GLOBAL SUPPORT & CHECKOUT (NO BOOSTY! REPLACED WITH PROMO/KEY, @CRYPTOBOT, TELEGRAM, GITHUB) ---
-    containerEl.createEl("h3", { text: "⭐ Global Checkout, Card Support & Community" });
+    // --- GLOBAL SUPPORT & CHECKOUT ---
+    containerEl.createEl("h3", { text: t("supportHeading", this.plugin) });
 
     const supportSetting = new Setting(containerEl)
-      .setName("💳 Global Payment & Direct Author Contact")
-      .setDesc("Pay by Bank Card (USA/EU/World via @CryptoBot or Direct 0% EVM), 1-Click @CryptoBot, or Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20).")
+      .setName(t("supportSetName", this.plugin))
+      .setDesc(t("supportSetDesc", this.plugin))
       .addButton((btn) => {
         btn
-          .setButtonText("🌐 0% Fee EVM / Bybit UID")
+          .setButtonText("0% Fee EVM / Bybit UID")
           .setCta()
           .onClick(() => {
             new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
           });
       })
       .addButton((btn) => {
-        btn.setButtonText("✈️ @CryptoBot (USDT/TON)").onClick(() => {
+        btn.setButtonText("@CryptoBot (USDT/TON)").onClick(() => {
           new AlchemyCraftProModal(this.app, this.plugin, "cryptobot").open();
         });
       })
       .addButton((btn) => {
-        btn.setButtonText("💬 Telegram (@StratAlchemy)").onClick(() => {
+        btn.setButtonText("Telegram (@StratAlchemy)").onClick(() => {
           window.open("https://t.me/StratAlchemy", "_blank");
         });
       })
       .addButton((btn) => {
-        btn.setButtonText("🌟 GitHub Star").onClick(() => {
+        btn.setButtonText("GitHub Star").onClick(() => {
           window.open("https://github.com/elyazaliverdiyev/alchemy-craft", "_blank");
         });
       });

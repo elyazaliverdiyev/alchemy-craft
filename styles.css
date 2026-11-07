@@ -1642,9 +1642,8 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
   top: 50% !important;
   bottom: auto !important;
   transform: translateY(-50%) !important;
-  max-width: 52px !important;
-  width: 52px !important;
-  max-height: calc(100vh - 80px) !important;
+  max-width: 142px !important;
+  width: 142px !important;
   max-height: calc(100dvh - 80px) !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -1718,9 +1717,8 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
     top: 50% !important;
     bottom: auto !important;
     transform: translateY(-50%) !important;
-    max-width: 48px !important;
-    width: 48px !important;
-    max-height: calc(100vh - 120px) !important;
+    max-width: 136px !important;
+    width: 136px !important;
     max-height: calc(100dvh - 120px) !important;
     padding: 6px 4px !important;
   }
@@ -1800,7 +1798,34 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
   border-color: #D5D3CC;
 }
 
-/* Deprecated 68px rule removed in favor of authoritative 142px 2-column Swiss Bento Dock */
+/* Fix Vertical Dock Pillar so text/buttons never clip or overflow */
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  max-width: 68px !important;
+  width: 68px !important;
+  padding: 8px 6px !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 54px !important;
+  padding: 5px 4px !important;
+  font-size: 10px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill {
+  width: 54px !important;
+  padding: 4px 3px !important;
+  font-size: 9.5px !important;
+  white-space: nowrap !important;
+}
 
 /* ==========================================================================
    10. SWISS BENTO GRAPH STUDIO (OBSIDIAN GRAPH VIEW ENHANCEMENTS & HUD)
@@ -2414,8 +2439,8 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
   top: 50% !important;
   bottom: auto !important;
   transform: translateY(-50%) !important;
-  width: 142px !important;
-  max-width: 142px !important;
+  width: 112px !important;
+  max-width: 112px !important;
   max-height: none !important;
   overflow: visible !important;
   padding: 10px 8px !important;
@@ -2457,18 +2482,11 @@ body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-d
 body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
   width: 100% !important;
   min-width: 0 !important;
-  padding: 6px 5px !important;
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  white-space: nowrap !important;
+  padding: 5px 3px !important;
+  font-size: 9.5px !important;
   justify-content: center !important;
-  gap: 4px !important;
+  gap: 3px !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn.is-full-row {
-  grid-column: span 2 !important;
 }
 
 /* ==========================================================================
@@ -2598,27 +2616,42 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn.i
 
 
 /* ==========================================================================
-   SETTINGS TAB OVERFLOW PROTECTION & FULL-WIDTH CARDS
+   ALCHEMY CRAFT v4.3.0 — 142PX 2-COLUMN VERTICAL DOCK, SVG ICON SYSTEM,
+   FULL-WIDTH SETTINGS PROTECTION & DYNAMIC GRAPH STUDIO
    ========================================================================== */
+.sicraft-svg-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.artcraft-dock-btn:hover .sicraft-svg-icon,
+.artcraft-timer-pill:hover .sicraft-svg-icon {
+  transform: scale(1.12);
+}
+
+/* Full-width protection for Settings cards inside narrow modals */
 .artcraft-settings-full-width {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 12px !important;
-  padding: 14px 16px !important;
-  background: #F9F8F6 !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 10px !important;
-  box-shadow: 0 3px 0 #111111 !important;
-  margin-top: 14px !important;
+  width: 100% !important;
   max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.artcraft-settings-full-width * {
   box-sizing: border-box !important;
 }
 
 .artcraft-settings-full-width .setting-item-info {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin-bottom: 6px !important;
+  min-width: 180px !important;
+  flex: 1 1 220px !important;
 }
 
 .artcraft-settings-full-width .setting-item-control {
@@ -2628,28 +2661,66 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn.i
   gap: 8px !important;
   width: 100% !important;
   max-width: 100% !important;
-  box-sizing: border-box !important;
 }
 
 .artcraft-settings-full-width .setting-item-control button {
-  margin: 0 !important;
-  white-space: nowrap !important;
-  font-size: 11.5px !important;
-  padding: 6px 12px !important;
-  font-weight: 700 !important;
-}
-
-.vertical-tab-content .setting-item {
-  box-sizing: border-box !important;
   max-width: 100% !important;
+  white-space: normal !important;
+  height: auto !important;
+  min-height: 32px !important;
+  padding: 6px 12px !important;
+  line-height: 1.25 !important;
 }
 
-.vertical-tab-content .setting-item-control {
-  flex-wrap: wrap !important;
-  gap: 6px !important;
+/* Tactile Spring Physics & Tabular Nums for Floating Dock */
+.artcraft-timer-pill {
+  font-variant-numeric: tabular-nums !important;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-.vertical-tab-content .setting-item-description {
-  overflow-wrap: break-word !important;
-  word-break: break-word !important;
+.artcraft-dock-btn {
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.16s ease, box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.artcraft-dock-btn:active,
+.artcraft-timer-pill:active {
+  transform: translateY(1px) scale(0.96) !important;
+}
+
+/* Upgraded 142px 2-Column Vertical Dock (v4.3.0) */
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  width: 142px !important;
+  max-width: 142px !important;
+  padding: 10px 8px !important;
+  border-radius: 14px !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 6px 5px !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn.is-full-row,
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap,
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pill {
+  grid-column: span 2 !important;
+  width: 100% !important;
+}
+
+.artcraft-dock-eq-canvas {
+  width: 76px !important;
+  height: 22px !important;
+  display: block;
 }
