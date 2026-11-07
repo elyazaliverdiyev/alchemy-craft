@@ -2908,69 +2908,175 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 /* ==========================================================================
-   10. SONIC & AMBIENT STUDIO MODAL (PLAYER, SEEK BAR, 6 MODES, 12 iOS SOUNDS)
+   10. SONIC & AMBIENT STUDIO MODAL (PLAYER, SEEK BAR, 6 CRAFT MODES, 12 SOUNDS)
    ========================================================================== */
+.svg-inline-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.svg-inline-icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.artcraft-reading-stats-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #6B665E;
+  background: #F4F1EA;
+  border: 1px solid #E2DDD2;
+  padding: 2px 9px;
+  border-radius: 999px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.artcraft-reading-stats-pill svg {
+  width: 12px;
+  height: 12px;
+  color: #8C5828;
+}
+
 .artcraft-sonic-modal-root {
   padding: 6px 4px !important;
-  max-width: 580px;
+  max-width: 620px !important;
 }
 
-.artcraft-sonic-header {
-  margin-bottom: 14px;
+.sonic-studio-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.artcraft-sonic-badge {
-  display: inline-block;
+.sonic-studio-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #EAE7DF;
+}
+
+.sonic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: "JetBrains Mono", monospace;
   font-size: 9.5px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.06em;
-  background: #111111;
-  color: #FFFFFF;
-  padding: 3px 8px;
-  border-radius: 5px;
-  margin-bottom: 6px;
+  color: #78756E;
+  background: #F4F2EC;
+  border: 1px solid #E5E2D9;
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-bottom: 5px;
 }
 
-.artcraft-sonic-title {
-  margin: 0 0 4px 0 !important;
-  font-size: 19px !important;
-  font-weight: 800 !important;
-  color: #111111;
-}
-
-.artcraft-sonic-sub {
+.sonic-title {
   margin: 0 !important;
-  font-size: 12.5px !important;
-  color: #6B7280;
-  line-height: 1.45;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #1F2937 !important;
+  letter-spacing: -0.01em;
 }
 
-.artcraft-sonic-player-card {
-  background: #F9F8F5;
-  border: 1.5px solid #E5E3DC;
+.sonic-stop-all-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: #FEF2F2 !important;
+  color: #B91C1C !important;
+  border: 1px solid #FECACA !important;
+  border-radius: 8px !important;
+  padding: 6px 11px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: all 0.14s ease !important;
+}
+
+.sonic-stop-all-btn:hover {
+  background: #FEE2E2 !important;
+  border-color: #F87171 !important;
+}
+
+.sonic-card {
+  background: #FAF9F5;
+  border: 1px solid #E6E3DA;
   border-radius: 12px;
   padding: 12px 14px;
-  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.sonic-player-top {
+.sonic-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sonic-sec-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #78756E;
+}
+
+.sonic-vol-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: #6B7280;
+}
+
+.sonic-vol-row strong {
+  font-family: "JetBrains Mono", monospace;
+  color: #1F2937;
+  min-width: 34px;
+}
+
+.sonic-vol-slider {
+  width: 110px;
+  accent-color: #69BD28;
+  cursor: pointer;
+}
+
+.sonic-player-bar {
   display: flex;
   align-items: center;
   gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E6E3DA;
+  border-radius: 10px;
+  padding: 8px 10px;
 }
 
 .sonic-play-btn {
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 10px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 9px !important;
   background: #69BD28 !important;
   color: #FFFFFF !important;
-  border: 1.5px solid #111111 !important;
-  box-shadow: 0 2px 0 #111111 !important;
+  border: 1.5px solid #1F2937 !important;
+  box-shadow: 0 2px 0 #1F2937 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -2985,215 +3091,214 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 .sonic-track-meta {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .sonic-track-title {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
-  color: #111111;
+  color: #1F2937;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.sonic-track-time {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  color: #6B7280;
-  margin-top: 2px;
-}
-
-.sonic-load-btn {
-  background: #FFFFFF !important;
-  color: #111111 !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 8px !important;
-  padding: 6px 10px !important;
-  font-size: 11.5px !important;
-  font-weight: 700 !important;
-  box-shadow: 0 2px 0 #111111 !important;
-  cursor: pointer !important;
-}
-
-.sonic-seek-row,
-.sonic-vol-row {
+.sonic-seek-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.sonic-seek-slider,
-.sonic-vol-slider {
+.sonic-time-lbl {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: #8A867E;
+  min-width: 32px;
+}
+
+.sonic-seek-slider {
   flex: 1;
   accent-color: #69BD28;
   cursor: pointer;
 }
 
-.sonic-vol-label {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #4B5563;
-  min-width: 90px;
-}
-
-.sonic-vol-val {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  color: #111111;
-  min-width: 36px;
-  text-align: right;
-}
-
-.artcraft-sonic-source-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-
-.sonic-src-btn {
-  flex: 1;
-  min-width: 140px;
-  background: #FFFFFF !important;
+.sonic-load-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: #FAF9F5 !important;
   color: #1F2937 !important;
-  border: 1.5px solid #D1D5DB !important;
+  border: 1px solid #D5D1C5 !important;
   border-radius: 8px !important;
-  padding: 7px 10px !important;
+  padding: 6px 10px !important;
   font-size: 11.5px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.sonic-load-btn:hover {
+  background: #FFFFFF !important;
+  border-color: #1F2937 !important;
+}
+
+.sonic-source-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sonic-src-pill {
+  flex: 1;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  background: #FFFFFF !important;
+  color: #4B5563 !important;
+  border: 1px solid #E2DFD5 !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
   transition: all 0.14s ease !important;
 }
 
-.sonic-src-btn:hover {
-  border-color: #111111 !important;
-  background: #F9FAFB !important;
+.sonic-src-pill:hover {
+  border-color: #9CA3AF !important;
+  color: #1F2937 !important;
 }
 
-.sonic-src-btn.is-active {
+.sonic-src-pill.is-active {
   background: #ECFDF5 !important;
   border-color: #10B981 !important;
   color: #065F46 !important;
   font-weight: 700 !important;
 }
 
-.sonic-src-btn.is-stop {
-  flex: 0 0 auto;
-  min-width: 80px;
-  color: #DC2626 !important;
-}
-
-.artcraft-sonic-sec-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #6B7280;
-  margin: 10px 0 8px 0;
-}
-
-.artcraft-sonic-modes-grid {
+.sonic-eq-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 7px;
-  margin-bottom: 12px;
 }
 
-.sonic-mode-tile {
+.sonic-eq-btn {
   display: flex !important;
   align-items: center !important;
   gap: 7px !important;
   background: #FFFFFF !important;
-  border: 1.5px solid #E5E7EB !important;
+  border: 1px solid #E2DFD5 !important;
   border-radius: 8px !important;
   padding: 8px 10px !important;
   font-size: 11.5px !important;
   font-weight: 600 !important;
-  color: #374151 !important;
+  color: #4B5563 !important;
   cursor: pointer !important;
   text-align: left !important;
+  box-shadow: none !important;
+  transition: all 0.14s ease !important;
 }
 
-.sonic-mode-tile:hover {
+.sonic-eq-btn:hover {
   border-color: #9CA3AF !important;
+  color: #1F2937 !important;
 }
 
-.sonic-mode-tile.is-selected {
-  background: #111111 !important;
+.sonic-eq-btn.is-active {
+  background: #1F2937 !important;
   color: #FFFFFF !important;
-  border-color: #111111 !important;
+  border-color: #1F2937 !important;
+  font-weight: 700 !important;
 }
 
-.sonic-mode-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.artcraft-sonic-sounds-grid {
+.sonic-ambient-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 7px;
 }
 
-.sonic-sound-tile {
+.sonic-amb-tile {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
-  background: #F9F8F5 !important;
-  border: 1.5px solid #E5E3DC !important;
+  background: #FFFFFF !important;
+  border: 1px solid #E5E2D9 !important;
   border-radius: 9px !important;
-  padding: 8px 9px !important;
+  padding: 8px 10px !important;
   cursor: pointer !important;
   text-align: left !important;
+  box-shadow: none !important;
+  height: auto !important;
   transition: all 0.14s ease !important;
 }
 
-.sonic-sound-tile:hover {
-  border-color: #9CA3AF !important;
-  background: #FFFFFF !important;
+.sonic-amb-tile:hover {
+  border-color: #B8B3A6 !important;
+  background: #FDFCFA !important;
 }
 
-.sonic-sound-tile.is-selected {
+.sonic-amb-tile.is-active {
   background: #ECFDF5 !important;
   border-color: #10B981 !important;
-  box-shadow: 0 2px 0 #10B981 !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12) !important;
 }
 
-.sonic-sound-emoji {
-  font-size: 15px;
+.amb-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #F4F2EC;
+  color: #57534E;
   flex-shrink: 0;
 }
 
-.sonic-sound-info {
+.sonic-amb-tile.is-active .amb-icon {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.amb-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.amb-txt {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  line-height: 1.25;
 }
 
-.sonic-sound-info strong {
+.amb-txt strong {
   font-size: 11.5px;
   font-weight: 700;
-  color: #111111;
+  color: #1F2937;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.sonic-sound-info span {
-  font-size: 9.5px;
-  color: #6B7280;
+.amb-txt small {
+  font-size: 10px;
+  color: #8A867E;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 1px;
 }
 
 /* ==========================================================================
-   11. SOFT, CALM, ZERO-CLUTTER KO-FI / ZSOLT-INSPIRED PRO & PROMO MODAL
+   11. SOFT, CALM, ZERO-CLUTTER CAPPUCCINO CRAFT PRO & PROMO MODAL
    ========================================================================== */
 .artcraft-pro-modal-root {
-  max-width: 620px !important;
+  max-width: 630px !important;
   padding: 6px 4px !important;
 }
 
@@ -3204,15 +3309,17 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .artcraft-soft-pro-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: "JetBrains Mono", monospace;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #4B5563;
-  background: #F3F2EE;
-  border: 1px solid #E5E3DC;
-  padding: 3px 10px;
+  color: #6B5744;
+  background: #F6F2EC;
+  border: 1px solid #E5DEC9;
+  padding: 4px 11px;
   border-radius: 999px;
   margin-bottom: 8px;
 }
@@ -3227,7 +3334,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .artcraft-soft-pro-sub {
   margin: 0 auto !important;
-  max-width: 520px;
+  max-width: 530px;
   font-size: 12.5px !important;
   line-height: 1.5 !important;
   color: #78756E !important;
@@ -3247,6 +3354,10 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .artcraft-ko-tab {
   flex: 1;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -3270,7 +3381,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* 3 Illustrated Ko-fi / Zsolt Tier Cards */
+/* 3 Illustrated Cappuccino Craft Tier Cards */
 .artcraft-ko-tier-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -3280,10 +3391,10 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .artcraft-ko-tier-card {
   position: relative;
-  background: #FAF9F6;
-  border: 1.5px solid #E6E4DD;
+  background: #FAF9F5;
+  border: 1.5px solid #E6E2D8;
   border-radius: 12px;
-  padding: 12px 10px;
+  padding: 14px 10px 12px 10px;
   text-align: center;
   cursor: pointer;
   transition: all 0.16s ease;
@@ -3293,7 +3404,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .artcraft-ko-tier-card:hover {
-  border-color: #C7C4B8;
+  border-color: #C7BFB0;
   background: #FFFFFF;
   transform: translateY(-1px);
 }
@@ -3306,30 +3417,38 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .ko-tier-popular {
   position: absolute;
-  top: -8px;
+  top: -9px;
   right: 10px;
   background: #69BD28;
   color: #FFFFFF;
   font-size: 9px;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 999px;
   letter-spacing: 0.04em;
 }
 
 .ko-tier-art {
-  height: 44px;
+  width: 100%;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.ko-tier-art svg {
+  width: 124px !important;
+  height: 62px !important;
+  display: block !important;
+  overflow: visible;
 }
 
 .ko-tier-name {
   font-size: 13px;
   font-weight: 800;
   color: #1F2937;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .ko-tier-price {
@@ -3342,7 +3461,7 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 .ko-tier-desc {
   margin: 0 !important;
   font-size: 11px !important;
-  line-height: 1.4 !important;
+  line-height: 1.42 !important;
   color: #78756E !important;
 }
 
@@ -3362,6 +3481,9 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .artcraft-soft-method-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
   background: #FAF9F6 !important;
   border: 1px solid #E5E3DC !important;
   border-radius: 8px !important;
@@ -3418,6 +3540,9 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .soft-amount-copy-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
   background: #ECFDF5 !important;
   color: #065F46 !important;
   border: 1px solid #A7F3D0 !important;
@@ -3433,6 +3558,13 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   font-size: 11.5px;
   line-height: 1.45;
   color: #8A867E;
+}
+
+.artcraft-pay-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
 }
 
 .artcraft-pay-action-btn.is-soft {
@@ -3462,6 +3594,9 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .soft-verify-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12.5px;
   font-weight: 700;
   color: #374151;
@@ -3515,6 +3650,9 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .soft-tg-link-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
   background: #FFFFFF !important;
   color: #2563EB !important;
   border: 1px solid #BFDBFE !important;
@@ -3528,6 +3666,13 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 
 .soft-tg-link-btn:hover {
   background: #EFF6FF !important;
+}
+
+.artcraft-open-modal-btn,
+.artcraft-open-promo-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
 }
 
 .artcraft-open-promo-btn {
@@ -3546,15 +3691,123 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   background: #FFFFFF !important;
 }
 
+/* ==========================================================================
+   12. CALM, STRUCTURED SWISS BENTO SETTINGS TAB HIERARCHY
+   ========================================================================== */
+.artcraft-calm-settings-root .artcraft-settings-group-card {
+  background: #FAF9F5;
+  border: 1px solid #E5E2D9;
+  border-radius: 14px;
+  padding: 14px 18px 6px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-head {
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #EAE7DF;
+}
+
+.artcraft-calm-settings-root .settings-group-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.artcraft-calm-settings-root .settings-group-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  color: #6B5744;
+  background: #EFECE4;
+  border: 1px solid #DFD9CA;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.artcraft-calm-settings-root .settings-group-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4B5563;
+}
+
+.artcraft-calm-settings-root .settings-group-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.artcraft-calm-settings-root .settings-group-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #1F2937;
+  letter-spacing: -0.01em;
+}
+
+.artcraft-calm-settings-root .settings-group-sub {
+  font-size: 11.5px;
+  color: #8A867E;
+  line-height: 1.4;
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-items .setting-item {
+  border-top: 1px solid #EFECE6 !important;
+  padding: 11px 0 !important;
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-items .setting-item:first-child {
+  border-top: none !important;
+}
+
+/* Primary Setting Name: Crisp, High-Readability Dark Ink */
+.artcraft-calm-settings-root .setting-item-name {
+  font-size: 13.2px !important;
+  font-weight: 700 !important;
+  color: #1F2937 !important;
+  margin-bottom: 2px !important;
+}
+
+/* Secondary Setting Description: Soft, Calm, Smaller Muted Grey */
+.artcraft-calm-settings-root .setting-item-description {
+  font-size: 11.5px !important;
+  line-height: 1.45 !important;
+  color: #7E7A72 !important;
+  font-weight: 400 !important;
+  max-width: 580px;
+}
+
+body.theme-dark .artcraft-calm-settings-root .artcraft-settings-group-card,
+body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-group-card {
+  background: #181A1E;
+  border-color: #2A2E37;
+}
+
+body.theme-dark .artcraft-calm-settings-root .settings-group-title,
+body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-title,
+body.theme-dark .artcraft-calm-settings-root .setting-item-name,
+body.artcraft-dark-craft .artcraft-calm-settings-root .setting-item-name {
+  color: #F3F4F6 !important;
+}
+
+body.theme-dark .artcraft-calm-settings-root .setting-item-description,
+body.artcraft-dark-craft .artcraft-calm-settings-root .setting-item-description,
+body.theme-dark .artcraft-calm-settings-root .settings-group-sub,
+body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-sub {
+  color: #9CA3AF !important;
+}
+
 @media (max-width: 640px) {
   .artcraft-ko-tier-grid,
-  .artcraft-sonic-modes-grid,
-  .artcraft-sonic-sounds-grid {
+  .sonic-eq-grid,
+  .sonic-ambient-grid {
     grid-template-columns: 1fr !important;
   }
   .soft-verify-row {
     flex-direction: column;
   }
 }
+
 
 

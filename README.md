@@ -1,4 +1,4 @@
-# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.2)
+# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.3)
 
 > **A warm, tactile Swiss Bento reading, focus, presentation, and visual studio plugin.**
 
@@ -7,23 +7,23 @@
 
 ---
 
-## ✨ What's New in v4.3.2
+## What's New in v4.3.3
 
-- **🎛️ Sonic & Ambient Studio Modal:** Interactive audio control center with Play/Pause, Track Title, Interactive Seek/Scrub Bar, Master Volume Slider (`0%–100%`), and direct audio file loading.
-- **🎧 12 iOS-Inspired Background Soundscapes:** Procedural WebAudio ambient generators with zero audio assets needed — Balanced Noise, Bright Noise, Dark Noise, Ocean Waves, Rain, Rain on Roof, Mountain Stream, Quiet Night, Fireplace / Wood Crackle, Night Train, Cozy Cafe, and 40Hz Gamma Focus.
-- **🌊 6 Living Equalizer Visual Modes (Added 2 New Craft Modes):**
-  1. `01 // Peak-Hold Neon Spectrum` — 16 neon gradient bars with floating gravity caps and specular mirror reflection.
-  2. `02 // Cyber Liquid Spline Ribbon` — 3-layer harmonic Bezier ribbons with glowing sub-bass fill.
-  3. `03 // Supernova Polar Sunburst` — 24 radial frequency spikes orbiting a reactive bass shockwave core.
-  4. `04 // Quantum Matrix Rain` — Mirrored digital frequency rain with glowing spark heads.
-  5. `05 // Craft Ink Seismograph` — 4-layer warm paper & fountain-pen wave ridges with tapered edges.
+- **Sonic & Ambient Studio (Swiss Bento Layout + PC Audio Loopback Fix):** Fixed Windows WASAPI Desktop Audio loopback capture (`chromeMediaSource: "desktop"` with dedicated audio carrier stream), fixed right-click modal stacking, and styled the entire studio with 100% vector SVG icons (`SICRAFT_SVGS`).
+- **6 Craft Equalizer Visual Modes (Default: Craft Ink Seismograph):**
+  1. `01 // Craft Ink Seismograph` — 4-layer warm paper & fountain-pen wave ridges with tapered edges.
+  2. `02 // Quantum Matrix` — Mirrored digital frequency rain with glowing spark heads.
+  3. `03 // Craft Risograph Stamps` — Warm cappuccino, espresso, and matcha stamped blocks with cream caps.
+  4. `04 // Liquid Silk Ribbon` — 3-layer harmonic Bezier ribbons with glowing sub-bass fill.
+  5. `05 // Supernova Polar Orb` — 24 radial frequency spikes orbiting a reactive bass shockwave core.
   6. `06 // Alchemy Ferrofluid Orbs` — Organic magnetic liquid droplets dancing to bass and harmonic frequencies.
-- **☕ Soft Ko-fi / Zsolt-Inspired Support Modal & Dedicated Promo View:** Calm, distraction-free checkout with 3 illustrated tiers (Bronze Elixir $4.99/yr, Silver Crucible $9.99 Lifetime, Gold Philosopher $19 Patron) and a dedicated zero-clutter Promo Code / VIP Key view.
-- **🌐 Default OS Browser & Telegram Desktop Navigation:** All external links now open via `electron.shell.openExternal` in the user's default browser or desktop apps, bypassing the internal webviewer.
-- **📏 Reading Ruler Mode for Smart LED Lamp:** Added a 3rd GPU-accelerated horizontal reading ruler beam to maintain reading line focus without fatigue.
-- **⚡ 144 FPS Hardware-Accelerated GPU Lamp:** The 2700K–6500K Smart LED Cursor Lamp runs on a hardware-accelerated GPU layer with 0% CPU consumption and zero lag.
-- **🕸️ Dynamic Swiss Bento Graph Studio:** Auto-distributes vault folders across Swiss Bento palette colors, renders neural laser pulses, and toggles orphan nodes.
-- **🌍 Complete 6-Language Localization (`EN`, `RU`, `ZH`, `JA`, `ES`, `DE`):** Full-interface translation across settings, dock, modals, and Graph HUD.
+- **Cappuccino Craft Support Tiers & Vector Illustrations:** Warm, emotion-evoking SVG illustrations (`124x62px`) for **Warm Cappuccino** (`$4.99/yr`), **Double Cappuccino & Chemex** (`$9.99 Lifetime`), and **Alchemist Coffee Roastery** (`$19 Patron + 3 Keys`), plus a dedicated zero-clutter Promo Code / VIP Key tab.
+- **4 New Productivity & Craft Features:**
+  - **Live Reading Time & Word Count Capsule** (`~3 min read • 640 words`) alongside the Task Progress Bar in the note header.
+  - **Pomodoro Audio Link (`Auto-Fade on Break`)**: Smoothly fades down ambient soundscapes or music during 5-minute breaks and restores volume when a new focus sprint begins.
+  - **Mouse-Wheel Volume Scroll** directly on the Equalizer pill in the floating dock (`0%–100%`).
+  - **1-Click Graph PNG Snapshot (`Snap PNG`)** button in the Graph View HUD that exports a high-DPI PNG card with a Swiss Bento watermark.
+- **Calm, Grouped Settings Hierarchy:** Settings are organized into 4 structured Swiss Bento cards with crisp primary labels and soft, muted grey descriptions (`#7E7A72`).
 
 ---
 
