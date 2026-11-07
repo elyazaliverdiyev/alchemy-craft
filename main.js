@@ -28,7 +28,8 @@ const DEFAULT_SETTINGS = {
   lampShape: "radial", // "radial" (Spotlight) | "deskbar" (BenQ Monitor Bar)
   lampMode: "kelvin", // "kelvin" | "color"
   lampCustomColor: "#F59E0B",
-  tactileTypingSound: "off", // "off" | "thock" | "typewriter"
+  tactileTypingSound: "off", // "off" | "creamy_pom" | "thock" | "matcha_lubed" | "raindrop_wood" | "velvet_felt" | "paper_brush"
+  audioInputDeviceId: "auto", // "auto" | deviceId of a chosen audio input / loopback device
   showEqualizer: true,
   eqMode: "craft", // "bars" (Risograph) | "wave" (Ink Ribbon) | "orb" (Compass) | "dna" (Quantum Matrix) | "craft" (Craft Ink) | "ferro" (Espresso Ferro)
   audioVolume: 75, // 0..100%
@@ -123,7 +124,10 @@ const SICRAFT_SVGS = {
   zap: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   bookmark: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>`,
   stamp: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/></svg>`,
-  columns: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>`
+  columns: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>`,
+  edit: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
+  eqOrigami: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17l4-6 4 4 4-9 4 7 4-3"/><path d="M2 21l4-3 4 2 4-4 4 3 4-2" opacity="0.6"/></svg>`,
+  eqStrings: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c4-4 6 4 10 0s6-4 10 0"/><path d="M2 12c4 4 6-4 10 0s6 4 10 0"/><path d="M2 18c4-4 6 4 10 0s6-4 10 0" opacity="0.6"/></svg>`
 };
 
 // Always open external URLs in the user's default OS browser (Chrome/Safari/Edge/Telegram Desktop), bypassing Obsidian's internal Web Viewer!
@@ -329,7 +333,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Focus Radar",
     graphColorizeBtn: "Colorize My Vault",
     graphOrphansBtn: "Hide Orphans",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.1)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
     checkUpdatesBtn: "Check Updates",
     langName: "Interface Language (6 Global Languages)",
     langDesc: "Instantly translates all settings, floating dock buttons, Graph HUD, and modals.",
@@ -348,10 +352,10 @@ const TRANSLATIONS = {
     lampSetName: "Smart LED Cursor Lamp (2700K–6500K Kelvin & Room Dimmer)",
     lampSetDesc: "Dims the surrounding workspace while your cursor shines a warm 2700K–6500K LED spotlight over your notes.",
     lampConfigBtn: "Configure Lamp",
-    keySoundSetName: "Tactile Keystroke Sound (Mechanical Switch ASMR)",
-    keySoundSetDesc: "Zero-latency WebAudio mechanical keyboard sound while typing (Deep Topre Thock or Vintage Swiss Typewriter).",
-    eqSetName: "Live 4-Mode Sonic Equalizer (Desktop Audio Sync)",
-    eqSetDesc: "Syncs directly with desktop music (Telegram, YouTube, Spotify) or built-in soundscapes with 4 complex visualizers.",
+    keySoundSetName: "Tactile Keystroke Sound (Creamy & Soft)",
+    keySoundSetDesc: "Zero-latency WebAudio typing sound — six creamy, soft low-pass tuned profiles (POM Linear, PBT Thock, Matcha Silent, Walnut Raindrop, Piano Felt, Fountain Pen).",
+    eqSetName: "Craft 6-Mode Sonic Equalizer",
+    eqSetDesc: "Animated dock equalizer that reacts to desktop audio, a selected audio device, or the built-in ambient soundscapes.",
     eqSyncBtn: "Sync Desktop Audio",
     spotlightSetName: "Spotlight Paragraph Focus Dimmer",
     spotlightSetDesc: "Gently dims inactive paragraphs to 42% opacity while keeping your active paragraph at 100% contrast.",
@@ -480,7 +484,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Фокус Радар",
     graphColorizeBtn: "Раскрасить мои папки",
     graphOrphansBtn: "Без одиночек",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.1)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
     checkUpdatesBtn: "Проверить обновления",
     langName: "Язык интерфейса (6 мировых языков)",
     langDesc: "Мгновенно переводит все настройки, кнопки панели, Граф и окно оплаты на выбранный язык.",
@@ -499,10 +503,10 @@ const TRANSLATIONS = {
     lampSetName: "Умная светодиодная лампа курсора (2700K–6500K и затемнение)",
     lampSetDesc: "Погружает экран в уютный полумрак, а вокруг курсора светит теплый или дневной луч (2700K–6500K).",
     lampConfigBtn: "Настроить лампу",
-    keySoundSetName: "Тактильный звук клавиш при печати (Механика / Печатная машинка)",
-    keySoundSetDesc: "Мгновенный синтез приятного звука механических свитчей (Deep Thock) или винтажной машинки при наборе текста.",
-    eqSetName: "Живой 4-режимный Эквалайзер (Синхронизация со звуком ПК)",
-    eqSetDesc: "Считывает системный звук компьютера (музыка из Telegram, YouTube, Spotify) без микрофона и анимирует 4 сложных визуализатора.",
+    keySoundSetName: "Тактильный звук клавиш при печати (мягкие кремовые звуки)",
+    keySoundSetDesc: "Мгновенный синтез мягких кремовых звуков при наборе текста: 6 приятных профилей (POM-свитч, глубокий Thock, Матча, капля по ореху, пианинный фетр, перьевая ручка).",
+    eqSetName: "Крафтовый 6-режимный Эквалайзер",
+    eqSetDesc: "Анимированный эквалайзер в панели: считывает системный звук ПК, выбранное аудиоустройство или встроенные фоновые звуки.",
     eqSyncBtn: "Подключить звук ПК",
     spotlightSetName: "Фокус-затемнение неактивных абзацев (Spotlight)",
     spotlightSetDesc: "Мягко приглушает соседние абзацы до 42%, оставляя на 100% яркости только текущий абзац.",
@@ -782,7 +786,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "レーダー",
     graphColorizeBtn: "フォルダ自動色分け",
     graphOrphansBtn: "孤立ノード非表示",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.1)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
     checkUpdatesBtn: "アップデート確認",
     langName: "インターフェース言語 (6ヶ国語対応)",
     langDesc: "すべての設定項目、ドック、グラフHUD、決済画面を選択した言語に切り替えます。",
@@ -933,7 +937,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Radar Focus",
     graphColorizeBtn: "Colorear Mis Carpetas",
     graphOrphansBtn: "Ocultar Huérfanos",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.1)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
     checkUpdatesBtn: "Buscar Actualizaciones",
     langName: "Idioma de la Interfaz (6 Idiomas Globales)",
     langDesc: "Traduce al instante todos los ajustes, botones de la barra, Grafo y ventana de pago.",
@@ -1084,7 +1088,7 @@ const TRANSLATIONS = {
     graphPresetRadar: "Fokus-Radar",
     graphColorizeBtn: "Meine Ordner färben",
     graphOrphansBtn: "Waisen ausblenden",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.1)",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio (v4.3.7)",
     checkUpdatesBtn: "Updates prüfen",
     langName: "Oberflächensprache (6 Weltsprachen)",
     langDesc: "Übersetzt sofort alle Einstellungen, Dock-Buttons, Graph-HUD und das Checkout-Fenster.",
@@ -1726,8 +1730,8 @@ class AlchemySonicStudioModal extends Modal {
       { id: "dna", name: isRu ? "02 // Квантовая Матрица" : "02 // Quantum Matrix", icon: SICRAFT_SVGS.eqMatrix },
       { id: "bars", name: isRu ? "03 // Ризограф и Штампы" : "03 // Craft Risograph Stamps", icon: SICRAFT_SVGS.eqBars },
       { id: "wave", name: isRu ? "04 // Чернильная Лента" : "04 // Botanical Ink Ribbon", icon: SICRAFT_SVGS.eqWave },
-      { id: "orb", name: isRu ? "05 // Алхимический Компас" : "05 // Alchemist Compass", icon: SICRAFT_SVGS.eqOrb },
-      { id: "ferro", name: isRu ? "06 // Капли Эспрессо" : "06 // Espresso Ferrofluid", icon: SICRAFT_SVGS.eqFerro }
+      { id: "orb", name: isRu ? "05 // Бумажное Оригами" : "05 // Origami Topography", icon: SICRAFT_SVGS.eqOrigami },
+      { id: "ferro", name: isRu ? "06 // Струны Архитектора" : "06 // Harmonic Strings", icon: SICRAFT_SVGS.eqStrings }
     ];
 
     const recipes = [
@@ -1747,7 +1751,7 @@ class AlchemySonicStudioModal extends Modal {
         id: "night_roastery",
         icon: SICRAFT_SVGS.brain,
         title: isRu ? "Ночная Обжарка 40Hz" : "Night Roastery 40Hz",
-        sub: isRu ? "40Hz Гамма • Эспрессо • 2700K • 60м" : "40Hz Gamma • Ferrofluid • 2700K • 60m"
+        sub: isRu ? "40Hz Гамма • Струны • 2700K • 60м" : "40Hz Gamma • Strings • 2700K • 60m"
       }
     ];
 
@@ -1816,6 +1820,19 @@ class AlchemySonicStudioModal extends Modal {
               <span class="svg-inline-icon">${SICRAFT_SVGS.mic}</span> <span>${isRu ? "Микрофон / Стерео Микшер" : "Microphone / Stereo Mix"}</span>
             </button>
           </div>
+
+          <div class="sonic-device-row">
+            <span class="sonic-device-lbl"><span class="svg-inline-icon">${SICRAFT_SVGS.volume}</span><span>${isRu ? "Аудиовход / Loopback:" : "Audio input / loopback:"}</span></span>
+            <select id="sonic-dev-select" class="sonic-device-select">
+              <option value="auto">${isRu ? "Авто (звук ПК, затем микрофон)" : "Auto (desktop audio, then mic)"}</option>
+            </select>
+            <button class="sonic-device-refresh" id="sonic-dev-refresh">${isRu ? "Обновить" : "Refresh"}</button>
+          </div>
+          <div class="sonic-device-hint" id="sonic-dev-hint">${
+            isRu
+              ? "Если у вас USB-гарнитура (например, Blue Yeti), микрофон не слышит звук ПК. Выберите здесь «Стерео микшер» / «Stereo Mix» / виртуальный кабель (VB-Cable) — либо оставьте «Авто»."
+              : "With a USB headset (e.g. Blue Yeti) the microphone can't hear PC audio. Pick \"Stereo Mix\" or a virtual cable (VB-Cable) here — or leave Auto."
+          }</div>
         </div>
 
         <!-- 2. 6 CRAFT EQUALIZER STYLES -->
@@ -1946,6 +1963,46 @@ class AlchemySonicStudioModal extends Modal {
       }
       this.onOpen();
     });
+
+    // Audio input / loopback device selector (lets the user pick Stereo Mix, VB-Cable, Yeti, etc.)
+    const devSelect = contentEl.querySelector("#sonic-dev-select");
+    const populateDevices = async () => {
+      if (!devSelect || !navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      try {
+        let devices = await navigator.mediaDevices.enumerateDevices();
+        const needLabels = devices.some((d) => d.kind === "audioinput" && !d.label);
+        if (needLabels) {
+          try {
+            const tmp = await navigator.mediaDevices.getUserMedia({ audio: true });
+            tmp.getTracks().forEach((tr) => tr.stop());
+            devices = await navigator.mediaDevices.enumerateDevices();
+          } catch (e) {}
+        }
+        const current = this.plugin.settings.audioInputDeviceId || "auto";
+        while (devSelect.options.length > 1) devSelect.remove(1);
+        devices
+          .filter((d) => d.kind === "audioinput" && d.deviceId && d.deviceId !== "default" && d.deviceId !== "communications")
+          .forEach((d, i) => {
+            const opt = document.createElement("option");
+            opt.value = d.deviceId;
+            opt.textContent = d.label || `${isRu ? "Аудиовход" : "Audio input"} ${i + 1}`;
+            devSelect.appendChild(opt);
+          });
+        devSelect.value = Array.from(devSelect.options).some((o) => o.value === current) ? current : "auto";
+      } catch (e) {}
+    };
+    populateDevices();
+    if (devSelect) {
+      devSelect.onchange = async () => {
+        this.plugin.settings.audioInputDeviceId = devSelect.value;
+        await this.plugin.saveSettings();
+        if (devSelect.value !== "auto") {
+          await this.plugin.startDeviceAudioCapture(devSelect.value);
+          this.onOpen();
+        }
+      };
+    }
+    contentEl.querySelector("#sonic-dev-refresh")?.addEventListener("click", populateDevices);
 
     // Wire up Equalizer Modes
     contentEl.querySelectorAll(".sonic-eq-btn").forEach((btn) => {
@@ -2266,31 +2323,100 @@ class AlchemyFlowPlugin extends Plugin {
       const ctx = this.keyAudioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
+      const profile = this.settings.tactileTypingSound;
       const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+      const isBig = key === " " || key === "Enter" || key === "Backspace";
+      const jitter = 1 + (Math.random() * 0.08 - 0.04);
 
-      const isSpaceOrEnter = key === " " || key === "Enter" || key === "Backspace";
-      if (this.settings.tactileTypingSound === "thock") {
-        osc.type = "triangle";
-        const baseFreq = isSpaceOrEnter ? 115 : 145 + (Math.random() * 22 - 11);
-        osc.frequency.setValueAtTime(baseFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(42, now + 0.045);
-        gain.gain.setValueAtTime(0.14, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.048);
-      } else {
-        osc.type = "sawtooth";
-        const baseFreq = isSpaceOrEnter ? 520 : 780 + (Math.random() * 120 - 60);
-        osc.frequency.setValueAtTime(baseFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(160, now + 0.028);
-        gain.gain.setValueAtTime(0.07, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      // Shared soft noise buffer (for gentle cushion / paper textures)
+      if (!this.keyNoiseBuf) {
+        const len = Math.floor(ctx.sampleRate * 0.12);
+        const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+        const ch = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+        this.keyNoiseBuf = buf;
       }
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.05);
+      // Tonal body: sine/triangle with a soft attack, pitch drop and low-pass filtering
+      const tone = (type, f0, f1, peak, attack, decay, lp, partialGain) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = lp;
+        osc.type = type;
+        osc.frequency.setValueAtTime(f0 * jitter, now);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(30, f1 * jitter), now + decay);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(peak, now + attack);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + decay + 0.02);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + decay + 0.05);
+        if (partialGain) {
+          const osc2 = ctx.createOscillator();
+          const g2 = ctx.createGain();
+          osc2.type = "sine";
+          osc2.frequency.setValueAtTime(f0 * 1.5 * jitter, now);
+          osc2.frequency.exponentialRampToValueAtTime(Math.max(30, f1 * 1.5 * jitter), now + decay);
+          g2.gain.setValueAtTime(0.0001, now);
+          g2.gain.linearRampToValueAtTime(peak * partialGain, now + attack);
+          g2.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+          osc2.connect(g2);
+          g2.connect(filter);
+          osc2.start(now);
+          osc2.stop(now + decay + 0.05);
+        }
+      };
+
+      // Soft textured noise burst (cushion / paper brush)
+      const puff = (peak, dur, filterType, freq, q) => {
+        const src = ctx.createBufferSource();
+        src.buffer = this.keyNoiseBuf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = filterType;
+        filter.frequency.value = freq;
+        filter.Q.value = q || 0.7;
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(peak, now + 0.006);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        src.start(now);
+        src.stop(now + dur + 0.02);
+      };
+
+      if (profile === "thock") {
+        // Deep PBT Thock: round, matte, low
+        tone("triangle", isBig ? 105 : 150, isBig ? 52 : 62, 0.15, 0.004, 0.09, 720, 0);
+        puff(0.018, 0.04, "lowpass", 900, 0.5);
+      } else if (profile === "matcha_lubed") {
+        // Matcha Silent Tactile: lubed, hushed, gentle
+        tone("sine", isBig ? 190 : 260, isBig ? 110 : 150, 0.075, 0.005, 0.06, 1100, 0);
+        puff(0.012, 0.035, "lowpass", 1300, 0.5);
+      } else if (profile === "raindrop_wood") {
+        // Warm Walnut Raindrop: woody "tok" with a soft second partial
+        tone("sine", isBig ? 300 : 430, isBig ? 160 : 230, 0.09, 0.003, 0.11, 1900, 0.35);
+      } else if (profile === "velvet_felt") {
+        // Piano felt: pentatonic note per key, muffled hammer on cloth
+        const notes = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25];
+        const code = typeof key === "string" && key.length === 1 ? key.toLowerCase().charCodeAt(0) : 0;
+        const f = isBig ? 196.0 : notes[code % notes.length];
+        tone("sine", f, f * 0.985, 0.075, 0.009, 0.2, 760, 0.18);
+        puff(0.008, 0.03, "lowpass", 700, 0.5);
+      } else if (profile === "paper_brush") {
+        // Fountain pen on cotton paper: a quiet, silky brush
+        puff(isBig ? 0.06 : 0.045, isBig ? 0.085 : 0.06, "bandpass", 2400 * jitter, 0.7);
+        tone("sine", 190, 120, 0.028, 0.004, 0.05, 700, 0);
+      } else {
+        // creamy_pom (default): Creamy POM Linear — velvety low-pass body, smooth and round
+        tone("triangle", isBig ? 140 : 205, isBig ? 78 : 104, 0.11, 0.004, 0.075, 880, 0);
+        puff(0.022, 0.04, "lowpass", 1400, 0.5);
+      }
     } catch (e) {}
   }
 
@@ -2458,8 +2584,8 @@ class AlchemyFlowPlugin extends Plugin {
     const analyser = ctx.createAnalyser();
     analyser.fftSize = 256;
     analyser.smoothingTimeConstant = 0.70;
-    analyser.minDecibels = -96;
-    analyser.maxDecibels = -18;
+    analyser.minDecibels = -110;
+    analyser.maxDecibels = -20;
 
     const silentGain = ctx.createGain();
     silentGain.gain.value = 0;
@@ -2475,16 +2601,63 @@ class AlchemyFlowPlugin extends Plugin {
 
   async startSystemAudioCapture() {
     this.stopAudioCapture(true);
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
     let stream = null;
-
-    // Strategy 1: Native Electron Windows WASAPI Desktop Audio Loopback
-    // IMPORTANT: On Windows Chromium/Electron, audio.mandatory MUST NOT include chromeMediaSourceId ("screen:0:0"),
-    // only chromeMediaSource: "desktop"!
-    const videoSourceIds = [undefined, "screen:0:0", "screen:1:0"];
-    for (const vidSid of videoSourceIds) {
-      if (stream && stream.getAudioTracks && stream.getAudioTracks().length > 0) break;
+    const hasAudio = (s) => !!(s && s.getAudioTracks && s.getAudioTracks().length > 0);
+    const dropStream = (s) => {
       try {
-        const mandatoryVideo = {
+        if (s) s.getTracks().forEach((tr) => tr.stop());
+      } catch (e) {}
+    };
+
+    // If the user explicitly picked an input device (Stereo Mix, VB-Cable, Yeti...) honor it first
+    const savedDevice = this.settings.audioInputDeviceId;
+    if (savedDevice && savedDevice !== "auto") {
+      const ok = await this.startDeviceAudioCapture(savedDevice, true);
+      if (ok) return;
+    }
+
+    // Collect real desktop capture source ids (Electron renderer may or may not expose desktopCapturer)
+    const sourceIds = [];
+    try {
+      let electron = null;
+      try {
+        electron = window.require ? window.require("electron") : require("electron");
+      } catch (e) {}
+      const capturers = [];
+      if (electron && electron.desktopCapturer) capturers.push(electron.desktopCapturer);
+      if (electron && electron.remote && electron.remote.desktopCapturer) capturers.push(electron.remote.desktopCapturer);
+      try {
+        const remote = window.require ? window.require("@electron/remote") : null;
+        if (remote && remote.desktopCapturer) capturers.push(remote.desktopCapturer);
+      } catch (e) {}
+      for (const cap of capturers) {
+        try {
+          const srcs = await cap.getSources({ types: ["screen"], thumbnailSize: { width: 1, height: 1 } });
+          (srcs || []).forEach((s) => s && s.id && sourceIds.push(s.id));
+          if (sourceIds.length) break;
+        } catch (e) {}
+      }
+    } catch (e) {}
+    ["screen:0:0", "screen:1:0", "screen:65537:0"].forEach((id) => {
+      if (!sourceIds.includes(id)) sourceIds.push(id);
+    });
+
+    // Strategy 1: native WASAPI desktop loopback (works regardless of which output device you listen on).
+    // Chromium wants chromeMediaSourceId for the video carrier track; some builds also want it on audio — try both.
+    const attempts = [];
+    sourceIds.forEach((id) => {
+      attempts.push({ audioId: id, videoId: id });
+      attempts.push({ audioId: null, videoId: id });
+    });
+    attempts.push({ audioId: null, videoId: null });
+    let usedStrategy = "";
+    for (const att of attempts) {
+      if (hasAudio(stream)) break;
+      try {
+        const audioMandatory = { chromeMediaSource: "desktop" };
+        if (att.audioId) audioMandatory.chromeMediaSourceId = att.audioId;
+        const videoMandatory = {
           chromeMediaSource: "desktop",
           minWidth: 16,
           maxWidth: 64,
@@ -2492,68 +2665,113 @@ class AlchemyFlowPlugin extends Plugin {
           maxHeight: 64,
           maxFrameRate: 5,
         };
-        if (vidSid) mandatoryVideo.chromeMediaSourceId = vidSid;
-        stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            mandatory: {
-              chromeMediaSource: "desktop",
-            },
-          },
-          video: {
-            mandatory: mandatoryVideo,
-          },
+        if (att.videoId) videoMandatory.chromeMediaSourceId = att.videoId;
+        const s = await navigator.mediaDevices.getUserMedia({
+          audio: { mandatory: audioMandatory },
+          video: { mandatory: videoMandatory },
         });
+        if (hasAudio(s)) {
+          stream = s;
+          usedStrategy = "desktop-loopback";
+        } else {
+          dropStream(s);
+        }
       } catch (e1) {}
     }
 
-    // Strategy 2: Check if user has a Stereo Mix / What U Hear / Virtual Cable loopback device
-    if (!stream || !stream.getAudioTracks || stream.getAudioTracks().length === 0) {
-      if (stream) {
-        stream.getTracks().forEach((t) => t.stop());
-        stream = null;
-      }
-      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-        try {
-          const devices = await navigator.mediaDevices.enumerateDevices();
-          const loopbackDev = devices.find(
-            (d) =>
-              d.kind === "audioinput" &&
-              /stereo mix|смеситель|loopback|cable|what u hear|blackhole|soundflower|monitor|voicemeeter/i.test(d.label || "")
-          );
-          if (loopbackDev) {
-            stream = await navigator.mediaDevices.getUserMedia({
-              audio: {
-                deviceId: { exact: loopbackDev.deviceId },
-                echoCancellation: false,
-                noiseSuppression: false,
-                autoGainControl: false,
-              },
-              video: false,
-            });
-          }
-        } catch (e0) {}
-      }
+    // Strategy 1b: standards-based getDisplayMedia (works when the host app provides a display-media handler)
+    if (!hasAudio(stream) && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      try {
+        const s = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
+        if (hasAudio(s)) {
+          stream = s;
+          usedStrategy = "display-media";
+        } else {
+          dropStream(s);
+        }
+      } catch (e) {}
     }
 
-    // Strategy 3: Fallback to High-Gain Room/Speaker Pickup only if WASAPI & Stereo Mix are completely blocked
-    if (!stream || !stream.getAudioTracks || stream.getAudioTracks().length === 0) {
-      if (stream) stream.getTracks().forEach((t) => t.stop());
+    // Strategy 2: Stereo Mix / What U Hear / virtual cable loopback input device
+    if (!hasAudio(stream) && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const loopbackDev = devices.find(
+          (d) =>
+            d.kind === "audioinput" &&
+            /stereo mix|смеситель|стерео микшер|loopback|cable|what u hear|blackhole|soundflower|monitor|voicemeeter/i.test(d.label || "")
+        );
+        if (loopbackDev) {
+          const s = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              deviceId: { exact: loopbackDev.deviceId },
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false,
+            },
+            video: false,
+          });
+          if (hasAudio(s)) {
+            stream = s;
+            usedStrategy = "loopback-device";
+          }
+        }
+      } catch (e0) {}
+    }
+
+    if (!hasAudio(stream)) {
+      new Notice(
+        isRu
+          ? "Не удалось получить звук ПК напрямую. Откройте Аудио-Пульт и выберите «Стерео микшер» / VB-Cable в списке аудиовходов. Пока включён микрофон."
+          : "Couldn't capture PC audio directly. Open the Sonic Studio and pick \"Stereo Mix\" / VB-Cable in the audio input list. Falling back to microphone.",
+        9000
+      );
       return this.startMicAudioCapture(true);
     }
 
     try {
       this.connectStreamToAnalyser(stream, "system", 3.2);
+      if (this.desktopAudioNodes) this.desktopAudioNodes.strategy = usedStrategy;
       new Notice(t("audioConnectedNotice", this));
     } catch (err) {
+      dropStream(stream);
       return this.startMicAudioCapture(true);
+    }
+  }
+
+  // Capture a specific audio input device chosen by the user in the Sonic Studio (Stereo Mix, VB-Cable, Blue Yeti, ...)
+  async startDeviceAudioCapture(deviceId, silent = false) {
+    this.stopAudioCapture(true);
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: { exact: deviceId },
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+        },
+        video: false,
+      });
+      this.connectStreamToAnalyser(stream, "mic", 2.4);
+      if (!silent) new Notice(t("audioMicConnectedNotice", this));
+      return true;
+    } catch (err) {
+      if (!silent) {
+        new Notice(isRu ? "Не удалось открыть выбранное аудиоустройство." : "Could not open the selected audio device.");
+      }
+      return false;
     }
   }
 
   async startMicAudioCapture(highGainForSpeakers = false) {
     this.stopAudioCapture(true);
     try {
+      const audioConstraints = { echoCancellation: false, noiseSuppression: false, autoGainControl: true };
+      const savedDevice = this.settings.audioInputDeviceId;
+      if (savedDevice && savedDevice !== "auto") audioConstraints.deviceId = { ideal: savedDevice };
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
+        audio: audioConstraints,
         video: false,
       });
       this.connectStreamToAnalyser(stream, "mic", highGainForSpeakers ? 3.8 : 2.8);
@@ -2609,10 +2827,10 @@ class AlchemyFlowPlugin extends Plugin {
       const modeIcons = {
         bars: SICRAFT_SVGS.eqBars,
         wave: SICRAFT_SVGS.eqWave,
-        orb: SICRAFT_SVGS.eqOrb,
+        orb: SICRAFT_SVGS.eqOrigami,
         dna: SICRAFT_SVGS.eqMatrix,
         craft: SICRAFT_SVGS.eqCraft,
-        ferro: SICRAFT_SVGS.eqFerro,
+        ferro: SICRAFT_SVGS.eqStrings,
       };
       iconEl.innerHTML = modeIcons[this.settings.eqMode || "craft"] || SICRAFT_SVGS.eqCraft;
     }
@@ -2630,8 +2848,8 @@ class AlchemyFlowPlugin extends Plugin {
       dna: isRu ? "02 // Квантовая Матрица" : "02 // Quantum Matrix",
       bars: isRu ? "03 // Ризограф и Штампы" : "03 // Craft Risograph Stamps",
       wave: isRu ? "04 // Чернильная Лента" : "04 // Botanical Ink Ribbon",
-      orb: isRu ? "05 // Алхимический Компас" : "05 // Alchemist Compass",
-      ferro: isRu ? "06 // Капли Эспрессо" : "06 // Espresso Ferrofluid",
+      orb: isRu ? "05 // Бумажное Оригами" : "05 // Origami Topography",
+      ferro: isRu ? "06 // Струны Архитектора" : "06 // Harmonic Strings",
     };
     const idx = modes.indexOf(this.settings.eqMode || "craft");
     const next = modes[(idx + 1) % modes.length];
@@ -3958,23 +4176,35 @@ class AlchemyFlowPlugin extends Plugin {
       return BOOK_NUTRIENTS.proteins;
     };
 
+    const stripEmoji = (str) =>
+      String(str || "")
+        .replace(/[\p{Extended_Pictographic}\u200d\ufe0f\u23f3\u270e\u270f]/gu, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+
     const bookmarksHtml =
       noteBookmarks.length > 0
         ? `<div class="artcraft-margin-bookmarks-strip">
+            <button class="artcraft-bm-digest-chip" data-act="digest" title="${
+              isRu ? "Открыть дайджест книги (Белки и Углеводы)" : "Open Book Nutrient Digest (Proteins & Carbs)"
+            }">
+              ${SICRAFT_SVGS.book}
+              <span>${isRu ? `Дайджест · ${noteBookmarks.length}` : `Digest · ${noteBookmarks.length}`}</span>
+            </button>
             ${noteBookmarks
               .map((bm) => {
                 const n = normalizeNutrient(bm);
                 const nutName = isRu ? n.ruName : n.enName;
-                const displayMeaning = bm.meaning || bm.snippet || nutName;
-                const shortMeaning = displayMeaning.length > 42 ? displayMeaning.slice(0, 40) + "…" : displayMeaning;
-                const tooltip = `${nutName} (${isRu ? n.ruRole : n.enRole})\n${bm.meaning ? bm.meaning + "\n" : ""}«${bm.snippet || ""}»`;
+                const displayMeaning = stripEmoji(bm.meaning || bm.snippet || nutName) || nutName;
+                const shortMeaning = displayMeaning.length > 34 ? displayMeaning.slice(0, 32) + "…" : displayMeaning;
+                const tooltip = `${nutName} (${isRu ? n.ruRole : n.enRole})\n${bm.meaning ? stripEmoji(bm.meaning) + "\n" : ""}«${bm.snippet || ""}»`;
                 return `
                   <div class="artcraft-bm-pill is-nut-${n.id}" data-bm-id="${bm.id}" data-bm-line="${bm.line || 0}" style="--bm-accent:${n.color};--bm-bg:${n.bg};--bm-border:${n.border};" title="${tooltip.replace(/"/g, "&quot;")}">
                     <span class="bm-nut-dot" style="background:${n.color}"></span>
-                    <span class="bm-tag-name" style="color:${n.color}">${nutName}:</span>
+                    <span class="bm-tag-name" style="color:${n.color}">${nutName}</span>
                     <span class="bm-tag-text">${shortMeaning}</span>
-                    <button class="bm-tag-edit" data-bm-edit="${bm.id}" title="${isRu ? "Изменить закладку" : "Edit sticker"}">✎</button>
-                    <button class="bm-tag-del" data-bm-del="${bm.id}" title="${isRu ? "Удалить закладку" : "Delete sticker"}">×</button>
+                    <button class="bm-tag-edit" data-bm-edit="${bm.id}" title="${isRu ? "Изменить закладку" : "Edit sticker"}">${SICRAFT_SVGS.edit}</button>
+                    <button class="bm-tag-del" data-bm-del="${bm.id}" title="${isRu ? "Удалить закладку" : "Delete sticker"}">${SICRAFT_SVGS.clear}</button>
                   </div>
                 `;
               })
@@ -4052,16 +4282,6 @@ class AlchemyFlowPlugin extends Plugin {
               ${SICRAFT_SVGS.bookmark}
               <span>+ ${isRu ? "Закладка" : "Sticker"}</span>
             </button>
-            ${
-              noteBookmarks.length > 0
-                ? `<button class="artcraft-craft-mini-btn is-digest-btn" data-act="digest" title="${
-                    isRu ? "Открыть дайджест книги (Белки и Углеводы)" : "Open Book Nutrient Digest (Proteins & Carbs)"
-                  }">
-                    ${SICRAFT_SVGS.book}
-                    <span>${isRu ? `Дайджест (${noteBookmarks.length})` : `Digest (${noteBookmarks.length})`}</span>
-                  </button>`
-                : ""
-            }
             <button class="artcraft-craft-mini-btn ${this.settings.bookSpreadMode ? "is-active" : ""}" data-act="spread" title="${
               isRu
                 ? "ЛКМ: Книжный лист (Book Folio) | ПКМ: Открыть 2-страничный разворот рядом"
@@ -4955,8 +5175,8 @@ class AlchemyFlowPlugin extends Plugin {
       eqWrap.appendChild(eqDotSpan);
 
       this.eqCanvas = document.createElement("canvas");
-      this.eqCanvas.width = 62;
-      this.eqCanvas.height = 20;
+      this.eqCanvas.width = 124;
+      this.eqCanvas.height = 40;
       this.eqCanvas.className = "artcraft-dock-eq-canvas";
       eqWrap.appendChild(this.eqCanvas);
       eqWrap.addEventListener("click", () => {
@@ -5017,7 +5237,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     // 8. Collapse / Minimize button
     const btnCollapse = document.createElement("button");
-    btnCollapse.className = "artcraft-dock-btn artcraft-dock-icon-btn artcraft-dock-collapse-btn";
+    btnCollapse.className = "artcraft-dock-btn artcraft-dock-icon-btn artcraft-dock-collapse-btn is-full-row";
     btnCollapse.title = t("collapseTip", this);
     btnCollapse.innerHTML = SICRAFT_SVGS.collapse;
     btnCollapse.addEventListener("click", (e) => {
@@ -5506,8 +5726,11 @@ class AlchemyFlowPlugin extends Plugin {
   renderEqualizerFrame() {
     if (!this.eqCanvas) return;
     const eqCtx = this.eqCanvas.getContext("2d");
-    const ew = this.eqCanvas.width;
-    const eh = this.eqCanvas.height;
+    // Logical drawing space is always 62x20; canvas backing store is 2x for crisp lines on HiDPI
+    const ew = 62;
+    const eh = 20;
+    const eqScale = this.eqCanvas.width / ew;
+    eqCtx.setTransform(eqScale, 0, 0, eqScale, 0, 0);
     eqCtx.clearRect(0, 0, ew, eh);
 
     const activeAnalyser =
@@ -5521,6 +5744,24 @@ class AlchemyFlowPlugin extends Plugin {
     if (activeAnalyser) {
       freqData = new Uint8Array(activeAnalyser.frequencyBinCount);
       activeAnalyser.getByteFrequencyData(freqData);
+
+      // Smart auto-gain: quiet sources (USB headset at low Windows volume, WASAPI loopback) are boosted up to 14x
+      const isLiveInput = !!(this.desktopAudioNodes && this.desktopAudioNodes.analyser === activeAnalyser);
+      let frameMax = 0;
+      for (let j = 0; j < freqData.length; j++) {
+        if (freqData[j] > frameMax) frameMax = freqData[j];
+      }
+      if (isLiveInput) {
+        this.eqAgcPeak = Math.max(frameMax, (this.eqAgcPeak || 0) * 0.994);
+        const agc = this.eqAgcPeak > 2 ? Math.max(1, Math.min(14, 200 / this.eqAgcPeak)) : 1;
+        if (agc > 1.05) {
+          for (let j = 0; j < freqData.length; j++) {
+            freqData[j] = Math.min(255, Math.round(freqData[j] * agc));
+          }
+        }
+      } else {
+        this.eqAgcPeak = 0;
+      }
 
       for (let j = 0; j < freqData.length; j++) {
         if (freqData[j] > 4) {
@@ -5569,15 +5810,9 @@ class AlchemyFlowPlugin extends Plugin {
       this.eqPhase += 0.08 + Math.min(0.22, totalEnergy / 150);
     }
 
-    // Reactive Bass Glow on Equalizer Pill border when music plays
-    const bassLevel = (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2));
-    if (this.eqWrap) {
-      if (bassLevel > 0.08) {
-        const glowAlpha = Math.min(0.75, bassLevel * 0.9).toFixed(2);
-        this.eqWrap.style.boxShadow = `0 2px 0 #111111, 0 0 ${Math.round(6 + bassLevel * 12)}px rgba(105, 189, 40, ${glowAlpha})`;
-      } else {
-        this.eqWrap.style.boxShadow = "";
-      }
+    // Calm, glow-free equalizer pill (no neon halo around the dock pill)
+    if (this.eqWrap && this.eqWrap.style.boxShadow) {
+      this.eqWrap.style.boxShadow = "";
     }
 
     if (mode === "bars") {
@@ -5648,46 +5883,57 @@ class AlchemyFlowPlugin extends Plugin {
         eqCtx.stroke();
       }
     } else if (mode === "orb") {
-      // MODE 03: Supernova Polar Sunburst (20-Ray Starburst + Dual Bass Shockwave Rings)
-      const cx = ew / 2;
-      const cy = eh / 2;
-      const bass = Math.max(0, (this.eqSmooth[0] + this.eqSmooth[1] + this.eqSmooth[2] - 6) / (3 * (eh - 2)));
+      // MODE 05: Origami Topographic Waves — 5 folded-paper contour layers (sharp creases, guilloche tension threads)
+      const origamiLayers = [
+        { fill: "rgba(244, 243, 239, 0.14)", stroke: "rgba(244, 243, 239, 0.85)", k: 0.30 },
+        { fill: "rgba(245, 158, 11, 0.20)", stroke: "#F59E0B", k: 0.44 },
+        { fill: "rgba(96, 165, 250, 0.22)", stroke: "#60A5FA", k: 0.58 },
+        { fill: "rgba(52, 211, 153, 0.26)", stroke: "#34D399", k: 0.72 },
+        { fill: "rgba(105, 189, 40, 0.38)", stroke: "#69BD28", k: 0.88 },
+      ];
+      const foldStep = 3.1;
+      const ridgeY = (l, x) => {
+        const band = Math.min(15, Math.floor((x / ew) * 16));
+        const amp = Math.max(0, this.eqSmooth[(band + l * 3) % 16] - 2);
+        const crease = Math.abs(Math.sin(x * 0.23 + this.eqPhase * (0.7 + l * 0.18) + l * 1.9));
+        const env = 0.35 + 0.65 * Math.sin((x / ew) * Math.PI);
+        return Math.max(1.2, origamiLayers[l].k * eh - amp * 0.52 * crease * env * (0.6 + l * 0.12) - 0.4);
+      };
 
-      if (bass > 0.12) {
+      // Vertical architectural tension threads between the upper and lower envelopes
+      eqCtx.lineWidth = 0.5;
+      for (let x = 1.5; x < ew; x += foldStep * 2) {
+        const yTop = ridgeY(0, x);
+        const yBot = ridgeY(4, x);
+        const tension = Math.min(0.5, 0.12 + (yBot - yTop) / (eh * 3));
+        eqCtx.strokeStyle = `rgba(244, 243, 239, ${tension.toFixed(2)})`;
         eqCtx.beginPath();
-        eqCtx.arc(cx, cy, 4.0 + bass * 7.5, 0, Math.PI * 2);
-        eqCtx.strokeStyle = `rgba(105, 189, 40, ${(bass * 0.7).toFixed(2)})`;
-        eqCtx.lineWidth = 1;
+        eqCtx.moveTo(x, yTop);
+        eqCtx.lineTo(x, yBot);
         eqCtx.stroke();
       }
 
-      eqCtx.beginPath();
-      eqCtx.arc(cx, cy, 2.8 + bass * 4.8, 0, Math.PI * 2);
-      eqCtx.strokeStyle = "rgba(6, 182, 212, 0.8)";
-      eqCtx.lineWidth = 1.2;
-      eqCtx.stroke();
-
-      const rays = 20;
-      for (let i = 0; i < rays; i++) {
-        const bandIdx = i % 16;
-        const angle = (i / rays) * Math.PI * 2 + this.eqPhase * 0.32;
-        const rayLen = 2.2 + ((this.eqSmooth[bandIdx] - 2) / (eh - 2)) * 7.5;
-        const x1 = cx + Math.cos(angle) * 1.8;
-        const y1 = cy + Math.sin(angle) * 1.8;
-        const x2 = cx + Math.cos(angle) * rayLen;
-        const y2 = cy + Math.sin(angle) * rayLen;
+      for (let l = 0; l < origamiLayers.length; l++) {
+        const lay = origamiLayers[l];
         eqCtx.beginPath();
-        eqCtx.moveTo(x1, y1);
-        eqCtx.lineTo(x2, y2);
-        eqCtx.strokeStyle = colors[i % colors.length];
-        eqCtx.lineWidth = 1.3;
+        eqCtx.moveTo(0, eh);
+        eqCtx.lineTo(0, ridgeY(l, 0));
+        for (let x = foldStep; x < ew; x += foldStep) eqCtx.lineTo(x, ridgeY(l, x));
+        eqCtx.lineTo(ew, ridgeY(l, ew));
+        eqCtx.lineTo(ew, eh);
+        eqCtx.closePath();
+        eqCtx.fillStyle = lay.fill;
+        eqCtx.fill();
+
+        eqCtx.beginPath();
+        eqCtx.moveTo(0, ridgeY(l, 0));
+        for (let x = foldStep; x < ew; x += foldStep) eqCtx.lineTo(x, ridgeY(l, x));
+        eqCtx.lineTo(ew, ridgeY(l, ew));
+        eqCtx.strokeStyle = lay.stroke;
+        eqCtx.lineWidth = 0.7;
+        eqCtx.lineJoin = "miter";
         eqCtx.stroke();
       }
-
-      eqCtx.beginPath();
-      eqCtx.arc(cx, cy, 1.8 + bass * 2.2, 0, Math.PI * 2);
-      eqCtx.fillStyle = "#FFFFFF";
-      eqCtx.fill();
     } else if (mode === "craft") {
       // MODE 05: Swiss Craft Ink Seismograph (4 Layered Warm Paper & Fountain-Pen Wave Ridges)
       const craftLayers = [
@@ -5727,46 +5973,105 @@ class AlchemyFlowPlugin extends Plugin {
         eqCtx.stroke();
       }
     } else if (mode === "ferro") {
-      // MODE 06: Alchemy Ferrofluid Orbs (Harmonic Liquid Droplets & Magnetic Core)
-      const orbColors = ["#69BD28", "#06B6D4", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981", "#3B82F6"];
-      const cy = eh / 2;
-      // Subtle magnetic horizon line
-      eqCtx.beginPath();
-      eqCtx.moveTo(2, cy);
-      eqCtx.lineTo(ew - 2, cy);
-      eqCtx.strokeStyle = "rgba(255, 255, 255, 0.12)";
-      eqCtx.lineWidth = 1;
-      eqCtx.stroke();
+      // MODE 06: Architect's Harmonic Strings — 4 coupled resonant strings (spring-damper physics),
+      // Lissajous harmonic nodes and gossamer weave threads between neighbouring strings
+      const STR_N = 14;
+      const STR_COUNT = 4;
+      if (!this.eqStr) {
+        this.eqStr = {
+          u: Array.from({ length: STR_COUNT }, () => new Array(STR_N).fill(0)),
+          v: Array.from({ length: STR_COUNT }, () => new Array(STR_N).fill(0)),
+        };
+      }
+      const strColors = ["#F4F3EF", "#F59E0B", "#60A5FA", "#69BD28"];
+      const rowGap = (eh - 4) / (STR_COUNT - 1);
+      const maxDisp = rowGap * 0.82;
+      const nodeXs = [];
+      for (let i = 0; i < STR_N; i++) nodeXs.push(1.5 + (i / (STR_N - 1)) * (ew - 3));
 
-      for (let i = 0; i < 7; i++) {
-        const bandA = this.eqSmooth[i * 2] - 2;
-        const bandB = this.eqSmooth[i * 2 + 1] - 2;
-        const energy = (bandA + bandB) / (2 * (eh - 2));
-        const x = 6 + i * ((ew - 12) / 6) + Math.sin(this.eqPhase * 0.8 + i * 1.4) * (energy * 3.2);
-        const y = cy + Math.cos(this.eqPhase * 1.15 + i * 1.1) * (energy * (eh * 0.34));
-        const r = 1.8 + energy * 4.8;
-
-        // Outer magnetic halo
-        if (energy > 0.12) {
-          eqCtx.beginPath();
-          eqCtx.arc(x, y, r + 1.8, 0, Math.PI * 2);
-          eqCtx.fillStyle = "rgba(105, 189, 40, 0.22)";
-          eqCtx.fill();
+      // Physics step: spring coupling k, damping d, driven by the real spectrum energy of each string's 4 bands
+      for (let s = 0; s < STR_COUNT; s++) {
+        let e = 0;
+        for (let b = 0; b < 4; b++) e += Math.max(0, this.eqSmooth[s * 4 + b] - 2);
+        e = Math.min(1, e / (4 * (eh - 2)) * 1.5);
+        const u = this.eqStr.u[s];
+        const v = this.eqStr.v[s];
+        const active = hasSound || e > 0.02;
+        for (let i = 1; i < STR_N - 1; i++) {
+          const lap = u[i - 1] + u[i + 1] - 2 * u[i];
+          const standing = Math.sin((Math.PI * i) / (STR_N - 1));
+          const drive = active ? e * 0.38 * Math.sin(this.eqPhase * (1.1 + s * 0.37) + i * 0.9) * standing : 0;
+          v[i] += 0.24 * lap - 0.07 * v[i] - 0.015 * u[i] + drive;
         }
+        for (let i = 1; i < STR_N - 1; i++) {
+          u[i] += v[i];
+          if (u[i] > 1) { u[i] = 1; v[i] *= -0.4; }
+          if (u[i] < -1) { u[i] = -1; v[i] *= -0.4; }
+        }
+      }
 
-        // Main ferrofluid droplet
+      const stringPts = (s) => {
+        const baseY = 2 + s * rowGap;
+        return nodeXs.map((x, i) => ({ x, y: baseY + this.eqStr.u[s][i] * maxDisp }));
+      };
+      const allPts = [];
+      for (let s = 0; s < STR_COUNT; s++) allPts.push(stringPts(s));
+
+      // Gossamer weave threads between neighbouring strings (bezier curves)
+      eqCtx.lineWidth = 0.4;
+      for (let s = 0; s < STR_COUNT - 1; s++) {
+        for (let i = 1; i < STR_N - 1; i += 3) {
+          const a = allPts[s][i];
+          const b = allPts[s + 1][Math.min(STR_N - 2, i + 1)];
+          const sway = (this.eqStr.u[s][i] - this.eqStr.u[s + 1][i]) * 2;
+          eqCtx.strokeStyle = "rgba(244, 243, 239, 0.18)";
+          eqCtx.beginPath();
+          eqCtx.moveTo(a.x, a.y);
+          eqCtx.quadraticCurveTo((a.x + b.x) / 2 + sway, (a.y + b.y) / 2, b.x, b.y);
+          eqCtx.stroke();
+        }
+      }
+
+      // Strings as smooth curves through the nodes
+      for (let s = 0; s < STR_COUNT; s++) {
+        const pts = allPts[s];
         eqCtx.beginPath();
-        eqCtx.arc(x, y, r, 0, Math.PI * 2);
-        eqCtx.fillStyle = orbColors[i % orbColors.length];
-        eqCtx.fill();
-
-        // Specular highlight dot
-        if (r > 2.4) {
-          eqCtx.beginPath();
-          eqCtx.arc(x - r * 0.28, y - r * 0.28, Math.max(0.7, r * 0.26), 0, Math.PI * 2);
-          eqCtx.fillStyle = "#FFFFFF";
-          eqCtx.fill();
+        eqCtx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length - 1; i++) {
+          const mx = (pts[i].x + pts[i + 1].x) / 2;
+          const my = (pts[i].y + pts[i + 1].y) / 2;
+          eqCtx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
         }
+        eqCtx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+        eqCtx.strokeStyle = strColors[s];
+        eqCtx.lineWidth = 0.85;
+        eqCtx.stroke();
+      }
+
+      // Phase-shifted Lissajous harmonic nodes riding on the strings with the largest displacement
+      for (let s = 0; s < STR_COUNT; s++) {
+        let bestI = 1;
+        for (let i = 2; i < STR_N - 1; i++) {
+          if (Math.abs(this.eqStr.u[s][i]) > Math.abs(this.eqStr.u[s][bestI])) bestI = i;
+        }
+        const p = allPts[s][bestI];
+        const energy = Math.min(1, Math.abs(this.eqStr.u[s][bestI]) * 1.6);
+        const rad = 0.9 + energy * 1.8;
+        eqCtx.beginPath();
+        for (let t = 0; t <= 24; t++) {
+          const ang = (t / 24) * Math.PI * 2;
+          const lx = p.x + Math.sin(ang * (2 + (s % 2)) + this.eqPhase * 0.9 + s) * rad;
+          const ly = p.y + Math.sin(ang * 3 + this.eqPhase * 0.6) * rad * 0.8;
+          if (t === 0) eqCtx.moveTo(lx, ly);
+          else eqCtx.lineTo(lx, ly);
+        }
+        eqCtx.strokeStyle = strColors[s];
+        eqCtx.lineWidth = 0.55;
+        eqCtx.stroke();
+        eqCtx.beginPath();
+        eqCtx.arc(p.x, p.y, 0.7, 0, Math.PI * 2);
+        eqCtx.fillStyle = "#FFFFFF";
+        eqCtx.fill();
       }
     } else {
       // MODE 04: Quantum Matrix 16x5 LED Grid & Hot-Peak Sparks
@@ -5794,6 +6099,10 @@ class AlchemyFlowPlugin extends Plugin {
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    // Migrate the removed "Vintage Typewriter" sound to the new creamy default
+    if (this.settings.tactileTypingSound === "typewriter") {
+      this.settings.tactileTypingSound = "creamy_pom";
+    }
   }
 
   async saveSettings() {
@@ -5808,6 +6117,7 @@ class AlchemyCraftProModal extends Modal {
     this.selectedNetwork = initialMethod === "promo" ? "evm" : initialMethod;
     this.activeTab = initialMethod === "promo" ? "promo" : "support";
     this.selectedTier = "silver";
+    this.customAmount = "5";
   }
 
   onOpen() {
@@ -5885,7 +6195,29 @@ class AlchemyCraftProModal extends Modal {
           ? "Вдохновить кофейню Алхимика на новые идеи: вечная Pro-лицензия + 3 подарочных ключа для друзей и приоритет ваших пожеланий."
           : "Inspire the Alchemist Roastery: Lifetime Pro license + 3 gift keys for friends & priority feature requests.",
       },
+      custom: {
+        id: "custom",
+        name: isRu ? "Свободная поддержка" : "Pay what you want",
+        amount: "5.00",
+        period: "",
+        svg: "",
+        planKey: "1_year",
+        desc: "",
+      },
     };
+
+    // Free-form support amount (any sum from $1 to $500) — keeps tier + plan in sync with the typed value
+    const parseCustomAmount = () => {
+      const n = parseFloat(String(this.customAmount || "").replace(",", ".").replace(/[^0-9.]/g, ""));
+      if (!isFinite(n) || n < 1) return null;
+      return Math.min(500, Math.round(n * 100) / 100);
+    };
+    const syncCustomTier = () => {
+      const n = parseCustomAmount();
+      tiers.custom.amount = n === null ? "0.00" : n.toFixed(2);
+      tiers.custom.planKey = n !== null && n >= 19 ? "patron_lifetime" : n !== null && n >= 9.99 ? "lifetime" : "1_year";
+    };
+    syncCustomTier();
 
     const renderVerificationBlock = (parentEl, isPromoView) => {
       const verifyBox = parentEl.createDiv({ cls: "artcraft-soft-verify-box" + (isPromoView ? " is-promo-hero" : "") });
@@ -6012,24 +6344,79 @@ class AlchemyCraftProModal extends Modal {
 
       // TAB 1: KO-FI / ZSOLT-INSPIRED 3 CAPPUCCINO TIER CARDS + CLEAN PAYMENT BAR
       const tierGrid = bodyContainer.createDiv({ cls: "artcraft-ko-tier-grid" });
-      Object.values(tiers).forEach((tObj) => {
-        const card = tierGrid.createDiv({
-          cls: "artcraft-ko-tier-card" + (this.selectedTier === tObj.id ? " is-selected" : ""),
-        });
-        card.innerHTML = `
+      Object.values(tiers)
+        .filter((tObj) => tObj.id !== "custom")
+        .forEach((tObj) => {
+          const card = tierGrid.createDiv({
+            cls: "artcraft-ko-tier-card" + (this.selectedTier === tObj.id ? " is-selected" : ""),
+          });
+          card.innerHTML = `
           ${tObj.badge ? `<div class="ko-tier-popular">${tObj.badge}</div>` : ""}
           <div class="ko-tier-art">${tObj.svg}</div>
           <div class="ko-tier-name">${tObj.name}</div>
           <div class="ko-tier-price">${tObj.period}</div>
           <p class="ko-tier-desc">${tObj.desc}</p>
         `;
-        card.onclick = () => {
-          this.selectedTier = tObj.id;
+          card.onclick = () => {
+            this.selectedTier = tObj.id;
+            renderView();
+          };
+        });
+
+      // Free-form amount row: pay what you want (chips + custom input)
+      const customRow = bodyContainer.createDiv({
+        cls: "artcraft-ko-custom-row" + (this.selectedTier === "custom" ? " is-selected" : ""),
+      });
+      customRow.innerHTML = `
+        <div class="ko-custom-left">
+          <span class="svg-inline-icon">${SICRAFT_SVGS.coffee}</span>
+          <div class="ko-custom-txt">
+            <strong>${isRu ? "Своя сумма" : "Your own amount"}</strong>
+            <small>${isRu ? "Любая сумма от $1 — от всего сердца" : "Any amount from $1 — straight from the heart"}</small>
+          </div>
+        </div>
+        <div class="ko-custom-right">
+          <div class="ko-custom-chips"></div>
+          <label class="ko-custom-input-wrap">
+            <span>$</span>
+            <input type="text" inputmode="decimal" class="ko-custom-input" placeholder="5.00" value="${this.customAmount}" />
+          </label>
+        </div>
+      `;
+      const customInput = customRow.querySelector(".ko-custom-input");
+      const chipsWrap = customRow.querySelector(".ko-custom-chips");
+      ["3", "5", "10", "25"].forEach((v) => {
+        const chip = document.createElement("button");
+        chip.className = "ko-custom-chip";
+        chip.textContent = `$${v}`;
+        chip.onclick = (ev) => {
+          ev.stopPropagation();
+          this.customAmount = v;
+          this.selectedTier = "custom";
           renderView();
         };
+        chipsWrap.appendChild(chip);
       });
+      customInput.addEventListener("focus", () => {
+        if (this.selectedTier !== "custom") {
+          this.selectedTier = "custom";
+          customRow.addClass("is-selected");
+          tierGrid.querySelectorAll(".artcraft-ko-tier-card").forEach((c) => c.removeClass("is-selected"));
+          syncCustomTier();
+          renderMethodDetail(this.selectedNetwork);
+        }
+      });
+      customInput.addEventListener("input", () => {
+        this.customAmount = customInput.value;
+        this.selectedTier = "custom";
+        syncCustomTier();
+        renderMethodDetail(this.selectedNetwork);
+      });
+      customRow.onclick = () => {
+        if (this.selectedTier !== "custom") customInput.focus();
+      };
 
-      const activeTierObj = tiers[this.selectedTier] || tiers.silver;
+      const getActiveTier = () => tiers[this.selectedTier] || tiers.silver;
 
       // Clean Horizontal Payment Method Pills with Vector SVG Icons
       const methodsLabel = bodyContainer.createDiv({ cls: "artcraft-soft-section-lbl" });
@@ -6053,7 +6440,9 @@ class AlchemyCraftProModal extends Modal {
           el.toggleClass("is-active", el.dataset.net === netId);
         });
 
+        const activeTierObj = getActiveTier();
         const curAmount = activeTierObj.amount;
+        const amountValid = parseFloat(curAmount) >= 1;
 
         if (netId === "cryptobot") {
           paymentDetailBox.innerHTML = `
@@ -6084,40 +6473,75 @@ class AlchemyCraftProModal extends Modal {
           if (btnApiCb) {
             btnApiCb.onclick = async () => {
               const origHtml = btnApiCb.innerHTML;
-              btnApiCb.textContent = isRu ? "Открываем счет в браузере..." : "Opening Invoice in Browser...";
+              if (!amountValid) {
+                new Notice(isRu ? "Введите сумму от $1 для оплаты через @CryptoBot." : "Enter an amount of $1 or more to pay via @CryptoBot.");
+                return;
+              }
+              btnApiCb.disabled = true;
+              btnApiCb.textContent = isRu ? "Создаём счёт в @CryptoBot..." : "Creating @CryptoBot invoice...";
               try {
+                const obsidianApi = require("obsidian");
                 const sbFuncUrl =
                   this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
                 const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
-                const res = await fetch(sbFuncUrl, {
+                const payload = {
+                  action: "create_invoice",
+                  amount: curAmount,
+                  tier: activeTierObj.id,
+                  description: `Alchemy Craft — ${activeTierObj.name} ($${curAmount})`,
+                };
+                // requestUrl bypasses browser CORS inside Obsidian
+                const res = await obsidianApi.requestUrl({
+                  url: sbFuncUrl,
                   method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "apikey": sbKey,
-                    "Authorization": `Bearer ${sbKey}`,
-                  },
-                  body: JSON.stringify({
-                    action: "create_invoice",
-                    amount: curAmount,
-                    tier: tierObj.id,
-                    description: `Alchemy Craft Pro — ${tierObj.name} ($${curAmount})`,
-                  }),
+                  contentType: "application/json",
+                  headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` },
+                  body: JSON.stringify(payload),
+                  throw: false,
                 });
-                if (res.ok) {
-                  const d = await res.json();
-                  if (d && d.pay_url) {
-                    if (d.invoice_id) {
-                      const txField = this.contentEl.querySelector(".verify-tx-input");
-                      if (txField) txField.value = String(d.invoice_id);
-                    }
-                    openExternalUrl(d.pay_url);
+                const d = res && res.json ? res.json : null;
+                if (d && d.ok && d.pay_url) {
+                  // Safety: the invoice must carry exactly the amount the user picked (an outdated server would ignore it)
+                  if (d.amount !== undefined && Math.abs(parseFloat(d.amount) - parseFloat(curAmount)) > 0.001) {
+                    new Notice(
+                      isRu
+                        ? `Сервер вернул счёт на $${d.amount} вместо $${curAmount}. Оплата через @CryptoBot временно недоступна — используйте другой способ.`
+                        : `The server returned a $${d.amount} invoice instead of $${curAmount}. @CryptoBot is temporarily unavailable — please use another method.`,
+                      10000
+                    );
                     return;
                   }
+                  if (d.amount === undefined && parseFloat(curAmount) !== 4.99) {
+                    new Notice(
+                      isRu
+                        ? "Серверная функция @CryptoBot ещё не обновлена (она создаёт счёт только на $4.99). Выберите другой способ оплаты или напишите @StratAlchemy."
+                        : "The @CryptoBot server function hasn't been updated yet (it only creates $4.99 invoices). Please pick another method or message @StratAlchemy.",
+                      10000
+                    );
+                    return;
+                  }
+                  if (d.invoice_id) {
+                    const txField = this.contentEl.querySelector(".verify-tx-input");
+                    if (txField) txField.value = String(d.invoice_id);
+                  }
+                  openExternalUrl(d.pay_url);
+                  return;
                 }
-                openExternalUrl("https://t.me/send?start=IVdNOM8aeE7t");
+                new Notice(
+                  isRu
+                    ? "Не удалось создать счёт @CryptoBot. Попробуйте ещё раз или выберите другой способ оплаты."
+                    : "Couldn't create the @CryptoBot invoice. Please try again or choose another payment method.",
+                  8000
+                );
               } catch (e) {
-                openExternalUrl("https://t.me/send?start=IVdNOM8aeE7t");
+                new Notice(
+                  isRu
+                    ? "Нет связи с сервером оплаты @CryptoBot. Проверьте интернет или выберите другой способ."
+                    : "Can't reach the @CryptoBot payment server. Check your connection or choose another method.",
+                  8000
+                );
               } finally {
+                btnApiCb.disabled = false;
                 btnApiCb.innerHTML = origHtml;
               }
             };
@@ -6512,30 +6936,35 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     new Setting(secSonic)
       .setName(t("eqSetName", this.plugin))
       .setDesc(t("eqSetDesc", this.plugin))
-      .addDropdown((drop) =>
-        drop
-          .addOption("craft", isRu ? "01 // Крафтовый Сейсмограф Чернил" : "01 // Craft Ink Seismograph")
-          .addOption("dna", isRu ? "02 // Квантовая Матрица (Quantum Matrix)" : "02 // Quantum Matrix")
-          .addOption("bars", isRu ? "03 // Ризограф-Штампы (Craft Risograph)" : "03 // Craft Risograph Stamps")
-          .addOption("wave", isRu ? "04 // Шёлковая Лента (Liquid Ribbon)" : "04 // Liquid Silk Ribbon")
-          .addOption("orb", isRu ? "05 // Солнечная Сфера (Supernova Orb)" : "05 // Supernova Polar Orb")
-          .addOption("ferro", isRu ? "06 // Феррофлюид Алхимика (Ferrofluid)" : "06 // Alchemy Ferrofluid Orbs")
-          .setValue(this.plugin.settings.eqMode || "craft")
-          .onChange(async (val) => {
-            this.plugin.settings.eqMode = val;
-            await this.plugin.saveSettings();
-          })
-      )
-      .addButton((btn) =>
-        btn.setButtonText(isRu ? "Открыть Аудио-Пульт" : "Open Sonic Studio").onClick(() => {
-          this.plugin.openSonicStudioModal();
-        })
-      )
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.showEqualizer !== false).onChange(async (val) => {
           this.plugin.settings.showEqualizer = val;
           await this.plugin.saveSettings();
           this.plugin.createFloatingDock();
+        })
+      );
+
+    new Setting(secSonic)
+      .setName(isRu ? "Стиль эквалайзера" : "Equalizer style")
+      .setDesc(isRu ? "Выберите один из 6 крафтовых режимов или откройте Аудио-Пульт." : "Pick one of the 6 craft styles, or open the Sonic Studio.")
+      .addDropdown((drop) =>
+        drop
+          .addOption("craft", isRu ? "01 // Крафтовый Сейсмограф" : "01 // Craft Ink Seismograph")
+          .addOption("dna", isRu ? "02 // Квантовая Матрица" : "02 // Quantum Matrix")
+          .addOption("bars", isRu ? "03 // Ризограф-Штампы" : "03 // Craft Risograph Stamps")
+          .addOption("wave", isRu ? "04 // Шёлковая Лента" : "04 // Liquid Silk Ribbon")
+          .addOption("orb", isRu ? "05 // Бумажное Оригами" : "05 // Origami Topography")
+          .addOption("ferro", isRu ? "06 // Струны Архитектора" : "06 // Harmonic Strings")
+          .setValue(this.plugin.settings.eqMode || "craft")
+          .onChange(async (val) => {
+            this.plugin.settings.eqMode = val;
+            await this.plugin.saveSettings();
+            this.plugin.updateEqualizerPillUI();
+          })
+      )
+      .addButton((btn) =>
+        btn.setButtonText(isRu ? "Аудио-Пульт" : "Sonic Studio").onClick(() => {
+          this.plugin.openSonicStudioModal();
         })
       );
 
@@ -6558,8 +6987,12 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       .addDropdown((drop) =>
         drop
           .addOption("off", isRu ? "Выкл (Off)" : "Off")
-          .addOption("thock", "Deep Mechanical Thock")
-          .addOption("typewriter", "Vintage Swiss Typewriter")
+          .addOption("creamy_pom", isRu ? "Кремовый POM-свитч (мягкий бархатный отклик)" : "Creamy POM Linear (velvety soft)")
+          .addOption("thock", isRu ? "Глубокий PBT Thock (матовый глубокий звук)" : "Deep PBT Thock (matte & deep)")
+          .addOption("matcha_lubed", isRu ? "Матча Латте (смазанный тихий свитч)" : "Matcha Silent Tactile (lubed & hushed)")
+          .addOption("raindrop_wood", isRu ? "Капля по тёплому ореху (деревянный корпус)" : "Warm Walnut Raindrop (wooden)")
+          .addOption("velvet_felt", isRu ? "Пианинный фетр (мягкий молоточек)" : "Velvet Piano Felt (soft hammer)")
+          .addOption("paper_brush", isRu ? "Перьевая ручка по хлопковой бумаге" : "Fountain Pen on Cotton Paper")
           .setValue(this.plugin.settings.tactileTypingSound || "off")
           .onChange(async (val) => {
             this.plugin.settings.tactileTypingSound = val;

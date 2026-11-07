@@ -4619,3 +4619,327 @@ body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-sub {
 
 
 
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v4.3.7 — SIDE DOCK TEXT FIX, GLOW-FREE EQUALIZER PILL,
+   SINGLE-LINE BOOKMARK STRIP, CUSTOM DONATION ROW, AUDIO DEVICE PICKER
+   ========================================================================== */
+
+/* 1. Right-side vertical dock: wider pillar + labels that never clip */
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  width: 196px !important;
+  max-width: 196px !important;
+  padding: 10px 10px !important;
+  box-sizing: border-box !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 6px 6px !important;
+  font-size: 11px !important;
+  gap: 5px !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn .artcraft-btn-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn svg,
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn .artcraft-btn-caret {
+  flex-shrink: 0;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-collapse-btn {
+  grid-column: span 2 !important;
+  width: 100% !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pill {
+  padding: 4px 8px !important;
+}
+
+/* 2. Calm equalizer pill: no green neon halo, no glowing status dot */
+.artcraft-dock-eq-pill,
+.artcraft-dock-eq-pill.is-synced,
+.artcraft-dock-eq-pill.is-audio-live {
+  box-shadow: 0 2px 0 #111111 !important;
+  border-color: #111111 !important;
+}
+
+.artcraft-eq-status-dot.is-live {
+  box-shadow: none !important;
+}
+
+/* 3. Note top strip: stays on one line; bookmarks live in a compact one-line scroller */
+.artcraft-top-bar-inner {
+  max-width: var(--file-line-width, 700px) !important;
+}
+
+.artcraft-header-main-row {
+  gap: 6px 8px;
+}
+
+.artcraft-note-craft-actions {
+  flex-wrap: nowrap !important;
+  flex-shrink: 0;
+}
+
+.artcraft-margin-bookmarks-strip {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  padding: 3px 0 2px 0 !important;
+  width: 100%;
+}
+
+.artcraft-margin-bookmarks-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.artcraft-bm-pill {
+  flex: 0 0 auto;
+  max-width: 270px;
+}
+
+.artcraft-bm-pill .bm-tag-edit,
+.artcraft-bm-pill .bm-tag-del {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  padding: 0 !important;
+}
+
+.artcraft-bm-pill .bm-tag-edit svg,
+.artcraft-bm-pill .bm-tag-del svg {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+.artcraft-bm-digest-chip {
+  flex: 0 0 auto;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 24px !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  background: #FFF7ED !important;
+  border: 1px solid #FDBA74 !important;
+  color: #9A3412 !important;
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.artcraft-bm-digest-chip svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.artcraft-bm-digest-chip:hover {
+  background: #FFEDD5 !important;
+}
+
+/* 4. Pay-what-you-want donation row in the Pro / Support modal */
+.artcraft-ko-custom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  flex-wrap: wrap;
+  background: #FAF9F5;
+  border: 1.5px dashed #D6D1C4;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 0 0 14px 0;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.artcraft-ko-custom-row:hover {
+  border-color: #B8B3A6;
+  background: #FFFFFF;
+}
+
+.artcraft-ko-custom-row.is-selected {
+  background: #FFFFFF;
+  border-style: solid;
+  border-color: #69BD28;
+  box-shadow: 0 4px 14px rgba(105, 189, 40, 0.14);
+}
+
+.ko-custom-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: #8C5828;
+}
+
+.ko-custom-txt {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  min-width: 0;
+}
+
+.ko-custom-txt strong {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #1F2937;
+}
+
+.ko-custom-txt small {
+  font-size: 11px;
+  color: #8A867E;
+}
+
+.ko-custom-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ko-custom-chips {
+  display: flex;
+  gap: 5px;
+}
+
+.ko-custom-chip {
+  background: #FFFFFF !important;
+  border: 1px solid #E2DDD2 !important;
+  border-radius: 999px !important;
+  padding: 2px 9px !important;
+  height: auto !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #4B5563 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+.ko-custom-chip:hover {
+  border-color: #69BD28 !important;
+  color: #15803D !important;
+}
+
+.ko-custom-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 1px 9px;
+  font-weight: 800;
+  color: #1F2937;
+}
+
+.ko-custom-input-wrap:focus-within {
+  border-color: #69BD28;
+}
+
+.ko-custom-input {
+  width: 72px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 5px 0 !important;
+  font-family: "JetBrains Mono", monospace !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+}
+
+/* 5. Sonic Studio: audio input / loopback picker */
+.sonic-device-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.sonic-device-lbl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #57534E;
+  flex-shrink: 0;
+}
+
+.sonic-device-select {
+  flex: 1 1 200px;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 11.5px !important;
+  height: 30px !important;
+}
+
+.sonic-device-refresh {
+  flex-shrink: 0;
+  height: 30px !important;
+  padding: 0 12px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  background: #FAF9F5 !important;
+  border: 1px solid #D5D1C5 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+.sonic-device-hint {
+  margin-top: 6px;
+  font-size: 10.8px;
+  line-height: 1.45;
+  color: #8A867E;
+}
+
+/* 6. Settings rows: Russian (long) labels never get squeezed into a thin column */
+.artcraft-calm-settings-root .setting-item-info {
+  min-width: 240px;
+  flex: 1 1 260px;
+}
+
+.artcraft-calm-settings-root .setting-item-control {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 100%;
+}
