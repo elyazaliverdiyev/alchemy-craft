@@ -5674,3 +5674,112 @@ body.theme-dark .artcraft-wax-seal-veil {
   border-radius: 6px;
   will-change: transform;
 }
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v4.6.1 — BOOKBINDER'S SPINE MATERIALS (COGNAC, EMERALD SAFFIANO,
+   IMPERIAL CRIMSON, NORDIC LINEN) & CHRONO-INK AGING
+   ========================================================================== */
+.artcraft-spine-picker-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 4px;
+}
+
+.spine-mat-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  padding: 5px 6px !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  border: 1.5px solid #E2DDD2 !important;
+  background: #FFFFFF !important;
+  color: #374151 !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: all 0.14s ease !important;
+}
+
+.spine-mat-chip:hover {
+  border-color: #8C5828 !important;
+}
+
+.spine-mat-chip.is-active {
+  background: #18181B !important;
+  color: #FFFFFF !important;
+  border-color: #18181B !important;
+}
+
+.spine-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Emerald Saffiano Leather & Gold Foil Trim */
+body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  border-left: 9px solid #14532D !important;
+  background: linear-gradient(90deg, #E8F0EB 0%, #FAF9F5 3.2%, #FCFBF8 96.5%, #F2EFE6 100%) !important;
+  box-shadow:
+    inset 3px 0 0 #D97706,
+    inset 28px 0 36px -16px rgba(20, 83, 45, 0.18),
+    4px 3px 0 -1px #F6F3EC,
+    4px 3px 0 0 #D8D2C5,
+    8px 6px 0 -1px #EFEBE1,
+    8px 6px 0 0 #CFC8B8,
+    12px 9px 0 -1px #E8E3D7,
+    12px 9px 0 0 #C5BEB0,
+    16px 12px 0 -1px #E1DBD0,
+    16px 12px 0 0 #B8B0A0,
+    22px 20px 38px rgba(20, 45, 30, 0.14) !important;
+}
+
+/* Imperial Crimson Velvet & Brass Trim */
+body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  border-left: 9px solid #7F1D1D !important;
+  background: linear-gradient(90deg, #F5EAE8 0%, #FCF9F5 3.2%, #FFFDF9 96.5%, #F4EFE6 100%) !important;
+  box-shadow:
+    inset 3px 0 0 #F59E0B,
+    inset 28px 0 36px -16px rgba(127, 29, 29, 0.17),
+    4px 3px 0 -1px #F6F3EC,
+    4px 3px 0 0 #D8D2C5,
+    8px 6px 0 -1px #EFEBE1,
+    8px 6px 0 0 #CFC8B8,
+    12px 9px 0 -1px #E8E3D7,
+    12px 9px 0 0 #C5BEB0,
+    16px 12px 0 -1px #E1DBD0,
+    16px 12px 0 0 #B8B0A0,
+    22px 20px 38px rgba(60, 20, 20, 0.14) !important;
+}
+
+/* Nordic Woven Slate Linen */
+body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  border-left: 9px solid #334155 !important;
+  background: linear-gradient(90deg, #EAEEF4 0%, #F9FAFB 3.2%, #FFFFFF 96.5%, #F1F5F9 100%) !important;
+  box-shadow:
+    inset 3px 0 0 #94A3B8,
+    inset 28px 0 36px -16px rgba(51, 65, 85, 0.16),
+    4px 3px 0 -1px #F8FAFC,
+    4px 3px 0 0 #CBD5E1,
+    8px 6px 0 -1px #F1F5F9,
+    8px 6px 0 0 #94A3B8,
+    12px 9px 0 -1px #E2E8F0,
+    12px 9px 0 0 #64748B,
+    22px 20px 38px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Chrono-Ink Archival Patina for Mature Notes (>14 days old) */
+body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .markdown-rendered p,
+body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .cm-line {
+  color: #2C221E;
+}

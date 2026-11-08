@@ -41,6 +41,9 @@ const DEFAULT_SETTINGS = {
   readingPacer: false, // Acoustic Speed-Reading Pacer (300 WPM gliding line guide)
   readingPacerWpm: 300,
   waxSealNotes: {}, // { [filePath]: { sealedAt, unlockDate, note } }
+  spineMaterial: "cognac", // "cognac" | "emerald" | "crimson" | "linen"
+  chronoInkAging: true, // Subtle archival ink maturation based on note age
+  chapterChord: true, // Warm Cello & Harp harmonic chord on checklist completion
   stampedNotes: {}, // { [filePath]: "2026-11-07" }
   marginBookmarks: {}, // { [filePath]: Array<{ id, type, label, snippet, line }> }
   readingRuler: false,
@@ -4079,6 +4082,8 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-book-spread", !!this.settings.bookSpreadMode);
     document.body.classList.toggle("artcraft-breathing-spine", !!this.settings.breathingSpine);
     document.body.classList.toggle("artcraft-margin-sandglass", this.settings.marginSandglass !== false);
+    document.body.classList.toggle("artcraft-chrono-ink", this.settings.chronoInkAging !== false);
+    document.body.setAttribute("data-spine-material", this.settings.spineMaterial || "cognac");
 
     const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
     const show = this.settings.showHeaderTag !== false && tag.length > 0;
@@ -4111,9 +4116,9 @@ class AlchemyFlowPlugin extends Plugin {
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
       // Auto-upgrade graph.json once so folders are colored
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.5.0") {
+      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.1") {
         this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.5.0";
+        this.settings.graphConfigVersion = "4.6.1";
         this.saveSettings();
         setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
       }
@@ -4986,7 +4991,9 @@ class AlchemyFlowPlugin extends Plugin {
     if (!this.settings.stampedNotes) this.settings.stampedNotes = {};
     if (!this.settings.marginBookmarks) this.settings.marginBookmarks = {};
 
+    this.applyChronoInkToActiveNote();
     if (fromCheckboxClick && total > 0 && pct === 100 && this.lastTaskPctByFile[filePath] !== 100) {
+      this.playChapterCompletionChord();
       this.burstParticles(window.innerWidth / 2, window.innerHeight / 4, 60);
       if (!this.settings.stampedNotes[filePath]) {
         this.settings.stampedNotes[filePath] = { dates: [new Date().toLocaleDateString()], count: 1 };
@@ -5464,6 +5471,70 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   // --- 🖼 NEW IDEA 3: EX-LIBRIS BOOK CARD PNG EXPORTER (ГЕНЕРАТОР КАРТОЧКИ ЭКСЛИБРИСА В PNG) ---
+  // --- 🎻 NEW IDEA 1: CHAPTER COMPLETION HARP & CELLO CHORD (АКУСТИЧЕСКИЙ АККОРД ЗАВЕРШЕНИЯ ГЛАВЫ) ---
+  playChapterCompletionChord() {
+    if (this.settings.chapterChord === false) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!this.keyAudioCtx) this.keyAudioCtx = new AudioCtx();
+      const ctx = this.keyAudioCtx;
+      if (ctx.state === "suspended") ctx.resume();
+
+      const now = ctx.currentTime;
+      const master = ctx.createGain();
+      master.gain.value = 0.16;
+      const bodyFilter = ctx.createBiquadFilter();
+      bodyFilter.type = "lowpass";
+      bodyFilter.frequency.value = 1450;
+      master.connect(bodyFilter);
+      bodyFilter.connect(ctx.destination);
+
+      // Warm Cello Bass Drone (C3 = 130.81 Hz) + Plucked Concert Harp Major-9th Arpeggio (C4, E4, G4, B4, D5)
+      const notes = [
+        { f: 130.81, delay: 0.0, dur: 2.2, type: "triangle", gain: 0.38 },
+        { f: 261.63, delay: 0.06, dur: 1.6, type: "sine", gain: 0.28 },
+        { f: 329.63, delay: 0.14, dur: 1.6, type: "sine", gain: 0.25 },
+        { f: 392.00, delay: 0.22, dur: 1.7, type: "sine", gain: 0.24 },
+        { f: 493.88, delay: 0.30, dur: 1.8, type: "sine", gain: 0.20 },
+        { f: 587.33, delay: 0.38, dur: 2.1, type: "sine", gain: 0.22 }
+      ];
+
+      notes.forEach((n) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = n.type;
+        osc.frequency.setValueAtTime(n.f, now + n.delay);
+        g.gain.setValueAtTime(0.0001, now + n.delay);
+        g.gain.linearRampToValueAtTime(n.gain, now + n.delay + 0.025);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + n.delay + n.dur);
+        osc.connect(g);
+        g.connect(master);
+        osc.start(now + n.delay);
+        osc.stop(now + n.delay + n.dur + 0.05);
+      });
+    } catch (e) {}
+  }
+
+  // --- 🖋 NEW IDEA 2: CHRONO-INK AGING & BOOKBINDER SPINE SELECTOR ---
+  applyChronoInkToActiveNote() {
+    if (this.settings.chronoInkAging === false) {
+      document.body.removeAttribute("data-chrono-age");
+      return;
+    }
+    const obsidian = require("obsidian");
+    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!view || !view.file || !view.file.stat) return;
+    const ageDays = Math.max(0, (Date.now() - (view.file.stat.mtime || Date.now())) / 86400000);
+    if (ageDays > 14) {
+      document.body.setAttribute("data-chrono-age", "archival");
+    } else if (ageDays < 1) {
+      document.body.setAttribute("data-chrono-age", "fresh");
+    } else {
+      document.body.setAttribute("data-chrono-age", "seasoned");
+    }
+  }
+
   exportExLibrisBookCardPNG() {
     try {
       const obsidian = require("obsidian");
@@ -5573,7 +5644,7 @@ class AlchemyFlowPlugin extends Plugin {
       // 7. Footer Signature
       ctx.fillStyle = "#78716C";
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText("ALCHEMY CRAFT v4.5.1 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+      ctx.fillText("ALCHEMY CRAFT v4.6.1 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
 
       const url = cv.toDataURL("image/png");
       const a = document.createElement("a");
@@ -5732,6 +5803,21 @@ class AlchemyFlowPlugin extends Plugin {
             )
             .join("")}
         </div>
+        <div class="focus-pop-divider">${isRu ? "ПЕРЕПЛЁТНАЯ МАСТЕРСКАЯ (МАТЕРИАЛ КОРЕШКА И ЛИСТА)" : "BOOKBINDER'S SPINE MATERIAL & TEXTURE"}</div>
+        <div class="artcraft-spine-picker-row">
+          <button class="spine-mat-chip ${(this.settings.spineMaterial || "cognac") === "cognac" ? "is-active" : ""}" data-spine="cognac">
+            <span class="spine-swatch" style="background:#8C5828"></span><span>${isRu ? "Коньяк" : "Cognac"}</span>
+          </button>
+          <button class="spine-mat-chip ${this.settings.spineMaterial === "emerald" ? "is-active" : ""}" data-spine="emerald">
+            <span class="spine-swatch" style="background:#14532D"></span><span>${isRu ? "Сафьян" : "Emerald"}</span>
+          </button>
+          <button class="spine-mat-chip ${this.settings.spineMaterial === "crimson" ? "is-active" : ""}" data-spine="crimson">
+            <span class="spine-swatch" style="background:#7F1D1D"></span><span>${isRu ? "Бархат" : "Crimson"}</span>
+          </button>
+          <button class="spine-mat-chip ${this.settings.spineMaterial === "linen" ? "is-active" : ""}" data-spine="linen">
+            <span class="spine-swatch" style="background:#334155"></span><span>${isRu ? "Лён" : "Linen"}</span>
+          </button>
+        </div>
         <div class="focus-pop-divider">${isRu ? "КНИЖНАЯ МЕТОДИКА: 5 ЗАКЛАДОК-НУТРИЕНТОВ" : "5-NUTRIENT BOOK STICKER TOOLS"}</div>
         <div class="focus-pop-actions">
           <button class="focus-pop-act-btn is-primary" data-pop-act="add-sticker">
@@ -5754,6 +5840,17 @@ class AlchemyFlowPlugin extends Plugin {
           </button>
         </div>
       `;
+
+      pop.querySelectorAll(".spine-mat-chip").forEach((chip) => {
+        chip.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          this.settings.spineMaterial = chip.getAttribute("data-spine") || "cognac";
+          this.settings.bookSpreadMode = true;
+          await this.saveSettings();
+          this.applyBodyClasses();
+          renderPopoverContent();
+        });
+      });
 
       pop.querySelector(".focus-pop-close")?.addEventListener("click", (ev) => {
         ev.stopPropagation();
