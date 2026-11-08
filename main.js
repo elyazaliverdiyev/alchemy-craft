@@ -45,6 +45,10 @@ const DEFAULT_SETTINGS = {
   spineMaterial: "cognac", // "cognac" | "emerald" | "crimson" | "linen"
   chronoInkAging: true, // Subtle archival ink maturation based on note age
   chapterChord: true, // Warm Cello & Harp harmonic chord on checklist completion
+  showCornerStamp: true, // Top-Right Ex-Libris Stamp & Classics Seal
+  astrolabeCompass: true, // Rotating Brass Astrolabe Reading & Link Compass
+  uvSecretInk: false, // UV Secret Margin Ink (glows under Smart Lamp & hover)
+  goldSpineRibbon: true, // Silk Bookmark Ribbon & Gold-Foil Spine Embossing
   stampedNotes: {}, // { [filePath]: "2026-11-07" }
   marginBookmarks: {}, // { [filePath]: Array<{ id, type, label, snippet, line }> }
   readingRuler: false,
@@ -139,7 +143,9 @@ const SICRAFT_SVGS = {
   eqStrings: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c4-4 6 4 10 0s6-4 10 0"/><path d="M2 12c4 4 6-4 10 0s6 4 10 0"/><path d="M2 18c4-4 6 4 10 0s6-4 10 0" opacity="0.6"/></svg>`,
   shelf: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M9 7h6"/><path d="M9 11h4"/></svg>`,
   sandglass: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>`,
-  lung: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M12 10c-3-2-7-1-8 3-1 4 0 8 4 8 2.5 0 4-2 4-5"/><path d="M12 10c3-2 7-1 8 3 1 4 0 8-4 8-2.5 0-4-2-4-5"/></svg>`
+  lung: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M12 10c-3-2-7-1-8 3-1 4 0 8 4 8 2.5 0 4-2 4-5"/><path d="M12 10c3-2 7-1 8 3 1 4 0 8-4 8-2.5 0-4-2-4-5"/></svg>`,
+  astrolabe: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m16.2 7.8-4.2 4.2-2.5 2.5"/></svg>`,
+  ribbon: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/><path d="M9 8h6"/></svg>`
 };
 
 // Always open external URLs in the user's default OS browser (Chrome/Safari/Edge/Telegram Desktop), bypassing Obsidian's internal Web Viewer!
@@ -2054,7 +2060,7 @@ class BookNutrientDigestModal extends Modal {
     }</span>`;
     btnAppend.onclick = async () => {
       const obsidian = require("obsidian");
-      const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+      const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
       if (view && view.editor && this.bookmarks.length > 0) {
         const cur = view.editor.getValue();
         view.editor.setValue(cur + buildDigestMarkdown());
@@ -3652,7 +3658,7 @@ class AlchemyFlowPlugin extends Plugin {
   // --- 📸 4. 1-CLICK SWISS BENTO QUOTE CARD EXPORTER ---
   async exportSelectionAsBentoCard() {
     const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     let text = "";
     let title = "STRATALCHEMY // KNOWLEDGE BRIEF";
     if (view && view.file) {
@@ -4489,6 +4495,8 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-breathing-spine", !!this.settings.breathingSpine);
     document.body.classList.remove("artcraft-margin-sandglass");
     document.body.classList.toggle("artcraft-chrono-ink", this.settings.chronoInkAging !== false);
+    document.body.classList.toggle("artcraft-uv-secret-ink", !!this.settings.uvSecretInk);
+    document.body.classList.toggle("artcraft-gold-ribbon", this.settings.goldSpineRibbon !== false);
     document.body.setAttribute("data-spine-material", this.settings.spineMaterial || "cognac");
 
     const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
@@ -5363,7 +5371,7 @@ class AlchemyFlowPlugin extends Plugin {
       .forEach((el) => el.remove());
 
     const obsidian = require("obsidian");
-    const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const activeView = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     if (!activeView || !activeView.file) return;
 
     const cache = this.app.metadataCache.getFileCache(activeView.file);
@@ -5429,6 +5437,7 @@ class AlchemyFlowPlugin extends Plugin {
     let wrap = viewContent.querySelector(":scope > .artcraft-task-progress-wrap");
     if (!showStats && !showTasks && !showStamp && noteBookmarks.length === 0) {
       if (wrap) wrap.remove();
+      this.renderBookCraftAdornments(activeView, filePath, stampRec, pct);
       return;
     }
 
@@ -5683,11 +5692,13 @@ class AlchemyFlowPlugin extends Plugin {
         this.updateTaskProgressBar();
       });
     });
+
+    this.renderBookCraftAdornments(activeView, filePath, stampRec, pct);
   }
 
   async addMarginBookmarkToActiveNote() {
     const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     if (!view || !view.file) return;
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     const filePath = view.file.path;
@@ -5743,7 +5754,7 @@ class AlchemyFlowPlugin extends Plugin {
 
   openBookNutrientDigestModal() {
     const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     if (!view || !view.file) return;
     const filePath = view.file.path;
     const bookmarks = (this.settings.marginBookmarks && this.settings.marginBookmarks[filePath]) || [];
@@ -5796,7 +5807,7 @@ class AlchemyFlowPlugin extends Plugin {
 
   async toggleNoteWaxSeal() {
     const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     const loc = getLocale(this);
     if (!view || !view.file) {
       new Notice(i18n({
@@ -5899,7 +5910,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.waxSealTicker = null;
     }
     const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     if (!view || !view.file) return;
 
     const fp = view.file.path;
@@ -6224,7 +6235,7 @@ class AlchemyFlowPlugin extends Plugin {
       return;
     }
     const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     if (!view || !view.file || !view.file.stat) return;
     const ageDays = Math.max(0, (Date.now() - (view.file.stat.mtime || Date.now())) / 86400000);
     if (ageDays > 14) {
@@ -6239,7 +6250,7 @@ class AlchemyFlowPlugin extends Plugin {
   exportExLibrisBookCardPNG() {
     try {
       const obsidian = require("obsidian");
-      const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+      const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
       const isRu = (this.settings.uiLanguage || "en") === "ru";
       const file = view && view.file ? view.file : null;
       const fp = file ? file.path : "";
@@ -6362,7 +6373,7 @@ class AlchemyFlowPlugin extends Plugin {
   async openTrueTwoPageBookSpread() {
     const obsidian = require("obsidian");
     const activeLeaf = this.app.workspace.activeLeaf;
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     if (!activeLeaf || !view || !view.file) return;
     const isRu = (this.settings.uiLanguage || "en") === "ru";
 
@@ -6390,6 +6401,244 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
+  // Safe aliases so no external/legacy call in Focus popover can ever fail
+  openAddBookmarkModal() {
+    return this.addMarginBookmarkToActiveNote();
+  }
+  openNoteBookmarksDigestModal() {
+    return this.openBookNutrientDigestModal();
+  }
+  exportExLibrisCardAsPNG() {
+    return this.exportExLibrisBookCardPNG();
+  }
+  openTimeCapsuleSealModal() {
+    return this.toggleNoteWaxSeal();
+  }
+  openTourNote() {
+    return this.openInteractiveTourNote();
+  }
+  renderNoteMasteryStamp() {
+    return this.updateTaskProgressBar();
+  }
+
+  renderBookCraftAdornments(activeView, filePath, stampRec, taskPct) {
+    if (!activeView || !activeView.containerEl) return;
+    const viewContent = activeView.containerEl.querySelector(".view-content");
+    if (!viewContent) return;
+
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const sizer =
+      viewContent.querySelector(".cm-sizer") ||
+      viewContent.querySelector(".markdown-preview-sizer") ||
+      viewContent;
+
+    // Remove previous adornments before re-rendering cleanly
+    viewContent.querySelectorAll(".artcraft-exlibris-corner-seal, .artcraft-astrolabe-widget, .artcraft-spine-ribbon-bookmark").forEach((el) => el.remove());
+
+    if (!this.settings.bookSpreadMode) return;
+
+    // 1. TOP-RIGHT ROTARY EX-LIBRIS CORNER SEAL (Clickable & Interactive!)
+    if (this.settings.showCornerStamp !== false) {
+      const sealEl = document.createElement("div");
+      const isClassics = !!(stampRec && stampRec.count >= 2);
+      const isStamped = !!stampRec;
+      sealEl.className =
+        "artcraft-exlibris-corner-seal" +
+        (isClassics ? " is-classics-gold" : isStamped ? " is-stamped-green" : " is-unstamped");
+      const dateStr = stampRec && stampRec.dates && stampRec.dates.length
+        ? stampRec.dates[stampRec.dates.length - 1]
+        : new Date().toLocaleDateString();
+      const ringText = isClassics
+        ? `★ EX LIBRIS • CLASSICS #${stampRec.count} • ${dateStr} • `
+        : isStamped
+        ? `✓ EX LIBRIS • MASTERED • ${dateStr} • `
+        : `EX LIBRIS • ALCHEMY CRAFT FOLIO • CLICK TO STAMP • `;
+
+      sealEl.title = isRu
+        ? isStamped
+          ? `Экслибрис-печать (${dateStr}). ЛКМ: добавить перечитывание (★ Классика #${(stampRec.count || 1) + 1}) | ПКМ: меню штампа`
+          : "Нажмите, чтобы поставить гербовую печать «EX LIBRIS • ИЗУЧЕНО» на этот книжный лист"
+        : isStamped
+        ? `Ex-Libris Seal (${dateStr}). LMB: Add re-read (★ Classics #${(stampRec.count || 1) + 1}) | RMB: Stamp Menu`
+        : "Click to press the 'EX LIBRIS • MASTERED' ink seal onto this book page";
+
+      sealEl.innerHTML = `
+        <svg viewBox="0 0 110 110" class="exlibris-seal-svg">
+          <defs>
+            <path id="exLibrisCirclePath" d="M 55, 55 m -39, 0 a 39,39 0 1,1 78,0 a 39,39 0 1,1 -78,0" />
+          </defs>
+          <circle cx="55" cy="55" r="49" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="4 2.5" opacity="0.82" />
+          <circle cx="55" cy="55" r="44" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.65" />
+          <circle cx="55" cy="55" r="28" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.75" />
+          <text font-size="7.3" font-weight="800" font-family="JetBrains Mono, monospace" letter-spacing="1.35" fill="currentColor">
+            <textPath href="#exLibrisCirclePath" startOffset="0%">${ringText}</textPath>
+          </text>
+          <g transform="translate(43, 39)" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3h6" />
+            <path d="M10 3v4.5L5.5 15c-.6 1 .2 2.2 1.3 2.2h10.4c1.1 0 1.9-1.2 1.3-2.2L14 7.5V3" />
+            <path d="M7 14h10" opacity="0.7" />
+          </g>
+          <text x="55" y="69" text-anchor="middle" font-size="7.5" font-weight="900" font-family="JetBrains Mono, monospace" fill="currentColor">
+            ${isClassics ? `★ #${stampRec.count}` : isStamped ? (isRu ? "ИЗУЧЕНО" : "APPROVED") : (isRu ? "ШТАМП" : "STAMP")}
+          </text>
+        </svg>
+      `;
+
+      sealEl.addEventListener("click", async (ev) => {
+        ev.stopPropagation();
+        sealEl.classList.remove("is-pressing");
+        void sealEl.offsetWidth;
+        sealEl.classList.add("is-pressing");
+        this.playHarmonicResonanceChime();
+        await this.stampNoteReading(filePath, "add");
+      });
+      sealEl.addEventListener("contextmenu", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.showCornerStampMenu(ev, filePath);
+      });
+
+      sizer.appendChild(sealEl);
+    }
+
+    // 2. ROTATING BRASS ASTROLABE READING & LINK COMPASS
+    if (this.settings.astrolabeCompass !== false) {
+      const resolvedLinks = (this.app.metadataCache && this.app.metadataCache.resolvedLinks) || {};
+      const outMap = resolvedLinks[filePath] || {};
+      const outPaths = Object.keys(outMap);
+      const inPaths = [];
+      for (const srcPath of Object.keys(resolvedLinks)) {
+        if (srcPath !== filePath && resolvedLinks[srcPath] && resolvedLinks[srcPath][filePath]) {
+          inPaths.push(srcPath);
+        }
+      }
+      const totalLinks = outPaths.length + inPaths.length;
+
+      const astroEl = document.createElement("div");
+      astroEl.className = "artcraft-astrolabe-widget";
+      astroEl.title = isRu
+        ? `Латунный Астролябий-Компас: ${inPaths.length} входящих / ${outPaths.length} исходящих связей. Прокручивайте страницу для вращения шестерён или нажмите для быстрого перехода!`
+        : `Brass Astrolabe Compass: ${inPaths.length} backlinks / ${outPaths.length} outgoing links. Scroll to rotate brass rings or click to jump to linked notes!`;
+
+      astroEl.innerHTML = `
+        <div class="astrolabe-dial-wrap">
+          <svg viewBox="0 0 100 100" class="astrolabe-svg">
+            <g class="astrolabe-outer-ring">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3" />
+              <circle cx="50" cy="50" r="39" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.7" />
+              <line x1="50" y1="2" x2="50" y2="10" stroke="currentColor" stroke-width="1.8" />
+              <line x1="50" y1="90" x2="50" y2="98" stroke="currentColor" stroke-width="1.8" />
+              <line x1="2" y1="50" x2="10" y2="50" stroke="currentColor" stroke-width="1.8" />
+              <line x1="90" y1="50" x2="98" y2="50" stroke="currentColor" stroke-width="1.8" />
+            </g>
+            <g class="astrolabe-inner-rete">
+              <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="6 3" />
+              <polygon points="50,16 54,46 50,54 46,46" fill="currentColor" opacity="0.88" />
+              <polygon points="50,84 53,54 50,48 47,54" fill="currentColor" opacity="0.38" />
+              <circle cx="50" cy="50" r="4.2" fill="#FAF8F3" stroke="currentColor" stroke-width="1.8" />
+            </g>
+          </svg>
+          <div class="astrolabe-readout">
+            <span class="astro-pct">0%</span>
+            <span class="astro-links">⟡ ${totalLinks}</span>
+          </div>
+        </div>
+      `;
+
+      // Live scroll listener on the note scroller to rotate the Astrolabe rings and update reading %
+      const scroller =
+        viewContent.querySelector(".cm-scroller") ||
+        viewContent.querySelector(".markdown-preview-view");
+      if (scroller) {
+        const updateAstroScroll = () => {
+          const maxScroll = Math.max(1, scroller.scrollHeight - scroller.clientHeight);
+          const ratio = Math.max(0, Math.min(1, scroller.scrollTop / maxScroll));
+          const degOuter = (ratio * 360).toFixed(1);
+          const degInner = (-ratio * 540).toFixed(1);
+          const outerG = astroEl.querySelector(".astrolabe-outer-ring");
+          const innerG = astroEl.querySelector(".astrolabe-inner-rete");
+          const pctSpan = astroEl.querySelector(".astro-pct");
+          if (outerG) outerG.style.transform = `rotate(${degOuter}deg)`;
+          if (innerG) innerG.style.transform = `rotate(${degInner}deg)`;
+          if (pctSpan) pctSpan.textContent = `${Math.round(ratio * 100)}%`;
+
+          // Also sway the silk spine ribbon slightly on scroll!
+          const ribbonEl = viewContent.querySelector(".artcraft-spine-ribbon-bookmark");
+          if (ribbonEl) {
+            const swayDeg = (Math.sin(scroller.scrollTop * 0.035) * 3.2).toFixed(2);
+            ribbonEl.style.setProperty("--ribbon-sway", `${swayDeg}deg`);
+          }
+        };
+        if (!scroller.dataset.artcraftAstroWired) {
+          scroller.dataset.artcraftAstroWired = "true";
+          scroller.addEventListener("scroll", updateAstroScroll, { passive: true });
+        }
+        setTimeout(updateAstroScroll, 40);
+      }
+
+      astroEl.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        const menu = new Menu();
+        menu.addItem((it) => {
+          it.setTitle(
+            isRu
+              ? `Компас связей заметки (${inPaths.length} входящих • ${outPaths.length} исходящих)`
+              : `Note Link Compass (${inPaths.length} Backlinks • ${outPaths.length} Outlinks)`
+          ).setIcon("sicraft-target");
+        });
+        menu.addSeparator();
+        const combined = [
+          ...outPaths.slice(0, 6).map((p) => ({ p, dir: "→" })),
+          ...inPaths.slice(0, 6).map((p) => ({ p, dir: "←" })),
+        ];
+        if (combined.length === 0) {
+          menu.addItem((it) => {
+            it.setTitle(
+              isRu
+                ? "Нет связанных заметок — откройте Полку Классики"
+                : "No linked notes yet — open Classics Bookshelf"
+            )
+              .setIcon("sicraft-spark")
+              .onClick(() => this.openClassicsBookshelfModal());
+          });
+        } else {
+          combined.forEach((entry) => {
+            const shortName = entry.p.replace(/\.md$/i, "").split("/").pop() || entry.p;
+            menu.addItem((it) => {
+              it.setTitle(`${entry.dir} ${shortName}`)
+                .setIcon("sicraft-rocket")
+                .onClick(() => this.app.workspace.openLinkText(entry.p, filePath, false));
+            });
+          });
+        }
+        menu.showAtMouseEvent(ev);
+      });
+
+      sizer.appendChild(astroEl);
+    }
+
+    // 3. GOLD-FOIL SPINE EMBOSSING & SWAYING SILK BOOKMARK RIBBON (ЛЯССЕ)
+    if (this.settings.goldSpineRibbon !== false) {
+      const ribbonEl = document.createElement("div");
+      ribbonEl.className = "artcraft-spine-ribbon-bookmark";
+      const noteTitle = (activeView.file && activeView.file.basename ? activeView.file.basename : "ALCHEMY CRAFT").toUpperCase().slice(0, 26);
+      ribbonEl.title = isRu
+        ? "Шёлковая лента-ляссе и золотое тиснение на корешке (нажмите, чтобы прикрепить закладку-нутриент)"
+        : "Silk Bookmark Ribbon & Gold-Foil Spine Embossing (click to attach a 5-Nutrient sticker)";
+      ribbonEl.innerHTML = `
+        <div class="spine-ribbon-cloth">
+          <span class="spine-foil-title">${noteTitle}</span>
+          <span class="spine-ribbon-tail"></span>
+        </div>
+      `;
+      ribbonEl.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        this.addMarginBookmarkToActiveNote();
+      });
+      sizer.appendChild(ribbonEl);
+    }
+  }
+
   toggleFocusSubmenuPopover(anchorBtn) {
     if (this.focusPopoverEl) {
       this.focusPopoverEl.remove();
@@ -6404,7 +6653,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     const renderPopoverContent = () => {
       const obsidian = require("obsidian");
-      const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+      const activeView = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
       const fp = activeView && activeView.file ? activeView.file.path : "";
       const isStamped = fp ? !!this.getNoteStampRecord(fp) : false;
       const isRulerOn = !!(this.settings.magicLamp && this.settings.lampShape === "ruler");
@@ -6564,7 +6813,7 @@ class AlchemyFlowPlugin extends Plugin {
           icon: SICRAFT_SVGS.stamp,
           title: i18n({
             en: "Top-Right Ex-Libris Stamp & Classics Seal",
-            ru: "Штамп «Изучено / Классика» вверху заметки",
+            ru: "Экслибрис-печать «Изучено / Классика» в углу листа",
             zh: "笔记右上角藏书票印章与经典封印",
             ja: "ノート右上の蔵書印＆名著クラシック封印",
             es: "Sello Ex-Libris y distinción de clásicos",
@@ -6572,21 +6821,84 @@ class AlchemyFlowPlugin extends Plugin {
           }, this),
           sub: isStamped
             ? i18n({
-                en: "Current note is stamped",
-                ru: "Штамп проставлен на этой заметке",
+                en: "Current note is stamped (click seal on page for #2+ Classics)",
+                ru: "Штамп проставлен (клик по печати на листе → ★ Классика)",
                 zh: "当前笔记已加盖印章",
                 ja: "このノートには印章が押されています",
                 es: "Nota actual ya sellada",
                 de: "Aktuelle Notiz ist abgestempelt",
               }, this)
             : i18n({
-                en: "Show Ex-Libris stamp in clean upper-right corner",
-                ru: "Показывать экслибрис-печать в правом верхнем углу",
+                en: "Stamp note & show rotary Ex-Libris seal in top-right corner",
+                ru: "Поставить штамп и показать круглую печать в правом верхнем углу",
                 zh: "在右上角展示精致典雅的藏书票盖印",
                 ja: "右上に洗練された蔵書票スタンプを表示",
                 es: "Mostrar sello en la esquina superior derecha",
                 de: "Ex-Libris-Stempel oben rechts anzeigen",
               }, this),
+        },
+        {
+          id: "astrolabe",
+          checked: this.settings.astrolabeCompass !== false,
+          icon: SICRAFT_SVGS.astrolabe,
+          title: i18n({
+            en: "Brass Astrolabe Reading & Link Compass",
+            ru: "Латунный Астролябий-Компас связей и чтения",
+            zh: "黄铜星盘阅读进度与双链罗盘",
+            ja: "真鍮アストロラーベ読書＆リンク羅針盤",
+            es: "Astrolabio de latón de lectura y enlaces",
+            de: "Messing-Astrolabium für Lesefortschritt & Links",
+          }, this),
+          sub: i18n({
+            en: "Rotating engraved brass gears on margin + 1-click backlinks jump",
+            ru: "Вращающееся кольцо с гравировкой на поле + быстрый переход по связям",
+            zh: "页边精密旋转星盘齿轮 + 一键跳转关联笔记",
+            ja: "スクロール連動の精密真鍮リング＋関連ノートへ即ジャンプ",
+            es: "Anillo de latón grabado giratorio + salto rápido a enlaces",
+            de: "Rotierender gravierter Messingring + 1-Klick-Link-Sprung",
+          }, this),
+        },
+        {
+          id: "goldribbon",
+          checked: this.settings.goldSpineRibbon !== false,
+          icon: SICRAFT_SVGS.ribbon,
+          title: i18n({
+            en: "Gold-Foil Spine Embossing & Silk Bookmark Ribbon",
+            ru: "Золотое тиснение на корешке и шёлковая лента-ляссе",
+            zh: "书脊烫金压印与丝绸书签缎带",
+            ja: "背表紙の金箔押し＆シルクリボンしおり",
+            es: "Estampado en oro en el lomo y cinta de seda",
+            de: "Goldfolienprägung am Buchrücken & Seidenleseband",
+          }, this),
+          sub: i18n({
+            en: "Swaying crimson silk ribbon & embossed foil title along spine",
+            ru: "Живая покачивающаяся шёлковая закладка и золотой оттиск на корешке",
+            zh: "随滚动微摆的丝绸书签带与书脊烫金铭文",
+            ja: "スクロールで揺れる絹のしおり紐と背表紙の金箔刻印",
+            es: "Cinta de seda con física suave y título grabado en oro",
+            de: "Schwingendes Seidenband & Goldprägung entlang des Buchrückens",
+          }, this),
+        },
+        {
+          id: "uvink",
+          checked: !!this.settings.uvSecretInk,
+          icon: SICRAFT_SVGS.spark,
+          title: i18n({
+            en: "Alchemist UV Secret Ink (==highlight== Lamp Reveal)",
+            ru: "Ультрафиолетовые чернила Алхимика (проявление светом)",
+            zh: "炼金术紫外线隐形墨水（台灯光束显影）",
+            ja: "錬金術UVシークレットインク (スマートランプで浮き出る文字)",
+            es: "Tinta secreta UV del Alquimista (revelado con lámpara)",
+            de: "Alchemisten-UV-Geheimtinte (erscheint im Lampenlicht)",
+          }, this),
+          sub: i18n({
+            en: "Turns ==highlights== into secret watermark ink revealed by Lamp/hover",
+            ru: "Прячет ==выделенный текст== в водяной знак, сияющий под Умной Лампой",
+            zh: "将 ==高亮文本== 化作隐形水印，仅在智能台灯或悬停时发出翠金磷光",
+            ja: "==ハイライト==を透かし彫りに隠し、ランプの光やホバーで黄金色に発光",
+            es: "Convierte ==resaltados== en marca de agua que brilla bajo la lámpara",
+            de: "Verwandelt ==Highlights== in Wasserzeichen, die unter der Lampe leuchten",
+          }, this),
         },
       ];
 
@@ -6720,13 +7032,23 @@ class AlchemyFlowPlugin extends Plugin {
             const curState = this.settings.showReadingStats !== false;
             this.settings.showReadingStats = !curState;
             this.settings.showTaskProgress = !curState;
-            this.updateTaskProgressBar();
           } else if (opt === "stamp") {
-            this.settings.showCornerStamp = !this.settings.showCornerStamp;
-            this.renderNoteMasteryStamp();
+            const nextStampVisible = this.settings.showCornerStamp === false;
+            this.settings.showCornerStamp = nextStampVisible;
+            if (nextStampVisible && fp && !this.getNoteStampRecord(fp)) {
+              await this.stampNoteReading(fp, "add");
+            }
+          } else if (opt === "astrolabe") {
+            this.settings.astrolabeCompass = this.settings.astrolabeCompass === false;
+          } else if (opt === "uvink") {
+            this.settings.uvSecretInk = !this.settings.uvSecretInk;
+          } else if (opt === "goldribbon") {
+            this.settings.goldSpineRibbon = this.settings.goldSpineRibbon === false;
           }
           await this.saveSettings();
           this.applyBodyClasses();
+          this.updateDockUI();
+          this.updateTaskProgressBar();
           renderPopoverContent();
         });
       });
@@ -6738,30 +7060,19 @@ class AlchemyFlowPlugin extends Plugin {
           pop.remove();
           this.focusPopoverEl = null;
           if (act === "add-sticker") {
-            this.openAddBookmarkModal();
+            this.addMarginBookmarkToActiveNote();
           } else if (act === "digest") {
-            this.openNoteBookmarksDigestModal();
+            this.openBookNutrientDigestModal();
           } else if (act === "bookshelf") {
             this.openClassicsBookshelfModal();
           } else if (act === "exlibris-png") {
-            this.exportExLibrisCardAsPNG(fp, activeView);
+            this.exportExLibrisBookCardPNG();
           } else if (act === "wax-seal") {
-            this.openTimeCapsuleSealModal(activeView);
+            this.toggleNoteWaxSeal();
           } else if (act === "tour") {
-            this.openTourNote();
+            this.openInteractiveTourNote();
           } else if (act === "two-page") {
-            this.settings.bookSpreadMode = true;
-            this.saveSettings();
-            this.applyBodyClasses();
-            this.createFloatingDock();
-            new Notice(i18n({
-              en: "3D Book Folio mode activated!",
-              ru: "Режим 3D Книжного фолианта включён!",
-              zh: "3D书籍手册模式已启用！",
-              ja: "3Dブックフォリオモードが有効になりました！",
-              es: "¡Modo folio 3D activado!",
-              de: "3D-Buchfolio-Modus aktiviert!",
-            }, this));
+            this.openTrueTwoPageBookSpread();
           }
         });
       });
@@ -6793,7 +7104,7 @@ class AlchemyFlowPlugin extends Plugin {
 
   jumpToMarginBookmark(lineNum, snippetText) {
     const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    const view = (this.app.workspace.getActiveViewOfType(obsidian.MarkdownView) || (this.app.workspace.getLeavesOfType("markdown")[0] && this.app.workspace.getLeavesOfType("markdown")[0].view));
     if (!view) return;
     if (view.editor) {
       view.editor.setCursor({ line: lineNum, ch: 0 });
@@ -9876,6 +10187,7 @@ class TimeCapsuleSealModal extends Modal {
 
 module.exports = AlchemyFlowPlugin;
 
+/* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */

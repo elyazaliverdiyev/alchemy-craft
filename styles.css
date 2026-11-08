@@ -3281,7 +3281,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 .artcraft-focus-popover {
   position: fixed;
   z-index: 99999;
-  width: 356px;
+  width: 364px;
+  max-height: calc(100vh - 86px);
+  overflow-y: auto;
   background: #FAF8F3;
   border: 2px solid #18181B;
   border-radius: 16px;
@@ -5093,11 +5095,48 @@ body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
    ========================================================================== */
 
 /* ==========================================================================
-   ALCHEMY CRAFT v4.6.6 — TRUE 3D MULTI-SHEET HARDCOVER BOOK FOLIO
-   (Cappuccino Craft Edition with 4 Deckle Sheets & Diffuse Amber Crease)
+   ALCHEMY CRAFT v4.6.7 — FLUSH-LEFT 3D MULTI-SHEET HARDCOVER BOOK FOLIO
+   (100% Snug Against Left Sidebar Divide + Stitched Leather/Saffiano/Velvet/Linen
+    Spine + Material-True Coherent 6-BPM Breathing + Astrolabe & Ex-Libris Seal)
    ========================================================================== */
 
-/* 1. Warm Desk Surface for the entire Markdown View & Scroller */
+body.artcraft-book-spread {
+  --artcraft-spine-base: #8C5828;
+  --artcraft-spine-dark: #5E3714;
+  --artcraft-spine-glow: rgba(217, 119, 6, 0.42);
+  --artcraft-spine-thread: rgba(253, 224, 71, 0.48);
+  --artcraft-spine-gutter: rgba(92, 60, 28, 0.18);
+  --artcraft-page-grad: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 2.8%, #FCFBF7 96.5%, #F4F0E5 100%);
+}
+
+body.artcraft-book-spread[data-spine-material="emerald"] {
+  --artcraft-spine-base: #14532D;
+  --artcraft-spine-dark: #0A2E18;
+  --artcraft-spine-glow: rgba(16, 185, 129, 0.45);
+  --artcraft-spine-thread: rgba(253, 224, 71, 0.55);
+  --artcraft-spine-gutter: rgba(20, 83, 45, 0.19);
+  --artcraft-page-grad: linear-gradient(90deg, #EBF3EE 0%, #FAF9F5 2.8%, #FCFBF8 96.5%, #F2EFE6 100%);
+}
+
+body.artcraft-book-spread[data-spine-material="crimson"] {
+  --artcraft-spine-base: #7F1D1D;
+  --artcraft-spine-dark: #4C0D0D;
+  --artcraft-spine-glow: rgba(244, 63, 94, 0.45);
+  --artcraft-spine-thread: rgba(253, 224, 71, 0.52);
+  --artcraft-spine-gutter: rgba(127, 29, 29, 0.19);
+  --artcraft-page-grad: linear-gradient(90deg, #F5EAE8 0%, #FCF9F5 2.8%, #FFFDF9 96.5%, #F4EFE6 100%);
+}
+
+body.artcraft-book-spread[data-spine-material="linen"] {
+  --artcraft-spine-base: #334155;
+  --artcraft-spine-dark: #1E293B;
+  --artcraft-spine-glow: rgba(96, 165, 250, 0.42);
+  --artcraft-spine-thread: rgba(226, 232, 240, 0.55);
+  --artcraft-spine-gutter: rgba(51, 65, 85, 0.18);
+  --artcraft-page-grad: linear-gradient(90deg, #EAEEF4 0%, #F9FAFB 2.8%, #FFFFFF 96.5%, #F1F5F9 100%);
+}
+
+/* 1. Warm Desk Surface for the Markdown View & Scroller */
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
@@ -5107,59 +5146,53 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
   box-shadow: none !important;
 }
 
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller {
-  overflow-x: hidden !important;
-  padding-top: 10px !important;
-  padding-bottom: 72px !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  box-sizing: border-box !important;
-}
-
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  padding-top: 10px !important;
+  overflow-x: hidden !important;
+  padding-top: 6px !important;
   padding-bottom: 72px !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
   box-sizing: border-box !important;
 }
 
-/* 2. Top Header Bar Aligns with Book Folio Width (Snug to Left Sidebar) */
+/* 2. Top Header Bar Aligns Flush with Book Folio Width */
 body.artcraft-book-spread .artcraft-task-progress-wrap {
-  width: calc(100% - 68px) !important;
-  max-width: calc(100% - 68px) !important;
-  margin-left: 20px !important;
-  margin-right: 48px !important;
+  width: calc(100% - 38px) !important;
+  max-width: calc(100% - 38px) !important;
+  margin-left: 0 !important;
+  margin-right: 38px !important;
   margin-top: 4px !important;
-  margin-bottom: 8px !important;
-  padding: 0 4px !important;
+  margin-bottom: 6px !important;
+  padding: 0 18px !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
 }
 
-/* 3. The 3D Book Folio Physical Page (Snug to Left Sidebar, Deckled Sheets on Right) */
+/* 3. The 3D Book Folio Physical Page — 100% FLUSH ("впритык") to Left Sidebar Divide! */
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  width: calc(100% - 68px) !important;
-  max-width: calc(100% - 68px) !important;
-  margin-left: 20px !important;
-  margin-right: 48px !important;
-  margin-top: 8px !important;
+  width: calc(100% - 36px) !important;
+  max-width: calc(100% - 36px) !important;
+  margin-left: 0 !important;
+  margin-right: 36px !important;
+  margin-top: 2px !important;
   margin-bottom: 56px !important;
-  background: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 3.2%, #FCFBF7 96.5%, #F4F0E5 100%) !important;
+  background: var(--artcraft-page-grad) !important;
   border-top: 1px solid #DFDBD0 !important;
   border-right: 1px solid #D4CFC2 !important;
   border-bottom: 1px solid #D4CFC2 !important;
-  border-left: 10px solid #8C5828 !important;
-  border-radius: 4px 18px 18px 4px !important;
-  padding: 30px 48px 48px 44px !important;
+  border-left: 12px solid var(--artcraft-spine-base) !important;
+  border-radius: 0 18px 18px 0 !important;
+  padding: 32px 54px 52px 46px !important;
   box-sizing: border-box !important;
   position: relative !important;
-  /* 4 Distinct Stacked Book Sheets on Right & Bottom Edges + Warm Depth Shadow */
+  /* 4 Distinct Stacked Book Sheets on Right & Bottom Edges + Deep Bookbinder Gutter Shadow */
   box-shadow:
-    inset 28px 0 38px -18px rgba(92, 60, 28, 0.18),
-    inset -1px 0 0 rgba(255, 255, 255, 0.8),
+    inset 30px 0 40px -18px var(--artcraft-spine-gutter),
+    inset 2px 0 0 rgba(255, 255, 255, 0.55),
+    inset -1px 0 0 rgba(255, 255, 255, 0.85),
     5px 4px 0 -1px #F6F3EC,
     5px 4px 0 0 #D6CFC0,
     10px 8px 0 -1px #EFEBE1,
@@ -5169,18 +5202,18 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
     20px 16px 0 -1px #E0DAD0,
     20px 16px 0 0 #B4AC9B,
     28px 26px 48px rgba(45, 35, 22, 0.14) !important;
-  transition: border-left-color 0.35s ease, box-shadow 0.35s ease !important;
+  transition: border-left-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
-/* Soft Subtle Amber Inner Spine Crease (Translucent, delicate, non-distracting) */
-@keyframes breathingSpinePulse {
+/* 4. Intricate Bookbinder Saddle-Stitching & Raised Ribs Along the Flush Left Spine */
+@keyframes artcraftSilkSpineWave {
   0%, 100% {
-    opacity: 0.12;
-    transform: scaleY(0.97);
+    opacity: 0.55;
+    filter: brightness(0.96);
   }
   50% {
-    opacity: 0.38;
-    transform: scaleY(1.0);
+    opacity: 1;
+    filter: brightness(1.18) drop-shadow(2px 0 8px var(--artcraft-spine-glow));
   }
 }
 
@@ -5188,29 +5221,48 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-size
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
   content: "" !important;
   position: absolute !important;
-  top: 24px !important;
-  bottom: 28px !important;
-  left: 0 !important;
-  width: 2.5px !important;
-  border-radius: 0 3px 3px 0 !important;
-  background: linear-gradient(
-    180deg,
-    rgba(217, 119, 6, 0) 0%,
-    rgba(217, 119, 6, 0.10) 20%,
-    rgba(245, 158, 11, 0.30) 50%,
-    rgba(217, 119, 6, 0.10) 80%,
-    rgba(217, 119, 6, 0) 100%
-  ) !important;
-  box-shadow: 0 0 5px 1px rgba(217, 119, 6, 0.12) !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: -12px !important;
+  width: 12px !important;
+  border-radius: 0 !important;
+  /* Combines 3D cylindrical leather highlight + raised horizontal bookbinder ribs every 140px + fine gold saddle stitch */
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 136px,
+      rgba(0, 0, 0, 0.32) 136px,
+      rgba(255, 255, 255, 0.24) 139px,
+      rgba(0, 0, 0, 0.25) 142px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      var(--artcraft-spine-thread) 0px,
+      var(--artcraft-spine-thread) 5px,
+      transparent 5px,
+      transparent 11px
+    ),
+    linear-gradient(
+      90deg,
+      var(--artcraft-spine-dark) 0%,
+      var(--artcraft-spine-base) 45%,
+      rgba(255, 255, 255, 0.18) 78%,
+      var(--artcraft-spine-dark) 100%
+    ) !important;
+  background-size: 100% 100%, 1.5px 100%, 100% 100% !important;
+  background-position: 0 0, 9px 0, 0 0 !important;
+  background-repeat: repeat-y, repeat-y, no-repeat !important;
+  box-shadow: 2px 0 8px var(--artcraft-spine-gutter) !important;
   pointer-events: none !important;
-  z-index: 4 !important;
-  opacity: 0.28 !important;
-  transition: opacity 0.4s ease !important;
+  z-index: 5 !important;
+  transform: none !important;
+  opacity: 0.92 !important;
 }
 
 body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
 body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
-  animation: breathingSpinePulse 11s ease-in-out infinite !important;
+  animation: artcraftSilkSpineWave 11s ease-in-out infinite !important;
 }
 
 /* Ensure Live Preview content stays neatly inside the sheet */
@@ -5219,98 +5271,6 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-cont
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-}
-
-/* 4. Bookbinder Spine Materials Applied to the Folio */
-body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  border-left: 10px solid #14532D !important;
-  background: linear-gradient(90deg, #E8F0EB 0%, #FAF9F5 3.2%, #FCFBF8 96.5%, #F2EFE6 100%) !important;
-  box-shadow:
-    inset 28px 0 38px -18px rgba(20, 83, 45, 0.20),
-    inset -1px 0 0 rgba(255, 255, 255, 0.8),
-    5px 4px 0 -1px #F6F3EC,
-    5px 4px 0 0 #D6CFC0,
-    10px 8px 0 -1px #EFEBE1,
-    10px 8px 0 0 #CCC4B4,
-    15px 12px 0 -1px #E8E3D7,
-    15px 12px 0 0 #C0B8A8,
-    20px 16px 0 -1px #E0DAD0,
-    20px 16px 0 0 #B4AC9B,
-    28px 26px 48px rgba(20, 45, 30, 0.15) !important;
-}
-
-body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
-body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
-  background: linear-gradient(
-    180deg,
-    rgba(217, 119, 6, 0) 0%,
-    rgba(217, 119, 6, 0.45) 15%,
-    #D97706 50%,
-    rgba(217, 119, 6, 0.45) 85%,
-    rgba(217, 119, 6, 0) 100%
-  ) !important;
-  box-shadow: 0 0 10px 2px rgba(217, 119, 6, 0.38) !important;
-}
-
-body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  border-left: 10px solid #7F1D1D !important;
-  background: linear-gradient(90deg, #F5EAE8 0%, #FCF9F5 3.2%, #FFFDF9 96.5%, #F4EFE6 100%) !important;
-  box-shadow:
-    inset 28px 0 38px -18px rgba(127, 29, 29, 0.20),
-    inset -1px 0 0 rgba(255, 255, 255, 0.8),
-    5px 4px 0 -1px #F6F3EC,
-    5px 4px 0 0 #D6CFC0,
-    10px 8px 0 -1px #EFEBE1,
-    10px 8px 0 0 #CCC4B4,
-    15px 12px 0 -1px #E8E3D7,
-    15px 12px 0 0 #C0B8A8,
-    20px 16px 0 -1px #E0DAD0,
-    20px 16px 0 0 #B4AC9B,
-    28px 26px 48px rgba(60, 20, 20, 0.15) !important;
-}
-
-body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
-body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
-  background: linear-gradient(
-    180deg,
-    rgba(245, 158, 11, 0) 0%,
-    rgba(245, 158, 11, 0.5) 15%,
-    #F59E0B 50%,
-    rgba(245, 158, 11, 0.5) 85%,
-    rgba(245, 158, 11, 0) 100%
-  ) !important;
-  box-shadow: 0 0 10px 2px rgba(245, 158, 11, 0.45) !important;
-}
-
-body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  border-left: 10px solid #334155 !important;
-  background: linear-gradient(90deg, #EAEEF4 0%, #F9FAFB 3.2%, #FFFFFF 96.5%, #F1F5F9 100%) !important;
-  box-shadow:
-    inset 28px 0 38px -18px rgba(51, 65, 85, 0.18),
-    inset -1px 0 0 rgba(255, 255, 255, 0.8),
-    5px 4px 0 -1px #F8FAFC,
-    5px 4px 0 0 #CBD5E1,
-    10px 8px 0 -1px #F1F5F9,
-    10px 8px 0 0 #94A3B8,
-    15px 12px 0 -1px #E2E8F0,
-    15px 12px 0 0 #64748B,
-    28px 26px 48px rgba(15, 23, 42, 0.13) !important;
-}
-
-body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
-body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
-  background: linear-gradient(
-    180deg,
-    rgba(148, 163, 184, 0) 0%,
-    rgba(148, 163, 184, 0.4) 15%,
-    #94A3B8 50%,
-    rgba(148, 163, 184, 0.4) 85%,
-    rgba(148, 163, 184, 0) 100%
-  ) !important;
-  box-shadow: 0 0 10px 2px rgba(148, 163, 184, 0.35) !important;
 }
 
 /* 5. Dark Mode 3D Hardcover Book Folio */
@@ -5327,7 +5287,7 @@ body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type=
   border-top: 1px solid #2E323C !important;
   border-right: 1px solid #2E323C !important;
   border-bottom: 1px solid #2E323C !important;
-  border-left: 10px solid #A16207 !important;
+  border-left: 12px solid var(--artcraft-spine-base) !important;
   box-shadow:
     inset 28px 0 38px -18px rgba(0, 0, 0, 0.65),
     5px 4px 0 -1px #1A1C22,
@@ -5337,6 +5297,190 @@ body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type=
     15px 12px 0 -1px #131519,
     15px 12px 0 0 #22262E,
     28px 26px 48px rgba(0, 0, 0, 0.60) !important;
+}
+
+/* ==========================================================================
+   6. TOP-RIGHT ROTARY EX-LIBRIS STAMP, BRASS ASTROLABE COMPASS,
+      GOLD-FOIL SPINE RIBBON & ALCHEMIST UV SECRET INK (v4.6.7)
+   ========================================================================== */
+
+/* A. Rotary Engraved Ex-Libris Corner Seal */
+@keyframes exLibrisSlowSpin {
+  0% { transform: rotate(-6deg); }
+  50% { transform: rotate(4deg); }
+  100% { transform: rotate(-6deg); }
+}
+
+@keyframes exLibrisPressBounce {
+  0% { transform: scale(1.45) rotate(-14deg); opacity: 0.4; }
+  55% { transform: scale(0.92) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-4deg); opacity: 1; }
+}
+
+.artcraft-exlibris-corner-seal {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 74px;
+  height: 74px;
+  z-index: 12;
+  cursor: pointer;
+  user-select: none;
+  color: #15803D;
+  opacity: 0.88;
+  transform: rotate(-4deg);
+  transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0 3px 6px rgba(21, 128, 61, 0.14));
+}
+
+.artcraft-exlibris-corner-seal.is-unstamped {
+  color: #8C5828;
+  opacity: 0.48;
+  filter: none;
+}
+
+.artcraft-exlibris-corner-seal.is-classics-gold {
+  color: #B45309;
+  opacity: 0.96;
+  filter: drop-shadow(0 4px 10px rgba(217, 119, 6, 0.28));
+}
+
+.artcraft-exlibris-corner-seal:hover {
+  opacity: 1;
+  transform: scale(1.08) rotate(0deg);
+}
+
+.artcraft-exlibris-corner-seal.is-pressing {
+  animation: exLibrisPressBounce 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.exlibris-seal-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* B. Rotating Brass Astrolabe Reading & Link Compass */
+.artcraft-astrolabe-widget {
+  position: absolute;
+  top: 102px;
+  right: 25px;
+  width: 68px;
+  z-index: 11;
+  cursor: pointer;
+  user-select: none;
+  color: #8C5828;
+  opacity: 0.86;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.artcraft-astrolabe-widget:hover {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+.astrolabe-dial-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: rgba(250, 248, 243, 0.88);
+  border: 1px solid #DFD9CA;
+  border-radius: 12px;
+  padding: 5px 4px;
+  box-shadow: 0 4px 12px rgba(92, 60, 28, 0.08);
+}
+
+.astrolabe-svg {
+  width: 48px;
+  height: 48px;
+  display: block;
+}
+
+.astrolabe-outer-ring,
+.astrolabe-inner-rete {
+  transform-origin: 50px 50px;
+  transition: transform 0.14s ease-out;
+}
+
+.astrolabe-readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  width: 100%;
+  padding: 0 3px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 800;
+  color: #5C4938;
+}
+
+/* C. Swaying Silk Bookmark Ribbon (Ляссе) & Gold-Foil Spine Embossing */
+.artcraft-spine-ribbon-bookmark {
+  position: absolute;
+  top: -2px;
+  left: 6px;
+  z-index: 11;
+  cursor: pointer;
+  user-select: none;
+  transform-origin: top center;
+  transform: rotate(var(--ribbon-sway, 0deg));
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.artcraft-spine-ribbon-bookmark:hover {
+  transform: rotate(-2.5deg) translateY(2px);
+}
+
+.spine-ribbon-cloth {
+  width: 22px;
+  padding: 8px 3px 14px 3px;
+  background: linear-gradient(180deg, #991B1B 0%, #B91C1C 65%, #7F1D1D 100%);
+  border-left: 1px solid rgba(253, 224, 71, 0.45);
+  border-right: 1px solid rgba(253, 224, 71, 0.45);
+  box-shadow: 2px 6px 12px rgba(45, 20, 20, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 88%, 0 100%);
+}
+
+.spine-foil-title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #FDE68A;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  max-height: 115px;
+  overflow: hidden;
+}
+
+/* D. Alchemist UV Secret Margin Ink (Revealed by Smart Lamp or Hover) */
+body.artcraft-uv-secret-ink .markdown-rendered mark,
+body.artcraft-uv-secret-ink .cm-s-obsidian span.cm-highlight {
+  background: rgba(16, 185, 129, 0.04) !important;
+  color: rgba(120, 113, 108, 0.22) !important;
+  border-bottom: 1px dashed rgba(16, 185, 129, 0.35) !important;
+  border-radius: 4px !important;
+  padding: 1px 5px !important;
+  filter: blur(0.45px);
+  transition: all 0.25s ease !important;
+}
+
+body.artcraft-uv-secret-ink.artcraft-magic-lamp .markdown-rendered mark,
+body.artcraft-uv-secret-ink.artcraft-magic-lamp .cm-s-obsidian span.cm-highlight,
+body.artcraft-uv-secret-ink .markdown-rendered mark:hover,
+body.artcraft-uv-secret-ink .cm-s-obsidian span.cm-highlight:hover {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.22) 0%, rgba(245, 158, 11, 0.24) 100%) !important;
+  color: #065F46 !important;
+  border-bottom: 1.5px solid #10B981 !important;
+  filter: none !important;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.45), 0 0 18px rgba(253, 224, 71, 0.35) !important;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.22) !important;
 }
 
 /* 2. Clean, Soft, Non-Intrusive Bottom-Left Graph Studio Bar (Never overlaps text or right filter drawer!) */
@@ -5515,54 +5659,6 @@ body .artcraft-graph-hud-toggle-btn {
   background: #EBE3D2 !important;
   border-color: #8C5828 !important;
 }
-
-
-/* ==========================================================================
-   ALCHEMY CRAFT v4.6.0 — COHERENT 6-BPM BREATHING SPINE, PERIPHERAL MARGIN
-   SANDGLASS THREAD & CLASSICS BOOKSHELF MODAL
-   ========================================================================== */
-
-/* 1. Coherent 6-BPM Breathing Book Spine (5.5s Inhale Warm Gold / 5.5s Exhale Calm Leather) */
-@keyframes artcraftCoherentSpineBreath {
-  0%, 100% {
-    border-left-color: #8C5828;
-    box-shadow:
-      inset 26px 0 36px -16px rgba(92, 60, 28, 0.16),
-      inset -1px 0 0 rgba(255, 255, 255, 0.7),
-      4px 3px 0 -1px #F6F3EC,
-      4px 3px 0 0 #D8D2C5,
-      8px 6px 0 -1px #EFEBE1,
-      8px 6px 0 0 #CFC8B8,
-      12px 9px 0 -1px #E8E3D7,
-      12px 9px 0 0 #C5BEB0,
-      16px 12px 0 -1px #E1DBD0,
-      16px 12px 0 0 #B8B0A0,
-      22px 20px 38px rgba(45, 35, 22, 0.13);
-  }
-  50% {
-    border-left-color: #D97706;
-    box-shadow:
-      inset 42px 0 54px -12px rgba(217, 119, 6, 0.26),
-      -4px 0 18px rgba(217, 119, 6, 0.28),
-      inset -1px 0 0 rgba(255, 255, 255, 0.7),
-      4px 3px 0 -1px #F6F3EC,
-      4px 3px 0 0 #D8D2C5,
-      8px 6px 0 -1px #EFEBE1,
-      8px 6px 0 0 #CFC8B8,
-      12px 9px 0 -1px #E8E3D7,
-      12px 9px 0 0 #C5BEB0,
-      16px 12px 0 -1px #E1DBD0,
-      16px 12px 0 0 #B8B0A0,
-      22px 20px 38px rgba(45, 35, 22, 0.13);
-  }
-}
-
-body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  animation: artcraftCoherentSpineBreath 11s ease-in-out infinite !important;
-}
-
-/* 2. Peripheral Margin Sandglass Thread permanently disabled per user request */
 
 /* 3. Classics Bookshelf Modal Styling */
 .artcraft-bookshelf-modal-root {
