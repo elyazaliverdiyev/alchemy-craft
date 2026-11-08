@@ -1,25 +1,27 @@
-# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.4)
+# Alchemy Craft — Tactile Book Folio, Sonic Studio & Smart LED Lamp (v4.5.0)
 
-> **A warm, tactile Swiss Bento reading, focus, presentation, and visual studio plugin.**
+> **A warm, eye-friendly Cappuccino & Swiss Bento reading, active book-digestion, audio-reactive, and knowledge graph studio.**
 
-[](#)
-[License: MIT](https://www.google.com/search?q=LICENSE)
-
----
-
-## What's New in v4.3.4
-
-- **One-Click Cappuccino Focus Recipes:** Instant focus presets (`Morning Cappuccino • 25m`, `Rainy Chemex • 45m`, `Night Roastery 40Hz • 60m`) that configure ambient soundscapes, craft equalizer mode, Smart LED Lamp Kelvin & shape, and Pomodoro sprint in one click.
-- **Margin Craft Bookmarks (`+ Sticker`):** Pin tactile paper ribbon stickers (`Key`, `Idea`, `Quote`, `Review`) to note sections and jump directly to them with smooth scrolling and amber highlight flash.
-- **Two-Column Open Book Spread (`Book Spread`):** Transform wide notes into an open two-column book spread with a warm editorial spine divider.
-- **Vintage Risograph Ink Stamp (`[ APPROVED / ИЗУЧЕНО ]`):** Automatically stamps notes when tasks reach 100% completion or on manual click in the note header bar.
-- **Zero-Overflow Wide Craft Modals (`680px`):** Fixed grid overflow in Sonic Studio and Cappuccino Support Modal (`minmax(0, 1fr)`, 2-column Equalizer grid, and fixed Bybit bolt SVG icon).
+- **Official Interactive Studio & Checkout Website:** [https://elyazaliverdiyev.github.io/alchemy-craft/](https://www.google.com/search?q=https://elyazaliverdiyev.github.io/alchemy-craft/)
+- **Author:** Elyaz Aliverdiyev ([@StratAlchemy](https://www.google.com/search?q=https://t.me/StratAlchemy))
+- **Version:** `4.5.0`
 
 ---
 
-## 🚀 Quickstart & Installation
+## ✨ What's New in v4.5.0
 
-1. Copy `main.js`, `manifest.json`, and `styles.css` into your `.obsidian/plugins/artcraft-reader/` folder.
+- **📚 True 3D Multi-Sheet Book Folio (`Book Page` Mode):** Transforms your notes into a physical hardcover book resting on a warm desk (`#E8E3D8`), complete with a rich leather spine (`#8C5828`), soft inner spine crease, and **4 visible stacked paper sheets** along the right and bottom edges. Works seamlessly in both Live Preview and Reading View.
+- **🔊 Native Windows CoreAudio WASAPI Loopback + WebAudio Studio:** Captures real-time desktop output audio from Telegram, YouTube, Spotify, or any media player across all speakers, USB headsets, and DACs — driving 6 craft equalizer modes (`Craft Ink Seismograph`, `Quantum Matrix`, `Risograph Stamps`, `Botanical Ink Ribbon`, `Origami Topography`, `Architect's Harmonic Strings`).
+- **⌨️ 6 Creamy Gasket-Mounted Switch Profiles:** Short, velvety 3-layer acoustic switch synthesis (`Reaper Creamy Linear`, `Ice Vein Deep Thock`, `Milky Yellow Lubed`, `Matcha Latte Tactile`, `Honey Peach Silent`, `Rosewood Cocoa Linear`).
+- **🎧 12 Stereo & Neuro-Acoustic Focus Soundscapes:** Decorrelated stereo synthesis with slow coherent breathing LFOs (`Velvet Pink Rain`, `Deep Brown Shield`, `40Hz Gamma Silk`, `10Hz Alpha Calm`, `6Hz Theta Deep Peace`, `Tibetan Singing Bowls`, `0.1Hz Coherent Ocean`, `Cozy Tent Rain`, `Mountain Brook`, `Cozy Hearth`, `Night Sleeper Train`, `Warm Roastery`).
+- **🕸️ Redesigned Bottom-Left Graph Studio & WebGL Coordinate Projection:** Soft, collapsible bottom-left HUD that never overlaps note titles or filter panels, with live WebGL projection for `Bento Grid`, `3D Mind-Palace`, `Focus Radar`, `Neural Photon Flow`, `Memory Resonance`, and `Constellation Tour`.
+- **🔖 5-Nutrient Active Reading System:** Pin color-coded book stickers (`Proteins — Must Do`, `Carbs — To Ponder`, `Fats — Stories`, `Vitamins — Quotes`, `Fiber — Facts`) and generate a 1-click **Book Digestion Action Plan**.
+
+---
+
+## 🚀 Installation
+
+1. Copy `main.js`, `manifest.json`, and `styles.css` into `.obsidian/plugins/artcraft-reader/`.
 2. Reload the app (`Ctrl+R` / `Cmd+R`) and enable **Alchemy Craft** in Settings.
 
 ---

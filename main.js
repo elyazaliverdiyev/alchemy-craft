@@ -1696,18 +1696,18 @@ class BookNutrientDigestModal extends Modal {
 }
 
 const AMBIENT_SOUNDSCAPES = [
-  { id: "balanced", ru: "Сбалансированный шум", en: "Balanced Noise", subRu: "Мягкий спектр iOS", subEn: "iOS Warm Pink Spectrum", icon: SICRAFT_SVGS.sliders },
-  { id: "bright", ru: "Светлый шум", en: "Bright Noise", subRu: "Воздушный высокий тон", subEn: "Crisp Airy Highs", icon: SICRAFT_SVGS.sun },
-  { id: "brown", ru: "Тёмный шум", en: "Dark Brown Noise", subRu: "Глубокий бас-фильтр", subEn: "Deep Sub-Bass Shield", icon: SICRAFT_SVGS.shield },
-  { id: "ocean", ru: "Океан", en: "Ocean Waves", subRu: "Прибой и ритм волн", subEn: "Rhythmic Surf Swell", icon: SICRAFT_SVGS.waves },
-  { id: "rain", ru: "Дождь", en: "Soft Rain", subRu: "Дождь по бумаге", subEn: "Gentle Rain on Paper", icon: SICRAFT_SVGS.rain },
-  { id: "rain_roof", ru: "Дождь на крыше", en: "Rain on Roof", subRu: "Уютный чердак", subEn: "Warm Attic Patter", icon: SICRAFT_SVGS.roof },
-  { id: "stream", ru: "Ручей", en: "Forest Stream", subRu: "Лесной водный поток", subEn: "Babbling Brook", icon: SICRAFT_SVGS.stream },
-  { id: "night", ru: "Тихая ночь", en: "Quiet Night", subRu: "Ночной воздух и сверчки", subEn: "Nocturnal Air & Crickets", icon: SICRAFT_SVGS.moon },
-  { id: "fire", ru: "Костёр в камине", en: "Cozy Fireplace", subRu: "Треск тёплых углей", subEn: "Crackling Hearth", icon: SICRAFT_SVGS.flame },
-  { id: "train", ru: "Ночной поезд", en: "Night Train", subRu: "Спальный вагон и рельсы", subEn: "Rhythmic Rail Cadence", icon: SICRAFT_SVGS.train },
-  { id: "cafe", ru: "Уютная кофейня", en: "Coffeehouse Murmur", subRu: "Мягкий гул зала", subEn: "Warm Room Ambience", icon: SICRAFT_SVGS.coffee },
-  { id: "gamma40", ru: "40Hz Гамма-фокус", en: "40Hz Gamma Focus", subRu: "Нейро-синхронизация", subEn: "Binaural Deep Work", icon: SICRAFT_SVGS.brain }
+  { id: "balanced", ru: "Бархатный Розовый Дождь", en: "Velvet Pink Rain", subRu: "Стерео -3dB • Память и фокус", subEn: "Stereo -3dB • Memory & Focus", icon: SICRAFT_SVGS.sliders },
+  { id: "brown", ru: "Глубокий Тёмный Кокон", en: "Deep Brown Shield", subRu: "Мягкий басовый щит • СДВГ-фокус", subEn: "Sub-Bass Shield • ADHD Focus", icon: SICRAFT_SVGS.shield },
+  { id: "gamma40", ru: "40Hz Нейро-Фокус в Шёлке", en: "40Hz Gamma Silk", subRu: "Ритм 40Hz + тёплый розовый шум", subEn: "40Hz Binaural + Warm Pink Pad", icon: SICRAFT_SVGS.brain },
+  { id: "bright", ru: "10Hz Альфа-Спокойствие", en: "10Hz Alpha Calm Flow", subRu: "Снятие тревоги и лёгкое чтение", subEn: "Stress Relief & Calm Reading", icon: SICRAFT_SVGS.sun },
+  { id: "night", ru: "6Hz Тета-Медитация Души", en: "6Hz Theta Deep Peace", subRu: "Глубокий покой 174Hz + 528Hz", subEn: "Deep Inner Peace 174Hz + 528Hz", icon: SICRAFT_SVGS.moon },
+  { id: "rain_roof", ru: "Поющие Чаши и Тёплый Ветер", en: "Singing Bowls & Air", subRu: "Тибетский резонанс 432Hz", subEn: "Harmonic Bowl Overtones 432Hz", icon: SICRAFT_SVGS.roof },
+  { id: "ocean", ru: "Дыхание Океана (0.1Hz)", en: "Coherent Ocean Breath", subRu: "Прибой в ритме спокойного пульса", subEn: "0.1Hz Coherent Breathing Surf", icon: SICRAFT_SVGS.waves },
+  { id: "rain", ru: "Дождь по Ткани Шатра", en: "Cozy Rain on Tent", subRu: "Мягкий стерео-дождь по бумаге", subEn: "Gentle Stereo Rain on Paper", icon: SICRAFT_SVGS.rain },
+  { id: "stream", ru: "Горный Ручей и Хвоя", en: "Mountain Brook & Pines", subRu: "Живая вода и лесной воздух", subEn: "Babbling Brook & Soft Breeze", icon: SICRAFT_SVGS.stream },
+  { id: "fire", ru: "Камин и Тёплые Угли", en: "Cozy Hearth & Embers", subRu: "Тёплый очаг и мягкий треск дров", subEn: "Warm Hearth & Soft Crackling", icon: SICRAFT_SVGS.flame },
+  { id: "train", ru: "Ночной Поезд под Дождём", en: "Night Sleeper Train", subRu: "Мерный стук колёс и уют купе", subEn: "Rhythmic Rail Cadence & Rain", icon: SICRAFT_SVGS.train },
+  { id: "cafe", ru: "Вечерняя Кофейня Алхимика", en: "Warm Roastery Ambience", subRu: "Мягкая акустика зала и пар", subEn: "Warm Coffeehouse Acoustic Pad", icon: SICRAFT_SVGS.coffee }
 ];
 
 class AlchemySonicStudioModal extends Modal {
@@ -2323,100 +2323,140 @@ class AlchemyFlowPlugin extends Plugin {
       const ctx = this.keyAudioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
-      const profile = this.settings.tactileTypingSound;
+      const profile = this.settings.tactileTypingSound || "creamy_pom";
       const now = ctx.currentTime;
-      const isBig = key === " " || key === "Enter" || key === "Backspace";
-      const jitter = 1 + (Math.random() * 0.08 - 0.04);
+      const isSpace = key === " ";
+      const isMod = key === "Enter" || key === "Backspace" || key === "Tab";
 
-      // Shared soft noise buffer (for gentle cushion / paper textures)
-      if (!this.keyNoiseBuf) {
-        const len = Math.floor(ctx.sampleRate * 0.12);
+      // Small human velocity & pitch micro-variation so consecutive keystrokes sound organic and alive
+      const code = typeof key === "string" && key.length === 1 ? key.toLowerCase().charCodeAt(0) : 105;
+      const keyOffset = ((code % 11) - 5) * 0.011;
+      const jitter = 1 + keyOffset + (Math.random() * 0.036 - 0.018);
+      const pitchMul = isSpace ? 0.74 : isMod ? 0.84 : 1.0;
+
+      // Build a high-resolution pink/velvet noise buffer for gasket foam & lubed stem cushion
+      if (!this.keyVelvetBuf) {
+        const len = Math.floor(ctx.sampleRate * 0.08);
         const buf = ctx.createBuffer(1, len, ctx.sampleRate);
         const ch = buf.getChannelData(0);
-        for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
-        this.keyNoiseBuf = buf;
+        let b0 = 0, b1 = 0, b2 = 0;
+        for (let i = 0; i < len; i++) {
+          const w = Math.random() * 2 - 1;
+          b0 = 0.997 * b0 + w * 0.099;
+          b1 = 0.963 * b1 + w * 0.296;
+          b2 = 0.570 * b2 + w * 1.052;
+          ch[i] = (b0 + b1 + b2 + w * 0.18) * 0.18;
+        }
+        this.keyVelvetBuf = buf;
       }
 
-      // Tonal body: sine/triangle with a soft attack, pitch drop and low-pass filtering
-      const tone = (type, f0, f1, peak, attack, decay, lp, partialGain) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.value = lp;
-        osc.type = type;
-        osc.frequency.setValueAtTime(f0 * jitter, now);
-        osc.frequency.exponentialRampToValueAtTime(Math.max(30, f1 * jitter), now + decay);
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.linearRampToValueAtTime(peak, now + attack);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + decay + 0.02);
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + decay + 0.05);
-        if (partialGain) {
-          const osc2 = ctx.createOscillator();
-          const g2 = ctx.createGain();
-          osc2.type = "sine";
-          osc2.frequency.setValueAtTime(f0 * 1.5 * jitter, now);
-          osc2.frequency.exponentialRampToValueAtTime(Math.max(30, f1 * 1.5 * jitter), now + decay);
-          g2.gain.setValueAtTime(0.0001, now);
-          g2.gain.linearRampToValueAtTime(peak * partialGain, now + attack);
-          g2.gain.exponentialRampToValueAtTime(0.0001, now + decay);
-          osc2.connect(g2);
-          g2.connect(filter);
-          osc2.start(now);
-          osc2.stop(now + decay + 0.05);
+      // Switch acoustic recipes (all short 18-32ms gasket-damped impulses, zero long electronic sine beeps!)
+      const RECIPES = {
+        // 1. Reaper Creamy Linear (POM stem + IXPE foam + PC plate — signature "marbly/creamy" pop-thock)
+        creamy_pom: {
+          fBody: 255, fChamber: 760, bodyDur: 0.024, lpCutoff: 1180,
+          stemFreq: 1380, stemQ: 1.5, stemGain: 0.085, bodyGain: 0.145, reboundFreq: 165, reboundGain: 0.032
+        },
+        // 2. Ice Vein Deep Thock (Thick PBT keycaps + poron case foam — deep, round, matte bottom-out)
+        thock: {
+          fBody: 185, fChamber: 520, bodyDur: 0.028, lpCutoff: 820,
+          stemFreq: 980, stemQ: 1.3, stemGain: 0.065, bodyGain: 0.165, reboundFreq: 132, reboundGain: 0.038
+        },
+        // 3. Milky Yellow Lubed (Factory hand-lubed linear — buttery smooth, warm low-mid cushion)
+        matcha_lubed: {
+          fBody: 225, fChamber: 640, bodyDur: 0.023, lpCutoff: 960,
+          stemFreq: 1180, stemQ: 1.2, stemGain: 0.060, bodyGain: 0.125, reboundFreq: 150, reboundGain: 0.026
+        },
+        // 4. Matcha Latte Tactile (Soft rounded tactile bump + warm wooden desk resonance)
+        raindrop_wood: {
+          fBody: 290, fChamber: 880, bodyDur: 0.021, lpCutoff: 1350,
+          stemFreq: 1580, stemQ: 1.8, stemGain: 0.090, bodyGain: 0.130, reboundFreq: 195, reboundGain: 0.030
+        },
+        // 5. Honey Peach Silent (Silicone dampened rails — ultra-soft library pillow whisper)
+        velvet_felt: {
+          fBody: 165, fChamber: 430, bodyDur: 0.022, lpCutoff: 640,
+          stemFreq: 760, stemQ: 0.9, stemGain: 0.042, bodyGain: 0.085, reboundFreq: 120, reboundGain: 0.018
+        },
+        // 6. Rosewood Cocoa Linear (Warm walnut & rosewood acoustic housing — rich organic woody tok)
+        paper_brush: {
+          fBody: 210, fChamber: 590, bodyDur: 0.026, lpCutoff: 920,
+          stemFreq: 1120, stemQ: 1.6, stemGain: 0.072, bodyGain: 0.140, reboundFreq: 145, reboundGain: 0.030
         }
       };
 
-      // Soft textured noise burst (cushion / paper brush)
-      const puff = (peak, dur, filterType, freq, q) => {
-        const src = ctx.createBufferSource();
-        src.buffer = this.keyNoiseBuf;
-        const filter = ctx.createBiquadFilter();
-        filter.type = filterType;
-        filter.frequency.value = freq;
-        filter.Q.value = q || 0.7;
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.linearRampToValueAtTime(peak, now + 0.006);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-        src.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-        src.start(now);
-        src.stop(now + dur + 0.02);
-      };
+      const r = RECIPES[profile] || RECIPES.creamy_pom;
+      const masterLp = ctx.createBiquadFilter();
+      masterLp.type = "lowpass";
+      masterLp.frequency.setValueAtTime(r.lpCutoff * jitter, now);
+      masterLp.Q.value = 0.75;
+      masterLp.connect(ctx.destination);
 
-      if (profile === "thock") {
-        // Deep PBT Thock: round, matte, low
-        tone("triangle", isBig ? 105 : 150, isBig ? 52 : 62, 0.15, 0.004, 0.09, 720, 0);
-        puff(0.018, 0.04, "lowpass", 900, 0.5);
-      } else if (profile === "matcha_lubed") {
-        // Matcha Silent Tactile: lubed, hushed, gentle
-        tone("sine", isBig ? 190 : 260, isBig ? 110 : 150, 0.075, 0.005, 0.06, 1100, 0);
-        puff(0.012, 0.035, "lowpass", 1300, 0.5);
-      } else if (profile === "raindrop_wood") {
-        // Warm Walnut Raindrop: woody "tok" with a soft second partial
-        tone("sine", isBig ? 300 : 430, isBig ? 160 : 230, 0.09, 0.003, 0.11, 1900, 0.35);
-      } else if (profile === "velvet_felt") {
-        // Piano felt: pentatonic note per key, muffled hammer on cloth
-        const notes = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25];
-        const code = typeof key === "string" && key.length === 1 ? key.toLowerCase().charCodeAt(0) : 0;
-        const f = isBig ? 196.0 : notes[code % notes.length];
-        tone("sine", f, f * 0.985, 0.075, 0.009, 0.2, 760, 0.18);
-        puff(0.008, 0.03, "lowpass", 700, 0.5);
-      } else if (profile === "paper_brush") {
-        // Fountain pen on cotton paper: a quiet, silky brush
-        puff(isBig ? 0.06 : 0.045, isBig ? 0.085 : 0.06, "bandpass", 2400 * jitter, 0.7);
-        tone("sine", 190, 120, 0.028, 0.004, 0.05, 700, 0);
-      } else {
-        // creamy_pom (default): Creamy POM Linear — velvety low-pass body, smooth and round
-        tone("triangle", isBig ? 140 : 205, isBig ? 78 : 104, 0.11, 0.004, 0.075, 880, 0);
-        puff(0.022, 0.04, "lowpass", 1400, 0.5);
-      }
+      // LAYER 1: Lubed POM Stem Cushion Transient (0ms .. 5ms)
+      const noiseSrc = ctx.createBufferSource();
+      noiseSrc.buffer = this.keyVelvetBuf;
+      const stemBp = ctx.createBiquadFilter();
+      stemBp.type = "bandpass";
+      stemBp.frequency.setValueAtTime(r.stemFreq * pitchMul * jitter, now);
+      stemBp.Q.value = r.stemQ;
+      const stemGain = ctx.createGain();
+      stemGain.gain.setValueAtTime(0.0001, now);
+      stemGain.gain.linearRampToValueAtTime(r.stemGain * (isSpace ? 1.15 : 1.0), now + 0.0012);
+      stemGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.011);
+      noiseSrc.connect(stemBp);
+      stemBp.connect(stemGain);
+      stemGain.connect(masterLp);
+      noiseSrc.start(now);
+      noiseSrc.stop(now + 0.014);
+
+      // LAYER 2: IXPE Foam & Gasket Plate Cavity Body (0.8ms .. 24ms) + PBT Keycap Chamber Formant
+      const bodyOsc = ctx.createOscillator();
+      const chamberOsc = ctx.createOscillator();
+      const bodyGain = ctx.createGain();
+      const chamberGain = ctx.createGain();
+
+      const f0 = r.fBody * pitchMul * jitter;
+      bodyOsc.type = "triangle";
+      bodyOsc.frequency.setValueAtTime(f0 * 1.32, now);
+      bodyOsc.frequency.exponentialRampToValueAtTime(Math.max(48, f0 * 0.56), now + r.bodyDur);
+
+      const fc = r.fChamber * pitchMul * jitter;
+      chamberOsc.type = "sine";
+      chamberOsc.frequency.setValueAtTime(fc * 1.15, now);
+      chamberOsc.frequency.exponentialRampToValueAtTime(Math.max(95, fc * 0.62), now + r.bodyDur * 0.72);
+
+      const peakBody = r.bodyGain * (isSpace ? 1.22 : isMod ? 1.1 : 1.0);
+      bodyGain.gain.setValueAtTime(0.0001, now);
+      bodyGain.gain.linearRampToValueAtTime(peakBody, now + 0.0016);
+      bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + r.bodyDur);
+
+      chamberGain.gain.setValueAtTime(0.0001, now);
+      chamberGain.gain.linearRampToValueAtTime(peakBody * 0.34, now + 0.0012);
+      chamberGain.gain.exponentialRampToValueAtTime(0.0001, now + r.bodyDur * 0.72);
+
+      bodyOsc.connect(bodyGain);
+      chamberOsc.connect(chamberGain);
+      bodyGain.connect(masterLp);
+      chamberGain.connect(masterLp);
+
+      bodyOsc.start(now);
+      bodyOsc.stop(now + r.bodyDur + 0.005);
+      chamberOsc.start(now);
+      chamberOsc.stop(now + r.bodyDur);
+
+      // LAYER 3: Subtle Gasket Silicone Upstroke Cushion (~19ms .. 34ms)
+      const upDelay = 0.017 + Math.random() * 0.004;
+      const upOsc = ctx.createOscillator();
+      const upGain = ctx.createGain();
+      upOsc.type = "sine";
+      upOsc.frequency.setValueAtTime(r.reboundFreq * pitchMul * jitter * 1.2, now + upDelay);
+      upOsc.frequency.exponentialRampToValueAtTime(Math.max(45, r.reboundFreq * 0.7), now + upDelay + 0.014);
+      upGain.gain.setValueAtTime(0.0001, now + upDelay);
+      upGain.gain.linearRampToValueAtTime(r.reboundGain, now + upDelay + 0.0015);
+      upGain.gain.exponentialRampToValueAtTime(0.0001, now + upDelay + 0.015);
+      upOsc.connect(upGain);
+      upGain.connect(masterLp);
+      upOsc.start(now + upDelay);
+      upOsc.stop(now + upDelay + 0.018);
     } catch (e) {}
   }
 
@@ -2599,6 +2639,128 @@ class AlchemyFlowPlugin extends Plugin {
     this.updateEqualizerPillUI();
   }
 
+  startWindowsWasapiLoopbackBridge() {
+    this.stopWindowsWasapiLoopbackBridge();
+    try {
+      const cp = window.require ? window.require("child_process") : null;
+      const os = window.require ? window.require("os") : null;
+      if (!cp || !os || os.platform() !== "win32") return false;
+
+      // Inline C# CoreAudio COM P/Invoke for IMMDeviceEnumerator::GetDefaultAudioEndpoint(eRender=0, eConsole=0) -> IAudioMeterInformation
+      // Reads real-time Windows master output peak & stereo channels from ANY speaker/USB headset/Bluetooth output at 40 FPS with 0 external dependencies!
+      const psScript = `
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+
+[Guid("BCDE0395-E52F-467C-8E3D-C4579291692E"), ComImport]
+class MMDeviceEnumeratorComObject { }
+
+[Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IMMDeviceEnumerator {
+    int EnumAudioEndpoints(int dataFlow, int dwStateMask, out IntPtr ppDevices);
+    int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppEndpoint);
+}
+
+[Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IMMDevice {
+    int Activate(ref Guid iid, int dwClsCtx, IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
+}
+
+[Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IAudioMeterInformation {
+    int GetPeakValue(out float pfPeak);
+    int GetMeteringChannelCount(out int pnChannelCount);
+    int GetChannelsPeakValues(int u32ChannelCount, [Out] float[] afPeakValues);
+}
+
+public class WinCoreAudioLoopback {
+    private static IAudioMeterInformation meter;
+    public static void Init() {
+        var enumerator = (IMMDeviceEnumerator)(new MMDeviceEnumeratorComObject());
+        IMMDevice dev;
+        enumerator.GetDefaultAudioEndpoint(0, 0, out dev);
+        Guid iid = new Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064");
+        object obj;
+        dev.Activate(ref iid, 23, IntPtr.Zero, out obj);
+        meter = (IAudioMeterInformation)obj;
+    }
+    public static string ReadPeaks() {
+        if (meter == null) Init();
+        float p = 0f;
+        meter.GetPeakValue(out p);
+        int ch = 0;
+        meter.GetMeteringChannelCount(out ch);
+        if (ch >= 2) {
+            float[] vals = new float[ch];
+            meter.GetChannelsPeakValues(ch, vals);
+            return p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
+                   vals[0].ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
+                   vals[1].ToString("F4", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        return p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
+               p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
+               p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture);
+    }
+}
+"@
+[WinCoreAudioLoopback]::Init()
+while ($true) {
+  try {
+    Write-Output ([WinCoreAudioLoopback]::ReadPeaks())
+  } catch {
+    [WinCoreAudioLoopback]::Init()
+  }
+  Start-Sleep -Milliseconds 26
+}
+`;
+      const proc = cp.spawn(
+        "powershell.exe",
+        ["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", psScript],
+        { windowsHide: true, stdio: ["ignore", "pipe", "ignore"] }
+      );
+      this.wasapiBridgeProc = proc;
+      this.wasapiLoopbackLevels = { peak: 0, left: 0, right: 0, active: false, phase: 0 };
+
+      let buf = "";
+      proc.stdout.on("data", (chunk) => {
+        buf += chunk.toString();
+        const lines = buf.split(/\r?\n/);
+        buf = lines.pop() || "";
+        const last = lines[lines.length - 1];
+        if (last && last.includes(",")) {
+          const parts = last.trim().split(",");
+          const pk = parseFloat(parts[0]) || 0;
+          const l = parseFloat(parts[1]) || pk;
+          const r = parseFloat(parts[2]) || pk;
+          this.wasapiLoopbackLevels = {
+            peak: pk,
+            left: l,
+            right: r,
+            active: pk > 0.002,
+            ts: Date.now()
+          };
+        }
+      });
+      proc.on("exit", () => {
+        if (this.wasapiBridgeProc === proc) this.wasapiBridgeProc = null;
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  stopWindowsWasapiLoopbackBridge() {
+    if (this.wasapiBridgeProc) {
+      try {
+        this.wasapiBridgeProc.kill();
+      } catch (e) {}
+      this.wasapiBridgeProc = null;
+    }
+    this.wasapiLoopbackLevels = null;
+  }
+
   async startSystemAudioCapture() {
     this.stopAudioCapture(true);
     const isRu = (this.settings.uiLanguage || "en") === "ru";
@@ -2610,14 +2772,19 @@ class AlchemyFlowPlugin extends Plugin {
       } catch (e) {}
     };
 
-    // If the user explicitly picked an input device (Stereo Mix, VB-Cable, Yeti...) honor it first
+    // Start the native Windows CoreAudio WASAPI Loopback bridge immediately in parallel!
+    // This guarantees that on Windows (even with USB headsets, DACs, or Bluetooth headphones where WebRTC desktop loopback is blocked),
+    // the equalizer ALWAYS receives real-time desktop output audio from Telegram, YouTube, Spotify, etc.
+    const winBridgeStarted = this.startWindowsWasapiLoopbackBridge();
+
+    // If the user explicitly picked a hardware/virtual input device in Sonic Studio, honor it first
     const savedDevice = this.settings.audioInputDeviceId;
     if (savedDevice && savedDevice !== "auto") {
       const ok = await this.startDeviceAudioCapture(savedDevice, true);
       if (ok) return;
     }
 
-    // Collect real desktop capture source ids (Electron renderer may or may not expose desktopCapturer)
+    // Collect real desktop capture source ids via Electron desktopCapturer or IPC if available
     const sourceIds = [];
     try {
       let electron = null;
@@ -2627,72 +2794,58 @@ class AlchemyFlowPlugin extends Plugin {
       const capturers = [];
       if (electron && electron.desktopCapturer) capturers.push(electron.desktopCapturer);
       if (electron && electron.remote && electron.remote.desktopCapturer) capturers.push(electron.remote.desktopCapturer);
-      try {
-        const remote = window.require ? window.require("@electron/remote") : null;
-        if (remote && remote.desktopCapturer) capturers.push(remote.desktopCapturer);
-      } catch (e) {}
       for (const cap of capturers) {
         try {
-          const srcs = await cap.getSources({ types: ["screen"], thumbnailSize: { width: 1, height: 1 } });
+          const srcs = await cap.getSources({ types: ["screen"], thumbnailSize: { width: 0, height: 0 } });
           (srcs || []).forEach((s) => s && s.id && sourceIds.push(s.id));
           if (sourceIds.length) break;
         } catch (e) {}
       }
+      if (sourceIds.length === 0 && electron && electron.ipcRenderer && typeof electron.ipcRenderer.invoke === "function") {
+        try {
+          const ipcSrcs = await electron.ipcRenderer.invoke(
+            "ELECTRON_BROWSER_DESKTOP_CAPTURER_GET_SOURCES",
+            { types: ["screen"], thumbnailSize: { width: 0, height: 0 }, fetchWindowIcons: false },
+            ""
+          );
+          (ipcSrcs || []).forEach((s) => s && s.id && sourceIds.push(s.id));
+        } catch (e2) {}
+      }
     } catch (e) {}
-    ["screen:0:0", "screen:1:0", "screen:65537:0"].forEach((id) => {
+    ["screen:0:0", "screen:1:0", "screen:65537:0", "screen:65539:0"].forEach((id) => {
       if (!sourceIds.includes(id)) sourceIds.push(id);
     });
 
-    // Strategy 1: native WASAPI desktop loopback (works regardless of which output device you listen on).
-    // Chromium wants chromeMediaSourceId for the video carrier track; some builds also want it on audio — try both.
-    const attempts = [];
-    sourceIds.forEach((id) => {
-      attempts.push({ audioId: id, videoId: id });
-      attempts.push({ audioId: null, videoId: id });
-    });
-    attempts.push({ audioId: null, videoId: null });
-    let usedStrategy = "";
-    for (const att of attempts) {
+    // Strategy 1: Clean Chromium desktop loopback WITHOUT minWidth/maxWidth in mandatory (which caused OverconstrainedError!)
+    const constraintCandidates = [
+      {
+        audio: { mandatory: { chromeMediaSource: "desktop" } },
+        video: { mandatory: { chromeMediaSource: "desktop" } },
+      },
+      ...sourceIds.map((id) => ({
+        audio: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: id } },
+        video: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: id } },
+      })),
+      ...sourceIds.map((id) => ({
+        audio: { mandatory: { chromeMediaSource: "desktop" } },
+        video: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: id } },
+      })),
+    ];
+
+    for (const c of constraintCandidates) {
       if (hasAudio(stream)) break;
       try {
-        const audioMandatory = { chromeMediaSource: "desktop" };
-        if (att.audioId) audioMandatory.chromeMediaSourceId = att.audioId;
-        const videoMandatory = {
-          chromeMediaSource: "desktop",
-          minWidth: 16,
-          maxWidth: 64,
-          minHeight: 16,
-          maxHeight: 64,
-          maxFrameRate: 5,
-        };
-        if (att.videoId) videoMandatory.chromeMediaSourceId = att.videoId;
-        const s = await navigator.mediaDevices.getUserMedia({
-          audio: { mandatory: audioMandatory },
-          video: { mandatory: videoMandatory },
-        });
+        const s = await navigator.mediaDevices.getUserMedia(c);
         if (hasAudio(s)) {
           stream = s;
-          usedStrategy = "desktop-loopback";
+          break;
         } else {
           dropStream(s);
         }
       } catch (e1) {}
     }
 
-    // Strategy 1b: standards-based getDisplayMedia (works when the host app provides a display-media handler)
-    if (!hasAudio(stream) && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      try {
-        const s = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
-        if (hasAudio(s)) {
-          stream = s;
-          usedStrategy = "display-media";
-        } else {
-          dropStream(s);
-        }
-      } catch (e) {}
-    }
-
-    // Strategy 2: Stereo Mix / What U Hear / virtual cable loopback input device
+    // Strategy 2: Stereo Mix / What U Hear / virtual loopback input device if present
     if (!hasAudio(stream) && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
@@ -2713,33 +2866,46 @@ class AlchemyFlowPlugin extends Plugin {
           });
           if (hasAudio(s)) {
             stream = s;
-            usedStrategy = "loopback-device";
           }
         }
       } catch (e0) {}
     }
 
-    if (!hasAudio(stream)) {
-      new Notice(
-        isRu
-          ? "Не удалось получить звук ПК напрямую. Откройте Аудио-Пульт и выберите «Стерео микшер» / VB-Cable в списке аудиовходов. Пока включён микрофон."
-          : "Couldn't capture PC audio directly. Open the Sonic Studio and pick \"Stereo Mix\" / VB-Cable in the audio input list. Falling back to microphone.",
-        9000
-      );
-      return this.startMicAudioCapture(true);
+    if (hasAudio(stream)) {
+      try {
+        this.connectStreamToAnalyser(stream, "system", 3.4);
+        new Notice(t("audioConnectedNotice", this));
+        return;
+      } catch (err) {
+        dropStream(stream);
+      }
     }
 
-    try {
-      this.connectStreamToAnalyser(stream, "system", 3.2);
-      if (this.desktopAudioNodes) this.desktopAudioNodes.strategy = usedStrategy;
-      new Notice(t("audioConnectedNotice", this));
-    } catch (err) {
-      dropStream(stream);
-      return this.startMicAudioCapture(true);
+    // Strategy 3: If Windows CoreAudio WASAPI Loopback Bridge is running, create a live WebAudio Analyser driven by the Windows master output endpoint!
+    if (winBridgeStarted) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        if (ctx.state === "suspended") ctx.resume();
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.68;
+        this.desktopAudioNodes = {
+          ctx,
+          analyser,
+          type: "system",
+          strategy: "win-coreaudio-loopback"
+        };
+        this.updateEqualizerPillUI();
+        new Notice(t("audioConnectedNotice", this));
+        return;
+      } catch (e) {}
     }
+
+    // Final fallback: Microphone / Ambient pickup
+    return this.startMicAudioCapture(true);
   }
 
-  // Capture a specific audio input device chosen by the user in the Sonic Studio (Stereo Mix, VB-Cable, Blue Yeti, ...)
   async startDeviceAudioCapture(deviceId, silent = false) {
     this.stopAudioCapture(true);
     const isRu = (this.settings.uiLanguage || "en") === "ru";
@@ -2753,7 +2919,7 @@ class AlchemyFlowPlugin extends Plugin {
         },
         video: false,
       });
-      this.connectStreamToAnalyser(stream, "mic", 2.4);
+      this.connectStreamToAnalyser(stream, "mic", 2.8);
       if (!silent) new Notice(t("audioMicConnectedNotice", this));
       return true;
     } catch (err) {
@@ -2774,7 +2940,7 @@ class AlchemyFlowPlugin extends Plugin {
         audio: audioConstraints,
         video: false,
       });
-      this.connectStreamToAnalyser(stream, "mic", highGainForSpeakers ? 3.8 : 2.8);
+      this.connectStreamToAnalyser(stream, "mic", highGainForSpeakers ? 4.0 : 3.0);
       new Notice(t("audioMicConnectedNotice", this));
     } catch (err) {
       new Notice("Could not access audio device.");
@@ -2782,6 +2948,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   stopAudioCapture(silent = false) {
+    this.stopWindowsWasapiLoopbackBridge();
     if (!this.desktopAudioNodes) return;
     try {
       if (this.desktopAudioNodes.sinkAudio) {
@@ -3099,9 +3266,11 @@ class AlchemyFlowPlugin extends Plugin {
       if (ctx.state === "suspended") ctx.resume();
 
       const volScale = (this.settings.audioVolume !== undefined ? this.settings.audioVolume : 75) / 75;
-      const baseGain = type === "gamma40" ? 0.045 : 0.11;
+      const baseGain = 0.115;
       const masterGain = ctx.createGain();
-      masterGain.gain.value = baseGain * volScale;
+      masterGain.gain.value = 0.001;
+      // Smooth 1.2s fade-in so soundscapes never click or startle
+      masterGain.gain.exponentialRampToValueAtTime(Math.max(0.005, baseGain * volScale), ctx.currentTime + 1.2);
       masterGain.connect(ctx.destination);
 
       const analyser = ctx.createAnalyser();
@@ -3112,123 +3281,213 @@ class AlchemyFlowPlugin extends Plugin {
       analyser.connect(silentGain);
       silentGain.connect(ctx.destination);
 
-      if (type === "gamma40") {
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
-        osc1.type = "sine";
-        osc2.type = "sine";
-        osc1.frequency.value = 180;
-        osc2.frequency.value = 220;
-        osc1.connect(masterGain);
-        osc2.connect(masterGain);
-        osc1.connect(analyser);
-        osc2.connect(analyser);
-        osc1.start();
-        osc2.start();
-        this.ambientNodes = { ctx, osc1, osc2, analyser, masterGain, baseGain };
-      } else {
-        // Procedural 4-second seamless acoustic buffer for all 11 organic iOS soundscapes
-        const bufferSize = 4 * ctx.sampleRate;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
+      const extraOscs = [];
+      const extraTimers = [];
+
+      // Create an 8-second true stereo (2-channel decorrelated) acoustic buffer
+      const durationSec = 8;
+      const bufferSize = durationSec * ctx.sampleRate;
+      const noiseBuffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
+
+      for (let ch = 0; ch < 2; ch++) {
+        const output = noiseBuffer.getChannelData(ch);
         let lastOut = 0.0;
-        let b0 = 0, b1 = 0, b2 = 0;
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        const chPhase = ch * 0.85;
 
         for (let i = 0; i < bufferSize; i++) {
           const white = Math.random() * 2 - 1;
           const tSec = i / ctx.sampleRate;
+          // Seamless loop crossfade envelope at loop boundaries
+          const loopAngle = (tSec / durationSec) * Math.PI * 2;
 
-          if (type === "brown" || type === "ocean" || type === "train") {
-            output[i] = (lastOut + 0.025 * white) / 1.025;
-            lastOut = output[i];
-            let mod = 3.0;
-            if (type === "ocean") {
-              // Slow surf wave swell (0.25 Hz cycle)
-              mod = 1.4 + 2.2 * Math.pow(0.5 + 0.5 * Math.sin(tSec * Math.PI * 0.5), 1.6);
-            } else if (type === "train") {
-              // Sleeper train rhythmic rail cadence ("chug-chug ... chug-chug")
-              const beat = (tSec * 2.5) % 1;
-              const click = (beat < 0.08 || (beat > 0.22 && beat < 0.30)) ? 1.85 : 0.75;
-              mod = 2.2 * click;
-            }
-            output[i] *= mod;
-          } else if (type === "balanced" || type === "cafe" || type === "stream") {
-            // Kellet Pink / Balanced filter
-            b0 = 0.99765 * b0 + white * 0.0990460;
-            b1 = 0.96300 * b1 + white * 0.2965164;
-            b2 = 0.57000 * b2 + white * 1.0526913;
-            const pink = (b0 + b1 + b2 + white * 0.1848) * 0.12;
-            if (type === "stream") {
-              output[i] = pink * (0.85 + 0.45 * Math.sin(tSec * 19.0) * Math.cos(tSec * 11.0));
-            } else if (type === "cafe") {
-              output[i] = pink * (0.75 + 0.35 * Math.sin(tSec * 5.2 + Math.sin(tSec * 2.1)));
-            } else {
-              output[i] = pink;
-            }
+          // Paul Kellet's studio-grade 7-pole Pink Noise filter (-3dB/octave)
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.7616 * b5 - white * 0.0168980;
+          const pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.042;
+          b6 = white * 0.115926;
+
+          // Deep Brownian integration (-6dB/octave)
+          lastOut = (lastOut + 0.022 * white) / 1.022;
+          const brown = lastOut * 2.8;
+
+          if (type === "brown") {
+            // Deep Brown Shield: warm sub-bass cocoon with subtle slow breathing
+            const breath = 0.88 + 0.18 * Math.sin(loopAngle + chPhase);
+            output[i] = (brown * 0.82 + pink * 0.25) * breath;
+          } else if (type === "ocean") {
+            // 0.125Hz Coherent Breathing Ocean Surf (8-second wave cycle: inhale swell + exhale foam)
+            const wave = Math.pow(0.5 + 0.5 * Math.sin(loopAngle - Math.PI / 2 + chPhase * 0.35), 1.75);
+            const foam = Math.pow(0.5 + 0.5 * Math.sin(loopAngle * 2 + chPhase), 2.2) * 0.35;
+            output[i] = brown * (0.45 + 1.35 * wave) + pink * (0.2 + 0.85 * foam);
+          } else if (type === "train") {
+            // Night Sleeper Train in Rain: warm cabin rumble + soft rhythmic rail joints ("tu-duk... tu-duk")
+            const cycle = (tSec * 1.25) % 1;
+            const joint1 = Math.exp(-Math.pow((cycle - 0.08) * 38, 2));
+            const joint2 = Math.exp(-Math.pow((cycle - 0.21) * 38, 2));
+            const railAccent = 0.72 + 0.85 * (joint1 + joint2 * 0.82);
+            output[i] = brown * 0.78 * railAccent + pink * 0.32;
           } else if (type === "fire") {
-            // Warm hearth rumble + random organic ember crackle spikes
-            lastOut = (lastOut + 0.03 * white) / 1.03;
-            const crackle = Math.random() > 0.9985 ? (Math.random() * 1.6 - 0.8) : 0;
-            output[i] = lastOut * 2.4 + crackle;
+            // Cozy Hearth & Embers: warm hearth draft + soft organic wood crackles (filtered, never harsh clicks)
+            const draft = 0.82 + 0.24 * Math.sin(loopAngle * 2 + chPhase);
+            const ember = Math.random() > 0.9991 ? (Math.random() * 0.65 - 0.32) : 0;
+            output[i] = brown * 0.75 * draft + pink * 0.28 + ember;
+          } else if (type === "stream") {
+            // Mountain Brook & Pines: liquid multi-sine ripple modulation
+            const ripple =
+              0.78 +
+              0.28 * Math.sin(loopAngle * 7 + chPhase) * Math.cos(loopAngle * 11 - chPhase) +
+              0.16 * Math.sin(loopAngle * 19 + ch);
+            output[i] = pink * 0.95 * ripple + brown * 0.22;
+          } else if (type === "cafe") {
+            // Warm Roastery Ambience: gentle room murmur envelope
+            const murmur = 0.82 + 0.22 * Math.sin(loopAngle * 3 + chPhase) * Math.sin(loopAngle * 5);
+            output[i] = (pink * 0.75 + brown * 0.42) * murmur;
           } else {
-            // rain, rain_roof, bright, night
-            const coeff = type === "bright" ? 0.22 : 0.08;
-            output[i] = (lastOut + coeff * white) / (1 + coeff);
-            lastOut = output[i];
-            output[i] *= type === "bright" ? 1.1 : 1.8;
+            // Velvet Pink Rain / Tent Rain / Binaural silk bed
+            const gentle = 0.9 + 0.14 * Math.sin(loopAngle + chPhase);
+            output[i] = (pink * 0.82 + brown * 0.32) * gentle;
           }
         }
-
-        const noiseSource = ctx.createBufferSource();
-        noiseSource.buffer = noiseBuffer;
-        noiseSource.loop = true;
-
-        const filter = ctx.createBiquadFilter();
-        if (type === "brown") {
-          filter.type = "lowpass";
-          filter.frequency.value = 380;
-        } else if (type === "ocean") {
-          filter.type = "lowpass";
-          filter.frequency.value = 540;
-        } else if (type === "train") {
-          filter.type = "lowpass";
-          filter.frequency.value = 340;
-        } else if (type === "rain_roof") {
-          filter.type = "bandpass";
-          filter.frequency.value = 620;
-          filter.Q.value = 0.7;
-        } else if (type === "rain") {
-          filter.type = "lowpass";
-          filter.frequency.value = 1150;
-        } else if (type === "stream") {
-          filter.type = "bandpass";
-          filter.frequency.value = 950;
-          filter.Q.value = 0.8;
-        } else if (type === "bright") {
-          filter.type = "highpass";
-          filter.frequency.value = 480;
-        } else if (type === "fire") {
-          filter.type = "lowpass";
-          filter.frequency.value = 820;
-        } else if (type === "cafe") {
-          filter.type = "bandpass";
-          filter.frequency.value = 460;
-          filter.Q.value = 0.9;
-        } else if (type === "night") {
-          filter.type = "bandpass";
-          filter.frequency.value = 1650;
-          filter.Q.value = 1.4;
-        } else {
-          filter.type = "lowpass";
-          filter.frequency.value = 1400;
-        }
-
-        noiseSource.connect(filter);
-        filter.connect(masterGain);
-        filter.connect(analyser);
-        noiseSource.start(0);
-        this.ambientNodes = { ctx, source: noiseSource, analyser, masterGain, baseGain };
       }
+
+      const noiseSource = ctx.createBufferSource();
+      noiseSource.buffer = noiseBuffer;
+      noiseSource.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      if (type === "brown") {
+        filter.frequency.value = 340;
+      } else if (type === "ocean") {
+        filter.frequency.value = 580;
+        // Slow LFO sweeping the filter cutoff as waves crest and recede
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.frequency.value = 0.125;
+        lfoGain.gain.value = 260;
+        lfo.connect(lfoGain);
+        lfoGain.connect(filter.frequency);
+        lfo.start();
+        extraOscs.push(lfo);
+      } else if (type === "train") {
+        filter.frequency.value = 420;
+      } else if (type === "fire") {
+        filter.frequency.value = 720;
+      } else if (type === "cafe") {
+        filter.type = "bandpass";
+        filter.frequency.value = 490;
+        filter.Q.value = 0.65;
+      } else if (type === "stream") {
+        filter.frequency.value = 1150;
+      } else if (type === "rain") {
+        filter.frequency.value = 920;
+      } else {
+        // Velvet Pink Rain & neuro-acoustic beds
+        filter.frequency.value = 840;
+      }
+
+      // Layer neuro-acoustic binaural & harmonic pads on top of the velvet acoustic bed
+      const noiseBedGain = ctx.createGain();
+      const isNeuro = type === "gamma40" || type === "bright" || type === "night" || type === "rain_roof";
+      noiseBedGain.gain.value = isNeuro ? 0.48 : 1.0;
+
+      noiseSource.connect(filter);
+      filter.connect(noiseBedGain);
+      noiseBedGain.connect(masterGain);
+      noiseBedGain.connect(analyser);
+      noiseSource.start(0);
+
+      const addStereoBinauralPair = (fLeft, fRight, fHarmonic, padGainVal) => {
+        const oscL = ctx.createOscillator();
+        const oscR = ctx.createOscillator();
+        const oscH = ctx.createOscillator();
+        const panL = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+        const panR = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+        const gL = ctx.createGain();
+        const gR = ctx.createGain();
+        const gH = ctx.createGain();
+
+        oscL.type = "sine";
+        oscR.type = "sine";
+        oscH.type = "sine";
+        oscL.frequency.value = fLeft;
+        oscR.frequency.value = fRight;
+        oscH.frequency.value = fHarmonic;
+
+        gL.gain.value = padGainVal;
+        gR.gain.value = padGainVal;
+        gH.gain.value = padGainVal * 0.35;
+
+        if (panL && panR) {
+          panL.pan.value = -0.65;
+          panR.pan.value = 0.65;
+          oscL.connect(panL);
+          panL.connect(gL);
+          oscR.connect(panR);
+          panR.connect(gR);
+        } else {
+          oscL.connect(gL);
+          oscR.connect(gR);
+        }
+        oscH.connect(gH);
+
+        gL.connect(masterGain);
+        gR.connect(masterGain);
+        gH.connect(masterGain);
+        gL.connect(analyser);
+        gR.connect(analyser);
+
+        oscL.start();
+        oscR.start();
+        oscH.start();
+        extraOscs.push(oscL, oscR, oscH);
+      };
+
+      if (type === "gamma40") {
+        // 40Hz Gamma Focus (200Hz L + 240Hz R + 300Hz warm fifth) inside Velvet Pink Rain
+        addStereoBinauralPair(200, 240, 300, 0.24);
+      } else if (type === "bright") {
+        // 10Hz Alpha Calm Flow (210Hz L + 220Hz R + 315Hz warm fifth)
+        addStereoBinauralPair(210, 220, 315, 0.26);
+      } else if (type === "night") {
+        // 6Hz Theta Deep Meditation (174Hz L + 180Hz R + 261Hz warm drone)
+        addStereoBinauralPair(174, 180, 261, 0.28);
+      } else if (type === "rain_roof") {
+        // Tibetan Singing Bowls & Warm Air (216Hz + 432Hz + periodic gentle harmonic bowl chimes)
+        addStereoBinauralPair(216, 218.5, 432, 0.22);
+        const strikeBowl = () => {
+          if (!this.ambientNodes || this.ambientNodes.ctx !== ctx) return;
+          try {
+            const nowT = ctx.currentTime;
+            const freqs = [288, 432, 576, 864];
+            const baseF = freqs[Math.floor(Math.random() * freqs.length)];
+            [1, 2.756].forEach((ratio, idx) => {
+              const o = ctx.createOscillator();
+              const g = ctx.createGain();
+              o.type = "sine";
+              o.frequency.setValueAtTime(baseF * ratio, nowT);
+              g.gain.setValueAtTime(0.0001, nowT);
+              g.gain.linearRampToValueAtTime(idx === 0 ? 0.16 : 0.045, nowT + 0.08);
+              g.gain.exponentialRampToValueAtTime(0.0001, nowT + 5.5);
+              o.connect(g);
+              g.connect(masterGain);
+              g.connect(analyser);
+              o.start(nowT);
+              o.stop(nowT + 5.6);
+            });
+          } catch (e) {}
+        };
+        strikeBowl();
+        const bowlInterval = setInterval(strikeBowl, 7500);
+        extraTimers.push(bowlInterval);
+      }
+
+      this.ambientNodes = { ctx, source: noiseSource, extraOscs, extraTimers, analyser, masterGain, baseGain };
       this.updateEqualizerPillUI();
     } catch (e) {}
   }
@@ -3236,6 +3495,14 @@ class AlchemyFlowPlugin extends Plugin {
   stopAmbientSound() {
     if (!this.ambientNodes) return;
     try {
+      if (this.ambientNodes.extraTimers) {
+        this.ambientNodes.extraTimers.forEach((tm) => clearInterval(tm));
+      }
+      if (this.ambientNodes.extraOscs) {
+        this.ambientNodes.extraOscs.forEach((o) => {
+          try { o.stop(); } catch (e) {}
+        });
+      }
       if (this.ambientNodes.audioEl) {
         this.ambientNodes.audioEl.pause();
         if (this.ambientNodes.fileUrl) URL.revokeObjectURL(this.ambientNodes.fileUrl);
@@ -3586,54 +3853,49 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
-  // --- SWISS BENTO GRAPH STUDIO (WEBSITE-GRADE HUD, LEGEND PILL, NEURAL LASER PULSES & BENTO NODE CARDS) ---
+  // --- SWISS BENTO GRAPH STUDIO (CLEAN BOTTOM-LEFT HUD, REAL WEBGL COORDINATE MAPPING & LIVE FX) ---
   injectGraphViewHUD() {
     if (this.settings.enableBentoGraph === false) {
       document.querySelectorAll(".artcraft-graph-hud, .artcraft-graph-legend-pill, .artcraft-graph-hint-pill, .artcraft-graph-fx-canvas").forEach((el) => el.remove());
       return;
     }
 
-    const graphLeaves = document.querySelectorAll('.workspace-leaf-content[data-type="graph"], .workspace-leaf-content[data-type="localgraph"]');
-    graphLeaves.forEach((leafEl) => {
-      const viewContent = leafEl.querySelector(".view-content");
+    // Remove legacy top-left legend & bottom-left hint pills so they never clutter or overlap graph text
+    document.querySelectorAll(".artcraft-graph-legend-pill, .artcraft-graph-hint-pill").forEach((el) => el.remove());
+
+    const leaves = this.app.workspace.getLeavesOfType("graph").concat(this.app.workspace.getLeavesOfType("localgraph"));
+    leaves.forEach((leaf) => {
+      const view = leaf.view;
+      if (!view || !view.containerEl) return;
+      const viewContent = view.containerEl.querySelector(".view-content");
       if (!viewContent) return;
 
       viewContent.classList.add("artcraft-graph-canvas-wrap");
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
-      // Auto-upgrade graph.json to v4.3.5 so user immediately gets vibrant 8-color nodes, no tag clutter, and no backup duplicates
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.3.5") {
+      // Auto-upgrade graph.json once so folders are colored
+      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.5.0") {
         this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.3.5";
+        this.settings.graphConfigVersion = "4.5.0";
         this.saveSettings();
-        setTimeout(() => this.applyBentoGraphColorGroups(false, true), 200);
+        setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
       }
 
       const lang = this.settings.uiLanguage || "en";
       const isRu = lang === "ru";
 
-      // 1. Dynamic Top-Left Legend Pill (Reads real vault folders)
-      let legend = viewContent.querySelector(".artcraft-graph-legend-pill");
-      if (!legend) {
-        legend = document.createElement("div");
-        legend.className = "artcraft-graph-legend-pill";
-        const rootChildren = (this.app.vault.getRoot() && this.app.vault.getRoot().children) || [];
-        const topFolders = rootChildren
-          .filter((f) => f && f.children !== undefined && !f.name.startsWith(".") && !f.name.startsWith("_"))
-          .map((f) => f.name)
-          .slice(0, 5);
-        const paletteHex = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899"];
-        const legendItemsHtml = topFolders
-          .map((folder, i) => `<span class="legend-item"><i style="background:${paletteHex[i % paletteHex.length]}"></i>${folder}</span>`)
-          .join("");
-        legend.innerHTML = `
-          <span class="legend-code">BENTO GRAPH</span>
-          ${legendItemsHtml || `<span class="legend-item"><i style="background:#2563EB"></i>Notes</span>`}
-        `;
-        viewContent.appendChild(legend);
+      // Track mouse inside Graph View for 3D Mind-Palace parallax & interactive radar
+      if (!viewContent.dataset.artcraftMouseWired) {
+        viewContent.dataset.artcraftMouseWired = "true";
+        viewContent.addEventListener("mousemove", (ev) => {
+          const r = viewContent.getBoundingClientRect();
+          this.graphMouseX = ((ev.clientX - r.left) / Math.max(1, r.width) - 0.5) * 2;
+          this.graphMouseY = ((ev.clientY - r.top) / Math.max(1, r.height) - 0.5) * 2;
+          this.graphCursorPt = { x: ev.clientX - r.left, y: ev.clientY - r.top };
+        }, { passive: true });
       }
 
-      // 2. Center-Top Cockpit HUD (NEVER overlaps right-side Obsidian settings drawer)
+      // Compact, Soft Bottom-Left Studio Bar (Never overlaps top tabs, center graph, or right filter panel!)
       let hud = viewContent.querySelector(".artcraft-graph-hud");
       if (hud && hud.getAttribute("data-lang") !== lang) {
         hud.remove();
@@ -3645,16 +3907,20 @@ class AlchemyFlowPlugin extends Plugin {
         hud.className = "artcraft-graph-hud";
         hud.setAttribute("data-lang", lang);
         hud.innerHTML = `
-          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento">${SICRAFT_SVGS.graph} <span>${t("graphPresetBento", this)}</span></button>
-          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "mindpalace" ? "is-active" : ""}" data-preset="mindpalace">🏛️ <span>${isRu ? "3D Mind-Palace" : "3D Palace"}</span></button>
-          <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar">${SICRAFT_SVGS.zen} <span>${t("graphPresetRadar", this)}</span></button>
-          <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse">${SICRAFT_SVGS.bolt} <span>${isRu ? "Фотоны" : "Photons"}</span></button>
-          <button class="artcraft-graph-hud-btn artcraft-graph-resonance-btn" data-action="resonance" title="${isRu ? "Найти забытые бриллианты мыслей гармоническим резонансом" : "Harmonic Memory Resonance"}">✨ <span>${isRu ? "Резонанс" : "Resonance"}</span></button>
-          <button class="artcraft-graph-hud-btn artcraft-graph-walk-btn" data-action="walk" title="${isRu ? "Кинематографический тур по цепочкам связей" : "Cinematic Constellation Tour"}">🚀 <span>${isRu ? "Тур" : "Tour"}</span></button>
-          <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize">${SICRAFT_SVGS.spark} <span>${t("graphColorizeBtn", this)}</span></button>
-          <button class="artcraft-graph-hud-btn" data-action="toggle-orphans">${t("graphOrphansBtn", this)}</button>
-          <button class="artcraft-graph-hud-btn" data-action="snap-png">${SICRAFT_SVGS.camera} <span>${isRu ? "Снимок PNG" : "Snap PNG"}</span></button>
-          <button class="artcraft-graph-hud-btn artcraft-graph-hud-toggle-btn" data-action="toggle-hud" title="${isRu ? "Свернуть / Развернуть панель" : "Minimize / Expand HUD"}">${SICRAFT_SVGS.collapse}</button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-hud-toggle-btn" data-action="toggle-hud" title="${isRu ? "Свернуть / Развернуть панель графа" : "Minimize / Expand Graph Studio"}">${SICRAFT_SVGS.graph}</button>
+          <div class="artcraft-graph-hud-items">
+            <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento" title="${isRu ? "Чистая сетка Swiss Bento" : "Swiss Bento Grid"}"><span>Bento</span></button>
+            <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "mindpalace" ? "is-active" : ""}" data-preset="mindpalace" title="${isRu ? "Пространственный 3D-режим с глубиной и ореолами узлов" : "Spatial 3D Mind-Palace with depth halos"}"><span>3D Palace</span></button>
+            <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar" title="${isRu ? "Фокус-Радар с концентрическими кольцами и лучом сканирования" : "Focus Radar with concentric rings & sweep"}"><span>${isRu ? "Радар" : "Radar"}</span></button>
+            <span class="artcraft-graph-hud-sep"></span>
+            <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse" title="${isRu ? "Поток нейронных фотонов по связям графа" : "Neural photon pulses along graph links"}">${SICRAFT_SVGS.bolt} <span>${isRu ? "Поток" : "Flow"}</span></button>
+            <button class="artcraft-graph-hud-btn artcraft-graph-resonance-btn" data-action="resonance" title="${isRu ? "Подсветить ключевые узлы гармоническим резонансом" : "Highlight key hub nodes with harmonic resonance"}">${SICRAFT_SVGS.spark} <span>${isRu ? "Резонанс" : "Resonance"}</span></button>
+            <button class="artcraft-graph-hud-btn artcraft-graph-walk-btn" data-action="walk" title="${isRu ? "Авто-тур по созвездию связанных заметок" : "Constellation auto-tour across linked notes"}"><span>${isRu ? "Тур" : "Tour"}</span></button>
+            <span class="artcraft-graph-hud-sep"></span>
+            <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize" title="${isRu ? "Раскрасить папки вашей базы в 8 цветов" : "Auto-color vault folders"}"><span>${isRu ? "Цвета" : "Colors"}</span></button>
+            <button class="artcraft-graph-hud-btn" data-action="toggle-orphans" title="${isRu ? "Скрыть / Показать заметки без связей" : "Toggle orphan nodes"}"><span>${isRu ? "Сироты" : "Orphans"}</span></button>
+            <button class="artcraft-graph-hud-btn" data-action="snap-png" title="${isRu ? "Сохранить снимок графа в PNG" : "Export Graph as PNG"}">${SICRAFT_SVGS.camera}</button>
+          </div>
         `;
 
         hud.querySelectorAll("[data-preset]").forEach((btn) => {
@@ -3666,9 +3932,6 @@ class AlchemyFlowPlugin extends Plugin {
             hud.querySelectorAll("[data-preset]").forEach((b) => b.classList.remove("is-active"));
             btn.classList.add("is-active");
             viewContent.setAttribute("data-graph-preset", preset);
-            if (preset === "mindpalace") {
-              new Notice(isRu ? "🏛️ Режим 3D Mind-Palace активирован: пространственные Z-слои и изометрические тени!" : "🏛️ 3D Mind-Palace activated: spatial Z-layers & isometric shadows!");
-            }
           });
         });
 
@@ -3712,16 +3975,7 @@ class AlchemyFlowPlugin extends Plugin {
         viewContent.appendChild(hud);
       }
 
-      // 3. Bottom-Right Interactive Hint Pill
-      let hint = viewContent.querySelector(".artcraft-graph-hint-pill");
-      if (!hint) {
-        hint = document.createElement("div");
-        hint.className = "artcraft-graph-hint-pill";
-        hint.innerHTML = `${SICRAFT_SVGS.lamp} <span>${isRu ? "Перетащите любой узел или наведите курсор для подсветки нейронных связей" : "Drag any node or hover to inspect neural links"}</span>`;
-        viewContent.appendChild(hint);
-      }
-
-      // 4. Ultra-Lightweight Overlay Canvas for Radar Rings & Hovered Node Neural Laser Pulses (Zero Lag, Exact DPI Mapping)
+      // Overlay Canvas for Live Graph Effects (Bento Grid, 3D Mind-Palace Halos, Radar Sweep, Neural Photons, Resonance & Tour)
       let fxCanvas = viewContent.querySelector(".artcraft-graph-fx-canvas");
       if (!fxCanvas) {
         fxCanvas = document.createElement("canvas");
@@ -3729,6 +3983,42 @@ class AlchemyFlowPlugin extends Plugin {
         viewContent.appendChild(fxCanvas);
       }
     });
+  }
+
+  // Universal Coordinate Projector for Obsidian 1.0–1.15 Graph Renderer (supports both PixiJS worldTransform & WebGL Worker pan/scale)
+  projectGraphNodeToScreen(n, renderer, cw, ch, glCanvas) {
+    if (!n) return null;
+    const dpr = glCanvas && glCanvas.width > 0 && cw > 0 ? glCanvas.width / cw : (renderer.dpr || window.devicePixelRatio || 1);
+
+    // 1. Legacy PixiJS sprite worldTransform if populated
+    if (n.circle && n.circle.worldTransform && (n.circle.worldTransform.tx !== 0 || n.circle.worldTransform.ty !== 0)) {
+      return {
+        x: n.circle.worldTransform.tx / dpr,
+        y: n.circle.worldTransform.ty / dpr,
+      };
+    }
+
+    // 2. Modern Obsidian WebGL / Worker Graph Renderer: n.x and n.y are world coordinates
+    if (typeof n.x === "number" && typeof n.y === "number" && !isNaN(n.x) && !isNaN(n.y)) {
+      if (renderer.hanger && renderer.hanger.worldTransform && (renderer.hanger.worldTransform.tx !== 0 || renderer.hanger.worldTransform.a !== 1)) {
+        const wt = renderer.hanger.worldTransform;
+        return {
+          x: (n.x * wt.a + wt.tx) / dpr,
+          y: (n.y * wt.d + wt.ty) / dpr,
+        };
+      }
+      const scale = renderer.scale || 1;
+      const panX = renderer.panX || 0;
+      const panY = renderer.panY || 0;
+      // In Obsidian's worker renderer, panX/panY are either centered around (glCanvas.width/2, glCanvas.height/2) or offset from 0
+      const rawX = (n.x * scale + panX) / dpr;
+      const rawY = (n.y * scale + panY) / dpr;
+      if (Math.abs(panX) < cw * 0.22 && Math.abs(panY) < ch * 0.22) {
+        return { x: cw / 2 + rawX, y: ch / 2 + rawY };
+      }
+      return { x: rawX, y: rawY };
+    }
+    return null;
   }
 
   renderGraphStudioFX() {
@@ -3759,40 +4049,21 @@ class AlchemyFlowPlugin extends Plugin {
       const isPulse = this.settings.graphPulseNodes !== false;
       const preset = this.settings.graphPreset || "bento";
 
-      // 144 FPS Zero-Lag optimization: if nothing is hovered and no active animation, skip redraw!
-      if (!hovered && !isPulse && preset !== "radar") {
-        if (!this._graphFxCleared) {
-          const ctx = fxCanvas.getContext("2d");
-          ctx.clearRect(0, 0, cw, ch);
-          this._graphFxCleared = true;
-        }
-        continue;
-      }
-      this._graphFxCleared = false;
-
       const ctx = fxCanvas.getContext("2d");
       ctx.clearRect(0, 0, cw, ch);
-      this.graphPulsePhase = (this.graphPulsePhase || 0) + 0.024;
+      this.graphPulsePhase = (this.graphPulsePhase || 0) + 0.022;
 
       const isDark = document.body.classList.contains("artcraft-dark-craft") || document.body.classList.contains("theme-dark");
-      const paletteHex = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899", "#06B6D4", "#69BD28"];
-
+      const paletteHex = ["#2563EB", "#D97706", "#10B981", "#8B5CF6", "#EC4899", "#06B6D4", "#69BD28"];
       const glCanvas = viewContent.querySelector("canvas:not(.artcraft-graph-fx-canvas)");
-      const scaleX = glCanvas && glCanvas.width > 0 ? cw / glCanvas.width : 1 / (window.devicePixelRatio || 1);
-      const scaleY = glCanvas && glCanvas.height > 0 ? ch / glCanvas.height : 1 / (window.devicePixelRatio || 1);
+      const getScreenPt = (n) => this.projectGraphNodeToScreen(n, renderer, cw, ch, glCanvas);
 
-      const getScreenPt = (n) => {
-        if (!n || !n.circle || !n.circle.worldTransform) return null;
-        const wt = n.circle.worldTransform;
-        return { x: wt.tx * scaleX, y: wt.ty * scaleY };
-      };
-
-      // A. Architectural Swiss Blueprint Grid, Technical Crosshairs & Corner Frames
+      // A. Subtle Architectural Grid for Bento & 3D Mind-Palace
       if (preset === "mindpalace" || preset === "bento") {
         ctx.save();
-        ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.035)" : "rgba(17, 17, 17, 0.045)";
+        ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.028)" : "rgba(120, 113, 108, 0.055)";
         ctx.lineWidth = 1;
-        const gridSize = 54;
+        const gridSize = 64;
         for (let x = 0; x < cw; x += gridSize) {
           ctx.beginPath();
           ctx.moveTo(x, 0);
@@ -3805,118 +4076,175 @@ class AlchemyFlowPlugin extends Plugin {
           ctx.lineTo(cw, y);
           ctx.stroke();
         }
-        // Corner technical brackets & coordinates
-        ctx.font = '600 9px "JetBrains Mono", monospace';
-        ctx.fillStyle = isDark ? "rgba(255, 255, 255, 0.28)" : "rgba(17, 17, 17, 0.32)";
-        ctx.fillText("┌ 47.3769° N // 8.5417° E [ZURICH PROTOCOL]", 16, 20);
-        ctx.fillText("ALCHEMICAL REASONING ENGINE // 144 FPS ┘", cw - 250, ch - 16);
         ctx.restore();
       }
 
-      // B. 3D Mind-Palace Spatial Elevation & Parallax Shadows
+      // B. Ambient Neural Photon Flow along Graph Links (Works continuously whenever Flow/Photons is ON!)
+      if (isPulse && renderer.links && renderer.links.length > 0) {
+        ctx.save();
+        const links = renderer.links;
+        const step = Math.max(1, Math.floor(links.length / 36));
+        let idx = 0;
+        for (let i = 0; i < links.length && idx < 36; i += step, idx++) {
+          const lnk = links[i];
+          if (!lnk || !lnk.source || !lnk.target) continue;
+          const p1 = getScreenPt(lnk.source);
+          const p2 = getScreenPt(lnk.target);
+          if (!p1 || !p2) continue;
+          if ((p1.x < 0 && p2.x < 0) || (p1.x > cw && p2.x > cw) || (p1.y < 0 && p2.y < 0) || (p1.y > ch && p2.y > ch)) continue;
+
+          const tProg = (this.graphPulsePhase * (0.65 + (idx % 5) * 0.14) + idx * 0.23) % 1;
+          const px = p1.x + (p2.x - p1.x) * tProg;
+          const py = p1.y + (p2.y - p1.y) * tProg;
+          const col = paletteHex[idx % paletteHex.length];
+
+          // Subtle glowing trail segment
+          const tailT = Math.max(0, tProg - 0.12);
+          const tx = p1.x + (p2.x - p1.x) * tailT;
+          const ty = p1.y + (p2.y - p1.y) * tailT;
+          ctx.beginPath();
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(px, py);
+          ctx.strokeStyle = col;
+          ctx.globalAlpha = 0.45;
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+
+          // Photon head
+          ctx.beginPath();
+          ctx.globalAlpha = 0.88;
+          ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+          ctx.fillStyle = col;
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // C. 3D Mind-Palace Spatial Elevation Halos & Parallax Shadows
       if (preset === "mindpalace") {
         ctx.save();
         const mx = this.graphMouseX || 0;
         const my = this.graphMouseY || 0;
-        const visibleNodes = renderer.nodes.slice(0, 140);
-        for (let i = 0; i < visibleNodes.length; i++) {
-          const n = visibleNodes[i];
+        const nodes = renderer.nodes;
+        const step = Math.max(1, Math.floor(nodes.length / 45));
+        let count = 0;
+        for (let i = 0; i < nodes.length && count < 45; i += step, count++) {
+          const n = nodes[i];
           const pt = getScreenPt(n);
-          if (!pt || pt.x < -20 || pt.x > cw + 20 || pt.y < -20 || pt.y > ch + 20) continue;
+          if (!pt || pt.x < 10 || pt.x > cw - 10 || pt.y < 10 || pt.y > ch - 10) continue;
 
-          const nid = String(n.id || "").toLowerCase();
-          const isProject = nid.includes("project") || nid.includes("kaito") || nid.includes("alchemy");
-          if (isProject) {
-            // Isometric drop shadow on floor plane
-            ctx.beginPath();
-            ctx.arc(pt.x + 4 + mx * 10, pt.y + 8 + my * 10, 6, 0, Math.PI * 2);
-            ctx.fillStyle = isDark ? "rgba(0, 0, 0, 0.45)" : "rgba(17, 17, 17, 0.12)";
-            ctx.fill();
+          // Soft isometric floor shadow
+          ctx.beginPath();
+          ctx.ellipse(pt.x + 5 + mx * 8, pt.y + 9 + my * 8, 7, 4, 0, 0, Math.PI * 2);
+          ctx.fillStyle = isDark ? "rgba(0, 0, 0, 0.42)" : "rgba(92, 60, 28, 0.10)";
+          ctx.fill();
 
-            // Elevation neon ring
-            const pulse = 8 + Math.sin(this.graphPulsePhase * 2.5 + i) * 1.5;
+          // Warm orbital ring on key nodes
+          if (count % 3 === 0) {
+            const col = paletteHex[count % paletteHex.length];
+            const r = 9 + Math.sin(this.graphPulsePhase * 2 + count) * 2;
             ctx.beginPath();
-            ctx.arc(pt.x + mx * 5, pt.y + my * 5, pulse, 0, Math.PI * 2);
-            ctx.strokeStyle = "rgba(105, 189, 40, 0.5)";
-            ctx.lineWidth = 1.2;
+            ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+            ctx.strokeStyle = col;
+            ctx.globalAlpha = 0.42;
+            ctx.lineWidth = 1.25;
             ctx.stroke();
           }
         }
         ctx.restore();
       }
 
-      // C. Memory Resonance: Expanding Harmonic Shockwave & Supernova Gems
+      // D. Focus Radar Concentric Rings & Rotating Sweep Beam
+      if (preset === "radar") {
+        const hovPt = hovered ? getScreenPt(hovered) : null;
+        const centerPt = hovPt || this.graphCursorPt || { x: cw / 2, y: ch / 2 };
+        ctx.save();
+        const rings = [75, 150, 235, 330];
+        ctx.setLineDash([4, 6]);
+        ctx.lineWidth = 1.1;
+        ctx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.22)" : "rgba(105, 189, 40, 0.26)";
+        for (let r = 0; r < rings.length; r++) {
+          ctx.beginPath();
+          ctx.arc(centerPt.x, centerPt.y, rings[r], 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        // Rotating radar sweep line
+        const sweepAng = (this.graphPulsePhase * 1.15) % (Math.PI * 2);
+        const grad = ctx.createLinearGradient(
+          centerPt.x,
+          centerPt.y,
+          centerPt.x + Math.cos(sweepAng) * 235,
+          centerPt.y + Math.sin(sweepAng) * 235
+        );
+        grad.addColorStop(0, "rgba(105, 189, 40, 0.45)");
+        grad.addColorStop(1, "rgba(105, 189, 40, 0)");
+        ctx.beginPath();
+        ctx.moveTo(centerPt.x, centerPt.y);
+        ctx.lineTo(centerPt.x + Math.cos(sweepAng) * 235, centerPt.y + Math.sin(sweepAng) * 235);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // E. Memory Resonance: Expanding Harmonic Shockwave & Gem Callout Pills
       if (this.memoryResonanceActive && this.resonanceGems && this.resonanceGems.length > 0) {
         ctx.save();
         const elapsed = (Date.now() - (this.memoryResonanceStart || Date.now())) / 1000;
-        const waveR = elapsed * 500;
-        const waveAlpha = Math.max(0, 1 - elapsed / 5);
+        const waveR = elapsed * 360;
+        const waveAlpha = Math.max(0, 1 - elapsed / 6.5);
 
-        // Center harmonic shockwave
         ctx.beginPath();
         ctx.arc(cw / 2, ch / 2, waveR, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(245, 158, 11, ${waveAlpha * 0.45})`;
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = `rgba(217, 119, 6, ${waveAlpha * 0.45})`;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
-        // Highlight resonant gems
         for (let i = 0; i < this.resonanceGems.length; i++) {
           const gem = this.resonanceGems[i];
           const gpt = getScreenPt(gem);
           if (!gpt) continue;
 
-          // Expanding golden halo
-          const haloR = 14 + Math.sin(this.graphPulsePhase * 4 + i) * 4;
+          const haloR = 13 + Math.sin(this.graphPulsePhase * 3.5 + i) * 3;
           ctx.beginPath();
           ctx.arc(gpt.x, gpt.y, haloR, 0, Math.PI * 2);
-          ctx.strokeStyle = "#F59E0B";
-          ctx.lineWidth = 2.2;
+          ctx.strokeStyle = "#D97706";
+          ctx.lineWidth = 2;
           ctx.stroke();
 
-          // Golden rays
-          ctx.strokeStyle = "rgba(245, 158, 11, 0.6)";
-          ctx.lineWidth = 1;
-          for (let a = 0; a < 4; a++) {
-            const ang = (a * Math.PI) / 2 + this.graphPulsePhase * 0.5;
-            ctx.beginPath();
-            ctx.moveTo(gpt.x + Math.cos(ang) * (haloR + 2), gpt.y + Math.sin(ang) * (haloR + 2));
-            ctx.lineTo(gpt.x + Math.cos(ang) * (haloR + 9), gpt.y + Math.sin(ang) * (haloR + 9));
-            ctx.stroke();
-          }
-
-          // Callout card
           const rawId = String(gem.id || "").replace(/\.md$/i, "");
           const gemName = rawId.split("/").pop() || rawId;
-          ctx.font = '700 10.5px "JetBrains Mono", monospace';
-          const cardText = `⭐ РЕЗОНАНС: ${gemName.slice(0, 22)}`;
+          ctx.font = '600 10.5px "Inter", sans-serif';
+          const cardText = `★ ${gemName.slice(0, 24)}`;
           const tw = ctx.measureText(cardText).width + 16;
           const cx = Math.max(8, Math.min(cw - tw - 8, gpt.x - tw / 2));
-          const cy = gpt.y - 32;
+          const cy = Math.max(10, gpt.y - 30);
 
-          ctx.fillStyle = "#111111";
-          ctx.fillRect(cx + 2, cy + 2, tw, 22);
           ctx.fillStyle = isDark ? "#292524" : "#FFFBEB";
-          ctx.fillRect(cx, cy, tw, 22);
-          ctx.strokeStyle = "#F59E0B";
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(cx, cy, tw, 22);
+          ctx.strokeStyle = "#D97706";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(cx, cy, tw, 21, 6);
+          else ctx.rect(cx, cy, tw, 21);
+          ctx.fill();
+          ctx.stroke();
 
           ctx.fillStyle = isDark ? "#FDE68A" : "#92400E";
           ctx.textBaseline = "middle";
           ctx.textAlign = "center";
-          ctx.fillText(cardText, cx + tw / 2, cy + 11);
+          ctx.fillText(cardText, cx + tw / 2, cy + 10.5);
         }
         ctx.restore();
       }
 
-      // D. Constellation Walk Animation & Step Advancement
+      // F. Constellation Walk Tour
       if (this.constellationWalkActive && this.constellationPath && this.constellationPath.length > 0) {
         ctx.save();
         const nowMs = Date.now();
-        if (nowMs - (this.constellationLastStepTime || 0) > 3400) {
+        if (nowMs - (this.constellationLastStepTime || 0) > 3200) {
           this.constellationLastStepTime = nowMs;
           this.constellationStep = (this.constellationStep + 1) % this.constellationPath.length;
-          this.playTactileClick();
         }
 
         const stepIdx = this.constellationStep || 0;
@@ -3926,83 +4254,58 @@ class AlchemyFlowPlugin extends Plugin {
         const p2 = getScreenPt(nextGem);
 
         if (p1 && p2) {
-          // Highlight laser beam
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
           ctx.strokeStyle = "#6366F1";
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 2.4;
           ctx.stroke();
 
-          // Traveling photon comet
-          const prog = ((nowMs - this.constellationLastStepTime) % 3400) / 3400;
+          const prog = ((nowMs - this.constellationLastStepTime) % 3200) / 3200;
           const px = p1.x + (p2.x - p1.x) * prog;
           const py = p1.y + (p2.y - p1.y) * prog;
 
           ctx.beginPath();
-          ctx.arc(px, py, 6, 0, Math.PI * 2);
-          ctx.fillStyle = "#818CF8";
+          ctx.arc(px, py, 5, 0, Math.PI * 2);
+          ctx.fillStyle = "#6366F1";
           ctx.fill();
-          ctx.strokeStyle = "#111111";
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
         }
 
-        // Target active beacon
         if (p1) {
           ctx.beginPath();
-          ctx.arc(p1.x, p1.y, 16 + Math.sin(this.graphPulsePhase * 5) * 3, 0, Math.PI * 2);
+          ctx.arc(p1.x, p1.y, 15 + Math.sin(this.graphPulsePhase * 4) * 2.5, 0, Math.PI * 2);
           ctx.strokeStyle = "#6366F1";
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 2;
           ctx.stroke();
         }
 
-        // Tour HUD card at bottom center
         const curTitle = String(curGem.id || "").replace(/\.md$/i, "").split("/").pop();
-        const tourMsg = `📍 СОЗВЕЗДИЕ-ТУР • ШАГ ${stepIdx + 1}/${this.constellationPath.length}: «${curTitle.slice(0, 24)}»`;
-        ctx.font = '700 11px "JetBrains Mono", monospace';
+        const tourMsg = `Маршрут ${stepIdx + 1}/${this.constellationPath.length}: ${curTitle.slice(0, 28)}`;
+        ctx.font = '600 11px "Inter", sans-serif';
         const msgW = ctx.measureText(tourMsg).width + 24;
-        const bx = (cw - msgW) / 2;
-        const by = ch - 54;
+        const bx = Math.max(16, (cw - msgW) / 2);
+        const by = 18;
 
-        ctx.fillStyle = "#111111";
-        ctx.fillRect(bx + 3, by + 3, msgW, 26);
-        ctx.fillStyle = isDark ? "#1E1B4B" : "#EEF2FF";
-        ctx.fillRect(bx, by, msgW, 26);
+        ctx.fillStyle = isDark ? "rgba(30, 27, 75, 0.92)" : "rgba(250, 248, 243, 0.95)";
         ctx.strokeStyle = "#6366F1";
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(bx, by, msgW, 26);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(bx, by, msgW, 25, 999);
+        else ctx.rect(bx, by, msgW, 25);
+        ctx.fill();
+        ctx.stroke();
 
         ctx.fillStyle = isDark ? "#E0E7FF" : "#3730A3";
         ctx.textBaseline = "middle";
         ctx.textAlign = "center";
-        ctx.fillText(tourMsg, bx + msgW / 2, by + 13);
+        ctx.fillText(tourMsg, bx + msgW / 2, by + 12.5);
         ctx.restore();
       }
 
-      // E. Radar Concentric Range Rings
-      if (preset === "radar" || (preset === "bento" && hovered)) {
-        let centerPt = hovered ? getScreenPt(hovered) : { x: cw / 2, y: ch / 2 };
-        if (centerPt && centerPt.x >= 0 && centerPt.x <= cw && centerPt.y >= 0 && centerPt.y <= ch) {
-          ctx.save();
-          ctx.setLineDash([4, 6]);
-          ctx.lineWidth = 1;
-          ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.09)" : "rgba(17, 17, 17, 0.08)";
-          const rings = [80, 160, 260];
-          for (let r = 0; r < rings.length; r++) {
-            ctx.beginPath();
-            ctx.arc(centerPt.x, centerPt.y, rings[r], 0, Math.PI * 2);
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-      }
-
-      // B. Hovered Node: Instant Cached Links, Beams, Photons & Swiss Bento Card
+      // G. Hovered Node Highlight & Soft Craft Pill
       if (hovered) {
         const hovPt = getScreenPt(hovered);
         if (hovPt && hovPt.x >= 0 && hovPt.x <= cw && hovPt.y >= 0 && hovPt.y <= ch) {
-          // Cache connected links only when hovered node changes (avoids scanning 50k links per frame!)
           if (this._lastHoveredId !== hovered.id) {
             this._lastHoveredId = hovered.id;
             this._cachedLinks = [];
@@ -4015,7 +4318,6 @@ class AlchemyFlowPlugin extends Plugin {
             }
           }
 
-          // 1. Highlighted connection lines & traveling laser photons
           if (this._cachedLinks && this._cachedLinks.length > 0) {
             ctx.save();
             for (let i = 0; i < this._cachedLinks.length; i++) {
@@ -4024,75 +4326,31 @@ class AlchemyFlowPlugin extends Plugin {
               const p2 = getScreenPt(lnk.target);
               if (!p1 || !p2) continue;
 
-              // Glowing connection line
               ctx.beginPath();
               ctx.moveTo(p1.x, p1.y);
               ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.45)" : "rgba(105, 189, 40, 0.35)";
-              ctx.lineWidth = 2;
+              ctx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.45)" : "rgba(105, 189, 40, 0.38)";
+              ctx.lineWidth = 1.8;
               ctx.stroke();
 
-              // Traveling photon
               const tProg = (this.graphPulsePhase + i * 0.16) % 1;
               const px = p1.x + (p2.x - p1.x) * tProg;
               const py = p1.y + (p2.y - p1.y) * tProg;
-              const col = paletteHex[i % paletteHex.length];
-
               ctx.beginPath();
-              ctx.arc(px, py, 3.5, 0, Math.PI * 2);
-              ctx.fillStyle = col;
+              ctx.arc(px, py, 3, 0, Math.PI * 2);
+              ctx.fillStyle = paletteHex[i % paletteHex.length];
               ctx.fill();
-              ctx.lineWidth = 1.2;
-              ctx.strokeStyle = "#111111";
-              ctx.stroke();
             }
             ctx.restore();
           }
 
-          // 2. Pulse target halo
           ctx.save();
-          const pulseR = 12 + Math.sin(this.graphPulsePhase * 3) * 3;
+          const pulseR = 11 + Math.sin(this.graphPulsePhase * 3) * 2.5;
           ctx.beginPath();
           ctx.arc(hovPt.x, hovPt.y, pulseR, 0, Math.PI * 2);
           ctx.strokeStyle = "#69BD28";
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.8;
           ctx.stroke();
-          ctx.restore();
-
-          // 3. Swiss Bento Node Card (Card Badge with Title + Links Count)
-          const rawId = String(hovered.id || "").replace(/\.md$/i, "");
-          const parts = rawId.split("/");
-          const fileName = parts.pop() || rawId;
-          const folderName = parts.length > 0 ? parts[0] : "";
-          const linkCount = (this._cachedLinks ? this._cachedLinks.length : 0);
-
-          ctx.save();
-          ctx.font = '700 11px "JetBrains Mono", monospace';
-          const label = fileName.length > 28 ? fileName.slice(0, 26) + "…" : fileName;
-          const folderLabel = folderName ? `[${folderName.slice(0, 14)}] ` : "";
-          const fullLabel = folderLabel + label + ` (${linkCount})`;
-          const textW = ctx.measureText(fullLabel).width;
-          const boxW = Math.round(textW + 18);
-          const boxH = 24;
-          const bx = Math.max(8, Math.min(cw - boxW - 8, Math.round(hovPt.x - boxW / 2)));
-          const by = Math.round(hovPt.y + 16);
-
-          // Card shadow
-          ctx.fillStyle = "#111111";
-          ctx.fillRect(bx + 2.5, by + 2.5, boxW, boxH);
-          // Card body
-          ctx.fillStyle = isDark ? "#1F2937" : "#FFFFFF";
-          ctx.fillRect(bx, by, boxW, boxH);
-          // Card border
-          ctx.strokeStyle = isDark ? "#4B5563" : "#111111";
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(bx, by, boxW, boxH);
-
-          // Text rendering
-          ctx.textBaseline = "middle";
-          ctx.textAlign = "center";
-          ctx.fillStyle = isDark ? "#F9FAFB" : "#111111";
-          ctx.fillText(fullLabel, bx + boxW / 2, by + boxH / 2);
           ctx.restore();
         }
       }
@@ -4106,16 +4364,14 @@ class AlchemyFlowPlugin extends Plugin {
     }
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     this.playHarmonicResonanceChime();
-    this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 45);
+    this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 35);
 
     this.memoryResonanceActive = true;
     this.memoryResonanceStart = Date.now();
 
-    // Find 3 to 5 dormant gem nodes (nodes that have links, but older/untouched)
     const allNodes = renderer.nodes.filter((n) => n && n.id && !n.id.includes("node_modules") && !n.id.includes("_CloudSync"));
     if (allNodes.length === 0) return;
 
-    // Score nodes: prefer nodes with connections
     const links = renderer.links || [];
     const linkMap = {};
     for (let i = 0; i < links.length; i++) {
@@ -4124,25 +4380,23 @@ class AlchemyFlowPlugin extends Plugin {
       if (l.target && l.target.id) linkMap[l.target.id] = (linkMap[l.target.id] || 0) + 1;
     }
 
-    const scored = allNodes
+    let scored = allNodes
       .map((n) => ({ node: n, score: linkMap[n.id] || 0 }))
-      .filter((x) => x.score >= 2)
       .sort((a, b) => b.score - a.score);
 
-    // Shuffle top 15 and pick 3-4
-    const candidates = scored.slice(0, 15).sort(() => Math.random() - 0.5).slice(0, 4);
+    const candidates = scored.slice(0, Math.min(20, scored.length)).sort(() => Math.random() - 0.5).slice(0, 4);
     this.resonanceGems = candidates.map((c) => c.node);
 
     new Notice(
       isRu
-        ? `✨ Резонанс памяти: Обнаружено ${this.resonanceGems.length} забытых бриллиантов мысли!`
-        : `✨ Memory Resonance: Discovered ${this.resonanceGems.length} dormant knowledge gems!`
+        ? `Резонанс памяти: подсвечено ${this.resonanceGems.length} ключевых узлов знаний`
+        : `Memory Resonance: highlighted ${this.resonanceGems.length} knowledge hubs`
     );
 
     setTimeout(() => {
       this.memoryResonanceActive = false;
       this.resonanceGems = [];
-    }, 7000);
+    }, 6500);
   }
 
   playHarmonicResonanceChime() {
@@ -4153,8 +4407,7 @@ class AlchemyFlowPlugin extends Plugin {
       if (ctx.state === "suspended") ctx.resume();
 
       const now = ctx.currentTime;
-      // Dual-sine 432 Hz + 864 Hz harmonic bell
-      [432, 864].forEach((freq, idx) => {
+      [432, 648].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "sine";
@@ -4162,13 +4415,13 @@ class AlchemyFlowPlugin extends Plugin {
         osc.connect(gain);
         gain.connect(ctx.destination);
 
-        const initGain = idx === 0 ? 0.22 : 0.12;
-        gain.gain.setValueAtTime(0, now);
+        const initGain = idx === 0 ? 0.14 : 0.07;
+        gain.gain.setValueAtTime(0.0001, now);
         gain.gain.linearRampToValueAtTime(initGain, now + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.85);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
 
         osc.start(now);
-        osc.stop(now + 1.85);
+        osc.stop(now + 1.65);
       });
     } catch (e) {}
   }
@@ -4178,7 +4431,7 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.constellationWalkActive) {
       this.constellationWalkActive = false;
       this.constellationPath = [];
-      new Notice(isRu ? "⏹ Созвездие-Тур завершен." : "⏹ Tour ended.");
+      new Notice(isRu ? "Тур по графу завершён." : "Graph Tour ended.");
       return;
     }
 
@@ -4188,9 +4441,8 @@ class AlchemyFlowPlugin extends Plugin {
     }
 
     const allNodes = renderer.nodes.filter((n) => n && n.id && !n.id.includes("node_modules"));
-    if (allNodes.length < 3) return;
+    if (allNodes.length < 2) return;
 
-    // Build random connected walk path of 5-6 steps
     const links = renderer.links || [];
     const adj = {};
     for (let i = 0; i < links.length; i++) {
@@ -4203,17 +4455,17 @@ class AlchemyFlowPlugin extends Plugin {
       }
     }
 
-    // Start with hovered node or a high-link node
     let cur = renderer.hoveredNode || allNodes[Math.floor(Math.random() * allNodes.length)];
     const path = [cur];
-    for (let step = 0; step < 6; step++) {
+    for (let step = 0; step < 5; step++) {
       const neighbors = adj[cur.id] || [];
       const unvisited = neighbors.filter((nb) => !path.includes(nb));
       if (unvisited.length > 0) {
         cur = unvisited[Math.floor(Math.random() * unvisited.length)];
         path.push(cur);
       } else {
-        break;
+        const nextRand = allNodes[Math.floor(Math.random() * allNodes.length)];
+        if (!path.includes(nextRand)) path.push(nextRand);
       }
     }
 
@@ -4222,11 +4474,10 @@ class AlchemyFlowPlugin extends Plugin {
     this.constellationStep = 0;
     this.constellationLastStepTime = Date.now();
 
-    this.playTactileClick();
     new Notice(
       isRu
-        ? `🚀 Созвездие-Тур: Построен маршрут из ${path.length} станций знаний!`
-        : `🚀 Constellation Tour: Mapped path of ${path.length} knowledge stations!`
+        ? `Созвездие-Тур: маршрут из ${path.length} связанных заметок`
+        : `Constellation Tour: path across ${path.length} linked notes`
     );
   }
 
@@ -6152,6 +6403,25 @@ class AlchemyFlowPlugin extends Plugin {
       }
     }
 
+    // If WebAudio stream is silent or unavailable on Windows, synthesize 16-band spectrum from live Windows CoreAudio WASAPI Loopback peaks!
+    if (!hasSound && this.wasapiLoopbackLevels && this.wasapiLoopbackLevels.active && Date.now() - (this.wasapiLoopbackLevels.ts || 0) < 400) {
+      const pk = Math.min(1, this.wasapiLoopbackLevels.peak * 1.65);
+      const lCh = Math.min(1, this.wasapiLoopbackLevels.left * 1.65);
+      const rCh = Math.min(1, this.wasapiLoopbackLevels.right * 1.65);
+      if (pk > 0.004) {
+        hasSound = true;
+        if (!freqData) freqData = new Uint8Array(128);
+        const tNow = performance.now() * 0.008;
+        for (let b = 0; b < freqData.length; b++) {
+          const norm = b / freqData.length;
+          const stereoMix = b % 2 === 0 ? lCh : rCh;
+          const bandContour = Math.exp(-Math.pow((norm - 0.22) * 2.4, 2)) * 0.75 + Math.exp(-Math.pow((norm - 0.58) * 3.2, 2)) * 0.45;
+          const dyn = 0.72 + 0.28 * Math.sin(tNow * (2.2 + (b % 7) * 0.45) + b * 0.7);
+          freqData[b] = Math.min(255, Math.round((pk * 0.55 + stereoMix * 0.45) * bandContour * dyn * 255));
+        }
+      }
+    }
+
     if (!this.eqPeaks) this.eqPeaks = new Array(16).fill(2);
     if (!this.eqSmooth) this.eqSmooth = new Array(16).fill(2);
     if (!this.eqPhase) this.eqPhase = 0;
@@ -7197,12 +7467,20 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         </div>
       </div>
       <div class="artcraft-settings-hero-actions">
-        <a href="https://elyazaliverdiyev.github.io/alchemy-craft/" target="_blank" class="artcraft-update-btn artcraft-website-btn" title="${isRu ? "Открыть официальный сайт и документацию" : "Open official website & documentation"}">
-          ${SICRAFT_SVGS.spark} <span>${isRu ? "🌐 Сайт & Доки" : "🌐 Website & Docs"}</span>
-        </a>
-        <button class="artcraft-update-btn" id="artcraft-check-rel-btn">${t("checkUpdatesBtn", this.plugin)}</button>
+        <button class="artcraft-hero-soft-btn is-primary-soft" id="artcraft-open-site-btn" title="${isRu ? "Открыть официальный сайт и руководство Alchemy Craft" : "Open official Alchemy Craft website & docs"}">
+          <span class="svg-inline-icon">${SICRAFT_SVGS.globe}</span>
+          <span>${isRu ? "Официальный сайт" : "Official Website"}</span>
+          <span class="svg-inline-icon">${SICRAFT_SVGS.external}</span>
+        </button>
+        <button class="artcraft-hero-soft-btn" id="artcraft-check-rel-btn" title="${isRu ? "Проверить обновления в каталоге плагинов" : "Check updates in plugin directory"}">
+          <span class="svg-inline-icon">${SICRAFT_SVGS.spark}</span>
+          <span>${t("checkUpdatesBtn", this.plugin)}</span>
+        </button>
       </div>
     `;
+    heroBanner.querySelector("#artcraft-open-site-btn")?.addEventListener("click", () => {
+      openExternalUrl("https://elyazaliverdiyev.github.io/alchemy-craft/");
+    });
     heroBanner.querySelector("#artcraft-check-rel-btn")?.addEventListener("click", () => {
       window.open("obsidian://show-plugin?id=artcraft-reader");
     });
@@ -7389,12 +7667,12 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       .addDropdown((drop) =>
         drop
           .addOption("off", isRu ? "Выкл (Off)" : "Off")
-          .addOption("creamy_pom", isRu ? "Кремовый POM-свитч (мягкий бархатный отклик)" : "Creamy POM Linear (velvety soft)")
-          .addOption("thock", isRu ? "Глубокий PBT Thock (матовый глубокий звук)" : "Deep PBT Thock (matte & deep)")
-          .addOption("matcha_lubed", isRu ? "Матча Латте (смазанный тихий свитч)" : "Matcha Silent Tactile (lubed & hushed)")
-          .addOption("raindrop_wood", isRu ? "Капля по тёплому ореху (деревянный корпус)" : "Warm Walnut Raindrop (wooden)")
-          .addOption("velvet_felt", isRu ? "Пианинный фетр (мягкий молоточек)" : "Velvet Piano Felt (soft hammer)")
-          .addOption("paper_brush", isRu ? "Перьевая ручка по хлопковой бумаге" : "Fountain Pen on Cotton Paper")
+          .addOption("creamy_pom", isRu ? "Reaper Creamy Linear (мягкий сливочно-мраморный свитч)" : "Reaper Creamy Linear (velvety marbly POM)")
+          .addOption("thock", isRu ? "Ice Vein Deep Thock (глубокий матовый PBT-отклик)" : "Ice Vein Deep Thock (deep matte PBT)")
+          .addOption("matcha_lubed", isRu ? "Milky Yellow Lubed (тёплый смазанный линейный свитч)" : "Milky Yellow Lubed (warm factory-lubed linear)")
+          .addOption("raindrop_wood", isRu ? "Matcha Latte Tactile (деликатная кремовая тактильность)" : "Matcha Latte Tactile (soft cushioned bump)")
+          .addOption("velvet_felt", isRu ? "Honey Peach Silent (бесшумный подушечный свитч)" : "Honey Peach Silent (silicone dampened whisper)")
+          .addOption("paper_brush", isRu ? "Rosewood Cocoa Linear (тёплый древесно-ореховый тон)" : "Rosewood Cocoa Linear (warm wooden pitch)")
           .setValue(this.plugin.settings.tactileTypingSound || "off")
           .onChange(async (val) => {
             this.plugin.settings.tactileTypingSound = val;

@@ -1,10 +1,10 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "4.4.1",
+  "version": "4.5.0",
   "minAppVersion": "1.0.0",
-  "description": "Tactile Swiss Bento reading & focus studio: 2700K-6500K Smart LED Cursor Lamp, 6-Mode Audio Equalizer, 12 Ambient Soundscapes, Dynamic Graph Studio, and Pomodoro dock.",
+  "description": "Tactile Cappuccino & Swiss Bento book studio: 3D multi-sheet book folio, 2700K-6500K Smart LED Lamp, 6-Mode WASAPI Audio Equalizer, 12 Stereo Soundscapes, and Graph Studio.",
   "author": "Elyaz Aliverdiyev",
-  "authorUrl": "https://github.com/elyazaliverdiyev",
+  "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
   "isDesktopOnly": false
 }
