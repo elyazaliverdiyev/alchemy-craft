@@ -1,7 +1,7 @@
 const { Plugin, PluginSettingTab, Setting, Notice, Modal, Menu, addIcon } = require("obsidian");
 
 const DEFAULT_SETTINGS = {
-  uiLanguage: "en", // "en" | "ru" | "zh" | "ja" | "es" | "de"
+  uiLanguage: "auto", // "auto" (Follow Obsidian language) | "en" | "ru" | "zh" | "ja" | "es" | "de"
   artcraftTheme: true,
   headerTagText: "STRATALCHEMY // KNOWLEDGE BRIEF",
   showHeaderTag: true,
@@ -1139,14 +1139,188 @@ const TRANSLATIONS = {
     supportSetDesc: "0% Gebühr via Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 oder @CryptoBot."
   }
 };
+const SUPPORTED_LANGS = ["en", "ru", "zh", "ja", "es", "de"];
+
+const LOCALE_TAGS = {
+  en: "en-US",
+  ru: "ru-RU",
+  zh: "zh-CN",
+  ja: "ja-JP",
+  es: "es-ES",
+  de: "de-DE",
+};
+
 function getLocale(plugin) {
-  const lang = plugin?.settings?.uiLanguage || "en";
-  return TRANSLATIONS[lang] ? lang : "en";
+  const chosen = plugin?.settings?.uiLanguage;
+  if (chosen && chosen !== "auto" && SUPPORTED_LANGS.includes(chosen)) {
+    return chosen;
+  }
+  try {
+    const obsLang = (
+      window.localStorage?.getItem("language") ||
+      window.moment?.locale?.() ||
+      document.documentElement?.lang ||
+      navigator.language ||
+      "en"
+    ).toLowerCase();
+
+    if (obsLang.startsWith("ru")) return "ru";
+    if (obsLang.startsWith("zh")) return "zh";
+    if (obsLang.startsWith("ja")) return "ja";
+    if (obsLang.startsWith("es")) return "es";
+    if (obsLang.startsWith("de")) return "de";
+  } catch (e) {}
+  return "en";
 }
 
 function t(key, plugin) {
   const loc = getLocale(plugin);
   return (TRANSLATIONS[loc] && TRANSLATIONS[loc][key]) || TRANSLATIONS["en"][key] || key;
+}
+
+
+const I18N_CAPSULE = {
+  badge: {
+    en: "TIME CAPSULE // WAX SEAL",
+    ru: "КАПСУЛА ВРЕМЕНИ // СУРГУЧНАЯ ПЕЧАТЬ",
+    zh: "时间胶囊 // 火漆封印",
+    ja: "タイムカプセル // 封蝋印",
+    es: "CÁPSULA DEL TIEMPO // SELLO DE LACRE",
+    de: "ZEITKAPSEL // SIEGELLACK",
+  },
+  title: {
+    en: "Seal this note until a date",
+    ru: "Запечатать заметку до даты",
+    zh: "将此笔记封存至指定日期",
+    ja: "このノートを指定日まで封印",
+    es: "Sellar esta nota hasta una fecha",
+    de: "Diese Notiz bis zu einem Datum versiegeln",
+  },
+  step1Title: {
+    en: "The seal hides the text",
+    ru: "Печать скрывает текст",
+    zh: "封印隐藏正文",
+    ja: "印が本文を隠します",
+    es: "El sello oculta el texto",
+    de: "Das Siegel verbirgt den Text",
+  },
+  step1Desc: {
+    en: "The file isn't changed or encrypted — it's a visual capsule for active recall.",
+    ru: "Файл не меняется и не шифруется — это визуальная капсула для активного припоминания.",
+    zh: "文件未被修改或加密——这是一种用于主动回忆的视觉记忆胶囊。",
+    ja: "ファイルは暗号化も変更もされません。能動的な想起のための視覚的カプセルです。",
+    es: "El archivo no se modifica ni se encripta: es una cápsula visual para el recuerdo activo.",
+    de: "Die Datei wird weder verändert noch verschlüsselt — eine visuelle Kapsel für aktives Erinnern.",
+  },
+  step2Title: {
+    en: "Recall from your question",
+    ru: "Вспоминайте по вопросу",
+    zh: "根据问题主动回忆",
+    ja: "問いから要点を想起",
+    es: "Recuerda a partir de tu pregunta",
+    de: "Aus der eigenen Frage erinnern",
+  },
+  step2Desc: {
+    en: "While the countdown runs, try to recall the essence. Early open: hold the seal for 2 seconds.",
+    ru: "Пока идёт отсчёт, пытайтесь вспомнить суть. Досрочно — удерживать печать 2 секунды.",
+    zh: "倒计时期间，尝试复述核心观点。提前开封：长按印章2秒。",
+    ja: "カウントダウン中、要点を思い出してください。早期開封：印を2秒長押し。",
+    es: "Durante la cuenta regresiva, intenta recordar lo esencial. Apertura anticipada: mantén presionado el sello 2 s.",
+    de: "Während der Countdown läuft, erinnere den Kern. Vorzeitiges Öffnen: Siegel 2 Sekunden gedrückt halten.",
+  },
+  step3Title: {
+    en: "Open it on time",
+    ru: "Вскройте в срок",
+    zh: "准时开封验证",
+    ja: "期日に開封して照合",
+    es: "Ábrela a tiempo",
+    de: "Pünktlich öffnen",
+  },
+  step3Desc: {
+    en: "On the day you'll get a notice and the seal turns gold. Compare your answer with the text.",
+    ru: "В день вскрытия придёт уведомление, печать засияет золотом. Сравните ответ с текстом.",
+    zh: "开封日系统将弹出通知，火漆印转为金色。比对你的记忆与原笔记。",
+    ja: "開封日に通知が届き、印が黄金色に輝きます。想起した記憶と本文を照合してください。",
+    es: "El día de apertura recibirás un aviso y el sello brillará en oro. Compara tu respuesta.",
+    de: "Am Öffnungstag erhältst du eine Benachrichtigung und das Siegel wird golden. Vergleiche deine Erinnerung.",
+  },
+  unlockAfter: {
+    en: "UNLOCK AFTER",
+    ru: "СРОК ВСКРЫТИЯ",
+    zh: "解锁期限",
+    ja: "封印期間",
+    es: "PLAZO DE DESBLOQUEO",
+    de: "VERSIEGELUNGSDAUER",
+  },
+  orDate: {
+    en: "or date",
+    ru: "или дата",
+    zh: "或指定日期",
+    ja: "または日付",
+    es: "o fecha",
+    de: "oder Datum",
+  },
+  questionLabel: {
+    en: "QUESTION TO SELF OR LETTER TO THE FUTURE (OPTIONAL)",
+    ru: "ВОПРОС СЕБЕ ИЛИ ПИСЬМО В БУДУЩЕЕ (НЕОБЯЗАТЕЛЬНО)",
+    zh: "给自己的提问或写给未来的信（可选）",
+    ja: "自分への問い、または未来への手紙（任意）",
+    es: "PREGUNTA A UNO MISMO O CARTA AL FUTURO (OPCIONAL)",
+    de: "FRAGE AN SICH SELBST ODER BRIEF AN DIE ZUKUNFT (OPTIONAL)",
+  },
+  questionPlaceholder: {
+    en: "e.g. What are the 3 key ideas of this chapter and what will I do with them?",
+    ru: "Например: какие 3 главные идеи этой главы и что я с ними сделаю?",
+    zh: "例如：本章的3个核心要点是什么？我将如何付诸实践？",
+    ja: "例：この章の3つの要点と、それをどう実践するか？",
+    es: "P. ej.: ¿Cuáles son las 3 ideas clave de este capítulo y cómo las aplicaré?",
+    de: "Z. B.: Was sind die 3 Kernideen dieses Kapitels und wie setze ich sie um?",
+  },
+  cancel: {
+    en: "Cancel",
+    ru: "Отмена",
+    zh: "取消",
+    ja: "キャンセル",
+    es: "Cancelar",
+    de: "Abbrechen",
+  },
+  sealBtn: {
+    en: "🕯️ Seal note",
+    ru: "🕯️ Запечатать",
+    zh: "🕯️ 封存笔记",
+    ja: "🕯️ ノートを封印",
+    es: "🕯️ Sellar nota",
+    de: "🕯️ Notiz versiegeln",
+  },
+  summaryPrefix: {
+    en: "The seal can be opened on: ",
+    ru: "Печать можно будет вскрыть: ",
+    zh: "解封开放时间：",
+    ja: "開封可能日時: ",
+    es: "El sello se podrá abrir el: ",
+    de: "Das Siegel kann geöffnet werden am: ",
+  },
+  datePlaceholder: {
+    en: "YYYY-MM-DD",
+    ru: "ГГГГ-ММ-ДД",
+    zh: "年-月-日",
+    ja: "年/月/日",
+    es: "AAAA-MM-DD",
+    de: "JJJJ-MM-TT",
+  },
+  presets: [
+    { d: 1, en: "1 day", ru: "1 день", zh: "1天", ja: "1日", es: "1 día", de: "1 Tag" },
+    { d: 3, en: "3 days", ru: "3 дня", zh: "3天", ja: "3日", es: "3 días", de: "3 Tage" },
+    { d: 7, en: "1 week", ru: "1 неделя", zh: "1周", ja: "1週間", es: "1 semana", de: "1 Woche" },
+    { d: 14, en: "2 weeks", ru: "2 недели", zh: "2周", ja: "2週間", es: "2 semanas", de: "2 Wochen" },
+    { d: 30, en: "1 month", ru: "1 месяц", zh: "1个月", ja: "1か月", es: "1 mes", de: "1 Monat" },
+  ],
+};
+
+function i18n(dict, plugin) {
+  if (!dict) return "";
+  const loc = getLocale(plugin);
+  return dict[loc] || dict["en"] || dict["ru"] || Object.values(dict)[0] || "";
 }
 
 
@@ -1362,6 +1536,62 @@ class SmartLedLampModal extends Modal {
 }
 
 // --- 5-NUTRIENT BOOK STICKER METHODOLOGY (БЕЛКИ • УГЛЕВОДЫ • ЖИРЫ • ВИТАМИНЫ • КЛЕТЧАТКА) ---
+
+const NUTRIENT_I18N = {
+  proteins: {
+    en: { name: "Proteins", edge: "Bottom Margin", role: "Actionable Lifehacks & Rules", desc: "Building blocks: actionable rules, techniques, and habits to transfer into your 'Must Do' planner." },
+    ru: { name: "Белки", edge: "Снизу страницы", role: "Немедленно внедрить в жизнь", desc: "Строительный материал: приёмы, алгоритмы, упражнения и лайфхаки, которые нужно выписать в «Необходимо сделать» и применить." },
+    zh: { name: "蛋白质", edge: "页面底部", role: "立即践行实施", desc: "知识构建基石：可落地的实用法则、技巧与行动清单，直接录入待办并执行。" },
+    ja: { name: "タンパク質", edge: "ページ下部", role: "即実践・行動に移す", desc: "知識の構築ブロック：すぐに行動へ移すべき実践的ルールやアルゴリズム、習慣。" },
+    es: { name: "Proteínas", edge: "Margen inferior", role: "Implementar de inmediato", desc: "Bloques de construcción: reglas prácticas, técnicas y hábitos para pasar a tu plan de acción." },
+    de: { name: "Proteine", edge: "Unterer Rand", role: "Sofort in die Tat umsetzen", desc: "Bausteine: konkrete Regeln, Techniken und Gewohnheiten zur sofortigen Umsetzung." },
+  },
+  carbs: {
+    en: { name: "Carbs", edge: "Top Margin", role: "Deep Reflection & Insights", desc: "Mental energy: profound insights, paradoxes, and ideas to ponder during your morning walk." },
+    ru: { name: "Углеводы", edge: "Сверху страницы", role: "К размышлению (Энергия и Смыслы)", desc: "Энергия книги: глубокие философские мысли, парадоксы и идеи, над которыми стоит поразмышлять на утренней прогулке." },
+    zh: { name: "碳水化合物", edge: "页面顶部", role: "深度思考与感悟", desc: "思想的能量之源：深刻的哲思、悖论与洞见，适于晨间散步时细细体悟。" },
+    ja: { name: "炭水化物", edge: "ページ上部", role: "思考・エネルギーと本質", desc: "思考のエネルギー：朝の散歩などでじっくり反芻すべき深い哲学的洞察や問い。" },
+    es: { name: "Carbohidratos", edge: "Margen superior", role: "Para reflexionar (Energía)", desc: "Energía mental: reflexiones profundas, paradojas e ideas para meditar." },
+    de: { name: "Kohlenhydrate", edge: "Oberer Rand", role: "Zum Nachdenken (Sinn)", desc: "Gedankliche Energie: tiefgründige philosophische Einsichten und Paradoxa." },
+  },
+  fats: {
+    en: { name: "Fats", edge: "Right Margin", role: "Vivid Stories & Case Studies", desc: "What makes a book flavorful: memorable stories, real-life examples, and metaphors." },
+    ru: { name: "Жиры", edge: "Справа страницы", role: "Яркие истории и примеры", desc: "То, что делает книгу «вкусной»: поучительные истории, биографические кейсы, метафоры и примеры из жизни." },
+    zh: { name: "脂肪", edge: "页面右侧", role: "精彩案例与生动故事", desc: "赋予书籍丰富风味的养分：发人深省的人物案例、生动传神的情节与譬喻。" },
+    ja: { name: "脂質", edge: "ページ右部", role: "鮮明なストーリーと事例", desc: "本に味わいを与える要素：印象深い逸話、伝記的ケーススタディ、比喩。" },
+    es: { name: "Grasas", edge: "Margen derecho", role: "Historias vivas y casos", desc: "Lo que hace amena la lectura: historias memorables, casos reales y metáforas." },
+    de: { name: "Fette", edge: "Rechter Rand", role: "Anschauliche Geschichten", desc: "Was das Buch lebendig macht: lehrreiche Geschichten, Biografien und Metaphern." },
+  },
+  vitamins: {
+    en: { name: "Vitamins", edge: "Right Margin", role: "Memorable Quotes & Wit", desc: "Flavorful details for speaking: sharp aphorisms, elegant phrasing, and witty remarks." },
+    ru: { name: "Витамины", edge: "Справа страницы", role: "Красивые цитаты и остроумие", desc: "Вкусные детали для общения и выступлений: точные афоризмы, красивые формулировки, шутки и крылатые фразы." },
+    zh: { name: "维生素", edge: "页面右侧", role: "名言金句与犀利洞察", desc: "点缀日常交流与演讲的亮点：精辟的格言、优美的措辞与幽默睿智的金句。" },
+    ja: { name: "ビタミン", edge: "ページ右部", role: "美しい引用・ウィット", desc: "会話やスピーチを彩るエッセンス：的確な警句、美しい表現、機知に富んだ言葉。" },
+    es: { name: "Vitaminas", edge: "Margen derecho", role: "Citas memorables e ingenio", desc: "Detalles elocuentes para la comunicación: aforismos precisos y frases ingeniosas." },
+    de: { name: "Vitamine", edge: "Rechter Rand", role: "Schöne Zitate & Geist", desc: "Feine Nuancen für Gespräche und Vorträge: treffende Aphorismen und Geistreichtum." },
+  },
+  fiber: {
+    en: { name: "Fiber", edge: "Right Margin", role: "Facts, Metrics, Dates & Data", desc: "The reference backbone: statistics, research data, historical dates, author names, and links." },
+    ru: { name: "Клетчатка", edge: "Справа страницы", role: "Факты, цифры, даты и ссылки", desc: "Справочный каркас книги: статистика, исследования, исторические даты, имена авторов и полезные ссылки." },
+    zh: { name: "膳食纤维", edge: "页面右侧", role: "客观事实、数据与引证", desc: "全书的硬核支撑骨架：严谨的统计数据、科学研究、历史年代、学者人名与参考出处。" },
+    ja: { name: "食物繊維", edge: "ページ右部", role: "事実・数値・日付・典拠", desc: "読書の骨格となる基礎情報：統計、研究データ、歴史的年代、著者名、参照リンク。" },
+    es: { name: "Fibra", edge: "Margen derecho", role: "Datos, métricas y fuentes", desc: "La estructura de referencia: estadísticas, investigaciones, fechas y enlaces." },
+    de: { name: "Ballaststoffe", edge: "Rechter Rand", role: "Fakten, Zahlen & Quellen", desc: "Das sachliche Gerüst: Statistiken, Forschungsdaten, historische Jahreszahlen und Quellen." },
+  },
+};
+
+function getNutrientI18n(nObj, plugin) {
+  const loc = getLocale(plugin);
+  const data = NUTRIENT_I18N[nObj.id] || NUTRIENT_I18N.proteins;
+  const locData = data[loc] || data.en || data.ru;
+  return {
+    name: locData.name,
+    edge: locData.edge,
+    role: locData.role,
+    desc: locData.desc,
+  };
+}
+
 const BOOK_NUTRIENTS = {
   proteins: {
     id: "proteins",
@@ -1454,20 +1684,41 @@ class NutrientStickerModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-nutrient-modal-root");
-    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this.plugin);
+    const locTag = LOCALE_TAGS[loc] || "en-US";
+    if (this.modalEl) this.modalEl.setAttribute("lang", locTag);
 
     const head = contentEl.createDiv({ cls: "nutrient-modal-head" });
     head.innerHTML = `
       <div class="sonic-badge"><span class="svg-inline-icon">${SICRAFT_SVGS.bookmark}</span> ${
-      isRu ? "МЕТОДИКА 5 ЗАКЛАДОК-НУТРИЕНТОВ • КНИЖНЫЙ КОНСПЕКТ" : "5-NUTRIENT BOOK STICKER SYSTEM • ACTIVE READING"
-    }</div>
+        i18n({
+          en: "5-NUTRIENT BOOK STICKER SYSTEM • ACTIVE READING",
+          ru: "МЕТОДИКА 5 ЗАКЛАДОК-НУТРИЕНТОВ • КНИЖНЫЙ КОНСПЕКТ",
+          zh: "5大养分书签方法论 • 深度阅读笔记",
+          ja: "5大栄養素付箋メソッド • 読書ノート",
+          es: "MÉTODO DE 5 NUTRIENTES • RESUMEN DE LECTURA",
+          de: "5-NÄHRSTOFF-LESEZEICHEN • AKTIVES LESEN",
+        }, this.plugin)
+      }</div>
       <h3 class="sonic-title">${
-        isRu ? "Прикрепить крафтовую закладку со смыслом" : "Attach a Craft Nutrient Bookmark with Meaning"
+        i18n({
+          en: "Attach a Craft Nutrient Bookmark with Meaning",
+          ru: "Прикрепить крафтовую закладку со смыслом",
+          zh: "为页面边栏附着带有深度意义的养分书签",
+          ja: "意味のあるクラフト栄養素付箋を貼る",
+          es: "Adjuntar pegatina de nutrientes con significado",
+          de: "Craft-Nährstofflesezeichen mit Bedeutung anbringen",
+        }, this.plugin)
       }</h3>
       <p class="sonic-studio-sub">${
-        isRu
-          ? "Выберите тип закладки по методике «5 нутриентов книги»: Белки крепятся снизу (внедрить), Углеводы — сверху (обдумать), Жиры/Витамины/Клетчатка — справа."
-          : "Choose a book nutrient: Proteins attach to the bottom margin (must do), Carbs to the top margin (ponder), and Fats/Vitamins/Fiber to the right margin."
+        i18n({
+          en: "Choose a book nutrient: Proteins attach to the bottom margin (must do), Carbs to the top margin (ponder), and Fats/Vitamins/Fiber to the right margin.",
+          ru: "Выберите тип закладки по методике «5 нутриентов книги»: Белки крепятся снизу (внедрить), Углеводы — сверху (обдумать), Жиры/Витамины/Клетчатка — справа.",
+          zh: "选择养分类型：蛋白质固定于页底（落地践行），碳水化合物固定于页顶（深度体悟），脂肪/维生素/膳食纤维固定于右侧。",
+          ja: "栄養素タイプを選択: タンパク質はページ下部(実践)、炭水化物はページ上部(思考)、脂質/ビタミン/食物繊維は右余白に配置。",
+          es: "Elige un nutriente: Proteínas al margen inferior (acción), Carbohidratos arriba (reflexión), y Grasas/Vitaminas/Fibra al margen derecho.",
+          de: "Wähle einen Nährstoff: Proteine am unteren Rand (Aktion), Kohlenhydrate oben (Reflexion), Fette/Vitamine/Ballaststoffe rechts.",
+        }, this.plugin)
       }</p>
     `;
 
@@ -1479,16 +1730,15 @@ class NutrientStickerModal extends Modal {
         c.toggleClass("is-selected", c.dataset.nut === this.selectedNutrient);
       });
       const nObj = BOOK_NUTRIENTS[this.selectedNutrient] || BOOK_NUTRIENTS.proteins;
+      const i18nN = getNutrientI18n(nObj, this.plugin);
       descBanner.style.borderColor = nObj.border;
       descBanner.style.background = nObj.bg;
       descBanner.innerHTML = `
         <div class="nutrient-banner-top">
-          <span class="nutrient-edge-pill" style="background:${nObj.color};color:#fff;">${isRu ? nObj.ruName : nObj.enName} • ${
-        isRu ? nObj.ruEdge : nObj.enEdge
-      }</span>
-          <strong style="color:${nObj.color};">${isRu ? nObj.ruRole : nObj.enRole}</strong>
+          <span class="nutrient-edge-pill" style="background:${nObj.color};color:#fff;">${i18nN.name} • ${i18nN.edge}</span>
+          <strong style="color:${nObj.color};">${i18nN.role}</strong>
         </div>
-        <div class="nutrient-banner-desc">${isRu ? nObj.ruDesc : nObj.enDesc}</div>
+        <div class="nutrient-banner-desc">${i18nN.desc}</div>
       `;
     };
 
@@ -1497,11 +1747,12 @@ class NutrientStickerModal extends Modal {
         cls: "nutrient-type-card" + (this.selectedNutrient === nObj.id ? " is-selected" : ""),
       });
       card.dataset.nut = nObj.id;
+      const i18nN = getNutrientI18n(nObj, this.plugin);
       card.innerHTML = `
         <span class="nutrient-color-tab" style="background:${nObj.color}"></span>
         <span class="nutrient-card-txt">
-          <strong>${isRu ? nObj.ruName : nObj.enName}</strong>
-          <small>${isRu ? nObj.ruEdge : nObj.enEdge}</small>
+          <strong>${i18nN.name}</strong>
+          <small>${i18nN.edge}</small>
         </span>
       `;
       card.onclick = () => {
@@ -1514,24 +1765,48 @@ class NutrientStickerModal extends Modal {
 
     const formWrap = contentEl.createDiv({ cls: "nutrient-form-wrap" });
     const lblMeaning = formWrap.createDiv({ cls: "sonic-sec-label" });
-    lblMeaning.textContent = isRu
-      ? "1. Ваш вывод / значение / что именно внедрить или обдумать:"
-      : "1. Your Takeaway / Meaning / Action to Implement:";
+    lblMeaning.textContent = i18n({
+      en: "1. Your Takeaway / Action to Implement / Key Insight:",
+      ru: "1. Ваш вывод / значение / что именно внедрить или обдумать:",
+      zh: "1. 你的结论 / 行动步骤 / 值得深思的洞见：",
+      ja: "1. 気づき / アクションプラン / 反芻すべき問い:",
+      es: "1. Tu conclusión / paso de acción / reflexión:",
+      de: "1. Deine Erkenntnis / Umsetzungsschritt / Gedanke:",
+    }, this.plugin);
     const meaningInput = formWrap.createEl("input", {
       type: "text",
       cls: "nutrient-text-input",
-      placeholder: isRu
-        ? "Например: Проводить утренний разбор задач за чашкой капучино..."
-        : "e.g. Apply this 2-minute rule during morning planning...",
+      placeholder: i18n({
+        en: "e.g. Apply this 2-minute rule during morning planning...",
+        ru: "Например: Проводить утренний разбор задач за чашкой капучино...",
+        zh: "例如：晨间规划时应用这套2分钟法则...",
+        ja: "例：朝のタスク整理でこの2分ルールを適用する...",
+        es: "P. ej.: Aplicar esta regla de 2 minutos en la planificación matutina...",
+        de: "Z. B.: Diese 2-Minuten-Regel bei der Morgenplanung anwenden...",
+      }, this.plugin),
       value: this.initialData.meaning || "",
     });
 
     const lblQuote = formWrap.createDiv({ cls: "sonic-sec-label" });
     lblQuote.style.marginTop = "8px";
-    lblQuote.textContent = isRu ? "2. Цитата или фрагмент из заметки (для быстрого перехода):" : "2. Book Quote or Note Snippet (for 1-click jump):";
+    lblQuote.textContent = i18n({
+      en: "2. Book Quote or Note Snippet (for 1-click jump):",
+      ru: "2. Цитата или фрагмент из заметки (для быстрого перехода):",
+      zh: "2. 原文片段或引文（用于一键跳转锚点）：",
+      ja: "2. 該当箇所の引用文（1クリックジャンプ用）:",
+      es: "2. Fragmento de la nota o cita (para salto directo):",
+      de: "2. Textstelle oder Zitat (für 1-Klick-Sprung):",
+    }, this.plugin);
     const quoteInput = formWrap.createEl("textarea", {
       cls: "nutrient-quote-textarea",
-      placeholder: isRu ? "Текст абзаца или цитаты..." : "Paragraph text or quote...",
+      placeholder: i18n({
+        en: "Paragraph text or quote...",
+        ru: "Текст абзаца или цитаты...",
+        zh: "段落文本或名言引用...",
+        ja: "段落の文章または引用...",
+        es: "Texto del párrafo o cita...",
+        de: "Absatztext oder Zitat...",
+      }, this.plugin),
     });
     quoteInput.rows = 2;
     quoteInput.value = this.initialData.snippet || "";
@@ -1540,7 +1815,9 @@ class NutrientStickerModal extends Modal {
     if (this.initialData.id && typeof this.initialData.onDelete === "function") {
       const delBtn = footer.createEl("button", {
         cls: "sonic-stop-all-btn",
-        text: isRu ? "Удалить закладку" : "Delete Sticker",
+        text: i18n({
+          en: "Delete Sticker", ru: "Удалить закладку", zh: "删除书签", ja: "付箋を削除", es: "Eliminar pegatina", de: "Lesezeichen löschen"
+        }, this.plugin),
       });
       delBtn.onclick = () => {
         this.initialData.onDelete();
@@ -1552,17 +1829,27 @@ class NutrientStickerModal extends Modal {
       cls: "artcraft-pay-action-btn is-green",
     });
     saveBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.bookmark}</span><span>${
-      isRu ? "Прикрепить закладку на поле книги" : "Pin Nutrient Sticker to Page Edge"
+      i18n({
+        en: "Pin Nutrient Sticker to Page Edge",
+        ru: "Прикрепить закладку на поле книги",
+        zh: "将养分书签固定至书籍页边",
+        ja: "ページの余白に付箋を貼る",
+        es: "Fijar pegatina al margen del libro",
+        de: "Nährstoff-Lesezeichen an Rand heften",
+      }, this.plugin)
     }</span>`;
 
     const submit = () => {
       const nObj = BOOK_NUTRIENTS[this.selectedNutrient] || BOOK_NUTRIENTS.proteins;
-      const snippetVal = (quoteInput.value || "").trim() || (isRu ? "Важный фрагмент заметки" : "Key Note Passage");
-      const meaningVal = (meaningInput.value || "").trim() || (isRu ? nObj.ruRole : nObj.enRole);
+      const i18nN = getNutrientI18n(nObj, this.plugin);
+      const snippetVal = (quoteInput.value || "").trim() || i18n({
+        en: "Key Note Passage", ru: "Важный фрагмент заметки", zh: "核心笔记文段", ja: "ノートの要点", es: "Pasaje clave", de: "Wichtige Textstelle"
+      }, this.plugin);
+      const meaningVal = (meaningInput.value || "").trim() || i18nN.role;
       this.onSave({
         type: nObj.id,
         edge: nObj.edge,
-        label: isRu ? nObj.ruName : nObj.enName,
+        label: i18nN.name,
         meaning: meaningVal,
         snippet: snippetVal,
         line: this.initialData.line || 0,
@@ -1574,7 +1861,6 @@ class NutrientStickerModal extends Modal {
     meaningInput.onkeydown = (e) => {
       if (e.key === "Enter") submit();
     };
-    setTimeout(() => meaningInput.focus(), 50);
   }
 
   onClose() {
@@ -1595,20 +1881,41 @@ class BookNutrientDigestModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-nutrient-modal-root");
-    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this.plugin);
+    const locTag = LOCALE_TAGS[loc] || "en-US";
+    if (this.modalEl) this.modalEl.setAttribute("lang", locTag);
 
     const head = contentEl.createDiv({ cls: "nutrient-modal-head" });
     head.innerHTML = `
       <div class="sonic-badge"><span class="svg-inline-icon">${SICRAFT_SVGS.book}</span> ${
-      isRu ? "УСВОЕНИЕ КНИГИ • ПЛАНИРОВЩИК БЕЛКОВ И УГЛЕВОДОВ" : "BOOK DIGESTION STUDIO • PROTEINS & CARBS PLANNER"
+      i18n({
+        en: "BOOK DIGESTION STUDIO • PROTEINS & CARBS PLANNER",
+        ru: "УСВОЕНИЕ КНИГИ • ПЛАНИРОВЩИК БЕЛКОВ И УГЛЕВОДОВ",
+        zh: "书籍消化工坊 • 蛋白质与碳水化合物规划",
+        ja: "読書消化スタジオ • 実践と洞察のプランナー",
+        es: "ESTUDIO DE ASIMILACIÓN • PLANIFICADOR DE NUTRIENTES",
+        de: "BUCH-VERDAUUNGSSTUDIO • PROTEIN- & KOHLENHYDRAT-PLANER",
+      }, this.plugin)
     }</div>
       <h3 class="sonic-title">${
-        isRu ? "Дайджест закладок-нутриентов по заметке" : "5-Nutrient Book Digest & Action Planner"
+        i18n({
+          en: "5-Nutrient Book Digest & Action Planner",
+          ru: "Дайджест закладок-нутриентов по заметке",
+          zh: "5大养分书签摘要与行动计划",
+          ja: "5大栄養素の付箋ダイジェスト＆行動計画",
+          es: "Resumen de 5 nutrientes y plan de acción",
+          de: "5-Nährstoff-Zusammenfassung & Aktionsplan",
+        }, this.plugin)
       }</h3>
       <p class="sonic-studio-sub">${
-        isRu
-          ? "После прочтения пробегитесь по красным (Белки — внедрить) и оранжевым (Углеводы — к размышлению) закладкам и перенесите их в свой планировщик или в конец заметки."
-          : "Review your Red (Proteins — Must Do) and Orange (Carbs — To Ponder) stickers and export them to your planner or append them to this note."
+        i18n({
+          en: "Review your Red (Proteins — Must Do) and Orange (Carbs — To Ponder) stickers and export them to your planner or append them to this note.",
+          ru: "После прочтения пробегитесь по красным (Белки — внедрить) и оранжевым (Углеводы — к размышлению) закладкам и перенесите их в свой планировщик или в конец заметки.",
+          zh: "阅读后回顾红色（蛋白质：立即践行）与橙色（碳水：深度反思）书签，将其导出至待办清单或追加至笔记末尾。",
+          ja: "読了後、赤（タンパク質：実践）と橙（炭水化物：思考）の付箋を見直し、プランナーへ書き出すかノート末尾に追加してください。",
+          es: "Revisa tus pegatinas rojas (Proteínas — Acción) y naranjas (Carbohidratos — Reflexión) y expórtalas a tu agenda o añádelas a la nota.",
+          de: "Überprüfe deine roten (Proteine — Aktion) und orangen (Kohlenhydrate — Reflexion) Lesezeichen und exportiere sie in deinen Planer.",
+        }, this.plugin)
       }</p>
     `;
 
@@ -1616,19 +1923,25 @@ class BookNutrientDigestModal extends Modal {
     if (this.bookmarks.length === 0) {
       listWrap.createDiv({
         cls: "soft-pay-muted-hint",
-        text: isRu
-          ? "В этой заметке пока нет закладок-нутриентов. Выделите любой абзац и нажмите «+ Закладка-Нутриент»."
-          : "No nutrient stickers in this note yet. Select any passage and click '+ Nutrient Sticker'.",
+        text: i18n({
+          en: "No nutrient stickers in this note yet. Select any passage and click '+ Nutrient Sticker'.",
+          ru: "В этой заметке пока нет закладок-нутриентов. Выделите любой абзац и нажмите «+ Закладка-Нутриент».",
+          zh: "此笔记暂无养分书签。选中任意文段并点击「+ 养分书签」。",
+          ja: "このノートにはまだ付箋がありません。任意の段落を選択して「+ 栄養素付箋」をクリックしてください。",
+          es: "Aún no hay pegatinas de nutrientes en esta nota. Selecciona un pasaje y haz clic en '+ Pegatina de nutrientes'.",
+          de: "Noch keine Nährstoff-Lesezeichen in dieser Notiz. Markiere eine Textstelle und klicke auf '+ Nährstoff-Lesezeichen'.",
+        }, this.plugin),
       });
     } else {
       Object.values(BOOK_NUTRIENTS).forEach((nObj) => {
         const groupItems = this.bookmarks.filter((b) => (b.type || "proteins") === nObj.id);
         if (groupItems.length === 0) return;
+        const i18nN = getNutrientI18n(nObj, this.plugin);
         const sec = listWrap.createDiv({ cls: "nutrient-digest-group" });
         sec.style.borderLeftColor = nObj.color;
         sec.style.background = nObj.bg;
         sec.innerHTML = `<div class="nutrient-digest-group-title" style="color:${nObj.color}">
-          <strong>${isRu ? nObj.ruName : nObj.enName} (${isRu ? nObj.ruRole : nObj.enRole})</strong>
+          <strong>${i18nN.name} (${i18nN.role})</strong>
           <span>${groupItems.length}</span>
         </div>`;
         groupItems.forEach((item) => {
@@ -1648,28 +1961,57 @@ class BookNutrientDigestModal extends Modal {
     const buildDigestMarkdown = () => {
       const lines = [];
       lines.push(`\n\n---`);
-      lines.push(`## ⚗️ ${isRu ? "Усвоение книги: Дайджест 5 Нутриентов" : "Book Nutrient Digest & Action Plan"}`);
+      lines.push(`## ⚗️ ${i18n({
+        en: "Book Nutrient Digest & Action Plan",
+        ru: "Усвоение книги: Дайджест 5 Нутриентов",
+        zh: "书籍养分摘要与行动规划",
+        ja: "読書消化：5大栄養素ダイジェスト",
+        es: "Resumen de nutrientes del libro y plan de acción",
+        de: "Buch-Nährstoff-Auszug & Aktionsplan",
+      }, this.plugin)}`);
       const proteins = this.bookmarks.filter((b) => (b.type || "proteins") === "proteins");
       const carbs = this.bookmarks.filter((b) => b.type === "carbs");
       const others = this.bookmarks.filter((b) => b.type && b.type !== "proteins" && b.type !== "carbs");
 
       if (proteins.length > 0) {
-        lines.push(`\n### 🔴 ${isRu ? "Белки — Необходимо сделать и внедрить" : "Proteins — Must Do & Implement"}`);
+        lines.push(`\n### 🔴 ${i18n({
+          en: "Proteins — Must Do & Implement",
+          ru: "Белки — Необходимо сделать и внедрить",
+          zh: "蛋白质 — 必须落地践行",
+          ja: "タンパク質 — 即実践・行動に移す",
+          es: "Proteínas — Tareas inmediatas y acción",
+          de: "Proteine — Sofort umsetzen & handeln",
+        }, this.plugin)}`);
         proteins.forEach((p) => {
           lines.push(`- [ ] **${p.meaning || p.label}** — *«${p.snippet}»*`);
         });
       }
       if (carbs.length > 0) {
-        lines.push(`\n### 🟠 ${isRu ? "Углеводы — К размышлению (Энергия и Инсайты)" : "Carbs — To Ponder & Reflect"}`);
+        lines.push(`\n### 🟠 ${i18n({
+          en: "Carbs — To Ponder & Reflect",
+          ru: "Углеводы — К размышлению (Энергия и Инсайты)",
+          zh: "碳水化合物 — 晨间反思与深刻洞见",
+          ja: "炭水化物 — 深い思考と哲学的洞察",
+          es: "Carbohidratos — Para reflexionar e interiorizar",
+          de: "Kohlenhydrate — Zum Nachdenken & Verinnerlichen",
+        }, this.plugin)}`);
         carbs.forEach((c) => {
           lines.push(`> [! lightbulb] **${c.meaning || c.label}**\n> *«${c.snippet}»*`);
         });
       }
       if (others.length > 0) {
-        lines.push(`\n### 🟡🟢🔵 ${isRu ? "Жиры, Витамины и Клетчатка (Истории, Цитаты, Факты)" : "Stories, Quotes & Facts"}`);
+        lines.push(`\n### 🟡🟢🔵 ${i18n({
+          en: "Stories, Quotes & Facts (Fats, Vitamins, Fiber)",
+          ru: "Жиры, Витамины и Клетчатка (Истории, Цитаты, Факты)",
+          zh: "故事、金句与数据（脂肪、维生素、膳食纤维）",
+          ja: "逸話・引用・データ（脂質・ビタミン・食物繊維）",
+          es: "Historias, citas y datos (Grasas, Vitaminas, Fibra)",
+          de: "Geschichten, Zitate & Fakten (Fette, Vitamine, Ballaststoffe)",
+        }, this.plugin)}`);
         others.forEach((o) => {
           const nObj = BOOK_NUTRIENTS[o.type] || BOOK_NUTRIENTS.vitamins;
-          lines.push(`- **[${isRu ? nObj.ruName : nObj.enName}] ${o.meaning || o.label}:** *«${o.snippet}»*`);
+          const i18nN = getNutrientI18n(nObj, this.plugin);
+          lines.push(`- **[${i18nN.name}] ${o.meaning || o.label}:** *«${o.snippet}»*`);
         });
       }
       return lines.join("\n");
@@ -1678,16 +2020,37 @@ class BookNutrientDigestModal extends Modal {
     const footer = contentEl.createDiv({ cls: "nutrient-modal-footer" });
     const btnCopy = footer.createEl("button", { cls: "artcraft-pay-action-btn is-soft" });
     btnCopy.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span><span>${
-      isRu ? "Скопировать для Планировщика" : "Copy for Planner"
+      i18n({
+        en: "Copy for Planner",
+        ru: "Скопировать для Планировщика",
+        zh: "复制至待办规划",
+        ja: "プランナー用にコピー",
+        es: "Copiar para la agenda",
+        de: "Für Planer kopieren",
+      }, this.plugin)
     }</span>`;
     btnCopy.onclick = async () => {
       await navigator.clipboard.writeText(buildDigestMarkdown().trim());
-      new Notice(isRu ? "Дайджест скопирован в буфер обмена!" : "Book Digest copied to clipboard!");
+      new Notice(i18n({
+        en: "Book Digest copied to clipboard!",
+        ru: "Дайджест скопирован в буфер обмена!",
+        zh: "书籍摘要已复制至剪贴板！",
+        ja: "ダイジェストをクリップボードにコピーしました！",
+        es: "¡Resumen copiado al portapapeles!",
+        de: "Auszug in die Zwischenablage kopiert!",
+      }, this.plugin));
     };
 
     const btnAppend = footer.createEl("button", { cls: "artcraft-pay-action-btn is-green" });
     btnAppend.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.check}</span><span>${
-      isRu ? "Вставить блок «Усвоение» в конец заметки" : "Append Digest Block to Note"
+      i18n({
+        en: "Append Digest Block to Note",
+        ru: "Вставить блок «Усвоение» в конец заметки",
+        zh: "在笔记末尾追加「消化」区块",
+        ja: "ノート末尾に「消化」ブロックを追加",
+        es: "Insertar bloque de asimilación al final de la nota",
+        de: "Auszug-Block an Notizende anfügen",
+      }, this.plugin)
     }</span>`;
     btnAppend.onclick = async () => {
       const obsidian = require("obsidian");
@@ -1696,7 +2059,14 @@ class BookNutrientDigestModal extends Modal {
         const cur = view.editor.getValue();
         view.editor.setValue(cur + buildDigestMarkdown());
         this.plugin.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
-        new Notice(isRu ? "Блок «Усвоение книги» добавлен в конец заметки!" : "Book Digest appended to note!");
+        new Notice(i18n({
+          en: "Book Digest appended to note!",
+          ru: "Блок «Усвоение книги» добавлен в конец заметки!",
+          zh: "书籍消化区块已添加至笔记末尾！",
+          ja: "ノート末尾に消化ブロックを追加しました！",
+          es: "¡Bloque de asimilación añadido al final de la nota!",
+          de: "Auszug-Block an Notizende angefügt!",
+        }, this.plugin));
         this.close();
       }
     };
@@ -1719,7 +2089,18 @@ class ClassicsBookshelfModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-bookshelf-modal-root");
-    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this.plugin);
+    const locTag = LOCALE_TAGS[loc] || "en-US";
+    if (this.modalEl) this.modalEl.setAttribute("lang", locTag);
+
+    const rootFolderLabel = i18n({
+      en: "Vault Root",
+      ru: "Корень базы",
+      zh: "知识库根目录",
+      ja: "保管庫ルート",
+      es: "Raíz de la bóveda",
+      de: "Tresor-Stammverzeichnis",
+    }, this.plugin);
 
     const stamped = this.plugin.settings.stampedNotes || {};
     const bms = this.plugin.settings.marginBookmarks || {};
@@ -1731,7 +2112,7 @@ class ClassicsBookshelfModal extends Modal {
       const list = Array.isArray(bms[fp]) ? bms[fp] : [];
       if (!rec && list.length === 0) return;
       const baseTitle = fp.replace(/\.md$/i, "").split("/").pop() || fp;
-      const folder = fp.includes("/") ? fp.split("/")[0] : (isRu ? "Корень базы" : "Vault Root");
+      const folder = fp.includes("/") ? fp.split("/")[0] : rootFolderLabel;
       books.push({
         path: fp,
         title: baseTitle,
@@ -1750,26 +2131,45 @@ class ClassicsBookshelfModal extends Modal {
     const head = contentEl.createDiv({ cls: "nutrient-modal-head" });
     head.innerHTML = `
       <div class="sonic-badge"><span class="svg-inline-icon">${SICRAFT_SVGS.shelf}</span> ${
-      isRu ? "ПОЛКА КЛАССИКИ И БИБЛИОТЕКА НУТРИЕНТОВ" : "CLASSICS BOOKSHELF & 5-NUTRIENT LIBRARY"
+      i18n({
+        en: "CLASSICS BOOKSHELF & 5-NUTRIENT LIBRARY",
+        ru: "ПОЛКА КЛАССИКИ И БИБЛИОТЕКА НУТРИЕНТОВ",
+        zh: "经典书架与5大养分文献库",
+        ja: "古典の本棚＆5大栄養素ライブラリ",
+        es: "ESTANTERÍA DE CLÁSICOS Y BIBLIOTECA DE NUTRIENTES",
+        de: "KLASSIKER-REGAL & 5-NÄHRSTOFF-BIBLIOTHEK",
+      }, this.plugin)
     }</div>
       <h3 class="sonic-title">${
-        isRu ? "Деревянная Полка Изученных Книг и Конспектов" : "Tactile Bookshelf of Stamped Notes & Book Nutrients"
+        i18n({
+          en: "Tactile Bookshelf of Stamped Notes & Book Nutrients",
+          ru: "Деревянная Полка Изученных Книг и Конспектов",
+          zh: "已研读笔记与养分摘录的实木书架",
+          ja: "学習済みノートと栄養素付箋の木製本棚",
+          es: "Estantería táctil de notas estudiadas y nutrientes",
+          de: "Taktiles Holzregal für studierte Notizen & Nährstoffe",
+        }, this.plugin)
       }</h3>
       <p class="sonic-studio-sub">${
-        isRu
-          ? "Здесь автоматически собираются все заметки со штампом «ИЗУЧЕНО / ★ КЛАССИКА» и закладками-нутриентами. Фильтруйте главные выводы по всей базе и открывайте любую книгу в 1 клик."
-          : "Every note stamped as APPROVED / ★ CLASSICS or tagged with 5-Nutrient stickers appears on this craft shelf. Filter insights across your entire vault."
+        i18n({
+          en: "Every note stamped as APPROVED / ★ CLASSICS or tagged with 5-Nutrient stickers appears on this craft shelf. Filter insights across your entire vault.",
+          ru: "Здесь автоматически собираются все заметки со штампом «ИЗУЧЕНО / ★ КЛАССИКА» и закладками-нутриентами. Фильтруйте главные выводы по всей базе и открывайте любую книгу в 1 клик.",
+          zh: "所有加盖「已研读 / ★ 经典」印章或贴有5大养分书签的笔记均会陈列在此书架上。跨全库检索核心要点，一键即达任意书籍。",
+          ja: "「学習済 / ★ 古典」印章が押されたノートや栄養素付箋付きのノートがこの本棚に集約されます。保管庫全体から要点を絞り込み、1クリックで開けます。",
+          es: "Todas las notas con sello de APROBADO / ★ CLÁSICOS o pegatinas de nutrientes aparecen en esta estantería artesanal. Filtra ideas en toda tu bóveda.",
+          de: "Jede Notiz mit dem Stempel BESTÄTIGT / ★ KLASSIKER oder Nährstoff-Lesezeichen erscheint in diesem Regal. Filtere Erkenntnisse im gesamten Tresor.",
+        }, this.plugin)
       }</p>
     `;
 
     const filterBar = contentEl.createDiv({ cls: "artcraft-shelf-filter-bar" });
     const filters = [
-      { id: "all", label: isRu ? `Все книги (${books.length})` : `All Books (${books.length})`, color: "#44403C" },
-      { id: "classics", label: isRu ? "★ Золотая Классика" : "★ Classics (#2+)", color: "#D97706" },
-      { id: "proteins", label: isRu ? "🔴 Белки (Внедрить)" : "🔴 Proteins (Must Do)", color: "#DC2626" },
-      { id: "carbs", label: isRu ? "🟠 Углеводы (Смыслы)" : "🟠 Carbs (Ponder)", color: "#EA580C" },
-      { id: "vitamins", label: isRu ? "🟢 Витамины (Цитаты)" : "🟢 Vitamins (Quotes)", color: "#16A34A" },
-      { id: "fiber", label: isRu ? "🔵 Клетчатка (Факты)" : "🔵 Fiber (Facts)", color: "#2563EB" },
+      { id: "all", label: `${i18n({ en: "All Books", ru: "Все книги", zh: "全部书籍", ja: "すべての本", es: "Todos los libros", de: "Alle Bücher" }, this.plugin)} (${books.length})`, color: "#44403C" },
+      { id: "classics", label: i18n({ en: "★ Classics (#2+)", ru: "★ Золотая Классика", zh: "★ 典藏经典 (#2+)", ja: "★ 名著・古典 (#2+)", es: "★ Clásicos (#2+)", de: "★ Klassiker (#2+)" }, this.plugin), color: "#D97706" },
+      { id: "proteins", label: i18n({ en: "🔴 Proteins (Must Do)", ru: "🔴 Белки (Внедрить)", zh: "🔴 蛋白质 (落地践行)", ja: "🔴 タンパク質 (実践)", es: "🔴 Proteínas (Acción)", de: "🔴 Proteine (Aktion)" }, this.plugin), color: "#DC2626" },
+      { id: "carbs", label: i18n({ en: "🟠 Carbs (Ponder)", ru: "🟠 Углеводы (Смыслы)", zh: "🟠 碳水化合物 (感悟)", ja: "🟠 炭水化物 (思考)", es: "🟠 Carbohidratos (Reflexión)", de: "🟠 Kohlenhydrate (Sinn)" }, this.plugin), color: "#EA580C" },
+      { id: "vitamins", label: i18n({ en: "🟢 Vitamins (Quotes)", ru: "🟢 Витамины (Цитаты)", zh: "🟢 维生素 (金句)", ja: "🟢 ビタミン (引用)", es: "🟢 Vitaminas (Citas)", de: "🟢 Vitamine (Zitate)" }, this.plugin), color: "#16A34A" },
+      { id: "fiber", label: i18n({ en: "🔵 Fiber (Facts)", ru: "🔵 Клетчатка (Факты)", zh: "🔵 膳食纤维 (数据)", ja: "🔵 食物繊維 (事実)", es: "🔵 Fibra (Datos)", de: "🔵 Ballaststoffe (Fakten)" }, this.plugin), color: "#2563EB" },
     ];
 
     const shelfBody = contentEl.createDiv({ cls: "artcraft-wooden-shelf-body" });
@@ -1789,9 +2189,14 @@ class ClassicsBookshelfModal extends Modal {
       if (filtered.length === 0) {
         shelfBody.createDiv({
           cls: "soft-pay-muted-hint",
-          text: isRu
-            ? "На этой полке пока нет книг под выбранный фильтр. Поставьте штамп «Штамп» или добавьте «+ Закладка» в любой заметке!"
-            : "No books match this filter yet. Click 'Stamp' or '+ Sticker' in any note to place it on your shelf!",
+          text: i18n({
+            en: "No books match this filter yet. Click 'Stamp' or '+ Sticker' in any note to place it on your shelf!",
+            ru: "На этой полке пока нет книг под выбранный фильтр. Поставьте штамп «Штамп» или добавьте «+ Закладка» в любой заметке!",
+            zh: "当前筛选下暂无书籍。在任意笔记中点击「印章」或「+ 书签」即可将其陈列上架！",
+            ja: "選択された条件の本はまだありません。ノート内で「印章」を押すか「+ 付箋」を追加してください！",
+            es: "No hay libros con este filtro. ¡Haz clic en 'Sello' o '+ Pegatina' en cualquier nota!",
+            de: "Noch keine Bücher unter diesem Filter. Klicke in einer Notiz auf 'Stempeln' oder '+ Lesezeichen'!",
+          }, this.plugin),
         });
         return;
       }
@@ -1802,68 +2207,46 @@ class ClassicsBookshelfModal extends Modal {
       filtered.forEach((bk, idx) => {
         const card = grid.createDiv({ cls: "artcraft-book-folio-card" + (bk.isClassics ? " is-gold-classic" : "") });
         const spineCol = bk.isClassics ? "#B45309" : spineColors[idx % spineColors.length];
-        card.style.setProperty("--book-spine-color", spineCol);
-
-        const stampText = bk.isClassics
-          ? `★ ${isRu ? "КЛАССИКА" : "CLASSICS"} #${bk.stamp.count}`
+        const stampTxt = bk.isClassics
+          ? `★ CLASSICS #${bk.stamp.count}`
           : bk.stamp
-          ? `✓ ${isRu ? "ИЗУЧЕНО" : "APPROVED"} • ${bk.stamp.dates[bk.stamp.dates.length - 1]}`
-          : isRu
-          ? "В чтении"
-          : "In Progress";
-
-        const matchingBms =
-          this.activeFilter === "all" || this.activeFilter === "classics"
-            ? bk.bookmarks.slice(0, 3)
-            : bk.bookmarks.filter((m) => (m.type || "proteins") === this.activeFilter).slice(0, 3);
-
-        const bmHtml = matchingBms
-          .map((m) => {
-            const nObj = BOOK_NUTRIENTS[m.type] || BOOK_NUTRIENTS.proteins;
-            return `<div class="book-card-bm-item" style="border-left-color:${nObj.color}">
-              <strong style="color:${nObj.color}">${isRu ? nObj.ruName : nObj.enName}:</strong>
-              <span>${(m.meaning || m.snippet || "").slice(0, 58)}</span>
-            </div>`;
-          })
-          .join("");
+          ? `✓ ${i18n({ en: "READ", ru: "ИЗУЧЕНО", zh: "已读", ja: "読了", es: "LEÍDO", de: "GELESEN" }, this.plugin)}`
+          : "";
 
         card.innerHTML = `
-          <div class="book-card-top">
-            <span class="book-card-folder">${bk.folder}</span>
-            <span class="book-card-stamp ${bk.isClassics ? "is-gold" : ""}">${stampText}</span>
-          </div>
-          <div class="book-card-title">${bk.title}</div>
-          <div class="book-card-bms">${
-            bmHtml ||
-            `<div class="book-card-empty-bm">${
-              isRu ? "Книга проштампована • Нажмите, чтобы открыть" : "Stamped book folio • Click to open"
-            }</div>`
-          }</div>
-          <div class="book-card-footer">
-            <span>${SICRAFT_SVGS.bookmark} ${bk.bookmarks.length} ${isRu ? "закладок" : "stickers"}</span>
-            <span class="book-open-link">${isRu ? "Открыть книгу →" : "Open Book →"}</span>
+          <div class="book-folio-spine" style="background:${spineCol}"></div>
+          <div class="book-folio-inner">
+            <div class="book-folio-folder">${bk.folder}</div>
+            <h4 class="book-folio-title" title="${bk.title}">${bk.title}</h4>
+            <div class="book-folio-meta">
+              ${stampTxt ? `<span class="book-folio-stamp-pill">${stampTxt}</span>` : ""}
+              <span class="book-folio-nutrients-count">${bk.bookmarks.length} ${i18n({ en: "stickers", ru: "закладок", zh: "个书签", ja: "付箋", es: "pegatinas", de: "Lesezeichen" }, this.plugin)}</span>
+            </div>
+            ${
+              bk.bookmarks.length > 0
+                ? `<div class="book-folio-nut-dots">${bk.bookmarks
+                    .slice(0, 6)
+                    .map((m) => {
+                      const nObj = BOOK_NUTRIENTS[m.type] || BOOK_NUTRIENTS.proteins;
+                      return `<span class="nut-dot" style="background:${nObj.color}" title="${m.meaning || m.label}"></span>`;
+                    })
+                    .join("")}</div>`
+                : ""
+            }
           </div>
         `;
 
-        card.onclick = async () => {
-          const abstractFile = this.app.vault.getAbstractFileByPath(bk.path);
-          if (abstractFile) {
-            const leaf = this.app.workspace.getLeaf(false);
-            await leaf.openFile(abstractFile);
-            this.close();
-          } else {
-            new Notice(isRu ? "Файл заметки не найден по старому пути." : "Note file not found at saved path.");
-          }
+        card.onclick = () => {
+          this.close();
+          this.app.workspace.openLinkText(bk.path, "", false);
         };
       });
     };
 
     filters.forEach((f) => {
-      const btn = filterBar.createEl("button", {
-        cls: "artcraft-shelf-filter-pill" + (this.activeFilter === f.id ? " is-active" : ""),
-        text: f.label,
-      });
+      const btn = filterBar.createEl("button", { cls: "artcraft-shelf-filter-pill" });
       btn.dataset.fid = f.id;
+      btn.innerHTML = `<span>${f.label}</span>`;
       btn.onclick = () => {
         this.activeFilter = f.id;
         renderShelf();
@@ -1875,20 +2258,35 @@ class ClassicsBookshelfModal extends Modal {
     const footer = contentEl.createDiv({ cls: "nutrient-modal-footer" });
     const btnExportAll = footer.createEl("button", { cls: "artcraft-pay-action-btn is-green" });
     btnExportAll.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span><span>${
-      isRu ? "Скопировать Сводный Дайджест Всех Книг" : "Copy Master Vault Book Digest"
+      i18n({
+        en: "Copy Master Vault Book Digest",
+        ru: "Скопировать Сводный Дайджест Всех Книг",
+        zh: "复制全库宏观书籍摘要",
+        ja: "保管庫全体の統合ダイジェストをコピー",
+        es: "Copiar resumen maestro de la bóveda",
+        de: "Gesamte Tresor-Zusammenfassung kopieren",
+      }, this.plugin)
     }</span>`;
     btnExportAll.onclick = async () => {
-      const lines = [`# 📚 ${isRu ? "Полка Классики и Сводный Дайджест Книг" : "Master Classics & Book Nutrient Digest"}\n`];
+      const lines = [`# 📚 ${i18n({ en: "Master Classics & Book Nutrient Digest", ru: "Полка Классики и Сводный Дайджест Книг", zh: "经典书架与全库书籍摘要", ja: "名著の本棚と統合ダイジェスト", es: "Estantería de clásicos y resumen maestro", de: "Klassiker-Regal und Gesamt-Auszug" }, this.plugin)}\n`];
       books.forEach((bk) => {
         lines.push(`## 📖 ${bk.title} (${bk.isClassics ? `★ CLASSICS #${bk.stamp.count}` : "Read"})`);
         bk.bookmarks.forEach((m) => {
           const nObj = BOOK_NUTRIENTS[m.type] || BOOK_NUTRIENTS.proteins;
-          lines.push(`- **[${isRu ? nObj.ruName : nObj.enName}] ${m.meaning || m.label}:** *«${m.snippet}»*`);
+          const i18nN = getNutrientI18n(nObj, this.plugin);
+          lines.push(`- **[${i18nN.name}] ${m.meaning || m.label}:** *«${m.snippet}»*`);
         });
         lines.push("");
       });
       await navigator.clipboard.writeText(lines.join("\n"));
-      new Notice(isRu ? "Сводный дайджест всех книг скопирован в буфер обмена!" : "Master Book Digest copied to clipboard!");
+      new Notice(i18n({
+        en: "Master Book Digest copied to clipboard!",
+        ru: "Сводный дайджест всех книг скопирован в буфер обмена!",
+        zh: "全库书籍摘要已复制至剪贴板！",
+        ja: "全冊の統合ダイジェストをコピーしました！",
+        es: "¡Resumen maestro copiado al portapapeles!",
+        de: "Gesamte Buch-Zusammenfassung in die Zwischenablage kopiert!",
+      }, this.plugin));
     };
   }
 
@@ -4124,9 +4522,9 @@ class AlchemyFlowPlugin extends Plugin {
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
       // Auto-upgrade graph.json once so folders are colored
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.3") {
+      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.4") {
         this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.6.3";
+        this.settings.graphConfigVersion = "4.6.4";
         this.saveSettings();
         setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
       }
@@ -5382,21 +5780,33 @@ class AlchemyFlowPlugin extends Plugin {
     return { unlockAt, sealedAtMs, ready, pct, remainingMs: Math.max(0, unlockAt - now), message: seal.message || "" };
   }
 
-  formatCapsuleRemaining(ms, isRu) {
+  formatCapsuleRemaining(ms, locOrIsRu) {
     const totalMin = Math.max(0, Math.ceil(ms / 60000));
     const d = Math.floor(totalMin / 1440);
     const h = Math.floor((totalMin % 1440) / 60);
     const m = totalMin % 60;
     const pad = (n) => String(n).padStart(2, "0");
-    return isRu ? `${pad(d)}д ${pad(h)}ч ${pad(m)}м` : `${pad(d)}d ${pad(h)}h ${pad(m)}m`;
+    const loc = typeof locOrIsRu === "string" ? locOrIsRu : (locOrIsRu ? "ru" : "en");
+    if (loc === "ru") return `${pad(d)}д ${pad(h)}ч ${pad(m)}м`;
+    if (loc === "zh") return `${pad(d)}天 ${pad(h)}时 ${pad(m)}分`;
+    if (loc === "ja") return `${pad(d)}日 ${pad(h)}時間 ${pad(m)}分`;
+    if (loc === "de") return `${pad(d)}T ${pad(h)}Std ${pad(m)}Min`;
+    return `${pad(d)}d ${pad(h)}h ${pad(m)}m`;
   }
 
   async toggleNoteWaxSeal() {
     const obsidian = require("obsidian");
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this);
     if (!view || !view.file) {
-      new Notice(isRu ? "Откройте заметку, которую хотите запечатать." : "Open the note you want to seal first.");
+      new Notice(i18n({
+        en: "Open the note you want to seal first.",
+        ru: "Откройте заметку, которую хотите запечатать.",
+        zh: "请先打开要封存的笔记。",
+        ja: "まず封印したいノートを開いてください。",
+        es: "Abre primero la nota que deseas sellar.",
+        de: "Öffne zuerst die Notiz, die du versiegeln möchtest.",
+      }, this));
       return;
     }
     const fp = view.file.path;
@@ -5410,9 +5820,14 @@ class AlchemyFlowPlugin extends Plugin {
       } else {
         this.renderNoteWaxSealOverlay();
         new Notice(
-          isRu
-            ? `🕯️ Капсула откроется через ${this.formatCapsuleRemaining(info.remainingMs, true)}. Чтобы вскрыть досрочно — удерживайте печать 2 секунды.`
-            : `🕯️ Capsule unlocks in ${this.formatCapsuleRemaining(info.remainingMs, false)}. To open early, press & hold the seal for 2 seconds.`
+          i18n({
+            en: `🕯️ Capsule unlocks in ${this.formatCapsuleRemaining(info.remainingMs, loc)}. To open early, press & hold the seal for 2 seconds.`,
+            ru: `🕯️ Капсула откроется через ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Чтобы вскрыть досрочно — удерживайте печать 2 секунды.`,
+            zh: `🕯️ 胶囊将在 ${this.formatCapsuleRemaining(info.remainingMs, loc)} 后解锁。提前开封：长按印章2秒。`,
+            ja: `🕯️ カプセルはあと ${this.formatCapsuleRemaining(info.remainingMs, loc)} で開封できます。早期開封：印を2秒長押し。`,
+            es: `🕯️ La cápsula se desbloquea en ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Para abrir antes, mantén el sello 2 s.`,
+            de: `🕯️ Die Kapsel öffnet in ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Zum vorzeitigen Öffnen das Siegel 2 Sek. halten.`,
+          }, this)
         );
       }
       return;
@@ -5437,8 +5852,17 @@ class AlchemyFlowPlugin extends Plugin {
     await this.saveSettings();
     this.playHarmonicResonanceChime();
     this.renderNoteWaxSealOverlay(true);
-    const dateLabel = new Date(unlockAt).toLocaleDateString(isRu ? "ru-RU" : undefined, { day: "numeric", month: "long", year: "numeric" });
-    new Notice(isRu ? `🔒 Заметка запечатана до ${dateLabel}. Obsidian напомнит, когда капсула созреет.` : `🔒 Note sealed until ${dateLabel}. You'll get a notice when the capsule is ready.`);
+    const loc = getLocale(this);
+    const locTag = LOCALE_TAGS[loc] || "en-US";
+    const dateLabel = new Date(unlockAt).toLocaleDateString(locTag, { day: "numeric", month: "long", year: "numeric" });
+    new Notice(i18n({
+      en: `🔒 Note sealed until ${dateLabel}. You'll get a notice when the capsule is ready.`,
+      ru: `🔒 Заметка запечатана до ${dateLabel}. Obsidian напомнит, когда капсула созреет.`,
+      zh: `🔒 笔记已封存至 ${dateLabel}。胶囊成熟时将自动发送通知。`,
+      ja: `🔒 ノートを ${dateLabel} まで封印しました。満期時に通知でお知らせします。`,
+      es: `🔒 Nota sellada hasta el ${dateLabel}. Recibirás un aviso cuando esté lista.`,
+      de: `🔒 Notiz versiegelt bis ${dateLabel}. Du erhältst eine Benachrichtigung, wenn sie bereit ist.`,
+    }, this));
   }
 
   async breakTimeCapsule(fp, early) {
@@ -5477,16 +5901,17 @@ class AlchemyFlowPlugin extends Plugin {
     const obsidian = require("obsidian");
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
     if (!view || !view.file) return;
+
     const fp = view.file.path;
     const seal = this.settings.waxSealNotes && this.settings.waxSealNotes[fp];
     if (!seal) return;
 
     const viewContent = view.containerEl.querySelector(".view-content");
     if (!viewContent) return;
-    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this);
+    const locTag = LOCALE_TAGS[loc] || "en-US";
     const info = this.getTimeCapsuleInfo(seal);
-    const locale = isRu ? "ru-RU" : undefined;
-    const fmtDate = (ms) => new Date(ms).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
+    const fmtDate = (ms) => new Date(ms).toLocaleDateString(locTag, { day: "numeric", month: "short", year: "numeric" });
     const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
     const sealSvg = `
@@ -5508,12 +5933,24 @@ class AlchemyFlowPlugin extends Plugin {
 
     const veil = document.createElement("div");
     veil.className = `artcraft-wax-seal-veil ${info.ready ? "is-ready" : "is-locked"} ${justSealed ? "is-just-sealed" : ""}`;
+    veil.setAttribute("lang", locTag);
+    const zeroRemain = { en: "00d 00h 00m", ru: "00д 00ч 00м", zh: "00天 00时 00分", ja: "00日 00時間 00分", es: "00d 00h 00m", de: "00T 00Std 00Min" };
     veil.innerHTML = `
       <div class="wax-seal-card">
         <div class="wax-seal-ribbon" aria-hidden="true"></div>
-        <div class="wax-seal-badge">${isRu ? "КАПСУЛА ВРЕМЕНИ" : "TIME CAPSULE"} // ${info.ready ? (isRu ? "СОЗРЕЛА" : "READY") : (isRu ? "ЗАПЕЧАТАНО" : "SEALED")}</div>
+        <div class="wax-seal-badge">${i18n({
+          en: "TIME CAPSULE", ru: "КАПСУЛА ВРЕМЕНИ", zh: "时间胶囊", ja: "タイムカプセル", es: "CÁPSULA DEL TIEMPO", de: "ZEITKAPSEL"
+        }, this)} // ${info.ready ? i18n({
+          en: "READY", ru: "СОЗРЕЛА", zh: "已成熟", ja: "開封可能", es: "LISTA", de: "BEREIT"
+        }, this) : i18n({
+          en: "SEALED", ru: "ЗАПЕЧАТАНО", zh: "已封存", ja: "封印中", es: "SELLADO", de: "VERSIEGELT"
+        }, this)}</div>
         <button class="wax-seal-emblem" style="--hold:0" title="${
-          info.ready ? (isRu ? "Нажмите, чтобы вскрыть" : "Click to crack the seal") : (isRu ? "Удерживайте 2 секунды, чтобы вскрыть досрочно" : "Press & hold 2s to open early")
+          info.ready ? i18n({
+            en: "Click to crack the seal", ru: "Нажмите, чтобы вскрыть", zh: "点击破印开封", ja: "クリックして封蝋を開封", es: "Haz clic para romper el sello", de: "Klicken, um das Siegel zu brechen"
+          }, this) : i18n({
+            en: "Press & hold 2s to open early", ru: "Удерживайте 2 секунды, чтобы вскрыть досрочно", zh: "长按2秒可提前开封", ja: "2秒長押しで早期開封", es: "Mantén presionado 2 s para abrir antes", de: "2 Sek. gedrückt halten zum vorzeitigen Öffnen"
+          }, this)
         }">
           <span class="wax-seal-hold-ring" aria-hidden="true"></span>
           <span class="wax-seal-half is-left">${sealSvg}</span>
@@ -5521,30 +5958,44 @@ class AlchemyFlowPlugin extends Plugin {
         </button>
         <h3 class="wax-seal-title">${
           info.ready
-            ? isRu ? "Капсула созрела — вскройте печать" : "The capsule is ready — crack the seal"
-            : isRu ? "Заметка под сургучной печатью" : "This note rests under wax"
+            ? i18n({
+                en: "The capsule is ready — crack the seal", ru: "Капсула созрела — вскройте печать", zh: "胶囊已成熟——请开启封印", ja: "カプセルが満期を迎えました — 封印を解いてください", es: "La cápsula está lista: rompe el sello", de: "Die Kapsel ist bereit — brich das Siegel"
+              }, this)
+            : i18n({
+                en: "This note rests under wax", ru: "Заметка под сургучной печатью", zh: "此笔记静候于火漆印下", ja: "このノートは封蝋の下に眠っています", es: "Esta nota descansa bajo lacre", de: "Diese Notiz ruht unter Siegellack"
+              }, this)
         }</h3>
         <div class="wax-seal-countdown">${
-          info.ready ? (isRu ? "00д 00ч 00м" : "00d 00h 00m") : this.formatCapsuleRemaining(info.remainingMs, isRu)
+          info.ready ? (zeroRemain[loc] || "00d 00h 00m") : this.formatCapsuleRemaining(info.remainingMs, loc)
         }</div>
         <div class="wax-seal-wick" aria-hidden="true"><span style="width:${info.pct.toFixed(1)}%"></span></div>
         <div class="wax-seal-dates">
-          <span>${isRu ? "Запечатано" : "Sealed"} · ${fmtDate(info.sealedAtMs)}</span>
-          <span>${isRu ? "Вскрытие" : "Opens"} · ${info.unlockAt ? fmtDate(info.unlockAt) : "—"}</span>
+          <span>${i18n({ en: "Sealed", ru: "Запечатано", zh: "已封存", ja: "封印日時", es: "Sellado", de: "Versiegelt" }, this)} · ${fmtDate(info.sealedAtMs)}</span>
+          <span>${i18n({ en: "Opens", ru: "Вскрытие", zh: "解封时间", ja: "開封予定", es: "Apertura", de: "Öffnung" }, this)} · ${info.unlockAt ? fmtDate(info.unlockAt) : "—"}</span>
         </div>
         ${
           info.message
-            ? `<blockquote class="wax-seal-letter"><small>${isRu ? "ВОПРОС / ПИСЬМО СЕБЕ" : "QUESTION / LETTER TO SELF"}</small>${esc(info.message)}</blockquote>`
+            ? `<blockquote class="wax-seal-letter"><small>${i18n({ en: "QUESTION / LETTER TO SELF", ru: "ВОПРОС / ПИСЬМО СЕБЕ", zh: "给自己的提问 / 未来的信", ja: "自分への問い / メモ", es: "PREGUNTA / CARTA A UNO MISMO", de: "FRAGE / BRIEF AN SICH SELBST" }, this)}</small>${esc(info.message)}</blockquote>`
             : ""
         }
         <p class="wax-seal-sub">${
           info.ready
-            ? isRu
-              ? "Сначала попробуйте вспомнить главное по памяти, затем нажмите на печать и сравните."
-              : "First recall the key points from memory, then click the seal and compare."
-            : isRu
-            ? "Текст скрыт, но файл не изменён (это не шифрование). Вспоминайте содержание по вопросу — так знание закрепляется. Досрочно: удерживайте печать 2 секунды."
-            : "The text is hidden but the file is untouched (this is not encryption). Recall the content from your question — that's how it sticks. Early open: hold the seal for 2 seconds."
+            ? i18n({
+                en: "First recall the key points from memory, then click the seal and compare.",
+                ru: "Сначала попробуйте вспомнить главное по памяти, затем нажмите на печать и сравните.",
+                zh: "请先凭记忆回想核心要点，然后点击封印与原文比对。",
+                ja: "まず記憶を頼りに要点を思い出してから、印をクリックして本文と照合してください。",
+                es: "Primero recuerda los puntos clave de memoria, luego haz clic en el sello y compara.",
+                de: "Erinnere zuerst die Kernpunkte aus dem Gedächtnis, klicke dann auf das Siegel und vergleiche."
+              }, this)
+            : i18n({
+                en: "The text is hidden but the file is untouched (this is not encryption). Recall the content from your question — that's how it sticks. Early open: hold the seal for 2 seconds.",
+                ru: "Текст скрыт, но файл не изменён (это не шифрование). Вспоминайте содержание по вопросу — так знание закрепляется. Досрочно: удерживайте печать 2 секунды.",
+                zh: "正文已隐藏但文件内容完好（非加密）。请根据问题主动回忆——这是巩固记忆的关键。提前开封：长按印章2秒。",
+                ja: "本文は隠れていますがファイルは無傷です（暗号化ではありません）。問いから内容を能動的に想起してください。早期開封：印を2秒長押し。",
+                es: "El texto está oculto pero el archivo intacto (no es encriptación). Recuerda el contenido a partir de la pregunta. Apertura anticipada: mantén el sello 2 s.",
+                de: "Der Text ist verborgen, die Datei unberührt (keine Verschlüsselung). Erinnere den Inhalt anhand der Frage. Vorzeitig: Siegel 2 Sek. gedrückt halten."
+              }, this)
         }</p>
       </div>
     `;
@@ -5578,31 +6029,27 @@ class AlchemyFlowPlugin extends Plugin {
       };
       emblem.addEventListener("pointerdown", (e) => {
         e.preventDefault();
-        e.stopPropagation();
         start = 0;
         emblem.classList.add("is-holding");
         raf = requestAnimationFrame(step);
       });
-      ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => emblem.addEventListener(ev, reset));
+      emblem.addEventListener("pointerup", reset);
+      emblem.addEventListener("pointerleave", reset);
+      emblem.addEventListener("pointercancel", reset);
     }
 
     viewContent.appendChild(veil);
 
     if (!info.ready) {
       this.waxSealTicker = window.setInterval(() => {
-        const cur = this.settings.waxSealNotes && this.settings.waxSealNotes[fp];
-        if (!cur || !veil.isConnected) {
-          window.clearInterval(this.waxSealTicker);
-          this.waxSealTicker = null;
-          return;
-        }
-        const live = this.getTimeCapsuleInfo(cur);
+        const live = this.getTimeCapsuleInfo(seal);
+        if (!live) return;
         if (live.ready) {
           this.renderNoteWaxSealOverlay();
           return;
         }
         const cd = veil.querySelector(".wax-seal-countdown");
-        if (cd) cd.textContent = this.formatCapsuleRemaining(live.remainingMs, isRu);
+        if (cd) cd.textContent = this.formatCapsuleRemaining(live.remainingMs, loc);
         const wick = veil.querySelector(".wax-seal-wick span");
         if (wick) wick.style.width = `${live.pct.toFixed(1)}%`;
       }, 30000);
@@ -5898,7 +6345,7 @@ class AlchemyFlowPlugin extends Plugin {
       // 7. Footer Signature
       ctx.fillStyle = "#78716C";
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText("ALCHEMY CRAFT v4.6.3 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+      ctx.fillText("ALCHEMY CRAFT v4.6.4 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
 
       const url = cv.toDataURL("image/png");
       const a = document.createElement("a");
@@ -5950,9 +6397,10 @@ class AlchemyFlowPlugin extends Plugin {
       return;
     }
 
-    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this);
     const pop = document.createElement("div");
     pop.className = "artcraft-focus-popover";
+    pop.setAttribute("lang", LOCALE_TAGS[loc] || "en-US");
 
     const renderPopoverContent = () => {
       const obsidian = require("obsidian");
@@ -5967,70 +6415,192 @@ class AlchemyFlowPlugin extends Plugin {
           id: "sentence",
           checked: !!this.settings.sentenceFocus,
           icon: SICRAFT_SVGS.focus,
-          title: isRu ? "Фокус на предложении и бейджи 01–04" : "Active Sentence Focus & 01–04 Badges",
-          sub: isRu ? "Подсветка кликнутых предложений и нумерации" : "Highlight clicked sentences & step badges",
+          title: i18n({
+            en: "Active Sentence Focus & 01–04 Badges",
+            ru: "Фокус на предложении и бейджи 01–04",
+            zh: "活动句子聚焦与01–04编号徽标",
+            ja: "文フォーカス＆01–04バッジ",
+            es: "Foco en frase activa y placas 01–04",
+            de: "Aktiver Satz-Fokus & 01–04 Badges",
+          }, this),
+          sub: i18n({
+            en: "Highlight clicked sentences & step badges",
+            ru: "Подсветка кликнутых предложений и нумерации",
+            zh: "高亮被点击的句子与段落步骤编号",
+            ja: "クリックされた文章とステップ番号のハイライト",
+            es: "Resalta frases pulsadas y distintivos numerados",
+            de: "Hervorhebung angeklickter Sätze & Schritt-Badges",
+          }, this),
         },
         {
           id: "spotlight",
           checked: !!this.settings.spotlightFocus,
           icon: SICRAFT_SVGS.zen,
-          title: isRu ? "Затемнение неактивных абзацев (Spotlight)" : "Spotlight Paragraph Dimmer",
-          sub: isRu ? "Мягко приглушает все абзацы, кроме текущего" : "Softly dims surrounding paragraphs while reading",
+          title: i18n({
+            en: "Spotlight Paragraph Dimmer",
+            ru: "Затемнение неактивных абзацев (Spotlight)",
+            zh: "聚光灯非焦点段落弱化",
+            ja: "非アクティブ段落の減光 (スポットライト)",
+            es: "Atenuación de párrafos circundantes",
+            de: "Spotlight-Abdunklung umgebender Absätze",
+          }, this),
+          sub: i18n({
+            en: "Softly dims surrounding paragraphs while reading",
+            ru: "Мягко приглушает все абзацы, кроме текущего",
+            zh: "阅读时柔和虚化除当前段落之外的内容",
+            ja: "読書中、現在のアクティブ段落以外を穏やかに薄暗くします",
+            es: "Atenúa suavemente los párrafos no leídos",
+            de: "Dunkelt umgebende Absätze beim Lesen sanft ab",
+          }, this),
         },
         {
           id: "ruler",
           checked: isRulerOn,
           icon: SICRAFT_SVGS.lamp,
-          title: isRu ? "Световая линейка для чтения (Reading Ruler)" : "Lumina Reading Ruler",
-          sub: isRu ? "Горизонтальная полоса света по строке курсора" : "Horizontal warm reading beam across active line",
+          title: i18n({
+            en: "Lumina Reading Ruler",
+            ru: "Световая линейка для чтения (Reading Ruler)",
+            zh: "温润光带阅读指引尺",
+            ja: "読書用ライトルーラー",
+            es: "Regla luminosa de lectura",
+            de: "Lumina-Leselineal",
+          }, this),
+          sub: i18n({
+            en: "Horizontal warm reading beam across active line",
+            ru: "Горизонтальная полоса света по строке курсора",
+            zh: "沿光标所在行展开水平柔光导读条",
+            ja: "カーソル行に沿った水平の温かいライトビーム",
+            es: "Haz de luz horizontal en la línea activa",
+            de: "Horizontaler warmer Lichtstrahl auf aktiver Zeile",
+          }, this),
         },
         {
           id: "bookfolio",
           checked: !!this.settings.bookSpreadMode,
           icon: SICRAFT_SVGS.columns,
-          title: isRu ? "3D Книжный фолиант (4 слоя страниц)" : "3D Multi-Sheet Book Folio (4 Stacked Sheets)",
-          sub: isRu ? "Книжный лист с кожаным корешком и стопкой страниц" : "Tactile book sheet with leather spine & stacked pages",
+          title: i18n({
+            en: "3D Multi-Sheet Book Folio (4 Stacked Sheets)",
+            ru: "3D Книжный фолиант (4 слоя страниц)",
+            zh: "3D多层实体书页册（4层页纸叠放）",
+            ja: "3D多層ブックフォリオ (4枚重ねの用紙)",
+            es: "Folio de libro 3D multicapa (4 hojas apiladas)",
+            de: "3D-Buchfolio (4 geschichtete Seiten)",
+          }, this),
+          sub: i18n({
+            en: "Tactile book sheet with leather spine & stacked pages",
+            ru: "Книжный лист с кожаным корешком и стопкой страниц",
+            zh: "带有皮革书脊与立体层叠纸边的实体书卷感",
+            ja: "革製背表紙と立体的な重ね紙を持つ触覚的ブックシート",
+            es: "Hoja de libro táctil con lomo de cuero y páginas apiladas",
+            de: "Taktile Buchseite mit Lederrücken und geschichteten Blättern",
+          }, this),
         },
         {
           id: "breathspine",
           checked: !!this.settings.breathingSpine,
           icon: SICRAFT_SVGS.lung,
-          title: isRu ? "Дыхание корешка книги (5.5с Вдох / 5.5с Выдох)" : "Coherent 6-BPM Breathing Book Spine",
-          sub: isRu ? "Мягкая волна света по корешку для глубокого покоя" : "Warm 11s coherent breathing glow along the book spine",
+          title: i18n({
+            en: "Coherent 6-BPM Breathing Book Spine",
+            ru: "Дыхание корешка книги (5.5с Вдох / 5.5с Выдох)",
+            zh: "6-BPM共振呼吸书脊（5.5秒吸气 / 5.5秒呼气）",
+            ja: "6-BPM共鳴呼吸ブック背表紙 (5.5秒吸気/5.5秒呼気)",
+            es: "Lomo con respiración coherente 6-BPM (5.5s insp / 5.5s esp)",
+            de: "6-BPM Kohärente Atmung am Buchrücken (5.5s Ein / 5.5s Aus)",
+          }, this),
+          sub: i18n({
+            en: "Warm 11s coherent breathing glow along the book spine",
+            ru: "Мягкая волна света по корешку для глубокого покоя",
+            zh: "书脊沿线11秒柔和光晕律动，调节心率变异性",
+            ja: "心身の深い安らぎをもたらす11秒周期の柔らかな光波",
+            es: "Suave resplandor de 11s en el lomo para máxima serenidad",
+            de: "Sanfte 11-Sekunden-Lichtwelle am Buchrücken für tiefe Ruhe",
+          }, this),
         },
         {
           id: "pacer",
           checked: !!this.settings.readingPacer,
           icon: SICRAFT_SVGS.bolt,
-          title: isRu ? "Световой пейсер скорочтения (300 слов/мин)" : "Acoustic Speed-Reading Pacer (300 WPM)",
-          sub: isRu ? "Плавный золотой луч ведёт взгляд по строкам" : "Gliding warm amber beam guides reading flow",
+          title: i18n({
+            en: "Acoustic Speed-Reading Pacer (300 WPM)",
+            ru: "Световой пейсер скорочтения (300 слов/мин)",
+            zh: "声学速读光标导引器 (300 词/分)",
+            ja: "音響速読ペーサー (300語/分)",
+            es: "Guía de lectura rápida (300 PPM)",
+            de: "Akustischer Schnelllese-Pacer (300 WpM)",
+          }, this),
+          sub: i18n({
+            en: "Gliding warm amber beam guides reading flow",
+            ru: "Плавный золотой луч ведёт взгляд по строкам",
+            zh: "行云流水的暖琥珀色光束引导阅读视线流",
+            ja: "滑らかな琥珀色の光が視線をスムーズに導きます",
+            es: "Un haz ámbar suave guía la vista línea a línea",
+            de: "Sanfter bernsteinfarbener Lichtstrahl führt den Blick",
+          }, this),
         },
         {
           id: "meta",
           checked: showMeta,
           icon: SICRAFT_SVGS.book,
-          title: isRu ? "Строка времени чтения и задач под заголовком" : "Quiet Reading Time & Tasks Sub-Header",
-          sub: isRu ? "Показать/скрыть ~мин чтения и прогресс задач" : "Show/hide reading time & task progress line",
+          title: i18n({
+            en: "Quiet Reading Time & Tasks Sub-Header",
+            ru: "Строка времени чтения и задач под заголовком",
+            zh: "标题下方静音阅读时间与任务进度",
+            ja: "見出し下の読書時間＆タスク進捗バー",
+            es: "Subcabecera con tiempo de lectura y tareas",
+            de: "Lesezeit & Aufgaben-Fortschritt unter Überschrift",
+          }, this),
+          sub: i18n({
+            en: "Show/hide reading time & task progress line",
+            ru: "Показать/скрыть ~мин чтения и прогресс задач",
+            zh: "显示/隐藏约分钟阅读时间与任务百分比",
+            ja: "読書時間とタスク進捗率の表示/非表示を切り替え",
+            es: "Mostrar/ocultar tiempo estimado y progreso",
+            de: "Lesezeit & Aufgaben-Fortschritt ein-/ausblenden",
+          }, this),
         },
         {
           id: "stamp",
           checked: this.settings.showCornerStamp !== false,
           icon: SICRAFT_SVGS.stamp,
-          title: isRu ? "Штамп «Изучено / Классика» вверху заметки" : "Top-Right Ex-Libris Stamp & Classics Seal",
+          title: i18n({
+            en: "Top-Right Ex-Libris Stamp & Classics Seal",
+            ru: "Штамп «Изучено / Классика» вверху заметки",
+            zh: "笔记右上角藏书票印章与经典封印",
+            ja: "ノート右上の蔵書印＆名著クラシック封印",
+            es: "Sello Ex-Libris y distinción de clásicos",
+            de: "Ex-Libris-Stempel & Klassiker-Siegel",
+          }, this),
           sub: isStamped
-            ? isRu
-              ? "Штамп проставлен на этой заметке"
-              : "Current note is stamped"
-            : isRu
-            ? "Показывать экслибрис-печать в правом верхнем углу"
-            : "Show Ex-Libris stamp in clean upper-right corner",
+            ? i18n({
+                en: "Current note is stamped",
+                ru: "Штамп проставлен на этой заметке",
+                zh: "当前笔记已加盖印章",
+                ja: "このノートには印章が押されています",
+                es: "Nota actual ya sellada",
+                de: "Aktuelle Notiz ist abgestempelt",
+              }, this)
+            : i18n({
+                en: "Show Ex-Libris stamp in clean upper-right corner",
+                ru: "Показывать экслибрис-печать в правом верхнем углу",
+                zh: "在右上角展示精致典雅的藏书票盖印",
+                ja: "右上に洗練された蔵書票スタンプを表示",
+                es: "Mostrar sello en la esquina superior derecha",
+                de: "Ex-Libris-Stempel oben rechts anzeigen",
+              }, this),
         },
       ];
 
       pop.innerHTML = `
         <div class="focus-pop-head">
           <span class="focus-pop-badge">${SICRAFT_SVGS.focus} <span>${
-        isRu ? "РЕЖИМЫ ФОКУСА И КНИЖНОЙ СТУДИИ" : "FOCUS & BOOK READING STUDIO"
+        i18n({
+          en: "FOCUS & BOOK READING STUDIO",
+          ru: "РЕЖИМЫ ФОКУСА И КНИЖНОЙ СТУДИИ",
+          zh: "专注模式与阅读工坊",
+          ja: "フォーカス＆読書スタジオ",
+          es: "ESTUDIO DE FOCO Y LECTURA",
+          de: "FOKUS- & LESE-STUDIO",
+        }, this)
       }</span></span>
           <button class="focus-pop-close" title="Close">×</button>
         </div>
@@ -6050,43 +6620,45 @@ class AlchemyFlowPlugin extends Plugin {
             )
             .join("")}
         </div>
-        <div class="focus-pop-divider">${isRu ? "ПЕРЕПЛЁТНАЯ МАСТЕРСКАЯ (МАТЕРИАЛ КОРЕШКА И ЛИСТА)" : "BOOKBINDER'S SPINE MATERIAL & TEXTURE"}</div>
+        <div class="focus-pop-divider">${i18n({
+          en: "BOOKBINDER'S SPINE MATERIAL & TEXTURE",
+          ru: "ПЕРЕПЛЁТНАЯ МАСТЕРСКАЯ (МАТЕРИАЛ КОРЕШКА И ЛИСТА)",
+          zh: "装订工坊（书脊皮质与纸张纹理）",
+          ja: "製本工房 (背表紙の革素材と質感)",
+          es: "TALLER DE ENCUADERNACIÓN (MATERIAL DEL LOMO)",
+          de: "BUCHBINDEREI (RÜCKENMATERIAL & TEXTUR)",
+        }, this)}</div>
         <div class="artcraft-spine-picker-row">
           <button class="spine-mat-chip ${(this.settings.spineMaterial || "cognac") === "cognac" ? "is-active" : ""}" data-spine="cognac">
-            <span class="spine-swatch" style="background:#8C5828"></span><span>${isRu ? "Коньяк" : "Cognac"}</span>
+            <span class="spine-swatch" style="background:#8C5828"></span><span>${i18n({ en: "Cognac", ru: "Коньяк", zh: "干邑棕", ja: "コニャック", es: "Coñac", de: "Cognac" }, this)}</span>
           </button>
           <button class="spine-mat-chip ${this.settings.spineMaterial === "emerald" ? "is-active" : ""}" data-spine="emerald">
-            <span class="spine-swatch" style="background:#14532D"></span><span>${isRu ? "Сафьян" : "Emerald"}</span>
+            <span class="spine-swatch" style="background:#14532D"></span><span>${i18n({ en: "Emerald", ru: "Сафьян", zh: "祖母绿", ja: "エメラルド", es: "Esmeralda", de: "Saffian" }, this)}</span>
           </button>
           <button class="spine-mat-chip ${this.settings.spineMaterial === "crimson" ? "is-active" : ""}" data-spine="crimson">
-            <span class="spine-swatch" style="background:#7F1D1D"></span><span>${isRu ? "Бархат" : "Crimson"}</span>
+            <span class="spine-swatch" style="background:#7F1D1D"></span><span>${i18n({ en: "Crimson", ru: "Бархат", zh: "绯红丝绒", ja: "深紅ベルベット", es: "Carmesí", de: "Samtrot" }, this)}</span>
           </button>
           <button class="spine-mat-chip ${this.settings.spineMaterial === "linen" ? "is-active" : ""}" data-spine="linen">
-            <span class="spine-swatch" style="background:#334155"></span><span>${isRu ? "Лён" : "Linen"}</span>
+            <span class="spine-swatch" style="background:#334155"></span><span>${i18n({ en: "Linen", ru: "Лён", zh: "北欧麻布", ja: "リネン", es: "Lino", de: "Leinen" }, this)}</span>
           </button>
         </div>
-        <div class="focus-pop-divider">${isRu ? "КНИЖНАЯ МЕТОДИКА: 5 ЗАКЛАДОК-НУТРИЕНТОВ" : "5-NUTRIENT BOOK STICKER TOOLS"}</div>
+        <div class="focus-pop-divider">${i18n({
+          en: "5-NUTRIENT BOOK STICKER TOOLS",
+          ru: "КНИЖНАЯ МЕТОДИКА: 5 ЗАКЛАДОК-НУТРИЕНТОВ",
+          zh: "阅读方法论：5大养分书签工具",
+          ja: "読書メソッド：5大栄養素付箋ツール",
+          es: "MÉTODO DE LECTURA: 5 NUTRIENTES",
+          de: "LESEMETHODIK: 5 NÄHRSTOFF-LESEZEICHEN",
+        }, this)}</div>
         <div class="focus-pop-actions">
           <button class="focus-pop-act-btn is-primary" data-pop-act="add-sticker">
-            ${SICRAFT_SVGS.bookmark} <span>${isRu ? "+ Закладка-Нутриент со смыслом" : "+ Attach 5-Nutrient Sticker"}</span>
+            ${SICRAFT_SVGS.bookmark} <span>${i18n({ en: "+ Attach 5-Nutrient Sticker", ru: "+ Закладка-Нутриент со смыслом", zh: "+ 附着有深度的养分书签", ja: "+ 意味ある栄養素付箋を貼る", es: "+ Adjuntar pegatina de nutrientes", de: "+ Nährstoff-Lesezeichen anbringen" }, this)}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="digest">
-            ${SICRAFT_SVGS.book} <span>${isRu ? "Дайджест книги (Белки и Углеводы)" : "Book Digest (Proteins & Carbs)"}</span>
+            ${SICRAFT_SVGS.book} <span>${i18n({ en: "Book Digest (Proteins & Carbs)", ru: "Дайджест книги (Белки и Углеводы)", zh: "书籍摘要（蛋白质与碳水）", ja: "読書ダイジェスト (実践＆思考)", es: "Resumen del libro (Proteínas y Carbohidratos)", de: "Buch-Auszug (Proteine & Kohlenhydrate)" }, this)}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="bookshelf">
-            ${SICRAFT_SVGS.shelf} <span>${isRu ? "Открыть «Полку Классики» (Все книги базы)" : "Open Classics Bookshelf (Vault Library)"}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="exlibris-png">
-            ${SICRAFT_SVGS.camera} <span>${isRu ? "Сохранить Карточку Экслибриса в PNG" : "Export Ex-Libris Book Card as PNG"}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="wax-seal">
-            ${SICRAFT_SVGS.stamp} <span>${isRu ? "Капсула времени: запечатать заметку до даты" : "Time Capsule: seal this note until a date"}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="tour">
-            ${SICRAFT_SVGS.spark} <span>${isRu ? "Открыть интерактивный тур (все фишки)" : "Open Interactive Tour (every feature)"}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="two-page">
-            ${SICRAFT_SVGS.columns} <span>${isRu ? "Открыть 2-страничный разворот рядом" : "Open 2-Page Side-by-Side Spread"}</span>
+            ${SICRAFT_SVGS.shelf} <span>${i18n({ en: "Open Classics Bookshelf (All Books)", ru: "Открыть «Полку Классики» (Все книги базы)", zh: "打开「经典书架」（全库图书）", ja: "「古典の本棚」を開く (全ノート)", es: "Abrir estantería de clásicos (Toda la bóveda)", de: "Klassiker-Regal öffnen (Alle Bücher)" }, this)}</span>
           </button>
         </div>
       `;
@@ -8350,18 +8922,21 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.addClass("artcraft-calm-settings-root");
-    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this.plugin);
+    const isRu = loc === "ru";
 
-    const createSectionGroup = (num, titleRu, titleEn, subRu, subEn, iconSvg) => {
+    const createSectionGroup = (num, title, sub, iconSvg) => {
+      const resolvedTitle = typeof title === "object" ? i18n(title, this.plugin) : (isRu ? title : sub);
+      const resolvedSub = typeof sub === "object" ? i18n(sub, this.plugin) : (isRu ? sub : "");
       const groupWrap = containerEl.createDiv({ cls: "artcraft-settings-group-card" });
       const groupHead = groupWrap.createDiv({ cls: "artcraft-settings-group-head" });
       groupHead.innerHTML = `
         <div class="settings-group-badge-row">
           <span class="settings-group-num">${num}</span>
           <span class="settings-group-icon">${iconSvg}</span>
-          <span class="settings-group-title">${isRu ? titleRu : titleEn}</span>
+          <span class="settings-group-title">${resolvedTitle}</span>
         </div>
-        <div class="settings-group-sub">${isRu ? subRu : subEn}</div>
+        ${resolvedSub ? `<div class="settings-group-sub">${resolvedSub}</div>` : ""}
       `;
       return groupWrap.createDiv({ cls: "artcraft-settings-group-items" });
     };
@@ -8403,10 +8978,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     // =========================================================================
     const secReadability = createSectionGroup(
       "01",
-      "Читаемость, Типографика и Шапка заметки",
-      "Readability, Typography & Note Header",
-      "Главные настройки журнальной вёрстки Swiss Bento, языка интерфейса и индикаторов прогресса.",
-      "Core Swiss Bento editorial typography, interface language, and note header indicators.",
+      {
+        en: "Readability, Typography & Note Header",
+        ru: "Читаемость, Типографика и Шапка заметки",
+        zh: "排版可读性、字体与笔记顶栏",
+        ja: "可読性・タイポグラフィ・ノートヘッダー",
+        es: "Legibilidad, tipografía y cabecera de nota",
+        de: "Lesbarkeit, Typografie & Notiz-Kopfzeile",
+      },
+      {
+        en: "Core typography, interface language, Swiss Bento styling, and reading progress indicators.",
+        ru: "Главные настройки журнальной вёрстки Swiss Bento, языка интерфейса и индикаторов прогресса.",
+        zh: "核心排版样式、界面语言、Swiss Bento杂志排版以及阅读进度指示器。",
+        ja: "主要なタイポグラフィ、UI言語、スイスベントー組版、読書進捗インジケーター。",
+        es: "Tipografía principal, idioma de la interfaz, diseño Swiss Bento e indicadores de progreso.",
+        de: "Typografie, UI-Sprache, Swiss-Bento-Satz und Lese-Fortschrittsanzeige.",
+      },
       SICRAFT_SVGS.book
     );
 
@@ -8415,13 +9002,14 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       .setDesc(t("langDesc", this.plugin))
       .addDropdown((drop) =>
         drop
+          .addOption("auto", "🌐 Auto (Follow Obsidian) / Авто")
           .addOption("en", "EN — English")
           .addOption("ru", "RU — Русский")
           .addOption("zh", "ZH — 中文 (Chinese)")
           .addOption("ja", "JA — 日本語 (Japanese)")
           .addOption("es", "ES — Español")
           .addOption("de", "DE — Deutsch")
-          .setValue(this.plugin.settings.uiLanguage || "en")
+          .setValue(this.plugin.settings.uiLanguage || "auto")
           .onChange(async (val) => {
             this.plugin.settings.uiLanguage = val;
             await this.plugin.saveSettings();
@@ -8519,10 +9107,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     // =========================================================================
     const secSonic = createSectionGroup(
       "02",
-      "Крафтовый Эквалайзер и Фоновые Звуки (Sonic Studio)",
-      "Craft Equalizer & Ambient Soundscapes",
-      "6 крафтовых визуализаций эквалайзера, системный звук ПК, скролл громкости колёсиком мыши и 12 звуков фокуса.",
-      "6 craft equalizer styles, PC desktop audio capture, mouse-wheel volume scroll, and 12 focus soundscapes.",
+      {
+        en: "Craft Equalizer & Ambient Soundscapes (Sonic Studio)",
+        ru: "Крафтовый Эквалайзер и Фоновые Звуки (Sonic Studio)",
+        zh: "手作律动均衡器与环境音效 (Sonic Studio)",
+        ja: "クラフトイコライザー＆環境音 (Sonic Studio)",
+        es: "Ecualizador artesanal y paisajes sonoros (Sonic Studio)",
+        de: "Craft-Equalizer & Ambient-Klangwelten (Sonic Studio)",
+      },
+      {
+        en: "6 craft equalizer visualizers, desktop audio loopback, volume scroll wheel, and 12 stereo soundscapes.",
+        ru: "6 крафтовых визуализаций эквалайзера, системный звук ПК, скролл громкости колёсиком мыши и 12 звуков фокуса.",
+        zh: "6种手作动效频谱仪、电脑系统音频环路同步、滚轮音量微调与12种立体声沉浸音效。",
+        ja: "6種のクラフト視覚効果、PC音声ループバック同期、ホイール音量調節、12種の環境音。",
+        es: "6 estilos visuales, captura de audio del PC, rueda de volumen y 12 paisajes sonoros.",
+        de: "6 Craft-Visualisierungen, PC-Audio-Loopback, Lautstärke-Scrollrad und 12 Stereo-Klangwelten.",
+      },
       SICRAFT_SVGS.sliders
     );
 
@@ -9129,48 +9729,44 @@ class TimeCapsuleSealModal extends Modal {
   onOpen() {
     const { contentEl, modalEl } = this;
     modalEl.addClass("artcraft-capsule-modal");
-    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const loc = getLocale(this.plugin);
+    const locTag = LOCALE_TAGS[loc] || "en-US";
+    modalEl.setAttribute("lang", locTag);
     contentEl.empty();
 
-    const presets = [
-      { d: 1, ru: "1 день", en: "1 day" },
-      { d: 3, ru: "3 дня", en: "3 days" },
-      { d: 7, ru: "1 неделя", en: "1 week" },
-      { d: 14, ru: "2 недели", en: "2 weeks" },
-      { d: 30, ru: "1 месяц", en: "1 month" },
-    ];
+    const presets = I18N_CAPSULE.presets;
     const minDate = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
 
     contentEl.innerHTML = `
       <div class="capsule-head">
-        <span class="capsule-badge">${isRu ? "КАПСУЛА ВРЕМЕНИ // СУРГУЧНАЯ ПЕЧАТЬ" : "TIME CAPSULE // WAX SEAL"}</span>
-        <h2 class="capsule-title">${isRu ? "Запечатать заметку до даты" : "Seal this note until a date"}</h2>
+        <span class="capsule-badge">${i18n(I18N_CAPSULE.badge, this.plugin)}</span>
+        <h2 class="capsule-title">${i18n(I18N_CAPSULE.title, this.plugin)}</h2>
         <div class="capsule-file">📄 ${this.file.basename}</div>
       </div>
       <ol class="capsule-steps">
-        <li><span>01</span><div><strong>${isRu ? "Печать скрывает текст" : "The seal hides the text"}</strong><small>${
-          isRu ? "Файл не меняется и не шифруется — это визуальная капсула для активного припоминания." : "The file isn't changed or encrypted — it's a visual capsule for active recall."
+        <li><span>01</span><div><strong>${i18n(I18N_CAPSULE.step1Title, this.plugin)}</strong><small>${
+          i18n(I18N_CAPSULE.step1Desc, this.plugin)
         }</small></div></li>
-        <li><span>02</span><div><strong>${isRu ? "Вспоминайте по вопросу" : "Recall from your question"}</strong><small>${
-          isRu ? "Пока идёт отсчёт, пытайтесь вспомнить суть. Досрочно — удерживать печать 2 секунды." : "While the countdown runs, try to recall the essence. Early open: hold the seal for 2 seconds."
+        <li><span>02</span><div><strong>${i18n(I18N_CAPSULE.step2Title, this.plugin)}</strong><small>${
+          i18n(I18N_CAPSULE.step2Desc, this.plugin)
         }</small></div></li>
-        <li><span>03</span><div><strong>${isRu ? "Вскройте в срок" : "Open it on time"}</strong><small>${
-          isRu ? "В день вскрытия придёт уведомление, печать засияет золотом. Сравните ответ с текстом." : "On the day you'll get a notice and the seal turns gold. Compare your answer with the text."
+        <li><span>03</span><div><strong>${i18n(I18N_CAPSULE.step3Title, this.plugin)}</strong><small>${
+          i18n(I18N_CAPSULE.step3Desc, this.plugin)
         }</small></div></li>
       </ol>
-      <div class="capsule-label">${isRu ? "СРОК ВСКРЫТИЯ" : "UNLOCK AFTER"}</div>
+      <div class="capsule-label">${i18n(I18N_CAPSULE.unlockAfter, this.plugin)}</div>
       <div class="capsule-chips">
-        ${presets.map((p) => `<button class="capsule-chip ${p.d === this.days ? "is-active" : ""}" data-days="${p.d}">${isRu ? p.ru : p.en}</button>`).join("")}
-        <label class="capsule-date-wrap">${isRu ? "или дата" : "or date"} <input type="date" class="capsule-date" min="${minDate}"></label>
+        ${presets.map((p) => `<button class="capsule-chip ${p.d === this.days ? "is-active" : ""}" data-days="${p.d}">${p[loc] || p.en}</button>`).join("")}
+        <label class="capsule-date-wrap" title="${i18n(I18N_CAPSULE.datePlaceholder, this.plugin)}">${i18n(I18N_CAPSULE.orDate, this.plugin)} <input type="date" class="capsule-date" min="${minDate}" lang="${locTag}"></label>
       </div>
-      <div class="capsule-label">${isRu ? "ВОПРОС СЕБЕ ИЛИ ПИСЬМО В БУДУЩЕЕ (НЕОБЯЗАТЕЛЬНО)" : "QUESTION TO SELF OR LETTER TO THE FUTURE (OPTIONAL)"}</div>
+      <div class="capsule-label">${i18n(I18N_CAPSULE.questionLabel, this.plugin)}</div>
       <textarea class="capsule-message" rows="3" maxlength="600" placeholder="${
-        isRu ? "Например: какие 3 главные идеи этой главы и что я с ними сделаю?" : "e.g. What are the 3 key ideas of this chapter and what will I do with them?"
+        i18n(I18N_CAPSULE.questionPlaceholder, this.plugin)
       }"></textarea>
       <div class="capsule-summary"></div>
       <div class="capsule-actions">
-        <button class="capsule-cancel">${isRu ? "Отмена" : "Cancel"}</button>
-        <button class="capsule-seal mod-cta">🕯️ ${isRu ? "Запечатать" : "Seal note"}</button>
+        <button class="capsule-cancel">${i18n(I18N_CAPSULE.cancel, this.plugin)}</button>
+        <button class="capsule-seal mod-cta">${i18n(I18N_CAPSULE.sealBtn, this.plugin)}</button>
       </div>
     `;
 
@@ -9185,8 +9781,14 @@ class TimeCapsuleSealModal extends Modal {
     };
     const refreshSummary = () => {
       const t = computeUnlock();
-      const label = new Date(t).toLocaleString(isRu ? "ru-RU" : undefined, { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
-      summaryEl.textContent = isRu ? `Печать можно будет вскрыть: ${label}` : `The seal can be opened on: ${label}`;
+      const label = new Date(t).toLocaleString(locTag, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      summaryEl.textContent = `${i18n(I18N_CAPSULE.summaryPrefix, this.plugin)}${label}`;
     };
 
     contentEl.querySelectorAll(".capsule-chip").forEach((chip) => {
@@ -9225,4 +9827,5 @@ class TimeCapsuleSealModal extends Modal {
 
 module.exports = AlchemyFlowPlugin;
 
+/* nosourcemap */
 /* nosourcemap */
