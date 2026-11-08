@@ -5100,49 +5100,150 @@ body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
    SOFT BOTTOM-LEFT GRAPH STUDIO BAR, & UNIFIED SETTINGS HERO BUTTONS
    ========================================================================== */
 
-/* 1. True Multi-Sheet 3D Hardcover Book Folio Effect (Live Preview + Reading View)
-   Creates the warm desk surface + leather spine + inner spine crease + 4 stacked sheets on right & bottom edges! */
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content {
-  background: radial-gradient(circle at 50% 20%, #ECE8DF 0%, #E2DDD1 100%) !important;
+/* ==========================================================================
+   ALCHEMY CRAFT v4.6.2 — TRUE 3D MULTI-SHEET HARDCOVER BOOK FOLIO
+   (MATCHING THE WEBSITE 1:1 WITH REAL DESK CANVAS & 4 VISIBLE DECKLE SHEETS)
+   ========================================================================== */
+
+/* 1. Warm Desk Surface for the entire Markdown View & Scroller */
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: radial-gradient(circle at 50% 16%, #EFEBE0 0%, #E3DDD0 100%) !important;
   border-left: none !important;
   box-shadow: none !important;
 }
 
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  padding-top: 22px !important;
-  padding-bottom: 44px !important;
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller {
+  overflow-x: hidden !important;
+  padding-top: 24px !important;
+  padding-bottom: 72px !important;
+  padding-left: 20px !important;
+  padding-right: 36px !important;
 }
 
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  padding-top: 24px !important;
+  padding-bottom: 72px !important;
+  padding-left: 20px !important;
+  padding-right: 36px !important;
+}
+
+/* 2. Top Header Bar Aligns with Book Folio Width */
+body.artcraft-book-spread .artcraft-task-progress-wrap {
+  max-width: min(940px, calc(100% - 48px)) !important;
+  margin: 0 auto 14px auto !important;
+  padding: 0 4px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 3. The 3D Book Folio Physical Page (Live Preview .cm-sizer & Reading View .markdown-preview-sizer) */
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  max-width: var(--file-line-width, 920px) !important;
+  width: min(920px, calc(100% - 48px)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 12px !important;
+  margin-bottom: 56px !important;
   background: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 3.2%, #FCFBF7 96.5%, #F4F0E5 100%) !important;
   border-top: 1px solid #DFDBD0 !important;
   border-right: 1px solid #D4CFC2 !important;
   border-bottom: 1px solid #D4CFC2 !important;
-  border-left: 8px solid #8C5828 !important;
-  border-radius: 4px 16px 16px 4px !important;
-  padding: 34px 46px 44px 46px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  border-left: 10px solid #8C5828 !important;
+  border-radius: 4px 18px 18px 4px !important;
+  padding: 40px 52px 52px 52px !important;
   box-sizing: border-box !important;
-  /* 4 Visible Stacked Book Sheets on Right & Bottom Edges + Warm Inner Spine Crease */
+  position: relative !important;
+  /* 4 Distinct Stacked Book Sheets on Right & Bottom Edges + Warm Inner Spine Crease */
   box-shadow:
-    inset 26px 0 36px -16px rgba(92, 60, 28, 0.16),
-    inset -1px 0 0 rgba(255, 255, 255, 0.7),
-    4px 3px 0 -1px #F6F3EC,
-    4px 3px 0 0 #D8D2C5,
-    8px 6px 0 -1px #EFEBE1,
-    8px 6px 0 0 #CFC8B8,
-    12px 9px 0 -1px #E8E3D7,
-    12px 9px 0 0 #C5BEB0,
-    16px 12px 0 -1px #E1DBD0,
-    16px 12px 0 0 #B8B0A0,
-    22px 20px 38px rgba(45, 35, 22, 0.13) !important;
+    inset 28px 0 38px -18px rgba(92, 60, 28, 0.18),
+    inset -1px 0 0 rgba(255, 255, 255, 0.8),
+    5px 4px 0 -1px #F6F3EC,
+    5px 4px 0 0 #D6CFC0,
+    10px 8px 0 -1px #EFEBE1,
+    10px 8px 0 0 #CCC4B4,
+    15px 12px 0 -1px #E8E3D7,
+    15px 12px 0 0 #C0B8A8,
+    20px 16px 0 -1px #E0DAD0,
+    20px 16px 0 0 #B4AC9B,
+    28px 26px 48px rgba(45, 35, 22, 0.14) !important;
+  transition: border-left-color 0.35s ease, box-shadow 0.35s ease !important;
 }
 
-body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content {
-  background: radial-gradient(circle at 50% 20%, #14161A 0%, #0D0E11 100%) !important;
+/* Ensure Live Preview content stays neatly inside the sheet */
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 4. Bookbinder Spine Materials Applied to the Folio */
+body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  border-left: 10px solid #14532D !important;
+  background: linear-gradient(90deg, #E8F0EB 0%, #FAF9F5 3.2%, #FCFBF8 96.5%, #F2EFE6 100%) !important;
+  box-shadow:
+    inset 3px 0 0 #D97706,
+    inset 28px 0 38px -18px rgba(20, 83, 45, 0.20),
+    inset -1px 0 0 rgba(255, 255, 255, 0.8),
+    5px 4px 0 -1px #F6F3EC,
+    5px 4px 0 0 #D6CFC0,
+    10px 8px 0 -1px #EFEBE1,
+    10px 8px 0 0 #CCC4B4,
+    15px 12px 0 -1px #E8E3D7,
+    15px 12px 0 0 #C0B8A8,
+    20px 16px 0 -1px #E0DAD0,
+    20px 16px 0 0 #B4AC9B,
+    28px 26px 48px rgba(20, 45, 30, 0.15) !important;
+}
+
+body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  border-left: 10px solid #7F1D1D !important;
+  background: linear-gradient(90deg, #F5EAE8 0%, #FCF9F5 3.2%, #FFFDF9 96.5%, #F4EFE6 100%) !important;
+  box-shadow:
+    inset 3px 0 0 #F59E0B,
+    inset 28px 0 38px -18px rgba(127, 29, 29, 0.20),
+    inset -1px 0 0 rgba(255, 255, 255, 0.8),
+    5px 4px 0 -1px #F6F3EC,
+    5px 4px 0 0 #D6CFC0,
+    10px 8px 0 -1px #EFEBE1,
+    10px 8px 0 0 #CCC4B4,
+    15px 12px 0 -1px #E8E3D7,
+    15px 12px 0 0 #C0B8A8,
+    20px 16px 0 -1px #E0DAD0,
+    20px 16px 0 0 #B4AC9B,
+    28px 26px 48px rgba(60, 20, 20, 0.15) !important;
+}
+
+body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  border-left: 10px solid #334155 !important;
+  background: linear-gradient(90deg, #EAEEF4 0%, #F9FAFB 3.2%, #FFFFFF 96.5%, #F1F5F9 100%) !important;
+  box-shadow:
+    inset 3px 0 0 #94A3B8,
+    inset 28px 0 38px -18px rgba(51, 65, 85, 0.18),
+    inset -1px 0 0 rgba(255, 255, 255, 0.8),
+    5px 4px 0 -1px #F8FAFC,
+    5px 4px 0 0 #CBD5E1,
+    10px 8px 0 -1px #F1F5F9,
+    10px 8px 0 0 #94A3B8,
+    15px 12px 0 -1px #E2E8F0,
+    15px 12px 0 0 #64748B,
+    28px 26px 48px rgba(15, 23, 42, 0.13) !important;
+}
+
+/* 5. Dark Mode 3D Hardcover Book Folio */
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: radial-gradient(circle at 50% 16%, #15171C 0%, #0D0E11 100%) !important;
 }
 
 body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
@@ -5151,16 +5252,16 @@ body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type=
   border-top: 1px solid #2E323C !important;
   border-right: 1px solid #2E323C !important;
   border-bottom: 1px solid #2E323C !important;
-  border-left: 8px solid #A16207 !important;
+  border-left: 10px solid #A16207 !important;
   box-shadow:
-    inset 26px 0 36px -16px rgba(0, 0, 0, 0.55),
-    4px 3px 0 -1px #1A1C22,
-    4px 3px 0 0 #2E323C,
-    8px 6px 0 -1px #16181D,
-    8px 6px 0 0 #282C35,
-    12px 9px 0 -1px #131519,
-    12px 9px 0 0 #22262E,
-    20px 20px 42px rgba(0, 0, 0, 0.55) !important;
+    inset 28px 0 38px -18px rgba(0, 0, 0, 0.65),
+    5px 4px 0 -1px #1A1C22,
+    5px 4px 0 0 #2E323C,
+    10px 8px 0 -1px #16181D,
+    10px 8px 0 0 #282C35,
+    15px 12px 0 -1px #131519,
+    15px 12px 0 0 #22262E,
+    28px 26px 48px rgba(0, 0, 0, 0.60) !important;
 }
 
 /* 2. Clean, Soft, Non-Intrusive Bottom-Left Graph Studio Bar (Never overlaps text or right filter drawer!) */
@@ -5386,31 +5487,7 @@ body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-
   animation: artcraftCoherentSpineBreath 11s ease-in-out infinite !important;
 }
 
-/* 2. Peripheral Margin Sandglass & Golden Ink Thread along Right Edge of Book Folio */
-body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  position: relative !important;
-}
-
-body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .cm-sizer::after,
-body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::after {
-  content: "";
-  position: absolute;
-  top: 18px;
-  right: 6px;
-  bottom: 18px;
-  width: 3px;
-  border-radius: 999px;
-  background: linear-gradient(
-    180deg,
-    #69BD28 0%,
-    #D97706 var(--artcraft-sandglass-pct, 0%),
-    rgba(212, 207, 194, 0.35) var(--artcraft-sandglass-pct, 0%),
-    rgba(212, 207, 194, 0.35) 100%
-  );
-  pointer-events: none;
-  transition: background 0.4s ease;
-}
+/* 2. Peripheral Margin Sandglass Thread permanently disabled per user request */
 
 /* 3. Classics Bookshelf Modal Styling */
 .artcraft-bookshelf-modal-root {
@@ -5782,4 +5859,317 @@ body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[d
 body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .markdown-rendered p,
 body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .cm-line {
   color: #2C221E;
+}
+
+/* Force removal of peripheral sandglass line */
+.artcraft-margin-sandglass .cm-sizer::after,
+.artcraft-margin-sandglass .markdown-preview-sizer::after {
+  display: none !important;
+  content: none !important;
+}
+
+
+/* ==========================================================================
+   TIME CAPSULE WAX SEAL & MODAL STYLES (v4.6.2)
+   ========================================================================== */
+.artcraft-capsule-modal {
+  padding: 8px !important;
+  max-width: 520px !important;
+}
+
+.capsule-head {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.capsule-badge {
+  display: inline-block;
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #991B1B;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-bottom: 6px;
+}
+
+.capsule-title {
+  margin: 0 0 4px 0 !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #18181B;
+}
+
+.capsule-file {
+  font-size: 12px;
+  color: #78716C;
+  font-family: var(--font-monospace);
+}
+
+.capsule-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.capsule-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #FAF8F3;
+  border: 1px solid #E7E2D7;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.capsule-steps li > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #8C5828;
+  color: #FFFFFF;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.capsule-steps li strong {
+  display: block;
+  font-size: 12.5px;
+  color: #1C1917;
+}
+
+.capsule-steps li small {
+  display: block;
+  font-size: 11px;
+  color: #78716C;
+  line-height: 1.35;
+}
+
+.capsule-label {
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #78716C;
+  margin-bottom: 6px;
+}
+
+.capsule-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.capsule-chip {
+  background: #FFFFFF !important;
+  border: 1.5px solid #E5E0D4 !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #44403C !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.capsule-chip:hover {
+  border-color: #8C5828 !important;
+}
+
+.capsule-chip.is-active {
+  background: #8C5828 !important;
+  color: #FFFFFF !important;
+  border-color: #8C5828 !important;
+}
+
+.capsule-date-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #78716C;
+  font-weight: 600;
+}
+
+.capsule-date {
+  padding: 4px 8px;
+  border: 1.5px solid #E5E0D4;
+  border-radius: 6px;
+  font-size: 11.5px;
+  background: #FFFFFF;
+}
+
+.capsule-message {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1.5px solid #E5E0D4;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-family: inherit;
+  resize: vertical;
+  background: #FAF8F3;
+  color: #1C1917;
+  margin-bottom: 10px;
+}
+
+.capsule-summary {
+  font-size: 12px;
+  color: #8C5828;
+  font-weight: 700;
+  margin-bottom: 14px;
+  min-height: 18px;
+}
+
+.capsule-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.capsule-actions button {
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+}
+
+/* Wax Seal Veil on Active Note */
+.artcraft-wax-seal-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  background: rgba(245, 241, 233, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  transition: opacity 0.5s ease;
+}
+
+.artcraft-wax-seal-veil.is-cracking {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wax-seal-card {
+  max-width: 480px;
+  width: 100%;
+  background: #FAF8F3;
+  border: 1.5px solid #D6CFC0;
+  border-radius: 20px;
+  padding: 32px 28px;
+  text-align: center;
+  box-shadow: 0 20px 48px rgba(45, 35, 22, 0.16);
+  position: relative;
+}
+
+.wax-seal-emblem {
+  position: relative;
+  display: inline-block;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  filter: drop-shadow(0 10px 20px rgba(153, 27, 27, 0.40));
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.wax-seal-emblem:hover {
+  transform: scale(1.06) rotate(-2deg);
+}
+
+.wax-seal-emblem.is-holding {
+  transform: scale(0.96);
+}
+
+.wax-seal-hold-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 3px solid rgba(245, 158, 11, 0.2);
+  border-top-color: #F59E0B;
+  pointer-events: none;
+  opacity: 0;
+  transform: rotate(calc(var(--hold, 0) * 360deg));
+  transition: opacity 0.2s ease;
+}
+
+.wax-seal-emblem.is-holding .wax-seal-hold-ring {
+  opacity: 1;
+}
+
+.wax-seal-countdown {
+  font-family: var(--font-monospace);
+  font-size: 26px;
+  font-weight: 800;
+  color: #8C5828;
+  letter-spacing: 0.04em;
+  margin: 8px 0;
+}
+
+.wax-seal-wick {
+  width: 100%;
+  height: 6px;
+  background: #E7E2D7;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 14px 0;
+}
+
+.wax-seal-wick span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #8C5828 0%, #D97706 100%);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.wax-seal-dates {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  color: #78716C;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.wax-seal-letter {
+  background: #FFFFFF;
+  border-left: 4px solid #D97706;
+  border-radius: 6px;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 12.5px;
+  color: #292524;
+  margin: 12px 0 !important;
+  font-style: italic;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.wax-seal-letter small {
+  display: block;
+  font-family: var(--font-monospace);
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #D97706;
+  font-style: normal;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
 }

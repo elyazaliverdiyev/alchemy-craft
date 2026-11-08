@@ -37,7 +37,8 @@ const DEFAULT_SETTINGS = {
   showReadingStats: true, // Live Reading Time & Word Count capsule
   bookSpreadMode: true, // Multi-Sheet 3D Hardcover Book Folio mode
   breathingSpine: false, // Coherent 6-BPM (5.5s Inhale / 5.5s Exhale) Breathing Book Spine Pacer
-  marginSandglass: true, // Golden Ink Sandglass Thread along the right margin during Pomodoro sprints
+  marginSandglass: false, // Removed in 4.6.2 (distracting peripheral thread) — kept only for settings compatibility
+  tourOffered: false, // One-time welcome notice offering the Interactive Tour note
   readingPacer: false, // Acoustic Speed-Reading Pacer (300 WPM gliding line guide)
   readingPacerWpm: 300,
   waxSealNotes: {}, // { [filePath]: { sealedAt, unlockDate, note } }
@@ -2414,6 +2415,12 @@ class AlchemyFlowPlugin extends Plugin {
       this.renderNoteWaxSealOverlay();
       this.updateReadingPacerState();
     }, 400);
+
+    // Time Capsules: announce sealed notes whose unlock date has arrived
+    this.app.workspace.onLayoutReady(() => {
+      setTimeout(() => this.announceReadyTimeCapsules(), 1500);
+      setTimeout(() => this.offerInteractiveTourOnce(), 2200);
+    });
   }
 
   // --- 🏮 1. MAGIC CURSOR LANTERN (LUMINA LAMP — DYNAMIC LIGHTING & 3D SHADOWS) ---
@@ -3429,6 +3436,18 @@ class AlchemyFlowPlugin extends Plugin {
     });
 
     this.addCommand({
+      id: "open-interactive-tour",
+      name: "✨ Open Interactive Tour note (every feature, live examples)",
+      callback: () => this.openInteractiveTourNote(),
+    });
+
+    this.addCommand({
+      id: "toggle-time-capsule-seal",
+      name: "🕯️ Time Capsule: seal / open current note",
+      callback: () => this.toggleNoteWaxSeal(),
+    });
+
+    this.addCommand({
       id: "clear-drawings",
       name: "Clear All Drawings & Highlights",
       callback: () => this.clearAllAnnotations(),
@@ -4057,17 +4076,6 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerEl.classList.toggle("is-running", this.timerRunning);
     this.timerEl.classList.toggle("is-break", this.timerState === "break");
     this.timerTextEl.innerHTML = `${SICRAFT_SVGS.timer}<span>${this.formatTime(this.timerSeconds)}</span>`;
-
-    // Update Peripheral Margin Sandglass Progress (0%..100%)
-    const totalSec = Math.max(60, (this.settings.pomodoroMinutes || 25) * 60);
-    let pct = 0;
-    if (this.settings.timerMode === "pomodoro") {
-      pct = Math.max(0, Math.min(100, Math.round(((totalSec - this.timerSeconds) / totalSec) * 100)));
-    } else {
-      pct = Math.min(100, Math.round(((this.timerSeconds % 1800) / 1800) * 100));
-    }
-    document.documentElement.style.setProperty("--artcraft-sandglass-pct", `${pct}%`);
-    document.body.classList.toggle("artcraft-sandglass-running", !!this.timerRunning);
   }
 
   applyBodyClasses() {
@@ -4081,7 +4089,7 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-magic-lamp", !!this.settings.magicLamp);
     document.body.classList.toggle("artcraft-book-spread", !!this.settings.bookSpreadMode);
     document.body.classList.toggle("artcraft-breathing-spine", !!this.settings.breathingSpine);
-    document.body.classList.toggle("artcraft-margin-sandglass", this.settings.marginSandglass !== false);
+    document.body.classList.remove("artcraft-margin-sandglass");
     document.body.classList.toggle("artcraft-chrono-ink", this.settings.chronoInkAging !== false);
     document.body.setAttribute("data-spine-material", this.settings.spineMaterial || "cognac");
 
@@ -4116,9 +4124,9 @@ class AlchemyFlowPlugin extends Plugin {
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
       // Auto-upgrade graph.json once so folders are colored
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.1") {
+      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.2") {
         this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.6.1";
+        this.settings.graphConfigVersion = "4.6.2";
         this.saveSettings();
         setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
       }
@@ -5348,36 +5356,124 @@ class AlchemyFlowPlugin extends Plugin {
     new ClassicsBookshelfModal(this.app, this).open();
   }
 
-  // --- 🕯️ NEW IDEA 1: WAX SEAL TIME-LOCK CAPSULE (ЗАПЕЧАТАТЬ ЗАМЕТКУ СУРГУЧНОЙ ПЕЧАТЬЮ) ---
+  // --- 🕯️ TIME CAPSULE (WAX SEAL): SEAL A NOTE UNTIL A DATE, RECALL IT, THEN CRACK THE SEAL ---
+  // How it works:
+  //  1) "Seal" opens a modal: pick an unlock date + optional recall question / letter to your future self.
+  //  2) Until that date the note is covered by a wax-sealed veil (the file itself is NOT modified or encrypted).
+  //     Try to recall the content from the question. Opening early = press & hold the seal for 2 seconds.
+  //  3) When the date arrives Obsidian shows a notice, the seal turns gold and one click cracks it open.
+  getTimeCapsuleInfo(seal) {
+    if (!seal) return null;
+    let unlockAt = Number(seal.unlockAt) || 0;
+    if (!unlockAt && seal.unlockDate) {
+      const parsed = Date.parse(seal.unlockDate);
+      unlockAt = Number.isFinite(parsed) ? parsed : 0;
+    }
+    let sealedAtMs = Number(seal.sealedAtMs) || 0;
+    if (!sealedAtMs && seal.sealedAt) {
+      const parsed = Date.parse(seal.sealedAt);
+      sealedAtMs = Number.isFinite(parsed) ? parsed : 0;
+    }
+    if (!sealedAtMs) sealedAtMs = unlockAt ? unlockAt - 7 * 86400000 : Date.now();
+    const now = Date.now();
+    const ready = !unlockAt || now >= unlockAt;
+    const span = Math.max(1, unlockAt - sealedAtMs);
+    const pct = ready ? 100 : Math.max(0, Math.min(100, ((now - sealedAtMs) / span) * 100));
+    return { unlockAt, sealedAtMs, ready, pct, remainingMs: Math.max(0, unlockAt - now), message: seal.message || "" };
+  }
+
+  formatCapsuleRemaining(ms, isRu) {
+    const totalMin = Math.max(0, Math.ceil(ms / 60000));
+    const d = Math.floor(totalMin / 1440);
+    const h = Math.floor((totalMin % 1440) / 60);
+    const m = totalMin % 60;
+    const pad = (n) => String(n).padStart(2, "0");
+    return isRu ? `${pad(d)}д ${pad(h)}ч ${pad(m)}м` : `${pad(d)}d ${pad(h)}h ${pad(m)}m`;
+  }
+
   async toggleNoteWaxSeal() {
     const obsidian = require("obsidian");
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-    if (!view || !view.file) return;
     const isRu = (this.settings.uiLanguage || "en") === "ru";
+    if (!view || !view.file) {
+      new Notice(isRu ? "Откройте заметку, которую хотите запечатать." : "Open the note you want to seal first.");
+      return;
+    }
     const fp = view.file.path;
     if (!this.settings.waxSealNotes) this.settings.waxSealNotes = {};
+    const seal = this.settings.waxSealNotes[fp];
 
-    if (this.settings.waxSealNotes[fp]) {
-      delete this.settings.waxSealNotes[fp];
-      await this.saveSettings();
-      this.playHarmonicResonanceChime();
-      this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 65);
-      this.renderNoteWaxSealOverlay();
-      new Notice(isRu ? "🔓 Сургучная печать расколота! Капсула времени открыта." : "🔓 Wax Seal broken! Time-Lock Capsule unlocked.");
-    } else {
-      const unlockDate = new Date(Date.now() + 7 * 86400000).toLocaleDateString();
-      this.settings.waxSealNotes[fp] = {
-        sealedAt: new Date().toLocaleDateString(),
-        unlockDate
-      };
-      await this.saveSettings();
-      this.renderNoteWaxSealOverlay();
-      new Notice(isRu ? `🔒 Заметка запечатана сургучной печатью (Капсула времени до ${unlockDate})!` : `🔒 Note sealed with Crimson Wax Seal (Time Capsule until ${unlockDate})!`);
+    if (seal) {
+      const info = this.getTimeCapsuleInfo(seal);
+      if (info.ready) {
+        await this.breakTimeCapsule(fp, false);
+      } else {
+        this.renderNoteWaxSealOverlay();
+        new Notice(
+          isRu
+            ? `🕯️ Капсула откроется через ${this.formatCapsuleRemaining(info.remainingMs, true)}. Чтобы вскрыть досрочно — удерживайте печать 2 секунды.`
+            : `🕯️ Capsule unlocks in ${this.formatCapsuleRemaining(info.remainingMs, false)}. To open early, press & hold the seal for 2 seconds.`
+        );
+      }
+      return;
     }
+
+    new TimeCapsuleSealModal(this.app, this, view.file).open();
   }
 
-  renderNoteWaxSealOverlay() {
+  async sealTimeCapsule(file, unlockAt, message) {
+    if (!file) return;
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    if (!this.settings.waxSealNotes) this.settings.waxSealNotes = {};
+    const now = Date.now();
+    this.settings.waxSealNotes[file.path] = {
+      sealedAtMs: now,
+      sealedAt: new Date(now).toISOString(),
+      unlockAt,
+      unlockDate: new Date(unlockAt).toISOString(),
+      message: (message || "").trim().slice(0, 600),
+      announced: false,
+    };
+    await this.saveSettings();
+    this.playHarmonicResonanceChime();
+    this.renderNoteWaxSealOverlay(true);
+    const dateLabel = new Date(unlockAt).toLocaleDateString(isRu ? "ru-RU" : undefined, { day: "numeric", month: "long", year: "numeric" });
+    new Notice(isRu ? `🔒 Заметка запечатана до ${dateLabel}. Obsidian напомнит, когда капсула созреет.` : `🔒 Note sealed until ${dateLabel}. You'll get a notice when the capsule is ready.`);
+  }
+
+  async breakTimeCapsule(fp, early) {
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const seal = this.settings.waxSealNotes && this.settings.waxSealNotes[fp];
+    if (!seal) return;
+    const message = seal.message || "";
+
+    const veil = document.querySelector(".artcraft-wax-seal-veil");
+    if (veil) {
+      veil.classList.add("is-cracking");
+      await new Promise((r) => setTimeout(r, 720));
+    }
+
+    delete this.settings.waxSealNotes[fp];
+    await this.saveSettings();
+    this.playHarmonicResonanceChime();
+    this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 65);
+    this.renderNoteWaxSealOverlay();
+
+    const head = early
+      ? isRu ? "🔓 Печать вскрыта досрочно." : "🔓 Seal opened early."
+      : isRu ? "📜 Капсула времени вскрыта!" : "📜 Time Capsule opened!";
+    const tail = message
+      ? isRu ? `\nВаш вопрос из прошлого: «${message}» — сравните с тем, что вспомнили.` : `\nYour question from the past: “${message}” — compare it with what you recalled.`
+      : "";
+    new Notice(head + tail, message ? 12000 : 5000);
+  }
+
+  renderNoteWaxSealOverlay(justSealed = false) {
     document.querySelectorAll(".artcraft-wax-seal-veil").forEach((el) => el.remove());
+    if (this.waxSealTicker) {
+      window.clearInterval(this.waxSealTicker);
+      this.waxSealTicker = null;
+    }
     const obsidian = require("obsidian");
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
     if (!view || !view.file) return;
@@ -5388,33 +5484,191 @@ class AlchemyFlowPlugin extends Plugin {
     const viewContent = view.containerEl.querySelector(".view-content");
     if (!viewContent) return;
     const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const info = this.getTimeCapsuleInfo(seal);
+    const locale = isRu ? "ru-RU" : undefined;
+    const fmtDate = (ms) => new Date(ms).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+    const sealSvg = `
+      <svg viewBox="0 0 120 120" width="112" height="112" aria-hidden="true">
+        <defs>
+          <radialGradient id="acWaxGrad" cx="38%" cy="32%" r="75%">
+            <stop offset="0%" stop-color="#DC2626"/>
+            <stop offset="55%" stop-color="#991B1B"/>
+            <stop offset="100%" stop-color="#5F1212"/>
+          </radialGradient>
+        </defs>
+        <path d="M60 4 C72 6 78 2 86 10 C96 14 104 18 108 30 C116 40 114 50 116 60 C114 72 118 80 110 90 C104 100 98 106 86 110 C76 116 68 114 60 116 C48 114 40 118 30 110 C20 104 14 98 10 86 C4 76 6 68 4 60 C6 48 2 40 10 30 C16 20 22 14 34 10 C42 4 50 6 60 4 Z" fill="url(#acWaxGrad)"/>
+        <circle cx="60" cy="60" r="38" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="3"/>
+        <circle cx="60" cy="60" r="34" fill="none" stroke="#FCD34D" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.85"/>
+        <path d="M51 40H69M55 40V53L44 73C42.6 75.5 44.3 78.4 47.2 78.4H72.8C75.7 78.4 77.4 75.5 76 73L65 53V40" stroke="#FDE68A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="60" cy="67" r="3.6" fill="#FDE68A"/>
+        <ellipse cx="44" cy="30" rx="14" ry="6" fill="rgba(255,255,255,0.16)" transform="rotate(-28 44 30)"/>
+      </svg>`;
 
     const veil = document.createElement("div");
-    veil.className = "artcraft-wax-seal-veil";
+    veil.className = `artcraft-wax-seal-veil ${info.ready ? "is-ready" : "is-locked"} ${justSealed ? "is-just-sealed" : ""}`;
     veil.innerHTML = `
       <div class="wax-seal-card">
-        <button class="wax-seal-emblem" title="${isRu ? "Нажмите, чтобы расколоть сургучную печать" : "Click to break the crimson wax seal"}">
-          <svg viewBox="0 0 120 120" width="96" height="96">
-            <circle cx="60" cy="60" r="54" fill="#991B1B" stroke="#7F1D1D" stroke-width="4"/>
-            <circle cx="60" cy="60" r="42" fill="#B91C1C" stroke="#F59E0B" stroke-width="1.8" stroke-dasharray="4 3"/>
-            <path d="M50 38H70M54 38V52L42 74C40.5 76.5 42.2 79.5 45.2 79.5H74.8C77.8 79.5 79.5 76.5 78 74L66 52V38" stroke="#FDE68A" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="60" cy="67" r="4" fill="#FDE68A"/>
-          </svg>
+        <div class="wax-seal-ribbon" aria-hidden="true"></div>
+        <div class="wax-seal-badge">${isRu ? "КАПСУЛА ВРЕМЕНИ" : "TIME CAPSULE"} // ${info.ready ? (isRu ? "СОЗРЕЛА" : "READY") : (isRu ? "ЗАПЕЧАТАНО" : "SEALED")}</div>
+        <button class="wax-seal-emblem" style="--hold:0" title="${
+          info.ready ? (isRu ? "Нажмите, чтобы вскрыть" : "Click to crack the seal") : (isRu ? "Удерживайте 2 секунды, чтобы вскрыть досрочно" : "Press & hold 2s to open early")
+        }">
+          <span class="wax-seal-hold-ring" aria-hidden="true"></span>
+          <span class="wax-seal-half is-left">${sealSvg}</span>
+          <span class="wax-seal-half is-right">${sealSvg}</span>
         </button>
-        <div class="wax-seal-badge">ALCHEMIST TIME CAPSULE // WAX SEALED</div>
-        <h3 class="wax-seal-title">${isRu ? "Заметка запечатана сургучной печатью" : "Note Sealed Under Crimson Wax"}</h3>
+        <h3 class="wax-seal-title">${
+          info.ready
+            ? isRu ? "Капсула созрела — вскройте печать" : "The capsule is ready — crack the seal"
+            : isRu ? "Заметка под сургучной печатью" : "This note rests under wax"
+        }</h3>
+        <div class="wax-seal-countdown">${
+          info.ready ? (isRu ? "00д 00ч 00м" : "00d 00h 00m") : this.formatCapsuleRemaining(info.remainingMs, isRu)
+        }</div>
+        <div class="wax-seal-wick" aria-hidden="true"><span style="width:${info.pct.toFixed(1)}%"></span></div>
+        <div class="wax-seal-dates">
+          <span>${isRu ? "Запечатано" : "Sealed"} · ${fmtDate(info.sealedAtMs)}</span>
+          <span>${isRu ? "Вскрытие" : "Opens"} · ${info.unlockAt ? fmtDate(info.unlockAt) : "—"}</span>
+        </div>
+        ${
+          info.message
+            ? `<blockquote class="wax-seal-letter"><small>${isRu ? "ВОПРОС / ПИСЬМО СЕБЕ" : "QUESTION / LETTER TO SELF"}</small>${esc(info.message)}</blockquote>`
+            : ""
+        }
         <p class="wax-seal-sub">${
-          isRu
-            ? `Запечатано: ${seal.sealedAt} • Рекомендуемое открытие: ${seal.unlockDate}. Нажмите на сургучную печать выше, чтобы расколоть оттиск и открыть текст.`
-            : `Sealed on ${seal.sealedAt} • Target Unlock: ${seal.unlockDate}. Click the crimson wax emblem above to crack the seal and reveal your note.`
+          info.ready
+            ? isRu
+              ? "Сначала попробуйте вспомнить главное по памяти, затем нажмите на печать и сравните."
+              : "First recall the key points from memory, then click the seal and compare."
+            : isRu
+            ? "Текст скрыт, но файл не изменён (это не шифрование). Вспоминайте содержание по вопросу — так знание закрепляется. Досрочно: удерживайте печать 2 секунды."
+            : "The text is hidden but the file is untouched (this is not encryption). Recall the content from your question — that's how it sticks. Early open: hold the seal for 2 seconds."
         }</p>
       </div>
     `;
-    veil.querySelector(".wax-seal-emblem")?.addEventListener("click", (e) => {
-      e.stopPropagation();
-      this.toggleNoteWaxSeal();
-    });
+
+    const emblem = veil.querySelector(".wax-seal-emblem");
+    if (info.ready) {
+      emblem?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.breakTimeCapsule(fp, false);
+      });
+    } else if (emblem) {
+      let raf = null;
+      let start = 0;
+      const HOLD_MS = 2000;
+      const reset = () => {
+        if (raf) cancelAnimationFrame(raf);
+        raf = null;
+        emblem.style.setProperty("--hold", "0");
+        emblem.classList.remove("is-holding");
+      };
+      const step = (ts) => {
+        if (!start) start = ts;
+        const p = Math.min(1, (ts - start) / HOLD_MS);
+        emblem.style.setProperty("--hold", p.toFixed(3));
+        if (p >= 1) {
+          reset();
+          this.breakTimeCapsule(fp, true);
+          return;
+        }
+        raf = requestAnimationFrame(step);
+      };
+      emblem.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        start = 0;
+        emblem.classList.add("is-holding");
+        raf = requestAnimationFrame(step);
+      });
+      ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => emblem.addEventListener(ev, reset));
+    }
+
     viewContent.appendChild(veil);
+
+    if (!info.ready) {
+      this.waxSealTicker = window.setInterval(() => {
+        const cur = this.settings.waxSealNotes && this.settings.waxSealNotes[fp];
+        if (!cur || !veil.isConnected) {
+          window.clearInterval(this.waxSealTicker);
+          this.waxSealTicker = null;
+          return;
+        }
+        const live = this.getTimeCapsuleInfo(cur);
+        if (live.ready) {
+          this.renderNoteWaxSealOverlay();
+          return;
+        }
+        const cd = veil.querySelector(".wax-seal-countdown");
+        if (cd) cd.textContent = this.formatCapsuleRemaining(live.remainingMs, isRu);
+        const wick = veil.querySelector(".wax-seal-wick span");
+        if (wick) wick.style.width = `${live.pct.toFixed(1)}%`;
+      }, 30000);
+      this.registerInterval(this.waxSealTicker);
+    }
+  }
+
+  async announceReadyTimeCapsules() {
+    const seals = this.settings.waxSealNotes || {};
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    let changed = false;
+    for (const fp of Object.keys(seals)) {
+      const seal = seals[fp];
+      const info = this.getTimeCapsuleInfo(seal);
+      if (!info || !info.ready || seal.announced) continue;
+      const file = this.app.vault.getAbstractFileByPath(fp);
+      if (!file) continue;
+      const frag = document.createDocumentFragment();
+      const txt = document.createElement("div");
+      txt.textContent = isRu ? `📜 Капсула времени созрела: «${file.basename}»` : `📜 Time Capsule ready: “${file.basename}”`;
+      const btn = document.createElement("button");
+      btn.className = "mod-cta artcraft-notice-btn";
+      btn.textContent = isRu ? "Открыть заметку" : "Open note";
+      btn.addEventListener("click", () => this.app.workspace.getLeaf(false).openFile(file));
+      frag.appendChild(txt);
+      frag.appendChild(btn);
+      new Notice(frag, 15000);
+      seal.announced = true;
+      changed = true;
+    }
+    if (changed) await this.saveSettings();
+  }
+
+  // --- ✨ INTERACTIVE TOUR NOTE (REAL VAULT FILE WITH LIVE EXAMPLES OF EVERY FEATURE) ---
+  async offerInteractiveTourOnce() {
+    if (this.settings.tourOffered) return;
+    this.settings.tourOffered = true;
+    await this.saveSettings();
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const frag = document.createDocumentFragment();
+    const txt = document.createElement("div");
+    txt.textContent = isRu
+      ? "⚗️ Alchemy Craft установлен. Откройте интерактивный тур — заметку с живыми примерами всех фишек."
+      : "⚗️ Alchemy Craft is installed. Open the Interactive Tour — a note with live examples of every feature.";
+    const btn = document.createElement("button");
+    btn.className = "mod-cta artcraft-notice-btn";
+    btn.textContent = isRu ? "Открыть тур" : "Open tour";
+    btn.addEventListener("click", () => this.openInteractiveTourNote());
+    frag.appendChild(txt);
+    frag.appendChild(btn);
+    new Notice(frag, 20000);
+  }
+
+  async openInteractiveTourNote() {
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const path = isRu ? "Alchemy Craft — Интерактивный тур.md" : "Alchemy Craft — Interactive Tour.md";
+    let file = this.app.vault.getAbstractFileByPath(path);
+    try {
+      if (!file) {
+        file = await this.app.vault.create(path, getAlchemyTourMarkdown(isRu, this.manifest.version));
+      }
+      await this.app.workspace.getLeaf(true).openFile(file);
+    } catch (e) {
+      console.error("Alchemy Craft: tour note error", e);
+      new Notice(isRu ? "Не удалось создать заметку тура: " + e.message : "Could not create the tour note: " + e.message);
+    }
   }
 
   // --- ⚡ NEW IDEA 2: ACOUSTIC SPEED-READING PACER (СВЕТОВОЙ МЕТРОНОМ СКОРОЧТЕНИЯ 300 WPM) ---
@@ -5644,7 +5898,7 @@ class AlchemyFlowPlugin extends Plugin {
       // 7. Footer Signature
       ctx.fillStyle = "#78716C";
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText("ALCHEMY CRAFT v4.6.1 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+      ctx.fillText("ALCHEMY CRAFT v4.6.2 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
 
       const url = cv.toDataURL("image/png");
       const a = document.createElement("a");
@@ -5745,13 +5999,6 @@ class AlchemyFlowPlugin extends Plugin {
           sub: isRu ? "Мягкая волна света по корешку для глубокого покоя" : "Warm 11s coherent breathing glow along the book spine",
         },
         {
-          id: "sandglass",
-          checked: this.settings.marginSandglass !== false,
-          icon: SICRAFT_SVGS.sandglass,
-          title: isRu ? "Песочные часы чернил на правом поле" : "Peripheral Margin Sandglass Thread",
-          sub: isRu ? "Золотая нить времени Помодоро вдоль среза книги" : "Golden Pomodoro ink thread along the right page edge",
-        },
-        {
           id: "pacer",
           checked: !!this.settings.readingPacer,
           icon: SICRAFT_SVGS.bolt,
@@ -5833,7 +6080,10 @@ class AlchemyFlowPlugin extends Plugin {
             ${SICRAFT_SVGS.camera} <span>${isRu ? "Сохранить Карточку Экслибриса в PNG" : "Export Ex-Libris Book Card as PNG"}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="wax-seal">
-            ${SICRAFT_SVGS.stamp} <span>${isRu ? "Запечатать / Открыть Сургучную Капсулу" : "Seal / Unlock Crimson Wax Time-Capsule"}</span>
+            ${SICRAFT_SVGS.stamp} <span>${isRu ? "Капсула времени: запечатать заметку до даты" : "Time Capsule: seal this note until a date"}</span>
+          </button>
+          <button class="focus-pop-act-btn" data-pop-act="tour">
+            ${SICRAFT_SVGS.spark} <span>${isRu ? "Открыть интерактивный тур (все фишки)" : "Open Interactive Tour (every feature)"}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="two-page">
             ${SICRAFT_SVGS.columns} <span>${isRu ? "Открыть 2-страничный разворот рядом" : "Open 2-Page Side-by-Side Spread"}</span>
@@ -5879,8 +6129,6 @@ class AlchemyFlowPlugin extends Plugin {
             this.settings.bookSpreadMode = !this.settings.bookSpreadMode;
           } else if (opt === "breathspine") {
             this.settings.breathingSpine = !this.settings.breathingSpine;
-          } else if (opt === "sandglass") {
-            this.settings.marginSandglass = this.settings.marginSandglass === false ? true : false;
           } else if (opt === "pacer") {
             this.settings.readingPacer = !this.settings.readingPacer;
             this.updateReadingPacerState();
@@ -5932,6 +6180,13 @@ class AlchemyFlowPlugin extends Plugin {
         pop.remove();
         this.focusPopoverEl = null;
         this.toggleNoteWaxSeal();
+      });
+
+      pop.querySelector('[data-pop-act="tour"]')?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        pop.remove();
+        this.focusPopoverEl = null;
+        this.openInteractiveTourNote();
       });
 
       pop.querySelector('[data-pop-act="two-page"]')?.addEventListener("click", (ev) => {
@@ -7410,6 +7665,8 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.settings.tactileTypingSound === "typewriter") {
       this.settings.tactileTypingSound = "creamy_pom";
     }
+    // 4.6.2: the peripheral "Golden Pomodoro" sandglass thread was removed (it pulled the eye away from the reading centre)
+    this.settings.marginSandglass = false;
   }
 
   async saveSettings() {
@@ -8593,6 +8850,378 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     supportSetting.settingEl.classList.add("artcraft-settings-full-width");
   }
 }
+
+// --- ✨ INTERACTIVE TOUR NOTE CONTENT (RU / EN) ---
+function getAlchemyTourMarkdown(isRu, version) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (isRu) {
+    return `---
+title: "Alchemy Craft — Интерактивный тур"
+tags: [alchemy-craft, tour]
+created: ${today}
+plugin-version: "${version}"
+---
+
+# ⚗️ Alchemy Craft — Интерактивный тур
+
+> [!abstract] Зачем этот плагин
+> Alchemy Craft превращает обычную заметку в **тёплую книжную страницу**: ясная иерархия глав, цветные номера, живой прогресс задач, фокус-режимы и звук. Эта заметка — живая песочница: всё, что вы видите ниже, отрисовано самим плагином. Меняйте, кликайте, проверяйте.
+
+---
+
+## 01 // Главы, подглавы и разделы
+
+Заголовки строят «оглавление на глаз»: глава → подглава → раздел. Каждый уровень получает свой вес, цветной корешок и отступ — структура считывается за секунду.
+
+### 1.1 Подглава: как устроена иерархия
+
+#### Раздел A — заголовок 4-го уровня
+Используйте \`#\` для названия книги, \`##\` для глав, \`###\` для подглав и \`####\` для разделов.
+
+#### Раздел B — нумерованные шаги
+1. Нумерованные списки превращаются в квадратные бейджи **01, 02, 03**.
+2. Глаз сразу видит порядок действий.
+3. Вложенность сохраняется:
+   1. подшаг первый;
+   2. подшаг второй.
+
+---
+
+## 02 // Цифры и метрики сами бросаются в глаза
+
+Пример: выручка выросла на **+340%**, конверсия — 4.8%, средний чек — $49.99, спринт длится 25 минут, релиз назначен на ${today}. Плагин подсвечивает числа, проценты, суммы и даты без какой-либо разметки.
+
+| Метрика | Было | Стало | Изменение |
+| :--- | ---: | ---: | ---: |
+| Время на чтение главы | 42 мин | 18 мин | −57% |
+| Запомненных идей | 3 | 9 | +200% |
+| Закрытых задач | 4/12 | 11/12 | 92% |
+
+> Таблицы получают зелёную «финансовую» шапку и чёткие границы.
+
+---
+
+## 03 // Галочки, прогресс и штамп «Изучено»
+
+Отмечайте пункты — над заметкой обновляется полоска **«Задачи: x/y»**. На 100% прозвучит аккорд виолончели и арфы, а в углу появится штамп **ИЗУЧЕНО**.
+
+- [x] Открыть интерактивный тур
+- [x] Посмотреть главы и подглавы
+- [ ] Включить «Книжный лист» (кнопка **Книжный лист** над заметкой)
+- [ ] Прикрепить закладку-нутриент (кнопка **+ Закладка**)
+- [ ] Запустить Помодоро в нижней панели
+- [ ] Отметить последний пункт и услышать аккорд 🎻
+
+---
+
+## 04 // Книжный лист: корешок и стопка страниц
+
+Нажмите **Книжный лист** — заметка ляжет на тёплый стол как раскрытая книга: кожаный корешок со строчкой, внутренняя тень переплёта и стопка листов справа и снизу.
+
+1. Материал корешка: нижняя панель → **Focus ▾** → *Коньяк / Сафьян / Бархат / Лён*.
+2. «Дыхание корешка» — мягкая волна света 5.5 с вдох / 5.5 с выдох для спокойного ритма.
+3. «Хроно-чернила» — старые заметки (14+ дней) получают благородный оттенок архивных чернил.
+
+---
+
+## 05 // 5 закладок-нутриентов (метод чтения книг)
+
+Каждая идея получает роль, как питательное вещество:
+
+- 🔴 **Белки** — сделать немедленно
+- 🟠 **Углеводы** — обдумать утром
+- 🟡 **Жиры** — истории и примеры
+- 🟢 **Витамины** — цитаты
+- 🔵 **Клетчатка** — факты и цифры
+
+Кнопка **+ Закладка** над заметкой → выберите тип → закладка появится полоской над текстом. **Дайджест** собирает все закладки в план действий.
+
+---
+
+## 06 // Фокус-режимы для чтения
+
+- **Фокус предложения** — наведите на предложение: оно мягко подсвечивается. Клик закрепляет подсветку выбранным цветом.
+- **Spotlight** — всё, кроме текущего абзаца, слегка приглушается.
+- **Световая линейка** — тёплая полоса по строке чтения.
+- **Пейсер 300 слов/мин** — плавный луч ведёт взгляд по строкам.
+- **Умная лампа** — круг или настольная планка света 2700K–6500K, остальная «комната» затемняется.
+
+> [!tip] Где включать
+> Нижняя панель → кнопка **Focus ▾**. Лампа — кнопка **Lamp**.
+
+---
+
+## 07 // Помодоро, звук и эквалайзер
+
+1. Клик по таймеру — старт/пауза, двойной клик — сброс, **правый клик** — пресеты 15 / 25 / 45 / 60 / 90 минут.
+2. **Sonic Studio** — фоновые сцены (дождь, кофейня, 40Hz Gamma, поезд), звуки «кремовых» свитчей при наборе.
+3. Эквалайзер реагирует на реальный звук ПК (YouTube, Spotify, Telegram).
+
+---
+
+## 08 // Капсула времени (сургучная печать)
+
+Как это работает:
+
+1. **Focus ▾ → «Капсула времени»** (или команда *Time Capsule: seal / open current note*).
+2. Выберите срок (1 день — 1 месяц) и напишите вопрос себе: *«Какие 3 главные идеи этой главы?»*.
+3. Заметка скроется под печатью с обратным отсчётом. Файл **не изменяется** и не шифруется — это режим активного припоминания.
+4. Пока срок не наступил, вспоминайте ответ по памяти. Досрочно — удерживайте печать 2 секунды.
+5. В день вскрытия Obsidian пришлёт уведомление, печать засияет золотом — нажмите и сравните ответ с текстом.
+
+---
+
+## 09 // Презентация и инструменты
+
+- **Laser** — светящаяся указка с хвостом (Esc — выключить).
+- **Draw / Eraser** — рисуйте стрелки и круги прямо поверх текста, Ctrl+Z — отмена.
+- **Полка классики** — все заметки базы со штампом «Изучено» на деревянной полке; экслибрис можно сохранить в PNG.
+- **Граф** — пастельные группы папок, режимы *Bento Grid*, *3D Mind-Palace*, *Focus Radar*.
+
+---
+
+> [!success] Готово
+> Отметьте все галочки в разделе 03 — и эта заметка получит штамп **ИЗУЧЕНО**. Сайт и руководство: https://elyazaliverdiyev.github.io/alchemy-craft/
+`;
+  }
+
+  return `---
+title: "Alchemy Craft — Interactive Tour"
+tags: [alchemy-craft, tour]
+created: ${today}
+plugin-version: "${version}"
+---
+
+# ⚗️ Alchemy Craft — Interactive Tour
+
+> [!abstract] Why this plugin exists
+> Alchemy Craft turns a plain note into a **warm book page**: a clear chapter hierarchy, colour-coded numbers, live task progress, focus modes and sound. This note is a live sandbox — everything below is rendered by the plugin itself. Edit it, click it, try it.
+
+---
+
+## 01 // Chapters, sub-chapters and sections
+
+Headings build a "table of contents at a glance": chapter → sub-chapter → section. Every level gets its own weight, coloured spine and spacing, so structure reads in a second.
+
+### 1.1 Sub-chapter: how the hierarchy works
+
+#### Section A — a level-4 heading
+Use \`#\` for the book title, \`##\` for chapters, \`###\` for sub-chapters and \`####\` for sections.
+
+#### Section B — numbered steps
+1. Numbered lists become square badges **01, 02, 03**.
+2. Your eye sees the order of actions instantly.
+3. Nesting is preserved:
+   1. first sub-step;
+   2. second sub-step.
+
+---
+
+## 02 // Numbers and metrics stand out on their own
+
+Example: revenue grew **+340%**, conversion is 4.8%, average order $49.99, a sprint lasts 25 minutes, release is set for ${today}. The plugin highlights numbers, percentages, amounts and dates with zero extra markup.
+
+| Metric | Before | After | Change |
+| :--- | ---: | ---: | ---: |
+| Time to read a chapter | 42 min | 18 min | −57% |
+| Ideas remembered | 3 | 9 | +200% |
+| Tasks closed | 4/12 | 11/12 | 92% |
+
+> Tables get a green "financial" header and crisp borders.
+
+---
+
+## 03 // Checkboxes, progress and the "Mastered" stamp
+
+Tick items — the **"Tasks: x/y"** bar above the note updates live. At 100% a cello & harp chord plays and a **MASTERED** stamp appears in the corner.
+
+- [x] Open the Interactive Tour
+- [x] Look at chapters and sub-chapters
+- [ ] Turn on "Book Page" (the **Book Page** button above the note)
+- [ ] Attach a nutrient sticker (the **+ Sticker** button)
+- [ ] Start a Pomodoro in the bottom dock
+- [ ] Tick the last item and hear the chord 🎻
+
+---
+
+## 04 // Book Page: spine and stacked sheets
+
+Press **Book Page** — the note rests on a warm desk like an open hardcover: a stitched leather spine, inner binding shadow and a stack of sheets along the right and bottom edges.
+
+1. Spine material: bottom dock → **Focus ▾** → *Cognac / Emerald / Crimson / Linen*.
+2. "Breathing spine" — a soft 5.5 s inhale / 5.5 s exhale glow for a calm rhythm.
+3. "Chrono-ink" — older notes (14+ days) take on a noble archival ink tone.
+
+---
+
+## 05 // 5 nutrient stickers (a book-reading method)
+
+Every idea gets a role, like a nutrient:
+
+- 🔴 **Proteins** — do it now
+- 🟠 **Carbs** — ponder in the morning
+- 🟡 **Fats** — stories and examples
+- 🟢 **Vitamins** — quotes
+- 🔵 **Fiber** — facts and figures
+
+**+ Sticker** above the note → choose a type → the sticker appears as a strip above the text. **Digest** gathers all stickers into an action plan.
+
+---
+
+## 06 // Focus modes for reading
+
+- **Sentence focus** — hover a sentence and it softly lights up; click to pin it in your colour.
+- **Spotlight** — everything except the current paragraph is gently dimmed.
+- **Reading ruler** — a warm band along the line you read.
+- **300 WPM pacer** — a gliding beam guides your eyes.
+- **Smart lamp** — a circle or desk bar of 2700K–6500K light, the rest of the "room" dims.
+
+> [!tip] Where to switch them on
+> Bottom dock → **Focus ▾**. The lamp is the **Lamp** button.
+
+---
+
+## 07 // Pomodoro, sound and equalizer
+
+1. Click the timer to start/pause, double-click to reset, **right-click** for 15 / 25 / 45 / 60 / 90 minute presets.
+2. **Sonic Studio** — ambient scenes (rain, café, 40Hz Gamma, night train) and creamy switch sounds while typing.
+3. The equalizer reacts to real desktop audio (YouTube, Spotify, Telegram).
+
+---
+
+## 08 // Time Capsule (wax seal)
+
+How it works:
+
+1. **Focus ▾ → "Time Capsule"** (or the command *Time Capsule: seal / open current note*).
+2. Pick a period (1 day — 1 month) and write a question to yourself: *"What are the 3 key ideas of this chapter?"*.
+3. The note hides under a seal with a countdown. The file is **not modified** or encrypted — this is an active-recall mode.
+4. Until the date, recall the answer from memory. To open early, press & hold the seal for 2 seconds.
+5. On the unlock day Obsidian shows a notice and the seal turns gold — click it and compare your answer with the text.
+
+---
+
+## 09 // Presenting and tools
+
+- **Laser** — a glowing pointer with a comet tail (Esc to exit).
+- **Draw / Eraser** — draw arrows and circles right over the text, Ctrl+Z to undo.
+- **Classics shelf** — every "Mastered" note on a wooden shelf; export an ex-libris card as PNG.
+- **Graph** — pastel folder groups, *Bento Grid*, *3D Mind-Palace*, *Focus Radar* modes.
+
+---
+
+> [!success] Done
+> Tick every box in chapter 03 and this note earns the **MASTERED** stamp. Website & guide: https://elyazaliverdiyev.github.io/alchemy-craft/
+`;
+}
+
+// --- 🕯️ TIME CAPSULE SEAL MODAL (EXPLAINS THE FEATURE, PICKS DATE + RECALL QUESTION) ---
+class TimeCapsuleSealModal extends Modal {
+  constructor(app, plugin, file) {
+    super(app);
+    this.plugin = plugin;
+    this.file = file;
+    this.days = 7;
+    this.customDate = "";
+    this.message = "";
+  }
+
+  onOpen() {
+    const { contentEl, modalEl } = this;
+    modalEl.addClass("artcraft-capsule-modal");
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    contentEl.empty();
+
+    const presets = [
+      { d: 1, ru: "1 день", en: "1 day" },
+      { d: 3, ru: "3 дня", en: "3 days" },
+      { d: 7, ru: "1 неделя", en: "1 week" },
+      { d: 14, ru: "2 недели", en: "2 weeks" },
+      { d: 30, ru: "1 месяц", en: "1 month" },
+    ];
+    const minDate = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+
+    contentEl.innerHTML = `
+      <div class="capsule-head">
+        <span class="capsule-badge">${isRu ? "КАПСУЛА ВРЕМЕНИ // СУРГУЧНАЯ ПЕЧАТЬ" : "TIME CAPSULE // WAX SEAL"}</span>
+        <h2 class="capsule-title">${isRu ? "Запечатать заметку до даты" : "Seal this note until a date"}</h2>
+        <div class="capsule-file">📄 ${this.file.basename}</div>
+      </div>
+      <ol class="capsule-steps">
+        <li><span>01</span><div><strong>${isRu ? "Печать скрывает текст" : "The seal hides the text"}</strong><small>${
+          isRu ? "Файл не меняется и не шифруется — это визуальная капсула для активного припоминания." : "The file isn't changed or encrypted — it's a visual capsule for active recall."
+        }</small></div></li>
+        <li><span>02</span><div><strong>${isRu ? "Вспоминайте по вопросу" : "Recall from your question"}</strong><small>${
+          isRu ? "Пока идёт отсчёт, пытайтесь вспомнить суть. Досрочно — удерживать печать 2 секунды." : "While the countdown runs, try to recall the essence. Early open: hold the seal for 2 seconds."
+        }</small></div></li>
+        <li><span>03</span><div><strong>${isRu ? "Вскройте в срок" : "Open it on time"}</strong><small>${
+          isRu ? "В день вскрытия придёт уведомление, печать засияет золотом. Сравните ответ с текстом." : "On the day you'll get a notice and the seal turns gold. Compare your answer with the text."
+        }</small></div></li>
+      </ol>
+      <div class="capsule-label">${isRu ? "СРОК ВСКРЫТИЯ" : "UNLOCK AFTER"}</div>
+      <div class="capsule-chips">
+        ${presets.map((p) => `<button class="capsule-chip ${p.d === this.days ? "is-active" : ""}" data-days="${p.d}">${isRu ? p.ru : p.en}</button>`).join("")}
+        <label class="capsule-date-wrap">${isRu ? "или дата" : "or date"} <input type="date" class="capsule-date" min="${minDate}"></label>
+      </div>
+      <div class="capsule-label">${isRu ? "ВОПРОС СЕБЕ ИЛИ ПИСЬМО В БУДУЩЕЕ (НЕОБЯЗАТЕЛЬНО)" : "QUESTION TO SELF OR LETTER TO THE FUTURE (OPTIONAL)"}</div>
+      <textarea class="capsule-message" rows="3" maxlength="600" placeholder="${
+        isRu ? "Например: какие 3 главные идеи этой главы и что я с ними сделаю?" : "e.g. What are the 3 key ideas of this chapter and what will I do with them?"
+      }"></textarea>
+      <div class="capsule-summary"></div>
+      <div class="capsule-actions">
+        <button class="capsule-cancel">${isRu ? "Отмена" : "Cancel"}</button>
+        <button class="capsule-seal mod-cta">🕯️ ${isRu ? "Запечатать" : "Seal note"}</button>
+      </div>
+    `;
+
+    const summaryEl = contentEl.querySelector(".capsule-summary");
+    const computeUnlock = () => {
+      if (this.customDate) {
+        const [y, m, d] = this.customDate.split("-").map(Number);
+        const t = new Date(y, (m || 1) - 1, d || 1, 9, 0, 0).getTime();
+        if (Number.isFinite(t) && t > Date.now()) return t;
+      }
+      return Date.now() + this.days * 86400000;
+    };
+    const refreshSummary = () => {
+      const t = computeUnlock();
+      const label = new Date(t).toLocaleString(isRu ? "ru-RU" : undefined, { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+      summaryEl.textContent = isRu ? `Печать можно будет вскрыть: ${label}` : `The seal can be opened on: ${label}`;
+    };
+
+    contentEl.querySelectorAll(".capsule-chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        this.days = Number(chip.getAttribute("data-days")) || 7;
+        this.customDate = "";
+        const dateInput = contentEl.querySelector(".capsule-date");
+        if (dateInput) dateInput.value = "";
+        contentEl.querySelectorAll(".capsule-chip").forEach((c) => c.classList.toggle("is-active", c === chip));
+        refreshSummary();
+      });
+    });
+    contentEl.querySelector(".capsule-date")?.addEventListener("change", (e) => {
+      this.customDate = e.target.value || "";
+      contentEl.querySelectorAll(".capsule-chip").forEach((c) => c.classList.toggle("is-active", !this.customDate && Number(c.getAttribute("data-days")) === this.days));
+      refreshSummary();
+    });
+    contentEl.querySelector(".capsule-message")?.addEventListener("input", (e) => {
+      this.message = e.target.value || "";
+    });
+    contentEl.querySelector(".capsule-cancel")?.addEventListener("click", () => this.close());
+    contentEl.querySelector(".capsule-seal")?.addEventListener("click", async () => {
+      const unlockAt = computeUnlock();
+      this.close();
+      await this.plugin.sealTimeCapsule(this.file, unlockAt, this.message);
+    });
+    refreshSummary();
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
+
+
 
 module.exports = AlchemyFlowPlugin;
 
