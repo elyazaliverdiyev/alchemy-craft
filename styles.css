@@ -3267,7 +3267,7 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
    3. HARDCOVER BOOK FOLIO PAGE MODE (SAFE FOR BOTH LIVE PREVIEW & READING VIEW!)
    Never overrides .cm-sizer or .markdown-preview-sizer internal virtual scroll math!
    ========================================================================== */
-/* (3. Hardcover Book Folio styled in Section ALCHEMY CRAFT v4.6.4 below) */
+/* (3. Hardcover Book Folio styled in Section ALCHEMY CRAFT v4.6.5 below) */
 
 /* ==========================================================================
    4. FOCUS & BOOK STUDIO SUBMENU POPOVER (CHECKBOXES + QUICK BOOK TOOLS)
@@ -5093,7 +5093,7 @@ body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
    ========================================================================== */
 
 /* ==========================================================================
-   ALCHEMY CRAFT v4.6.4 — TRUE 3D MULTI-SHEET HARDCOVER BOOK FOLIO
+   ALCHEMY CRAFT v4.6.5 — TRUE 3D MULTI-SHEET HARDCOVER BOOK FOLIO
    (Cappuccino Craft Edition with 4 Deckle Sheets & Diffuse Amber Crease)
    ========================================================================== */
 
@@ -5109,7 +5109,7 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
 
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller {
   overflow-x: hidden !important;
-  padding-top: 20px !important;
+  padding-top: 10px !important;
   padding-bottom: 72px !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
@@ -5117,32 +5117,35 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scro
 }
 
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  padding-top: 20px !important;
+  padding-top: 10px !important;
   padding-bottom: 72px !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
   box-sizing: border-box !important;
 }
 
-/* 2. Top Header Bar Aligns with Book Folio Width */
+/* 2. Top Header Bar Aligns with Book Folio Width (Snug to Left Sidebar) */
 body.artcraft-book-spread .artcraft-task-progress-wrap {
-  width: calc(100% - 64px) !important;
-  max-width: calc(100% - 64px) !important;
-  margin: 0 auto 14px auto !important;
+  width: calc(100% - 68px) !important;
+  max-width: calc(100% - 68px) !important;
+  margin-left: 20px !important;
+  margin-right: 48px !important;
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
   padding: 0 4px !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
 }
 
-/* 3. The 3D Book Folio Physical Page (Live Preview .cm-sizer & Reading View .markdown-preview-sizer) */
+/* 3. The 3D Book Folio Physical Page (Snug to Left Sidebar, Deckled Sheets on Right) */
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  width: calc(100% - 64px) !important;
-  max-width: calc(100% - 64px) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  margin-top: 14px !important;
+  width: calc(100% - 68px) !important;
+  max-width: calc(100% - 68px) !important;
+  margin-left: 20px !important;
+  margin-right: 48px !important;
+  margin-top: 8px !important;
   margin-bottom: 56px !important;
   background: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 3.2%, #FCFBF7 96.5%, #F4F0E5 100%) !important;
   border-top: 1px solid #DFDBD0 !important;
@@ -5150,7 +5153,7 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
   border-bottom: 1px solid #D4CFC2 !important;
   border-left: 10px solid #8C5828 !important;
   border-radius: 4px 18px 18px 4px !important;
-  padding: 40px 52px 52px 52px !important;
+  padding: 30px 48px 48px 44px !important;
   box-sizing: border-box !important;
   position: relative !important;
   /* 4 Distinct Stacked Book Sheets on Right & Bottom Edges + Warm Depth Shadow */
@@ -5169,14 +5172,14 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
   transition: border-left-color 0.35s ease, box-shadow 0.35s ease !important;
 }
 
-/* Soft Diffuse Amber Inner Spine Crease (Dissolves gracefully at top & bottom, exactly like official site) */
+/* Soft Subtle Amber Inner Spine Crease (Translucent, delicate, non-distracting) */
 @keyframes breathingSpinePulse {
   0%, 100% {
-    opacity: 0.22;
-    transform: scaleY(0.96);
+    opacity: 0.12;
+    transform: scaleY(0.97);
   }
   50% {
-    opacity: 0.85;
+    opacity: 0.38;
     transform: scaleY(1.0);
   }
 }
@@ -5185,23 +5188,23 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-size
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
   content: "" !important;
   position: absolute !important;
-  top: 18px !important;
-  bottom: 22px !important;
+  top: 24px !important;
+  bottom: 28px !important;
   left: 0 !important;
-  width: 5px !important;
-  border-radius: 0 4px 4px 0 !important;
+  width: 2.5px !important;
+  border-radius: 0 3px 3px 0 !important;
   background: linear-gradient(
     180deg,
-    rgba(245, 158, 11, 0) 0%,
-    rgba(245, 158, 11, 0.45) 15%,
-    #F59E0B 50%,
-    rgba(217, 119, 6, 0.45) 85%,
+    rgba(217, 119, 6, 0) 0%,
+    rgba(217, 119, 6, 0.10) 20%,
+    rgba(245, 158, 11, 0.30) 50%,
+    rgba(217, 119, 6, 0.10) 80%,
     rgba(217, 119, 6, 0) 100%
   ) !important;
-  box-shadow: 0 0 10px 2px rgba(245, 158, 11, 0.42) !important;
+  box-shadow: 0 0 5px 1px rgba(217, 119, 6, 0.12) !important;
   pointer-events: none !important;
   z-index: 4 !important;
-  opacity: 0.75 !important;
+  opacity: 0.28 !important;
   transition: opacity 0.4s ease !important;
 }
 
@@ -5889,7 +5892,7 @@ body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[dat
 
 
 /* ==========================================================================
-   TIME CAPSULE WAX SEAL & MODAL STYLES (v4.6.4)
+   TIME CAPSULE WAX SEAL & MODAL STYLES (v4.6.5)
    ========================================================================== */
 .artcraft-capsule-modal {
   padding: 8px !important;

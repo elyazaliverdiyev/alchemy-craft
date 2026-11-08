@@ -1,7 +1,7 @@
 const { Plugin, PluginSettingTab, Setting, Notice, Modal, Menu, addIcon } = require("obsidian");
 
 const DEFAULT_SETTINGS = {
-  uiLanguage: "auto", // "auto" (Follow Obsidian language) | "en" | "ru" | "zh" | "ja" | "es" | "de"
+  uiLanguage: "en", // "en" | "ru" | "zh" | "ja" | "es" | "de" (auto-detected on first load from Obsidian language)
   artcraftTheme: true,
   headerTagText: "STRATALCHEMY // KNOWLEDGE BRIEF",
   showHeaderTag: true,
@@ -4522,9 +4522,9 @@ class AlchemyFlowPlugin extends Plugin {
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
       // Auto-upgrade graph.json once so folders are colored
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.4") {
+      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.5") {
         this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.6.4";
+        this.settings.graphConfigVersion = "4.6.5";
         this.saveSettings();
         setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
       }
@@ -6345,7 +6345,7 @@ class AlchemyFlowPlugin extends Plugin {
       // 7. Footer Signature
       ctx.fillStyle = "#78716C";
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText("ALCHEMY CRAFT v4.6.4 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+      ctx.fillText("ALCHEMY CRAFT v4.6.5 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
 
       const url = cv.toDataURL("image/png");
       const a = document.createElement("a");
@@ -6513,7 +6513,7 @@ class AlchemyFlowPlugin extends Plugin {
             zh: "书脊沿线11秒柔和光晕律动，调节心率变异性",
             ja: "心身の深い安らぎをもたらす11秒周期の柔らかな光波",
             es: "Suave resplandor de 11s en el lomo para máxima serenidad",
-            de: "Sanfte 11-Sekunden-Lichtwelle am Buchrücken für tiefe Ruhe",
+            de: "Sanfte 11-Sekunden-Lichtwelle am Buchrücken для tiefe Ruhe",
           }, this),
         },
         {
@@ -6660,6 +6660,18 @@ class AlchemyFlowPlugin extends Plugin {
           <button class="focus-pop-act-btn" data-pop-act="bookshelf">
             ${SICRAFT_SVGS.shelf} <span>${i18n({ en: "Open Classics Bookshelf (All Books)", ru: "Открыть «Полку Классики» (Все книги базы)", zh: "打开「经典书架」（全库图书）", ja: "「古典の本棚」を開く (全ノート)", es: "Abrir estantería de clásicos (Toda la bóveda)", de: "Klassiker-Regal öffnen (Alle Bücher)" }, this)}</span>
           </button>
+          <button class="focus-pop-act-btn" data-pop-act="exlibris-png">
+            ${SICRAFT_SVGS.camera} <span>${i18n({ en: "Export Ex-Libris Book Card as PNG", ru: "Сохранить Карточку Экслибриса в PNG", zh: "导出藏书票书卡为 PNG", ja: "蔵書票カードをPNGで保存", es: "Exportar tarjeta Ex-Libris en PNG", de: "Ex-Libris-Buchkarte als PNG exportieren" }, this)}</span>
+          </button>
+          <button class="focus-pop-act-btn" data-pop-act="wax-seal">
+            ${SICRAFT_SVGS.stamp} <span>${i18n({ en: "Time Capsule: seal this note until a date", ru: "Капсула времени: запечатать заметку до даты", zh: "时间胶囊：封存此笔记至指定日期", ja: "タイムカプセル：指定日までノートを封印", es: "Cápsula del tiempo: sellar hasta una fecha", de: "Zeitkapsel: Notiz bis zu einem Datum versiegeln" }, this)}</span>
+          </button>
+          <button class="focus-pop-act-btn" data-pop-act="tour">
+            ${SICRAFT_SVGS.spark} <span>${i18n({ en: "Open Interactive Tour (every feature)", ru: "Открыть интерактивный тур (все фишки)", zh: "打开交互式新手漫游（全功能指引）", ja: "インタラクティブツアーを開く (全機能ガイド)", es: "Abrir tour interactivo (todas las funciones)", de: "Interaktive Tour öffnen (alle Funktionen)" }, this)}</span>
+          </button>
+          <button class="focus-pop-act-btn" data-pop-act="two-page">
+            ${SICRAFT_SVGS.columns} <span>${i18n({ en: "Open 2-Page Side-by-Side Spread", ru: "Открыть 2-страничный разворот рядом", zh: "开启双页并排展开阅读", ja: "2ページ見開き表示を開く", es: "Abrir doble página en paralelo", de: "2-Seiten-Nebeneinander-Ansicht öffnen" }, this)}</span>
+          </button>
         </div>
       `;
 
@@ -6705,67 +6717,53 @@ class AlchemyFlowPlugin extends Plugin {
             this.settings.readingPacer = !this.settings.readingPacer;
             this.updateReadingPacerState();
           } else if (opt === "meta") {
-            const nextState = !(this.settings.showReadingStats !== false || this.settings.showTaskProgress !== false);
-            this.settings.showReadingStats = nextState;
-            this.settings.showTaskProgress = nextState;
+            const curState = this.settings.showReadingStats !== false;
+            this.settings.showReadingStats = !curState;
+            this.settings.showTaskProgress = !curState;
+            this.updateTaskProgressBar();
           } else if (opt === "stamp") {
-            this.settings.showCornerStamp = this.settings.showCornerStamp === false ? true : false;
+            this.settings.showCornerStamp = !this.settings.showCornerStamp;
+            this.renderNoteMasteryStamp();
           }
           await this.saveSettings();
           this.applyBodyClasses();
-          this.updateDockUI();
-          this.updateTaskProgressBar();
           renderPopoverContent();
         });
       });
 
-      pop.querySelector('[data-pop-act="add-sticker"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        pop.remove();
-        this.focusPopoverEl = null;
-        this.addMarginBookmarkToActiveNote();
-      });
-
-      pop.querySelector('[data-pop-act="digest"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        pop.remove();
-        this.focusPopoverEl = null;
-        this.openBookNutrientDigestModal();
-      });
-
-      pop.querySelector('[data-pop-act="bookshelf"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        pop.remove();
-        this.focusPopoverEl = null;
-        this.openClassicsBookshelfModal();
-      });
-
-      pop.querySelector('[data-pop-act="exlibris-png"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        pop.remove();
-        this.focusPopoverEl = null;
-        this.exportExLibrisBookCardPNG();
-      });
-
-      pop.querySelector('[data-pop-act="wax-seal"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        pop.remove();
-        this.focusPopoverEl = null;
-        this.toggleNoteWaxSeal();
-      });
-
-      pop.querySelector('[data-pop-act="tour"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        pop.remove();
-        this.focusPopoverEl = null;
-        this.openInteractiveTourNote();
-      });
-
-      pop.querySelector('[data-pop-act="two-page"]')?.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        pop.remove();
-        this.focusPopoverEl = null;
-        this.openTrueTwoPageBookSpread();
+      pop.querySelectorAll("[data-pop-act]").forEach((btn) => {
+        btn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          const act = btn.getAttribute("data-pop-act");
+          pop.remove();
+          this.focusPopoverEl = null;
+          if (act === "add-sticker") {
+            this.openAddBookmarkModal();
+          } else if (act === "digest") {
+            this.openNoteBookmarksDigestModal();
+          } else if (act === "bookshelf") {
+            this.openClassicsBookshelfModal();
+          } else if (act === "exlibris-png") {
+            this.exportExLibrisCardAsPNG(fp, activeView);
+          } else if (act === "wax-seal") {
+            this.openTimeCapsuleSealModal(activeView);
+          } else if (act === "tour") {
+            this.openTourNote();
+          } else if (act === "two-page") {
+            this.settings.bookSpreadMode = true;
+            this.saveSettings();
+            this.applyBodyClasses();
+            this.createFloatingDock();
+            new Notice(i18n({
+              en: "3D Book Folio mode activated!",
+              ru: "Режим 3D Книжного фолианта включён!",
+              zh: "3D书籍手册模式已启用！",
+              ja: "3Dブックフォリオモードが有効になりました！",
+              es: "¡Modo folio 3D activado!",
+              de: "3D-Buchfolio-Modus aktiviert!",
+            }, this));
+          }
+        });
       });
     };
 
@@ -6773,301 +6771,26 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.appendChild(pop);
     this.focusPopoverEl = pop;
 
-    // Position popover cleanly near the Focus button (handles both bottom horizontal dock and right vertical pillar dock)
     const rect = anchorBtn.getBoundingClientRect();
-    const popW = 350;
-    const popH = pop.offsetHeight || 410;
-    if (this.settings.dockVertical) {
-      pop.style.left = `${Math.max(12, rect.left - popW - 12)}px`;
-      pop.style.top = `${Math.max(16, Math.min(window.innerHeight - popH - 16, rect.top - 80))}px`;
-    } else {
-      pop.style.left = `${Math.max(12, Math.min(window.innerWidth - popW - 16, rect.left - 110))}px`;
-      pop.style.bottom = `${Math.max(74, window.innerHeight - rect.top + 12)}px`;
-    }
+    const popW = 380;
+    let left = rect.left + rect.width / 2 - popW / 2;
+    if (left < 16) left = 16;
+    if (left + popW > window.innerWidth - 16) left = window.innerWidth - popW - 16;
+    pop.style.left = left + "px";
+    pop.style.bottom = (window.innerHeight - rect.top + 10) + "px";
 
-    const closeOutside = (ev) => {
-      if (this.focusPopoverEl && !this.focusPopoverEl.contains(ev.target) && !anchorBtn.contains(ev.target)) {
-        this.focusPopoverEl.remove();
+    const closeHandler = (ev) => {
+      if (!pop.contains(ev.target) && ev.target !== anchorBtn && !anchorBtn.contains(ev.target)) {
+        pop.remove();
         this.focusPopoverEl = null;
-        window.removeEventListener("mousedown", closeOutside, true);
+        document.removeEventListener("pointerdown", closeHandler);
       }
     };
-    setTimeout(() => window.addEventListener("mousedown", closeOutside, true), 40);
+    setTimeout(() => {
+      document.addEventListener("pointerdown", closeHandler);
+    }, 50);
   }
 
-  jumpToMarginBookmark(lineNum, snippetText) {
-    const obsidian = require("obsidian");
-    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-    if (!view) return;
-    if (view.editor) {
-      view.editor.setCursor({ line: lineNum, ch: 0 });
-      view.editor.scrollIntoView({ from: { line: Math.max(0, lineNum - 2), ch: 0 }, to: { line: lineNum + 2, ch: 0 } }, true);
-    }
-    const cleanNeedle = (snippetText || "").replace(/…$/, "").trim().slice(0, 24);
-    if (cleanNeedle) {
-      const blocks = view.contentEl.querySelectorAll(".cm-line, p, h1, h2, h3, h4, li, blockquote");
-      for (const b of blocks) {
-        if (b.textContent && b.textContent.includes(cleanNeedle)) {
-          b.scrollIntoView({ behavior: "smooth", block: "center" });
-          b.classList.add("artcraft-bm-flash-highlight");
-          setTimeout(() => b.classList.remove("artcraft-bm-flash-highlight"), 1600);
-          break;
-        }
-      }
-    }
-  }
-
-  cleanCurrentNoteAIWatermarks() {
-    const view = this.app.workspace.getActiveViewOfType(require("obsidian").MarkdownView);
-    if (!view || !view.editor) {
-      new Notice("Please open a markdown note to clean AI markers.");
-      return;
-    }
-    const editor = view.editor;
-    const hasSelection = editor.somethingSelected();
-    const raw = hasSelection ? editor.getSelection() : editor.getValue();
-
-    const invisibleRegex = /[\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff\u00ad]/g;
-    const matches = raw.match(invisibleRegex);
-    const count = matches ? matches.length : 0;
-
-    const cleaned = raw
-      .replace(invisibleRegex, "")
-      .replace(/[\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000]/g, " ")
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'");
-
-    if (cleaned !== raw) {
-      if (hasSelection) {
-        editor.replaceSelection(cleaned);
-      } else {
-        editor.setValue(cleaned);
-      }
-    }
-    navigator.clipboard.writeText(cleaned);
-    new Notice(`✓ Cleaned ${count} invisible AI marker(s) & copied to clipboard!`);
-  }
-
-  setupLivePreviewObserver() {
-    let rafPending = false;
-    const styleLivePreviewNodes = () => {
-      rafPending = false;
-      if (!this.settings.artcraftTheme || !this.settings.colorizeNumbers) return;
-      const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
-      const listSpans = document.querySelectorAll(".HyperMD-list-line .cm-formatting-list-ol");
-      for (let i = 0; i < listSpans.length; i++) {
-        const el = listSpans[i];
-        const txt = el.textContent;
-        if (!txt) continue;
-        const num = parseInt(txt, 10);
-        if (!isNaN(num) && num > 0) {
-          const mod = ((num - 1) % 4) + 1;
-          const modStr = String(mod);
-          if (el.getAttribute("data-artcraft-mod") !== modStr) {
-            el.setAttribute("data-artcraft-mod", modStr);
-            el.style.setProperty("background-color", colors[mod - 1], "important");
-          }
-        }
-      }
-    };
-
-    const scheduleStyle = () => {
-      if (!rafPending) {
-        rafPending = true;
-        requestAnimationFrame(styleLivePreviewNodes);
-      }
-    };
-
-    styleLivePreviewNodes();
-
-    // Instant zero-lag MutationObserver when CodeMirror 6 virtual scroller mounts new lines
-    this.cmObserver = new MutationObserver((mutations) => {
-      for (let i = 0; i < mutations.length; i++) {
-        if (mutations[i].addedNodes.length > 0 || mutations[i].type === "characterData") {
-          scheduleStyle();
-          break;
-        }
-      }
-    });
-    this.cmObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    });
-
-    // Passive scroll listener on capture phase so scrolling with mouse wheel colors badges on the exact same frame
-    this.onScrollCapture = () => scheduleStyle();
-    window.addEventListener("scroll", this.onScrollCapture, { capture: true, passive: true });
-    this.registerDomEvent(window, "wheel", () => scheduleStyle(), { passive: true });
-
-    // Lightweight fallback check for Graph HUD
-    this.lpInterval = setInterval(() => {
-      if (this.settings.enableBentoGraph !== false) {
-        this.injectGraphViewHUD();
-      }
-      scheduleStyle();
-    }, 1200);
-  }
-
-  enhanceMarkdownElement(rootEl) {
-    const blocks = rootEl.querySelectorAll("p, li, td, h1, h2, h3, h4");
-    blocks.forEach((block) => {
-      if (block.dataset.artcraftProcessed === "true") return;
-      this.enhanceSingleBlock(block, false);
-    });
-
-    rootEl.querySelectorAll("ol > li").forEach((li, idx) => {
-      const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
-      const c = colors[idx % 4];
-      li.style.setProperty("--artcraft-marker-color", c);
-    });
-  }
-
-  enhanceSingleBlock(block, isLivePreview = false) {
-    block.dataset.artcraftProcessed = "true";
-
-    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT, null);
-    const textNodes = [];
-    let node;
-    while ((node = walker.nextNode())) {
-      const pEl = node.parentElement;
-      if (!pEl) continue;
-      if (
-        pEl.closest(
-          "code, pre, a, button, svg, .inline-title, .callout-title, .artcraft-sentence, .artcraft-step-badge, .artcraft-pill-number, .artcraft-capsule-link, .artcraft-capsule-crypto, .artcraft-task-date, .artcraft-check-circle"
-        )
-      ) {
-        continue;
-      }
-      // If block is a <li> that contains child <p> or nested <ul>/<ol>, only process direct text nodes of this <li>
-      if (block.tagName === "LI" && pEl.closest("p, ul, ol") && pEl.closest("li") === block && pEl !== block) {
-        continue;
-      }
-      textNodes.push(node);
-    }
-
-    textNodes.forEach((textNode) => {
-      const text = textNode.nodeValue || "";
-      if (!text.trim()) return;
-
-      const hasTokens =
-        /\b(0[1-4]\s*\/\/|\d+\s*(?:%|\$|k|к|тыс|млн|USD|USDT)|https?:\/\/|\.com|\.io|\.org|\.ru|0x[a-fA-F0-9]{4,}|[1-9A-HJ-NP-Za-km-z]{32,}|TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+|✅|\d{4}-\d{2}-\d{2})/i.test(
-          text
-        );
-
-      if (!hasTokens && isLivePreview) return;
-
-      const frag = document.createDocumentFragment();
-      if (!isLivePreview && this.settings.sentenceFocus) {
-        const sentences = text.match(/[^.!?]+(?:[.!?]+|$)/g) || [text];
-        sentences.forEach((sent) => {
-          if (!sent.trim()) {
-            frag.appendChild(document.createTextNode(sent));
-            return;
-          }
-          const span = document.createElement("span");
-          span.className = "artcraft-sentence";
-          this.appendWithColorizedTokens(span, sent);
-
-          span.addEventListener("click", () => {
-            if (this.mode !== "none") return;
-            const targetColor = this.settings.strokeColor;
-            const currentPin = span.getAttribute("data-pinned-color");
-            if (currentPin === targetColor) {
-              span.removeAttribute("data-pinned-color");
-              span.style.removeProperty("--artcraft-pinned-bg");
-              span.style.removeProperty("--artcraft-pinned-border");
-              span.classList.remove("is-pinned");
-            } else {
-              span.setAttribute("data-pinned-color", targetColor);
-              span.style.setProperty("--artcraft-pinned-bg", `${targetColor}24`);
-              span.style.setProperty("--artcraft-pinned-border", targetColor);
-              span.classList.add("is-pinned");
-            }
-          });
-
-          frag.appendChild(span);
-        });
-      } else {
-        this.appendWithColorizedTokens(frag, text);
-      }
-
-      if (textNode.parentNode) {
-        textNode.parentNode.replaceChild(frag, textNode);
-      }
-    });
-  }
-
-  appendWithColorizedTokens(parent, text) {
-    const tokenRegex =
-      /(\b0[1-4]\s*\/\/|\b\d+(?:[.,]\d+)?\s*(?:%|\$|k|к|тыс|млн|USD|USDT)\b|\bhttps?:\/\/[^\s<]+|\b[a-zA-Z0-9.-]+\.(?:com|io|org|ru|dev|net|ai)(?:\/[^\s<]*)?|\b0x[a-fA-F0-9]{40}\b|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b|\b(?:TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+)\b|✅\s*(?:\d{4}-\d{2}-\d{2})?|✅|\b\d{4}-\d{2}-\d{2}\b)/gi;
-
-    let lastIdx = 0;
-    let match;
-
-    while ((match = tokenRegex.exec(text)) !== null) {
-      if (match.index > lastIdx) {
-        parent.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
-      }
-
-      const matchStr = match[0];
-      const stepMatch = matchStr.match(/^0([1-4])\s*\/\//);
-
-      if (stepMatch && this.settings.colorizeNumbers) {
-        const num = parseInt(stepMatch[1], 10);
-        const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
-        const color = colors[num - 1];
-        const span = document.createElement("span");
-        span.className = "artcraft-step-badge";
-        span.textContent = `0${num}`;
-        span.style.setProperty("background-color", color, "important");
-        span.style.setProperty("color", "#FFFFFF", "important");
-        parent.appendChild(span);
-        parent.appendChild(document.createTextNode(" // "));
-      } else if (matchStr.startsWith("✅")) {
-        const circle = document.createElement("span");
-        circle.className = "artcraft-check-circle";
-        circle.textContent = "✓";
-        parent.appendChild(circle);
-
-        const datePart = matchStr.replace(/^✅\s*/, "").trim();
-        if (datePart && /^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
-          const dateSpan = document.createElement("span");
-          dateSpan.className = "artcraft-task-date";
-          dateSpan.textContent = datePart;
-          parent.appendChild(dateSpan);
-        }
-      } else if (/^\d{4}-\d{2}-\d{2}$/.test(matchStr)) {
-        const dateSpan = document.createElement("span");
-        dateSpan.className = "artcraft-task-date";
-        dateSpan.textContent = matchStr;
-        parent.appendChild(dateSpan);
-      } else if (/^\d+(?:[.,]\d+)?\s*(?:%|\$|k|к|тыс|млн|USD|USDT)$/i.test(matchStr)) {
-        const span = document.createElement("span");
-        span.className = "artcraft-pill-number";
-        span.textContent = matchStr;
-        parent.appendChild(span);
-      } else if (/^(?:https?:\/\/|[a-zA-Z0-9.-]+\.(?:com|io|org|ru|dev|net|ai))/i.test(matchStr)) {
-        const span = document.createElement("span");
-        span.className = "artcraft-capsule-link";
-        span.textContent = matchStr;
-        parent.appendChild(span);
-      } else {
-        const span = document.createElement("span");
-        span.className = "artcraft-capsule-crypto";
-        span.textContent = matchStr;
-        parent.appendChild(span);
-      }
-
-      lastIdx = tokenRegex.lastIndex;
-    }
-
-    if (lastIdx < text.length) {
-      parent.appendChild(document.createTextNode(text.slice(lastIdx)));
-    }
-  }
-
-  // --- FLOATING DOCK & OVERLAY CANVAS ---
   createFloatingDock() {
     if (this.dockEl) this.dockEl.remove();
 
@@ -8233,6 +7956,26 @@ class AlchemyFlowPlugin extends Plugin {
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    // Auto-detect Obsidian language if not explicitly chosen or if set to legacy auto
+    if (!this.settings.uiLanguage || this.settings.uiLanguage === "auto" || !SUPPORTED_LANGS.includes(this.settings.uiLanguage)) {
+      try {
+        const obsLang = (
+          window.localStorage?.getItem("language") ||
+          window.moment?.locale?.() ||
+          document.documentElement?.lang ||
+          navigator.language ||
+          "en"
+        ).toLowerCase();
+        if (obsLang.startsWith("ru")) this.settings.uiLanguage = "ru";
+        else if (obsLang.startsWith("zh")) this.settings.uiLanguage = "zh";
+        else if (obsLang.startsWith("ja")) this.settings.uiLanguage = "ja";
+        else if (obsLang.startsWith("es")) this.settings.uiLanguage = "es";
+        else if (obsLang.startsWith("de")) this.settings.uiLanguage = "de";
+        else this.settings.uiLanguage = "en";
+      } catch (e) {
+        this.settings.uiLanguage = "en";
+      }
+    }
     // Migrate the removed "Vintage Typewriter" sound to the new creamy default
     if (this.settings.tactileTypingSound === "typewriter") {
       this.settings.tactileTypingSound = "creamy_pom";
@@ -8925,15 +8668,24 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     const loc = getLocale(this.plugin);
     const isRu = loc === "ru";
 
-    const createSectionGroup = (num, title, sub, iconSvg) => {
-      const resolvedTitle = typeof title === "object" ? i18n(title, this.plugin) : (isRu ? title : sub);
-      const resolvedSub = typeof sub === "object" ? i18n(sub, this.plugin) : (isRu ? sub : "");
+    const createSectionGroup = (num, title, subOrTitleEn, iconOrSubRu, subEn, iconSvg) => {
+      let resolvedTitle, resolvedSub, finalIcon;
+      if (typeof title === "object") {
+        resolvedTitle = i18n(title, this.plugin);
+        resolvedSub = typeof subOrTitleEn === "object" ? i18n(subOrTitleEn, this.plugin) : subOrTitleEn;
+        finalIcon = iconOrSubRu;
+      } else {
+        // Legacy 6 arguments: (num, titleRu, titleEn, subRu, subEn, iconSvg)
+        resolvedTitle = isRu ? title : subOrTitleEn;
+        resolvedSub = isRu ? iconOrSubRu : subEn;
+        finalIcon = iconSvg;
+      }
       const groupWrap = containerEl.createDiv({ cls: "artcraft-settings-group-card" });
       const groupHead = groupWrap.createDiv({ cls: "artcraft-settings-group-head" });
       groupHead.innerHTML = `
         <div class="settings-group-badge-row">
           <span class="settings-group-num">${num}</span>
-          <span class="settings-group-icon">${iconSvg}</span>
+          <span class="settings-group-icon">${finalIcon}</span>
           <span class="settings-group-title">${resolvedTitle}</span>
         </div>
         ${resolvedSub ? `<div class="settings-group-sub">${resolvedSub}</div>` : ""}
@@ -9002,14 +8754,13 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       .setDesc(t("langDesc", this.plugin))
       .addDropdown((drop) =>
         drop
-          .addOption("auto", "🌐 Auto (Follow Obsidian) / Авто")
           .addOption("en", "EN — English")
           .addOption("ru", "RU — Русский")
           .addOption("zh", "ZH — 中文 (Chinese)")
           .addOption("ja", "JA — 日本語 (Japanese)")
           .addOption("es", "ES — Español")
           .addOption("de", "DE — Deutsch")
-          .setValue(this.plugin.settings.uiLanguage || "auto")
+          .setValue(this.plugin.settings.uiLanguage || getLocale(this.plugin))
           .onChange(async (val) => {
             this.plugin.settings.uiLanguage = val;
             await this.plugin.saveSettings();
@@ -9199,10 +8950,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     // =========================================================================
     const secFocus = createSectionGroup(
       "03",
-      "Фокус, Помодоро и Умная Лампа",
-      "Focus, Pomodoro & Smart LED Lamp",
-      "Таймер глубокой работы, авто-затухание звука на перерыве, тёплая настольная лампа и чистка ИИ-символов.",
-      "Deep work timer, automatic audio fade on break, warm desk lamp, and AI watermark cleaner.",
+      {
+        en: "Focus Studio, Pomodoro & Smart LED Lamp",
+        ru: "Фокус, Помодоро и Умная Лампа",
+        zh: "专注工坊、番茄钟与智能护眼台灯",
+        ja: "フォーカススタジオ・ポモドーロ・スマートランプ",
+        es: "Estudio de foco, Pomodoro y lámpara Lumina",
+        de: "Fokus-Studio, Pomodoro & Smarte Lumina-Lampe",
+      },
+      {
+        en: "Deep work sprint timer, automatic audio fade on break, warm desk lamp, and AI watermark cleaner.",
+        ru: "Таймер глубокой работы, авто-затухание звука на перерыве, тёплая настольная лампа и чистка ИИ-символов.",
+        zh: "深度工作冲刺计时、休息期音乐渐隐、2700K–6500K色温护眼光带与AI标记清洗。",
+        ja: "ディープワーク用タイマー、休憩時フェードアウト、2700K–6500Kデスクライト、AI記号クリーンアップ。",
+        es: "Temporizador de trabajo profundo, atenuación en pausas, lámpara 2700K–6500K y limpieza de IA.",
+        de: "Fokus-Timer, Musik-Fadeout in Pausen, 2700K–6500K Schreibtischlampe und KI-Bereinigung.",
+      },
       SICRAFT_SVGS.lamp
     );
 
@@ -9298,10 +9061,22 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     // =========================================================================
     const secGraph = createSectionGroup(
       "04",
-      "Swiss Bento Граф Знаний и PNG-Экспорт",
-      "Swiss Bento Knowledge Graph & PNG Snapshot",
-      "8-цветная палитра папок, радар фокуса и сохранение снимка графа в PNG в 1 клик.",
-      "8-color folder palette, focus radar, and 1-click high-DPI PNG graph snapshot.",
+      {
+        en: "Swiss Bento Knowledge Graph & 1-Click PNG Export",
+        ru: "Swiss Bento Граф Знаний и PNG-Экспорт",
+        zh: "Swiss Bento 知识图谱与 1-Click PNG 导出",
+        ja: "Swiss Bento 知識グラフ＆1クリックPNGエクスポート",
+        es: "Grafo de conocimiento Swiss Bento y exportación PNG",
+        de: "Swiss Bento Wissensgraph & 1-Klick PNG-Export",
+      },
+      {
+        en: "8-color folder palette, focus radar, and 1-click high-DPI PNG graph snapshot.",
+        ru: "8-цветная палитра папок, радар фокуса и сохранение снимка графа в PNG в 1 клик.",
+        zh: "8色文件夹莫兰迪调色板、焦点雷达与一键高分辨率PNG图谱快照。",
+        ja: "8色フォルダパレット、フォーカスレーダー、1クリック高解像度PNGスナップショット。",
+        es: "Paleta de 8 colores para carpetas, radar de foco y captura PNG en 1 clic.",
+        de: "8-Farben-Ordnerpalette, Fokus-Radar und 1-Klick-PNG-Graph-Schnappschuss.",
+      },
       SICRAFT_SVGS.camera
     );
 
@@ -9827,5 +9602,6 @@ class TimeCapsuleSealModal extends Modal {
 
 module.exports = AlchemyFlowPlugin;
 
+/* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
