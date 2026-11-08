@@ -35,7 +35,12 @@ const DEFAULT_SETTINGS = {
   audioVolume: 75, // 0..100%
   pomoAudioLink: true, // Auto-fade audio on Pomodoro break & resume on focus sprint
   showReadingStats: true, // Live Reading Time & Word Count capsule
-  bookSpreadMode: false, // Two-Column Open Book Spread mode
+  bookSpreadMode: true, // Multi-Sheet 3D Hardcover Book Folio mode
+  breathingSpine: false, // Coherent 6-BPM (5.5s Inhale / 5.5s Exhale) Breathing Book Spine Pacer
+  marginSandglass: true, // Golden Ink Sandglass Thread along the right margin during Pomodoro sprints
+  readingPacer: false, // Acoustic Speed-Reading Pacer (300 WPM gliding line guide)
+  readingPacerWpm: 300,
+  waxSealNotes: {}, // { [filePath]: { sealedAt, unlockDate, note } }
   stampedNotes: {}, // { [filePath]: "2026-11-07" }
   marginBookmarks: {}, // { [filePath]: Array<{ id, type, label, snippet, line }> }
   readingRuler: false,
@@ -127,7 +132,10 @@ const SICRAFT_SVGS = {
   columns: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>`,
   edit: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
   eqOrigami: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17l4-6 4 4 4-9 4 7 4-3"/><path d="M2 21l4-3 4 2 4-4 4 3 4-2" opacity="0.6"/></svg>`,
-  eqStrings: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c4-4 6 4 10 0s6-4 10 0"/><path d="M2 12c4 4 6-4 10 0s6 4 10 0"/><path d="M2 18c4-4 6 4 10 0s6-4 10 0" opacity="0.6"/></svg>`
+  eqStrings: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c4-4 6 4 10 0s6-4 10 0"/><path d="M2 12c4 4 6-4 10 0s6 4 10 0"/><path d="M2 18c4-4 6 4 10 0s6-4 10 0" opacity="0.6"/></svg>`,
+  shelf: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M9 7h6"/><path d="M9 11h4"/></svg>`,
+  sandglass: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>`,
+  lung: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M12 10c-3-2-7-1-8 3-1 4 0 8 4 8 2.5 0 4-2 4-5"/><path d="M12 10c3-2 7-1 8 3 1 4 0 8-4 8-2.5 0-4-2-4-5"/></svg>`
 };
 
 // Always open external URLs in the user's default OS browser (Chrome/Safari/Edge/Telegram Desktop), bypassing Obsidian's internal Web Viewer!
@@ -1695,6 +1703,196 @@ class BookNutrientDigestModal extends Modal {
   }
 }
 
+class ClassicsBookshelfModal extends Modal {
+  constructor(app, plugin) {
+    super(app);
+    this.plugin = plugin;
+    this.activeFilter = "all"; // "all" | "classics" | "proteins" | "carbs" | "fats" | "vitamins" | "fiber"
+  }
+
+  onOpen() {
+    if (this.modalEl) this.modalEl.addClass("artcraft-wide-craft-modal");
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.addClass("artcraft-bookshelf-modal-root");
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+
+    const stamped = this.plugin.settings.stampedNotes || {};
+    const bms = this.plugin.settings.marginBookmarks || {};
+    const allPaths = Array.from(new Set([...Object.keys(stamped), ...Object.keys(bms)]));
+
+    const books = [];
+    allPaths.forEach((fp) => {
+      const rec = this.plugin.getNoteStampRecord(fp);
+      const list = Array.isArray(bms[fp]) ? bms[fp] : [];
+      if (!rec && list.length === 0) return;
+      const baseTitle = fp.replace(/\.md$/i, "").split("/").pop() || fp;
+      const folder = fp.includes("/") ? fp.split("/")[0] : (isRu ? "Корень базы" : "Vault Root");
+      books.push({
+        path: fp,
+        title: baseTitle,
+        folder,
+        stamp: rec,
+        isClassics: !!(rec && rec.count >= 2),
+        bookmarks: list,
+      });
+    });
+
+    books.sort((a, b) => {
+      if (a.isClassics !== b.isClassics) return a.isClassics ? -1 : 1;
+      return b.bookmarks.length - a.bookmarks.length;
+    });
+
+    const head = contentEl.createDiv({ cls: "nutrient-modal-head" });
+    head.innerHTML = `
+      <div class="sonic-badge"><span class="svg-inline-icon">${SICRAFT_SVGS.shelf}</span> ${
+      isRu ? "ПОЛКА КЛАССИКИ И БИБЛИОТЕКА НУТРИЕНТОВ" : "CLASSICS BOOKSHELF & 5-NUTRIENT LIBRARY"
+    }</div>
+      <h3 class="sonic-title">${
+        isRu ? "Деревянная Полка Изученных Книг и Конспектов" : "Tactile Bookshelf of Stamped Notes & Book Nutrients"
+      }</h3>
+      <p class="sonic-studio-sub">${
+        isRu
+          ? "Здесь автоматически собираются все заметки со штампом «ИЗУЧЕНО / ★ КЛАССИКА» и закладками-нутриентами. Фильтруйте главные выводы по всей базе и открывайте любую книгу в 1 клик."
+          : "Every note stamped as APPROVED / ★ CLASSICS or tagged with 5-Nutrient stickers appears on this craft shelf. Filter insights across your entire vault."
+      }</p>
+    `;
+
+    const filterBar = contentEl.createDiv({ cls: "artcraft-shelf-filter-bar" });
+    const filters = [
+      { id: "all", label: isRu ? `Все книги (${books.length})` : `All Books (${books.length})`, color: "#44403C" },
+      { id: "classics", label: isRu ? "★ Золотая Классика" : "★ Classics (#2+)", color: "#D97706" },
+      { id: "proteins", label: isRu ? "🔴 Белки (Внедрить)" : "🔴 Proteins (Must Do)", color: "#DC2626" },
+      { id: "carbs", label: isRu ? "🟠 Углеводы (Смыслы)" : "🟠 Carbs (Ponder)", color: "#EA580C" },
+      { id: "vitamins", label: isRu ? "🟢 Витамины (Цитаты)" : "🟢 Vitamins (Quotes)", color: "#16A34A" },
+      { id: "fiber", label: isRu ? "🔵 Клетчатка (Факты)" : "🔵 Fiber (Facts)", color: "#2563EB" },
+    ];
+
+    const shelfBody = contentEl.createDiv({ cls: "artcraft-wooden-shelf-body" });
+
+    const renderShelf = () => {
+      shelfBody.empty();
+      filterBar.querySelectorAll(".artcraft-shelf-filter-pill").forEach((b) => {
+        b.toggleClass("is-active", b.dataset.fid === this.activeFilter);
+      });
+
+      const filtered = books.filter((bk) => {
+        if (this.activeFilter === "all") return true;
+        if (this.activeFilter === "classics") return bk.isClassics || !!bk.stamp;
+        return bk.bookmarks.some((m) => (m.type || "proteins") === this.activeFilter);
+      });
+
+      if (filtered.length === 0) {
+        shelfBody.createDiv({
+          cls: "soft-pay-muted-hint",
+          text: isRu
+            ? "На этой полке пока нет книг под выбранный фильтр. Поставьте штамп «Штамп» или добавьте «+ Закладка» в любой заметке!"
+            : "No books match this filter yet. Click 'Stamp' or '+ Sticker' in any note to place it on your shelf!",
+        });
+        return;
+      }
+
+      const grid = shelfBody.createDiv({ cls: "artcraft-bookshelf-grid" });
+      const spineColors = ["#8C5828", "#15803D", "#1E40AF", "#9A3412", "#6D28D9", "#0F766E"];
+
+      filtered.forEach((bk, idx) => {
+        const card = grid.createDiv({ cls: "artcraft-book-folio-card" + (bk.isClassics ? " is-gold-classic" : "") });
+        const spineCol = bk.isClassics ? "#B45309" : spineColors[idx % spineColors.length];
+        card.style.setProperty("--book-spine-color", spineCol);
+
+        const stampText = bk.isClassics
+          ? `★ ${isRu ? "КЛАССИКА" : "CLASSICS"} #${bk.stamp.count}`
+          : bk.stamp
+          ? `✓ ${isRu ? "ИЗУЧЕНО" : "APPROVED"} • ${bk.stamp.dates[bk.stamp.dates.length - 1]}`
+          : isRu
+          ? "В чтении"
+          : "In Progress";
+
+        const matchingBms =
+          this.activeFilter === "all" || this.activeFilter === "classics"
+            ? bk.bookmarks.slice(0, 3)
+            : bk.bookmarks.filter((m) => (m.type || "proteins") === this.activeFilter).slice(0, 3);
+
+        const bmHtml = matchingBms
+          .map((m) => {
+            const nObj = BOOK_NUTRIENTS[m.type] || BOOK_NUTRIENTS.proteins;
+            return `<div class="book-card-bm-item" style="border-left-color:${nObj.color}">
+              <strong style="color:${nObj.color}">${isRu ? nObj.ruName : nObj.enName}:</strong>
+              <span>${(m.meaning || m.snippet || "").slice(0, 58)}</span>
+            </div>`;
+          })
+          .join("");
+
+        card.innerHTML = `
+          <div class="book-card-top">
+            <span class="book-card-folder">${bk.folder}</span>
+            <span class="book-card-stamp ${bk.isClassics ? "is-gold" : ""}">${stampText}</span>
+          </div>
+          <div class="book-card-title">${bk.title}</div>
+          <div class="book-card-bms">${
+            bmHtml ||
+            `<div class="book-card-empty-bm">${
+              isRu ? "Книга проштампована • Нажмите, чтобы открыть" : "Stamped book folio • Click to open"
+            }</div>`
+          }</div>
+          <div class="book-card-footer">
+            <span>${SICRAFT_SVGS.bookmark} ${bk.bookmarks.length} ${isRu ? "закладок" : "stickers"}</span>
+            <span class="book-open-link">${isRu ? "Открыть книгу →" : "Open Book →"}</span>
+          </div>
+        `;
+
+        card.onclick = async () => {
+          const abstractFile = this.app.vault.getAbstractFileByPath(bk.path);
+          if (abstractFile) {
+            const leaf = this.app.workspace.getLeaf(false);
+            await leaf.openFile(abstractFile);
+            this.close();
+          } else {
+            new Notice(isRu ? "Файл заметки не найден по старому пути." : "Note file not found at saved path.");
+          }
+        };
+      });
+    };
+
+    filters.forEach((f) => {
+      const btn = filterBar.createEl("button", {
+        cls: "artcraft-shelf-filter-pill" + (this.activeFilter === f.id ? " is-active" : ""),
+        text: f.label,
+      });
+      btn.dataset.fid = f.id;
+      btn.onclick = () => {
+        this.activeFilter = f.id;
+        renderShelf();
+      };
+    });
+
+    renderShelf();
+
+    const footer = contentEl.createDiv({ cls: "nutrient-modal-footer" });
+    const btnExportAll = footer.createEl("button", { cls: "artcraft-pay-action-btn is-green" });
+    btnExportAll.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span><span>${
+      isRu ? "Скопировать Сводный Дайджест Всех Книг" : "Copy Master Vault Book Digest"
+    }</span>`;
+    btnExportAll.onclick = async () => {
+      const lines = [`# 📚 ${isRu ? "Полка Классики и Сводный Дайджест Книг" : "Master Classics & Book Nutrient Digest"}\n`];
+      books.forEach((bk) => {
+        lines.push(`## 📖 ${bk.title} (${bk.isClassics ? `★ CLASSICS #${bk.stamp.count}` : "Read"})`);
+        bk.bookmarks.forEach((m) => {
+          const nObj = BOOK_NUTRIENTS[m.type] || BOOK_NUTRIENTS.proteins;
+          lines.push(`- **[${isRu ? nObj.ruName : nObj.enName}] ${m.meaning || m.label}:** *«${m.snippet}»*`);
+        });
+        lines.push("");
+      });
+      await navigator.clipboard.writeText(lines.join("\n"));
+      new Notice(isRu ? "Сводный дайджест всех книг скопирован в буфер обмена!" : "Master Book Digest copied to clipboard!");
+    };
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
+
 const AMBIENT_SOUNDSCAPES = [
   { id: "balanced", ru: "Бархатный Розовый Дождь", en: "Velvet Pink Rain", subRu: "Стерео -3dB • Память и фокус", subEn: "Stereo -3dB • Memory & Focus", icon: SICRAFT_SVGS.sliders },
   { id: "brown", ru: "Глубокий Тёмный Кокон", en: "Deep Brown Shield", subRu: "Мягкий басовый щит • СДВГ-фокус", subEn: "Sub-Bass Shield • ADHD Focus", icon: SICRAFT_SVGS.shield },
@@ -1707,7 +1905,11 @@ const AMBIENT_SOUNDSCAPES = [
   { id: "stream", ru: "Горный Ручей и Хвоя", en: "Mountain Brook & Pines", subRu: "Живая вода и лесной воздух", subEn: "Babbling Brook & Soft Breeze", icon: SICRAFT_SVGS.stream },
   { id: "fire", ru: "Камин и Тёплые Угли", en: "Cozy Hearth & Embers", subRu: "Тёплый очаг и мягкий треск дров", subEn: "Warm Hearth & Soft Crackling", icon: SICRAFT_SVGS.flame },
   { id: "train", ru: "Ночной Поезд под Дождём", en: "Night Sleeper Train", subRu: "Мерный стук колёс и уют купе", subEn: "Rhythmic Rail Cadence & Rain", icon: SICRAFT_SVGS.train },
-  { id: "cafe", ru: "Вечерняя Кофейня Алхимика", en: "Warm Roastery Ambience", subRu: "Мягкая акустика зала и пар", subEn: "Warm Coffeehouse Acoustic Pad", icon: SICRAFT_SVGS.coffee }
+  { id: "cafe", ru: "Вечерняя Кофейня Алхимика", en: "Warm Roastery Ambience", subRu: "Мягкая акустика зала и пар", subEn: "Warm Coffeehouse Acoustic Pad", icon: SICRAFT_SVGS.coffee },
+  { id: "crystal_432", ru: "432Hz Кристальные Чаши и Дождь", en: "432Hz Crystal Bowls & Rain", subRu: "Гармоники 432Hz + тёплый ливень", subEn: "432Hz Pure Crystal + Warm Rain", icon: SICRAFT_SVGS.spark },
+  { id: "solfeggio_528", ru: "528Hz Сольфеджио Глубокий Покой", en: "528Hz Solfeggio Deep Repair", subRu: "Частота восстановления + шёлк", subEn: "528Hz Restorative Drone + Silk", icon: SICRAFT_SVGS.sun },
+  { id: "nordic_wind", ru: "Северный Фьорд и Сосновый Лес", en: "Nordic Fjord & Pine Wind", subRu: "Дыхание ветра в кронах сосен", subEn: "Slow Boreal Wind Through Pines", icon: SICRAFT_SVGS.waves },
+  { id: "vinyl_library", ru: "Винил в Старой Библиотеке", en: "Old Library Vinyl & Hearth", subRu: "Тёплый виниловый шорох и камин", subEn: "Warm Vinyl Crackle & Study Room", icon: SICRAFT_SVGS.book }
 ];
 
 class AlchemySonicStudioModal extends Modal {
@@ -2200,8 +2402,15 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.setupTactileKeystrokesAndRipples();
     this.setupMagicCursorLamp();
+    if (this.settings.showEqualizer !== false) {
+      setTimeout(() => this.startWindowsWasapiLoopbackBridge(), 300);
+    }
     this.addSettingTab(new AlchemyFlowSettingTab(this.app, this));
-    setTimeout(() => this.injectGraphViewHUD(), 400);
+    setTimeout(() => {
+      this.injectGraphViewHUD();
+      this.renderNoteWaxSealOverlay();
+      this.updateReadingPacerState();
+    }, 400);
   }
 
   // --- 🏮 1. MAGIC CURSOR LANTERN (LUMINA LAMP — DYNAMIC LIGHTING & 3D SHADOWS) ---
@@ -2640,106 +2849,113 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   startWindowsWasapiLoopbackBridge() {
-    this.stopWindowsWasapiLoopbackBridge();
+    if (this.wasapiBridgeProc) return true;
     try {
       const cp = window.require ? window.require("child_process") : null;
       const os = window.require ? window.require("os") : null;
       if (!cp || !os || os.platform() !== "win32") return false;
 
-      // Inline C# CoreAudio COM P/Invoke for IMMDeviceEnumerator::GetDefaultAudioEndpoint(eRender=0, eConsole=0) -> IAudioMeterInformation
-      // Reads real-time Windows master output peak & stereo channels from ANY speaker/USB headset/Bluetooth output at 40 FPS with 0 external dependencies!
-      const psScript = `
-Add-Type -TypeDefinition @"
-using System;
-using System.Runtime.InteropServices;
+      // Native C# CoreAudio Multi-Endpoint Loopback Meter:
+      // Enumerates ALL active playback endpoints (eRender = 0, DEVICE_STATE_ACTIVE = 1) + default endpoints
+      // so whether music plays on USB headphones, speakers, HDMI monitor, or Bluetooth, it captures the live peak & stereo channels at 40 FPS
+      // and flushes Console.Out on every frame! Launched via -EncodedCommand (UTF-16LE Base64) to avoid any command-line escaping issues.
+      const csharpSource = [
+        "using System;",
+        "using System.Collections.Generic;",
+        "using System.Globalization;",
+        "using System.Runtime.InteropServices;",
+        "using System.Threading;",
+        "[Guid(\"BCDE0395-E52F-467C-8E3D-C4579291692E\"), ComImport] class MMDeviceEnumeratorComObject { }",
+        "[Guid(\"0BD7A1BE-7A1A-44DB-8397-CC5392387B5E\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
+        "interface IMMDeviceCollection { int GetCount(out uint pcDevices); int Item(uint nDevice, out IMMDevice ppDevice); }",
+        "[Guid(\"A95664D2-9614-4F35-A746-DE8DB63617E6\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
+        "interface IMMDeviceEnumerator { int EnumAudioEndpoints(int dataFlow, int dwStateMask, out IMMDeviceCollection ppDevices); int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppEndpoint); }",
+        "[Guid(\"D666063F-1587-4E43-81F1-B948E807363F\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
+        "interface IMMDevice { int Activate(ref Guid iid, int dwClsCtx, IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface); }",
+        "[Guid(\"C02216F6-8C67-4B5B-9D00-D008E73E0064\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
+        "interface IAudioMeterInformation { int GetPeakValue(out float pfPeak); int GetMeteringChannelCount(out int pnChannelCount); int GetChannelsPeakValues(int u32ChannelCount, [Out] float[] afPeakValues); }",
+        "public class WinCoreAudioLoopback {",
+        "  private static List<IAudioMeterInformation> meters = new List<IAudioMeterInformation>();",
+        "  public static void Init() {",
+        "    meters.Clear();",
+        "    var enumerator = (IMMDeviceEnumerator)(new MMDeviceEnumeratorComObject());",
+        "    Guid iid = new Guid(\"C02216F6-8C67-4B5B-9D00-D008E73E0064\");",
+        "    try {",
+        "      IMMDeviceCollection col;",
+        "      enumerator.EnumAudioEndpoints(0, 1, out col);",
+        "      if (col != null) {",
+        "        uint count = 0; col.GetCount(out count);",
+        "        for (uint i = 0; i < count; i++) {",
+        "          try { IMMDevice d; col.Item(i, out d); object o; d.Activate(ref iid, 23, IntPtr.Zero, out o); if (o != null) meters.Add((IAudioMeterInformation)o); } catch {}",
+        "        }",
+        "      }",
+        "    } catch {}",
+        "    if (meters.Count == 0) {",
+        "      for (int role = 0; role < 3; role++) {",
+        "        try { IMMDevice d; enumerator.GetDefaultAudioEndpoint(0, role, out d); object o; d.Activate(ref iid, 23, IntPtr.Zero, out o); if (o != null) meters.Add((IAudioMeterInformation)o); } catch {}",
+        "      }",
+        "    }",
+        "  }",
+        "  public static void RunLoop() {",
+        "    Init();",
+        "    int tick = 0;",
+        "    while (true) {",
+        "      try {",
+        "        if (meters.Count == 0 || (++tick % 240 == 0)) Init();",
+        "        float bestP = 0f, bestL = 0f, bestR = 0f;",
+        "        for (int i = 0; i < meters.Count; i++) {",
+        "          float p = 0f; meters[i].GetPeakValue(out p);",
+        "          if (p > bestP) {",
+        "            bestP = p; bestL = p; bestR = p;",
+        "            int ch = 0; meters[i].GetMeteringChannelCount(out ch);",
+        "            if (ch >= 2 && ch <= 16) {",
+        "              float[] vals = new float[ch]; meters[i].GetChannelsPeakValues(ch, vals);",
+        "              bestL = vals[0]; bestR = vals[1];",
+        "            }",
+        "          }",
+        "        }",
+        "        Console.Out.WriteLine(bestP.ToString(\"F4\", CultureInfo.InvariantCulture) + \",\" + bestL.ToString(\"F4\", CultureInfo.InvariantCulture) + \",\" + bestR.ToString(\"F4\", CultureInfo.InvariantCulture));",
+        "        Console.Out.Flush();",
+        "      } catch { try { Init(); } catch {} }",
+        "      Thread.Sleep(25);",
+        "    }",
+        "  }",
+        "}"
+      ].join("\n");
 
-[Guid("BCDE0395-E52F-467C-8E3D-C4579291692E"), ComImport]
-class MMDeviceEnumeratorComObject { }
+      const b64Cs = Buffer.from(csharpSource, "utf8").toString("base64");
+      const psBootstrap = `$cs = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${b64Cs}')); Add-Type -TypeDefinition $cs; [WinCoreAudioLoopback]::RunLoop()`;
+      const encodedPs = Buffer.from(psBootstrap, "utf16le").toString("base64");
 
-[Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IMMDeviceEnumerator {
-    int EnumAudioEndpoints(int dataFlow, int dwStateMask, out IntPtr ppDevices);
-    int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppEndpoint);
-}
-
-[Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IMMDevice {
-    int Activate(ref Guid iid, int dwClsCtx, IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
-}
-
-[Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IAudioMeterInformation {
-    int GetPeakValue(out float pfPeak);
-    int GetMeteringChannelCount(out int pnChannelCount);
-    int GetChannelsPeakValues(int u32ChannelCount, [Out] float[] afPeakValues);
-}
-
-public class WinCoreAudioLoopback {
-    private static IAudioMeterInformation meter;
-    public static void Init() {
-        var enumerator = (IMMDeviceEnumerator)(new MMDeviceEnumeratorComObject());
-        IMMDevice dev;
-        enumerator.GetDefaultAudioEndpoint(0, 0, out dev);
-        Guid iid = new Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064");
-        object obj;
-        dev.Activate(ref iid, 23, IntPtr.Zero, out obj);
-        meter = (IAudioMeterInformation)obj;
-    }
-    public static string ReadPeaks() {
-        if (meter == null) Init();
-        float p = 0f;
-        meter.GetPeakValue(out p);
-        int ch = 0;
-        meter.GetMeteringChannelCount(out ch);
-        if (ch >= 2) {
-            float[] vals = new float[ch];
-            meter.GetChannelsPeakValues(ch, vals);
-            return p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
-                   vals[0].ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
-                   vals[1].ToString("F4", System.Globalization.CultureInfo.InvariantCulture);
-        }
-        return p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
-               p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture) + "," +
-               p.ToString("F4", System.Globalization.CultureInfo.InvariantCulture);
-    }
-}
-"@
-[WinCoreAudioLoopback]::Init()
-while ($true) {
-  try {
-    Write-Output ([WinCoreAudioLoopback]::ReadPeaks())
-  } catch {
-    [WinCoreAudioLoopback]::Init()
-  }
-  Start-Sleep -Milliseconds 26
-}
-`;
       const proc = cp.spawn(
         "powershell.exe",
-        ["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-Command", psScript],
+        ["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-EncodedCommand", encodedPs],
         { windowsHide: true, stdio: ["ignore", "pipe", "ignore"] }
       );
       this.wasapiBridgeProc = proc;
-      this.wasapiLoopbackLevels = { peak: 0, left: 0, right: 0, active: false, phase: 0 };
+      this.wasapiLoopbackLevels = { peak: 0, left: 0, right: 0, active: false, ts: 0 };
 
       let buf = "";
       proc.stdout.on("data", (chunk) => {
         buf += chunk.toString();
         const lines = buf.split(/\r?\n/);
         buf = lines.pop() || "";
-        const last = lines[lines.length - 1];
-        if (last && last.includes(",")) {
-          const parts = last.trim().split(",");
-          const pk = parseFloat(parts[0]) || 0;
-          const l = parseFloat(parts[1]) || pk;
-          const r = parseFloat(parts[2]) || pk;
-          this.wasapiLoopbackLevels = {
-            peak: pk,
-            left: l,
-            right: r,
-            active: pk > 0.002,
-            ts: Date.now()
-          };
+        for (let i = lines.length - 1; i >= 0; i--) {
+          const ln = lines[i].trim();
+          if (ln && ln.includes(",")) {
+            const parts = ln.split(",");
+            const pk = parseFloat(parts[0]) || 0;
+            const l = parseFloat(parts[1]) || pk;
+            const r = parseFloat(parts[2]) || pk;
+            this.wasapiLoopbackLevels = {
+              peak: pk,
+              left: l,
+              right: r,
+              active: pk > 0.0015,
+              ts: Date.now()
+            };
+            break;
+          }
         }
       });
       proc.on("exit", () => {
@@ -3230,6 +3446,10 @@ while ($true) {
     );
     this.stopAmbientSound();
     this.stopDesktopAudioCapture();
+    this.stopWindowsWasapiLoopbackBridge();
+    if (this.pacerAnimFrame) cancelAnimationFrame(this.pacerAnimFrame);
+    if (this.pacerBarEl) this.pacerBarEl.remove();
+    document.querySelectorAll(".artcraft-wax-seal-veil").forEach((el) => el.remove());
     if (this.cmObserver) {
       this.cmObserver.disconnect();
       this.cmObserver = null;
@@ -3393,7 +3613,7 @@ while ($true) {
 
       // Layer neuro-acoustic binaural & harmonic pads on top of the velvet acoustic bed
       const noiseBedGain = ctx.createGain();
-      const isNeuro = type === "gamma40" || type === "bright" || type === "night" || type === "rain_roof";
+      const isNeuro = type === "gamma40" || type === "bright" || type === "night" || type === "rain_roof" || type === "crystal_432" || type === "solfeggio_528";
       noiseBedGain.gain.value = isNeuro ? 0.48 : 1.0;
 
       noiseSource.connect(filter);
@@ -3457,6 +3677,10 @@ while ($true) {
       } else if (type === "night") {
         // 6Hz Theta Deep Meditation (174Hz L + 180Hz R + 261Hz warm drone)
         addStereoBinauralPair(174, 180, 261, 0.28);
+      } else if (type === "crystal_432") {
+        addStereoBinauralPair(216, 220, 432, 0.23);
+      } else if (type === "solfeggio_528") {
+        addStereoBinauralPair(264, 268, 528, 0.22);
       } else if (type === "rain_roof") {
         // Tibetan Singing Bowls & Warm Air (216Hz + 432Hz + periodic gentle harmonic bowl chimes)
         addStereoBinauralPair(216, 218.5, 432, 0.22);
@@ -3830,6 +4054,17 @@ while ($true) {
     this.timerEl.classList.toggle("is-running", this.timerRunning);
     this.timerEl.classList.toggle("is-break", this.timerState === "break");
     this.timerTextEl.innerHTML = `${SICRAFT_SVGS.timer}<span>${this.formatTime(this.timerSeconds)}</span>`;
+
+    // Update Peripheral Margin Sandglass Progress (0%..100%)
+    const totalSec = Math.max(60, (this.settings.pomodoroMinutes || 25) * 60);
+    let pct = 0;
+    if (this.settings.timerMode === "pomodoro") {
+      pct = Math.max(0, Math.min(100, Math.round(((totalSec - this.timerSeconds) / totalSec) * 100)));
+    } else {
+      pct = Math.min(100, Math.round(((this.timerSeconds % 1800) / 1800) * 100));
+    }
+    document.documentElement.style.setProperty("--artcraft-sandglass-pct", `${pct}%`);
+    document.body.classList.toggle("artcraft-sandglass-running", !!this.timerRunning);
   }
 
   applyBodyClasses() {
@@ -3842,6 +4077,8 @@ while ($true) {
     document.body.classList.toggle("artcraft-spotlight-mode", !!this.settings.spotlightFocus);
     document.body.classList.toggle("artcraft-magic-lamp", !!this.settings.magicLamp);
     document.body.classList.toggle("artcraft-book-spread", !!this.settings.bookSpreadMode);
+    document.body.classList.toggle("artcraft-breathing-spine", !!this.settings.breathingSpine);
+    document.body.classList.toggle("artcraft-margin-sandglass", this.settings.marginSandglass !== false);
 
     const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
     const show = this.settings.showHeaderTag !== false && tag.length > 0;
@@ -4706,6 +4943,7 @@ while ($true) {
   }
 
   updateTaskProgressBar(fromCheckboxClick = false) {
+    setTimeout(() => this.renderNoteWaxSealOverlay(), 60);
     // Clean up any legacy or floating elements that previously caused layout overlap in Live Preview or Reading Mode
     document
       .querySelectorAll(
@@ -4916,11 +5154,19 @@ while ($true) {
             </button>
             <button class="artcraft-craft-mini-btn ${this.settings.bookSpreadMode ? "is-active" : ""}" data-act="spread" title="${
               isRu
-                ? "ЛКМ: Книжный лист (Book Folio) | ПКМ: Открыть 2-страничный разворот рядом"
-                : "LMB: Hardcover Book Page | RMB: Open 2-Page Side-by-Side Spread"
+                ? "ЛКМ: 3D Книжный лист в 4 слоя | ПКМ: Открыть 2-страничный разворот рядом"
+                : "LMB: 4-Layer 3D Book Folio | RMB: Open 2-Page Side-by-Side Spread"
             }">
               ${SICRAFT_SVGS.columns}
               <span>${isRu ? "Книжный лист" : "Book Page"}</span>
+            </button>
+            <button class="artcraft-craft-mini-btn" data-act="bookshelf" title="${
+              isRu
+                ? "Открыть «Полку Классики» — все проштампованные заметки и закладки-нутриенты"
+                : "Open Classics Bookshelf — all stamped notes & 5-Nutrient bookmarks"
+            }">
+              ${SICRAFT_SVGS.shelf}
+              <span>${isRu ? "Полка" : "Shelf"}</span>
             </button>
           </div>
         </div>
@@ -4953,6 +5199,11 @@ while ($true) {
     wrap.querySelector('[data-act="digest"]')?.addEventListener("click", (e) => {
       e.stopPropagation();
       this.openBookNutrientDigestModal();
+    });
+
+    wrap.querySelector('[data-act="bookshelf"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.openClassicsBookshelfModal();
     });
 
     const spreadBtn = wrap.querySelector('[data-act="spread"]');
@@ -5086,6 +5337,256 @@ while ($true) {
     new BookNutrientDigestModal(this.app, this, filePath, bookmarks).open();
   }
 
+  openClassicsBookshelfModal() {
+    new ClassicsBookshelfModal(this.app, this).open();
+  }
+
+  // --- 🕯️ NEW IDEA 1: WAX SEAL TIME-LOCK CAPSULE (ЗАПЕЧАТАТЬ ЗАМЕТКУ СУРГУЧНОЙ ПЕЧАТЬЮ) ---
+  async toggleNoteWaxSeal() {
+    const obsidian = require("obsidian");
+    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!view || !view.file) return;
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const fp = view.file.path;
+    if (!this.settings.waxSealNotes) this.settings.waxSealNotes = {};
+
+    if (this.settings.waxSealNotes[fp]) {
+      delete this.settings.waxSealNotes[fp];
+      await this.saveSettings();
+      this.playHarmonicResonanceChime();
+      this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 65);
+      this.renderNoteWaxSealOverlay();
+      new Notice(isRu ? "🔓 Сургучная печать расколота! Капсула времени открыта." : "🔓 Wax Seal broken! Time-Lock Capsule unlocked.");
+    } else {
+      const unlockDate = new Date(Date.now() + 7 * 86400000).toLocaleDateString();
+      this.settings.waxSealNotes[fp] = {
+        sealedAt: new Date().toLocaleDateString(),
+        unlockDate
+      };
+      await this.saveSettings();
+      this.renderNoteWaxSealOverlay();
+      new Notice(isRu ? `🔒 Заметка запечатана сургучной печатью (Капсула времени до ${unlockDate})!` : `🔒 Note sealed with Crimson Wax Seal (Time Capsule until ${unlockDate})!`);
+    }
+  }
+
+  renderNoteWaxSealOverlay() {
+    document.querySelectorAll(".artcraft-wax-seal-veil").forEach((el) => el.remove());
+    const obsidian = require("obsidian");
+    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!view || !view.file) return;
+    const fp = view.file.path;
+    const seal = this.settings.waxSealNotes && this.settings.waxSealNotes[fp];
+    if (!seal) return;
+
+    const viewContent = view.containerEl.querySelector(".view-content");
+    if (!viewContent) return;
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+
+    const veil = document.createElement("div");
+    veil.className = "artcraft-wax-seal-veil";
+    veil.innerHTML = `
+      <div class="wax-seal-card">
+        <button class="wax-seal-emblem" title="${isRu ? "Нажмите, чтобы расколоть сургучную печать" : "Click to break the crimson wax seal"}">
+          <svg viewBox="0 0 120 120" width="96" height="96">
+            <circle cx="60" cy="60" r="54" fill="#991B1B" stroke="#7F1D1D" stroke-width="4"/>
+            <circle cx="60" cy="60" r="42" fill="#B91C1C" stroke="#F59E0B" stroke-width="1.8" stroke-dasharray="4 3"/>
+            <path d="M50 38H70M54 38V52L42 74C40.5 76.5 42.2 79.5 45.2 79.5H74.8C77.8 79.5 79.5 76.5 78 74L66 52V38" stroke="#FDE68A" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="60" cy="67" r="4" fill="#FDE68A"/>
+          </svg>
+        </button>
+        <div class="wax-seal-badge">ALCHEMIST TIME CAPSULE // WAX SEALED</div>
+        <h3 class="wax-seal-title">${isRu ? "Заметка запечатана сургучной печатью" : "Note Sealed Under Crimson Wax"}</h3>
+        <p class="wax-seal-sub">${
+          isRu
+            ? `Запечатано: ${seal.sealedAt} • Рекомендуемое открытие: ${seal.unlockDate}. Нажмите на сургучную печать выше, чтобы расколоть оттиск и открыть текст.`
+            : `Sealed on ${seal.sealedAt} • Target Unlock: ${seal.unlockDate}. Click the crimson wax emblem above to crack the seal and reveal your note.`
+        }</p>
+      </div>
+    `;
+    veil.querySelector(".wax-seal-emblem")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleNoteWaxSeal();
+    });
+    viewContent.appendChild(veil);
+  }
+
+  // --- ⚡ NEW IDEA 2: ACOUSTIC SPEED-READING PACER (СВЕТОВОЙ МЕТРОНОМ СКОРОЧТЕНИЯ 300 WPM) ---
+  async toggleReadingPacer() {
+    this.settings.readingPacer = !this.settings.readingPacer;
+    await this.saveSettings();
+    this.updateReadingPacerState();
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    new Notice(
+      this.settings.readingPacer
+        ? isRu
+          ? `⚡ Световой пейсер скорочтения включён (${this.settings.readingPacerWpm || 300} слов/мин)`
+          : `⚡ Acoustic Speed-Reading Pacer ON (${this.settings.readingPacerWpm || 300} WPM)`
+        : isRu
+        ? "Пейсер скорочтения выключен"
+        : "Speed-Reading Pacer OFF"
+    );
+  }
+
+  updateReadingPacerState() {
+    if (this.pacerAnimFrame) {
+      cancelAnimationFrame(this.pacerAnimFrame);
+      this.pacerAnimFrame = null;
+    }
+    if (this.pacerBarEl) {
+      this.pacerBarEl.remove();
+      this.pacerBarEl = null;
+    }
+    if (!this.settings.readingPacer) return;
+
+    const bar = document.createElement("div");
+    bar.className = "artcraft-reading-pacer-beam";
+    document.body.appendChild(bar);
+    this.pacerBarEl = bar;
+    this.pacerY = 140;
+
+    let lastTs = performance.now();
+    const step = (ts) => {
+      if (!this.settings.readingPacer || !this.pacerBarEl) return;
+      const dt = Math.min(0.1, (ts - lastTs) / 1000);
+      lastTs = ts;
+      const wpm = this.settings.readingPacerWpm || 300;
+      // ~12 words per line -> lines per second = (wpm / 60) / 12 -> ~28px per line
+      const pxPerSec = ((wpm / 60) / 11.5) * 28;
+      this.pacerY += pxPerSec * dt;
+      const maxH = window.innerHeight - 110;
+      if (this.pacerY > maxH) {
+        this.pacerY = 130;
+      }
+      this.pacerBarEl.style.transform = `translate3d(0, ${Math.round(this.pacerY)}px, 0)`;
+      this.pacerAnimFrame = requestAnimationFrame(step);
+    };
+    this.pacerAnimFrame = requestAnimationFrame(step);
+  }
+
+  // --- 🖼 NEW IDEA 3: EX-LIBRIS BOOK CARD PNG EXPORTER (ГЕНЕРАТОР КАРТОЧКИ ЭКСЛИБРИСА В PNG) ---
+  exportExLibrisBookCardPNG() {
+    try {
+      const obsidian = require("obsidian");
+      const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+      const isRu = (this.settings.uiLanguage || "en") === "ru";
+      const file = view && view.file ? view.file : null;
+      const fp = file ? file.path : "";
+      const title = file ? file.basename : "Alchemy Craft — Knowledge Folio";
+      const folder = fp.includes("/") ? fp.split("/")[0] : "VAULT FOLIO";
+      const stampRec = fp ? this.getNoteStampRecord(fp) : null;
+      const bookmarks = (fp && this.settings.marginBookmarks && this.settings.marginBookmarks[fp]) || [];
+
+      const cv = document.createElement("canvas");
+      cv.width = 1200;
+      cv.height = 675;
+      const ctx = cv.getContext("2d");
+
+      // 1. Warm Desk Linen Backdrop
+      ctx.fillStyle = "#E6E1D5";
+      ctx.fillRect(0, 0, 1200, 675);
+
+      // 2. 4 Stacked Book Sheets Shadow on Right & Bottom
+      const bx = 70, by = 52, bw = 1040, bh = 555;
+      const sheets = [
+        { dx: 18, dy: 15, fill: "#DFD9CA", stroke: "#B8B0A0" },
+        { dx: 12, dy: 10, fill: "#E8E3D7", stroke: "#C5BEB0" },
+        { dx: 6, dy: 5, fill: "#F2EFE6", stroke: "#D4CFC2" },
+        { dx: 0, dy: 0, fill: "#FAF8F3", stroke: "#D8D2C5" }
+      ];
+      sheets.forEach((sh) => {
+        ctx.fillStyle = sh.fill;
+        ctx.strokeStyle = sh.stroke;
+        ctx.lineWidth = 2;
+        ctx.fillRect(bx + sh.dx, by + sh.dy, bw, bh);
+        ctx.strokeRect(bx + sh.dx, by + sh.dy, bw, bh);
+      });
+
+      // 3. Leather Book Spine on Left
+      ctx.fillStyle = "#8C5828";
+      ctx.fillRect(bx, by, 14, bh);
+
+      // 4. Header Pill & Stamp
+      ctx.fillStyle = "#18181B";
+      ctx.fillRect(bx + 46, by + 38, 340, 32);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = '800 13px "JetBrains Mono", monospace';
+      ctx.fillText(`EX-LIBRIS // ${folder.toUpperCase().slice(0, 22)}`, bx + 62, by + 59);
+
+      // Stamp Box in Top-Right
+      const stampTxt = stampRec && stampRec.count >= 2
+        ? `★ CLASSICS #${stampRec.count} • ${stampRec.dates[stampRec.dates.length - 1]}`
+        : `✓ APPROVED • ${new Date().toLocaleDateString()}`;
+      ctx.fillStyle = stampRec && stampRec.count >= 2 ? "#FEF3C7" : "#DCFCE7";
+      ctx.strokeStyle = stampRec && stampRec.count >= 2 ? "#D97706" : "#16A34A";
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([6, 4]);
+      ctx.fillRect(bx + bw - 310, by + 36, 270, 36);
+      ctx.strokeRect(bx + bw - 310, by + 36, 270, 36);
+      ctx.setLineDash([]);
+      ctx.fillStyle = stampRec && stampRec.count >= 2 ? "#92400E" : "#15803D";
+      ctx.font = '800 13px "JetBrains Mono", monospace';
+      ctx.fillText(stampTxt, bx + bw - 294, by + 59);
+
+      // 5. Book Title
+      ctx.fillStyle = "#18181B";
+      ctx.font = '900 34px "Inter", sans-serif';
+      ctx.fillText(title.slice(0, 44), bx + 46, by + 124);
+
+      // Divider
+      ctx.strokeStyle = "#E5E0D5";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(bx + 46, by + 148);
+      ctx.lineTo(bx + bw - 40, by + 148);
+      ctx.stroke();
+
+      // 6. Render up to 4 Nutrient Stickers
+      const displayBms = bookmarks.length > 0 ? bookmarks.slice(0, 4) : [
+        { type: "proteins", label: isRu ? "Белки" : "Proteins", meaning: isRu ? "Главный практический вывод из заметки" : "Key actionable takeaway from this note", snippet: title },
+        { type: "carbs", label: isRu ? "Углеводы" : "Carbs", meaning: isRu ? "Глубокая мысль для размышления" : "Core mental model to ponder", snippet: folder }
+      ];
+
+      let curY = by + 178;
+      displayBms.forEach((bm) => {
+        const nObj = BOOK_NUTRIENTS[bm.type] || BOOK_NUTRIENTS.proteins;
+        ctx.fillStyle = nObj.bg;
+        ctx.strokeStyle = nObj.border;
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(bx + 46, curY, bw - 88, 72);
+        ctx.strokeRect(bx + 46, curY, bw - 88, 72);
+
+        ctx.fillStyle = nObj.color;
+        ctx.fillRect(bx + 46, curY, 7, 72);
+
+        ctx.font = '800 13px "JetBrains Mono", monospace';
+        ctx.fillStyle = nObj.color;
+        ctx.fillText((isRu ? nObj.ruName : nObj.enName).toUpperCase(), bx + 68, curY + 26);
+
+        ctx.font = '700 17px "Inter", sans-serif';
+        ctx.fillStyle = "#1F2937";
+        const mText = String(bm.meaning || bm.snippet || "").replace(/\[([^\]]+)\]\([^\)]*\)/g, "$1").slice(0, 68);
+        ctx.fillText(mText, bx + 68, curY + 52);
+
+        curY += 86;
+      });
+
+      // 7. Footer Signature
+      ctx.fillStyle = "#78716C";
+      ctx.font = '700 13px "JetBrains Mono", monospace';
+      ctx.fillText("ALCHEMY CRAFT v4.5.1 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+
+      const url = cv.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ex-libris-${title.toLowerCase().replace(/[^a-z0-9а-яё]+/gi, "-").slice(0, 28)}.png`;
+      a.click();
+      this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
+      new Notice(isRu ? "🖼 Карточка Экслибриса сохранена в PNG!" : "🖼 Ex-Libris Book Card exported as PNG!");
+    } catch (e) {
+      new Notice("Could not export Ex-Libris PNG.");
+    }
+  }
+
   async openTrueTwoPageBookSpread() {
     const obsidian = require("obsidian");
     const activeLeaf = this.app.workspace.activeLeaf;
@@ -5162,8 +5663,29 @@ while ($true) {
           id: "bookfolio",
           checked: !!this.settings.bookSpreadMode,
           icon: SICRAFT_SVGS.columns,
-          title: isRu ? "Книжный лист с полями для закладок" : "Hardcover Book Folio & Margin Channels",
-          sub: isRu ? "3D книжная страница с корешком и полями" : "Tactile 3D book sheet with spine & sticker margins",
+          title: isRu ? "3D Книжный фолиант (4 слоя страниц)" : "3D Multi-Sheet Book Folio (4 Stacked Sheets)",
+          sub: isRu ? "Книжный лист с кожаным корешком и стопкой страниц" : "Tactile book sheet with leather spine & stacked pages",
+        },
+        {
+          id: "breathspine",
+          checked: !!this.settings.breathingSpine,
+          icon: SICRAFT_SVGS.lung,
+          title: isRu ? "Дыхание корешка книги (5.5с Вдох / 5.5с Выдох)" : "Coherent 6-BPM Breathing Book Spine",
+          sub: isRu ? "Мягкая волна света по корешку для глубокого покоя" : "Warm 11s coherent breathing glow along the book spine",
+        },
+        {
+          id: "sandglass",
+          checked: this.settings.marginSandglass !== false,
+          icon: SICRAFT_SVGS.sandglass,
+          title: isRu ? "Песочные часы чернил на правом поле" : "Peripheral Margin Sandglass Thread",
+          sub: isRu ? "Золотая нить времени Помодоро вдоль среза книги" : "Golden Pomodoro ink thread along the right page edge",
+        },
+        {
+          id: "pacer",
+          checked: !!this.settings.readingPacer,
+          icon: SICRAFT_SVGS.bolt,
+          title: isRu ? "Световой пейсер скорочтения (300 слов/мин)" : "Acoustic Speed-Reading Pacer (300 WPM)",
+          sub: isRu ? "Плавный золотой луч ведёт взгляд по строкам" : "Gliding warm amber beam guides reading flow",
         },
         {
           id: "meta",
@@ -5218,6 +5740,15 @@ while ($true) {
           <button class="focus-pop-act-btn" data-pop-act="digest">
             ${SICRAFT_SVGS.book} <span>${isRu ? "Дайджест книги (Белки и Углеводы)" : "Book Digest (Proteins & Carbs)"}</span>
           </button>
+          <button class="focus-pop-act-btn" data-pop-act="bookshelf">
+            ${SICRAFT_SVGS.shelf} <span>${isRu ? "Открыть «Полку Классики» (Все книги базы)" : "Open Classics Bookshelf (Vault Library)"}</span>
+          </button>
+          <button class="focus-pop-act-btn" data-pop-act="exlibris-png">
+            ${SICRAFT_SVGS.camera} <span>${isRu ? "Сохранить Карточку Экслибриса в PNG" : "Export Ex-Libris Book Card as PNG"}</span>
+          </button>
+          <button class="focus-pop-act-btn" data-pop-act="wax-seal">
+            ${SICRAFT_SVGS.stamp} <span>${isRu ? "Запечатать / Открыть Сургучную Капсулу" : "Seal / Unlock Crimson Wax Time-Capsule"}</span>
+          </button>
           <button class="focus-pop-act-btn" data-pop-act="two-page">
             ${SICRAFT_SVGS.columns} <span>${isRu ? "Открыть 2-страничный разворот рядом" : "Open 2-Page Side-by-Side Spread"}</span>
           </button>
@@ -5249,6 +5780,13 @@ while ($true) {
             this.updateLampGpuStyle();
           } else if (opt === "bookfolio") {
             this.settings.bookSpreadMode = !this.settings.bookSpreadMode;
+          } else if (opt === "breathspine") {
+            this.settings.breathingSpine = !this.settings.breathingSpine;
+          } else if (opt === "sandglass") {
+            this.settings.marginSandglass = this.settings.marginSandglass === false ? true : false;
+          } else if (opt === "pacer") {
+            this.settings.readingPacer = !this.settings.readingPacer;
+            this.updateReadingPacerState();
           } else if (opt === "meta") {
             const nextState = !(this.settings.showReadingStats !== false || this.settings.showTaskProgress !== false);
             this.settings.showReadingStats = nextState;
@@ -5276,6 +5814,27 @@ while ($true) {
         pop.remove();
         this.focusPopoverEl = null;
         this.openBookNutrientDigestModal();
+      });
+
+      pop.querySelector('[data-pop-act="bookshelf"]')?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        pop.remove();
+        this.focusPopoverEl = null;
+        this.openClassicsBookshelfModal();
+      });
+
+      pop.querySelector('[data-pop-act="exlibris-png"]')?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        pop.remove();
+        this.focusPopoverEl = null;
+        this.exportExLibrisBookCardPNG();
+      });
+
+      pop.querySelector('[data-pop-act="wax-seal"]')?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        pop.remove();
+        this.focusPopoverEl = null;
+        this.toggleNoteWaxSeal();
       });
 
       pop.querySelector('[data-pop-act="two-page"]')?.addEventListener("click", (ev) => {

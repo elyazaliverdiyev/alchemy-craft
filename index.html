@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alchemy Craft v4.5 — Cappuccino Book Folio, Sonic Studio & Smart Lamp</title>
+  <title>Alchemy Craft v4.6 — Tactile 4-Layer Book Folio, Classics Bookshelf & Focus Studio</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -66,6 +66,45 @@
         20px 16px 0 -1px #E0DAD0,
         20px 16px 0 0 #B4AC9B,
         28px 26px 48px rgba(45, 35, 22, 0.14);
+      transition: border-color 0.5s ease;
+    }
+
+    /* Coherent 6-BPM Breathing Spine (5.5s Inhale / 5.5s Exhale) */
+    @keyframes coherentSpineBreathing {
+      0%, 100% {
+        border-left-color: #8C5828;
+      }
+      50% {
+        border-left-color: #D97706;
+      }
+    }
+
+    .book-folio-shell.is-breathing-spine {
+      animation: coherentSpineBreathing 11s ease-in-out infinite;
+    }
+
+    /* Margin Sandglass Thread along the right edge */
+    .margin-sandglass-thread {
+      position: absolute;
+      top: 36px;
+      bottom: 48px;
+      right: 14px;
+      width: 4px;
+      border-radius: 999px;
+      background: #E8E3D7;
+      overflow: hidden;
+      box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+
+    .margin-sandglass-fill {
+      width: 100%;
+      height: 67%;
+      background: linear-gradient(180deg, #F59E0B 0%, #10B981 100%);
+      border-radius: 999px;
+      transition: height 0.4s ease;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    }
     }
 
     @media (max-width: 768px) {
@@ -336,6 +375,89 @@
       z-index: 9999;
     }
 
+    /* Floating Focus Dock Replica */
+    .craft-floating-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(250, 248, 243, 0.96);
+      backdrop-filter: blur(14px);
+      border: 1.5px solid #D5CFC0;
+      border-radius: 20px;
+      box-shadow: 0 16px 36px rgba(45, 35, 22, 0.18), 0 2px 6px rgba(0,0,0,0.06);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 45;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .craft-floating-dock.is-vertical {
+      left: auto;
+      right: 20px;
+      bottom: 50%;
+      transform: translateY(50%);
+      flex-direction: column;
+      padding: 12px 8px;
+      border-radius: 22px;
+    }
+
+    .dock-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #374151;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .dock-btn:hover {
+      background: #FFFFFF;
+      border-color: #D5CFC0;
+      color: #111111;
+    }
+
+    .dock-btn.is-active {
+      background: #69BD28;
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .dock-focus-menu {
+      position: absolute;
+      bottom: 56px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #FAF8F3;
+      border: 1px solid #CFC7B5;
+      border-radius: 14px;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.16);
+      padding: 8px;
+      width: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 50;
+    }
+
+    .craft-floating-dock.is-vertical .dock-focus-menu {
+      bottom: auto;
+      top: 50%;
+      right: 64px;
+      left: auto;
+      transform: translateY(-50%);
+    }
+
     #craftToast.is-visible {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
@@ -348,27 +470,38 @@
   <div id="craftToast">Скопировано в буфер обмена</div>
 
   <!-- MAIN 3D MULTI-SHEET HARDCOVER BOOK FOLIO -->
-  <main class="book-folio-shell">
+  <main class="book-folio-shell is-breathing-spine">
 
-    <!-- Top Bar: Studio Pill + Language Switcher + Roastery Recipe Status -->
+    <!-- Margin Sandglass Thread (Pomodoro Capillary Fill on Right Edge) -->
+    <div class="margin-sandglass-thread" title="Margin Sandglass Thread (67% Sprint Completed)">
+      <div class="margin-sandglass-fill" id="demoSandglassFill"></div>
+    </div>
+
+    <!-- Top Bar: Studio Pill + Language Switcher + Author Card + Recipe Status -->
     <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
       <div class="flex flex-wrap items-center gap-2.5">
         <span class="cappuccino-pill">
           <svg class="w-3.5 h-3.5 text-[#8C5828]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2"/><path d="M10 2v2"/><path d="M14 2v2"/></svg>
-          <span id="i18n-top-badge">STRATALCHEMY // CAPPUCCINO BOOK STUDIO v4.5.0</span>
+          <span id="i18n-top-badge">STRATALCHEMY // CAPPUCCINO BOOK STUDIO v4.6.0</span>
         </span>
-        <!-- 6-Language Selector -->
+        <!-- 6-Language Selector (EN by default) -->
         <div class="inline-flex items-center bg-[#F3EFE6] border border-[#DFD9CA] rounded-full p-0.5 text-xs font-semibold">
-          <button class="lang-btn px-2.5 py-1 rounded-full bg-white text-stone-900 shadow-sm" data-lang="ru">RU</button>
-          <button class="lang-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-lang="en">EN</button>
+          <button class="lang-btn px-2.5 py-1 rounded-full bg-white text-stone-900 shadow-sm font-bold" data-lang="en">EN</button>
+          <button class="lang-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-lang="ru">RU</button>
           <button class="lang-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-lang="zh">ZH</button>
           <button class="lang-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-lang="ja">JA</button>
           <button class="lang-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-lang="es">ES</button>
           <button class="lang-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-lang="de">DE</button>
         </div>
+        <!-- Author Portrait Capsule -->
+        <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-[#F3EFE6] border border-[#DFD9CA] rounded-full py-1 px-3 shadow-sm hover:border-[#69BD28] transition-all" title="Creator: Elyaz Aliverdiyev (@StratAlchemy)">
+          <img src="imprint-StratAlchemy.png" alt="Elyaz Aliverdiyev" class="w-6 h-6 rounded-full border border-[#69BD28] object-cover" style="box-shadow: 0 0 10px rgba(105, 189, 40, 0.45);" />
+          <span class="mono text-xs font-bold text-stone-800 hidden sm:inline">Elyaz Aliverdiyev</span>
+          <span class="text-[10px] text-stone-500 font-medium">@StratAlchemy</span>
+        </a>
       </div>
 
-      <!-- Right Dark Cappuccino Status Card (Like Screenshot) -->
+      <!-- Right Dark Cappuccino Status Card -->
       <div class="roastery-status-widget">
         <svg width="42" height="34" viewBox="0 0 64 48" fill="none">
           <path d="M12 12H30L24 24L32 38H10L18 24L12 12Z" fill="#F0F7F4" stroke="#D6C7B2" stroke-width="2"/>
@@ -377,20 +510,20 @@
           <path d="M20 6C19 4 21 2 20 0M46 16C45 14 47 12 46 10" stroke="#69BD28" stroke-width="2" stroke-linecap="round"/>
         </svg>
         <div class="text-xs leading-tight">
-          <div class="mono font-bold tracking-wider text-stone-100 uppercase" id="recipeStatusTitle">ФОКУС-РЕЦЕПТ ГОТОВ</div>
-          <div class="text-stone-400 mt-0.5"><span id="recipeStatusSub">Звук: 12 сцен • Лампа: 3570K</span></div>
-          <div class="mono text-[11px] text-[#69BD28] font-semibold mt-0.5" id="recipeStatusGoal">Версия: v4.5.0 • 0% Комиссия</div>
+          <div class="mono font-bold tracking-wider text-stone-100 uppercase" id="recipeStatusTitle">FOCUS RECIPE READY</div>
+          <div class="text-stone-400 mt-0.5"><span id="recipeStatusSub">Sound: 16 Scenes • Lamp: 3570K</span></div>
+          <div class="mono text-[11px] text-[#69BD28] font-semibold mt-0.5" id="recipeStatusGoal">Version: v4.6.0 • 0% Fee</div>
         </div>
       </div>
     </header>
 
-    <!-- Hero Title & Calm Subtitle -->
+    <!-- Hero Title & Calm Subtitle (EN by default) -->
     <section class="mb-7">
       <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-stone-900 leading-tight mb-2.5" id="i18n-hero-title">
-        Alchemy Craft — Тактильная Книжная и Аудио-Студия
+        Alchemy Craft — Tactile 4-Layer Book Folio & Sonic Studio
       </h1>
       <p class="text-sm sm:text-base text-stone-600 max-w-3xl leading-relaxed" id="i18n-hero-sub">
-        Превратите заметки в многослойный книжный фолиант без визуального шума: 5 закладок-нутриентов со смыслом, 6 крафтовых режимов эквалайзера со звуком ПК (WASAPI), кремовые свитчи при печати, 12 стерео-сцен фокуса и умная лампа 2700K–6500K.
+        Transform your notes into a multi-sheet hardcover book folio with zero visual noise: 6-BPM coherent breathing leather spine, margin sandglass thread, 5-nutrient active reading stickers, 6 WASAPI desktop equalizers, creamy gasket switches, 16 stereo focus soundscapes, and classics bookshelf.
       </p>
     </section>
 
@@ -399,29 +532,29 @@
       <button class="stage-tab is-active" data-tab="book">
         <span class="stage-num" style="background:#2563EB">01</span>
         <div class="min-w-0">
-          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab1-title">Книжный Лист и Нутриенты</div>
-          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab1-sub">3D Страницы • 5 Закладок • Лампа</div>
+          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab1-title">Book Folio & 5 Nutrients</div>
+          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab1-sub">4-Layer Book • Spine Pacer • Sandglass</div>
         </div>
       </button>
       <button class="stage-tab" data-tab="sonic">
         <span class="stage-num" style="background:#EA580C">02</span>
         <div class="min-w-0">
-          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab2-title">Эквалайзер и Кремовые Свитчи</div>
-          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab2-sub">6 Эквалайзеров • 12 Звуков • Печать</div>
+          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab2-title">Sonic Studio & Creamy Switches</div>
+          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab2-sub">6 WASAPI Equalizers • 16 Soundscapes</div>
         </div>
       </button>
       <button class="stage-tab" data-tab="graph">
         <span class="stage-num" style="background:#10B981">03</span>
         <div class="min-w-0">
-          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab3-title">3D Граф и Нейро-Резонанс</div>
-          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab3-sub">Мягкий HUD внизу • Поток фотонов</div>
+          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab3-title">3D Graph & Mind-Palace</div>
+          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab3-sub">Soft Bottom HUD • WebGL Coordinates</div>
         </div>
       </button>
       <button class="stage-tab" data-tab="checkout">
         <span class="stage-num" style="background:#8B5CF6">04</span>
         <div class="min-w-0">
-          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab4-title">Кофейня Алхимика & Pro</div>
-          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab4-sub">@CryptoBot • 0% EVM • Bybit • Ключи</div>
+          <div class="text-xs font-bold text-stone-900 truncate" id="i18n-tab4-title">Alchemist Roastery & Pro</div>
+          <div class="text-[11px] text-stone-500 truncate" id="i18n-tab4-sub">@CryptoBot • 0% EVM • Bybit • Keys</div>
         </div>
       </button>
     </nav>
@@ -448,27 +581,38 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <span id="demoStampBadge" class="risograph-stamp" title="Нажмите, чтобы переключить штамп ИЗУЧЕНО / КЛАССИКА">
-              ✓ ИЗУЧЕНО • 08.11.2026
+            <span id="demoStampBadge" class="risograph-stamp" title="Click to toggle APPROVED / ★ CLASSICS stamp">
+              ✓ APPROVED • 08.11.2026
             </span>
-            <button id="btnAddNutrientDemo" class="btn-soft text-xs py-1 px-2.5">+ Закладка-Нутриент</button>
-            <button id="btnToggleLampDemo" class="btn-soft text-xs py-1 px-2.5">Умная Лампа (3570K)</button>
+            <button id="btnOpenShelfDemo" class="btn-soft text-xs py-1 px-2.5 font-bold" title="Open Classics Bookshelf & 5-Nutrient Library">
+              📚 Shelf
+            </button>
+            <button id="btnAddNutrientDemo" class="btn-soft text-xs py-1 px-2.5">+ Sticker</button>
+            <button id="btnToggleLampDemo" class="btn-soft text-xs py-1 px-2.5">Lamp (3570K)</button>
           </div>
         </div>
 
         <!-- 5-Nutrient Bookmarks Strip -->
         <div id="demoNutrientStrip" class="flex flex-wrap items-center gap-2 mb-5">
           <span class="nutrient-chip" style="border-left-color:#DC2626; background:#FEF2F2;" data-jump="sec-1">
-            <span class="mono text-[10px] font-extrabold text-red-700">БЕЛКИ</span>
-            <span class="text-stone-700">Внедрить эффект 4 книжных листов</span>
+            <span class="mono text-[10px] font-extrabold text-red-700">PROTEINS</span>
+            <span class="text-stone-700">Implement 4-layer book folio architecture</span>
           </span>
           <span class="nutrient-chip" style="border-left-color:#EA580C; background:#FFF7ED;" data-jump="sec-2">
-            <span class="mono text-[10px] font-extrabold text-orange-700">УГЛЕВОДЫ</span>
-            <span class="text-stone-700">Мягкий кофейный фокус без шума</span>
+            <span class="mono text-[10px] font-extrabold text-orange-700">CARBS</span>
+            <span class="text-stone-700">6-BPM coherent breathing spine pacer</span>
+          </span>
+          <span class="nutrient-chip" style="border-left-color:#CA8A04; background:#FEFCE8;" data-jump="sec-2">
+            <span class="mono text-[10px] font-extrabold text-yellow-700">FATS</span>
+            <span class="text-stone-700">Margin sandglass capillary fill thread</span>
           </span>
           <span class="nutrient-chip" style="border-left-color:#16A34A; background:#F0FDF4;" data-jump="sec-3">
-            <span class="mono text-[10px] font-extrabold text-green-700">ВИТАМИНЫ</span>
-            <span class="text-stone-700">Кремовый отклик клавиш при печати</span>
+            <span class="mono text-[10px] font-extrabold text-green-700">VITAMINS</span>
+            <span class="text-stone-700">Creamy 3-layer gasket switch acoustics</span>
+          </span>
+          <span class="nutrient-chip" style="border-left-color:#2563EB; background:#EFF6FF;" data-jump="sec-3">
+            <span class="mono text-[10px] font-extrabold text-blue-700">FIBER</span>
+            <span class="text-stone-700">Zero-noise WASAPI desktop sound loopback</span>
           </span>
         </div>
 
@@ -681,6 +825,43 @@
           </p>
         </div>
 
+        <!-- Alex Hormozi Value Stack Breakdown -->
+        <div class="bg-[#FAF8F3] border border-[#DCD6C8] rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="mono text-xs font-bold text-stone-500 uppercase tracking-wider">OFFICIAL VALUE BREAKDOWN // BY ALEX HORMOZI FORMULA</span>
+            <span class="mono text-xs font-bold text-[#15803D] bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">94% OFF TODAY</span>
+          </div>
+          <div class="divide-y divide-stone-200 text-xs text-stone-700">
+            <div class="py-2 flex items-center justify-between">
+              <span class="font-medium">📚 Multi-Sheet 3D Hardcover Book Folio + Coherent 6-BPM Breathing Leather Spine</span>
+              <span class="mono font-bold text-stone-900">$29 Value</span>
+            </div>
+            <div class="py-2 flex items-center justify-between">
+              <span class="font-medium">🔊 Windows CoreAudio WASAPI Loopback Engine (Zero-Noise Desktop Capture)</span>
+              <span class="mono font-bold text-stone-900">$24 Value</span>
+            </div>
+            <div class="py-2 flex items-center justify-between">
+              <span class="font-medium">🎛 6 Craft Equalizer Modes + 16 Stereo Binaural & 40Hz Gamma Soundscapes</span>
+              <span class="mono font-bold text-stone-900">$19 Value</span>
+            </div>
+            <div class="py-2 flex items-center justify-between">
+              <span class="font-medium">⌨️ Creamy Gasket Mechanical Switch Acoustic Synthesizer (6 POM/PBT Profiles)</span>
+              <span class="mono font-bold text-stone-900">$17 Value</span>
+            </div>
+            <div class="py-2 flex items-center justify-between">
+              <span class="font-medium">📚 Classics Bookshelf & 5-Nutrient Library Modal + Margin Sandglass Thread</span>
+              <span class="mono font-bold text-stone-900">$19 Value</span>
+            </div>
+            <div class="pt-2.5 flex items-center justify-between font-bold text-sm">
+              <span class="text-stone-900">Total Combined Value:</span>
+              <div class="text-right">
+                <span class="line-through text-stone-400 mr-2 text-xs">$108/yr</span>
+                <span class="text-[#15803D] text-base font-extrabold">$4.99 one-time</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 3 Cappuccino Tiers -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="tier-card soft-subcard cursor-pointer border-2 border-transparent hover:border-stone-300 transition-all text-center p-5" data-tier="bronze" data-amount="4.99">
@@ -703,6 +884,21 @@
             <div class="text-lg font-extrabold text-stone-900 mt-1">Кофейня Алхимика</div>
             <div class="text-2xl font-extrabold text-[#15803D] my-2">$19.00</div>
             <p class="text-xs text-stone-600">Вечная Pro-лицензия + 3 подарочных ключа для друзей и приоритет ваших идей в новых версиях.</p>
+          </div>
+        </div>
+
+        <!-- Custom Amount (Pay What You Want: $1..$500) -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-[#FAF8F3] border border-[#DCD6C8] rounded-xl p-3 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-stone-800">☕ Pay What You Want / Своя сумма:</span>
+            <span class="text-stone-500">(от $1 до $500 в поддержку крафтовой разработки)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-stone-400 font-bold">$</span>
+              <input id="customAmountInput" type="number" min="1" max="500" step="0.5" placeholder="9.99" class="w-24 pl-6 pr-2 py-1.5 bg-white border border-[#D5CFC0] rounded-lg mono text-xs font-bold text-stone-900 focus:outline-none focus:border-[#69BD28]" />
+            </div>
+            <button id="btnApplyCustomAmount" class="btn-soft py-1.5 px-3 text-xs font-bold">Применить</button>
           </div>
         </div>
 
@@ -754,16 +950,224 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="mt-8 pt-5 border-t border-[#E5E0D5] flex flex-wrap items-center justify-between gap-4 text-xs text-stone-500">
-      <div>Alchemy Craft v4.5.0 • Cappuccino Book Folio & Sonic Studio • Created by Elyaz Aliverdiyev</div>
-      <div class="flex items-center gap-4">
-        <a href="https://github.com/elyazaliverdiyev/alchemy-craft" target="_blank" rel="noopener" class="hover:text-stone-900 font-semibold">GitHub Repository ↗</a>
-        <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="hover:text-stone-900 font-semibold">Telegram @StratAlchemy ↗</a>
+    <!-- Footer with Author Imprint -->
+    <footer class="mt-10 pt-6 border-t border-[#E5E0D5] flex flex-wrap items-center justify-between gap-6 text-xs text-stone-600">
+      <div class="flex items-center gap-3">
+        <img src="imprint-StratAlchemy.png" alt="Elyaz Aliverdiyev" class="w-10 h-10 rounded-full border-2 border-[#69BD28] object-cover shadow-md" />
+        <div>
+          <div class="font-bold text-stone-900 text-sm">Alchemy Craft v4.6.0 // Elyaz Aliverdiyev</div>
+          <div class="text-[11px] text-stone-500">Tactile 4-Layer Book Folio, Coherent Breathing Spine & Focus Studio</div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <a href="https://github.com/elyazaliverdiyev/alchemy-craft" target="_blank" rel="noopener" class="hover:text-stone-900 font-semibold inline-flex items-center gap-1.5">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub Repository
+        </a>
+        <a href="https://t.me/StratAlchemy" target="_blank" rel="noopener" class="hover:text-[#69BD28] text-stone-700 font-semibold inline-flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+          Telegram @StratAlchemy
+        </a>
       </div>
     </footer>
 
   </main>
+
+  <!-- ===================================================================
+       CLASSICS BOOKSHELF & 5-NUTRIENT LIBRARY MODAL
+       =================================================================== -->
+  <div id="classicsShelfModal" class="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-[#FAF8F3] border-2 border-[#8C5828] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+      <!-- Shelf Header -->
+      <div class="bg-gradient-to-r from-[#8C5828] to-[#A06935] text-white px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">📚</span>
+          <div>
+            <h3 class="font-extrabold text-base tracking-wide">ПОЛКА КЛАССИКИ И 5-НУТРИЕНТОВ // CLASSICS SHELF</h3>
+            <p class="text-xs text-amber-100/90">Все изученные книги, золотые штампы и сводный дайджест базы знаний</p>
+          </div>
+        </div>
+        <button id="btnCloseClassicsShelf" class="text-white/80 hover:text-white text-xl font-bold p-1 cursor-pointer">✕</button>
+      </div>
+
+      <!-- Shelf Filter & Actions -->
+      <div class="px-6 py-3 bg-[#F2EDE3] border-b border-[#D8D2C5] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex flex-wrap items-center gap-1.5" id="shelfNutrientFilters">
+          <button class="shelf-filter-btn px-2.5 py-1 rounded-full bg-white font-bold text-stone-900 shadow-sm border border-[#D0C9B8]" data-filter="all">Все книги (4)</button>
+          <button class="shelf-filter-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-filter="protein">🔴 Белки</button>
+          <button class="shelf-filter-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-filter="carbs">🟠 Углеводы</button>
+          <button class="shelf-filter-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-filter="vitamins">🟢 Витамины</button>
+          <button class="shelf-filter-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900" data-filter="fiber">🔵 Клетчатка</button>
+        </div>
+        <button id="btnCopyAllDigest" class="btn-matcha py-1 px-3 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
+          <span>📋</span> Скопировать Сводный Дайджест Всех Книг
+        </button>
+      </div>
+
+      <!-- Wooden Shelves Content -->
+      <div class="p-6 overflow-y-auto space-y-6 flex-1 bg-[radial-gradient(#E8E3D8_1px,transparent_1px)] [background-size:16px_16px]">
+        <!-- Shelf 1: Gold Classics -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="mono text-xs font-extrabold text-[#8C5828] uppercase tracking-wider">★ ПОЛКА 1 • ЗОЛОТАЯ КЛАССИКА (100% ИЗУЧЕНО)</span>
+            <div class="flex-1 h-px bg-[#D5CFC0]"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="shelfGridClassics">
+            <!-- Book 1 -->
+            <div class="bg-white border border-[#DFDBD0] hover:border-[#8C5828] rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group" onclick="showToast('Открываем книгу: $100M Offers')">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="risograph-stamp is-classics text-[10px] py-0.5 px-2">★ КЛАССИКА #1 • 08.11.2026</span>
+                  <h4 class="font-extrabold text-stone-900 text-sm mt-1.5 group-hover:text-[#8C5828] transition-colors">$100M Offers — Alex Hormozi</h4>
+                </div>
+                <span class="text-xs text-stone-400 mono">~12 мин</span>
+              </div>
+              <p class="text-xs text-stone-600 mt-2 line-clamp-2">Создание предложений, от которых глупо отказаться: ценность = (Dream Outcome × Likelihood) / (Time × Effort).</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="nutrient-chip text-[10px] py-0.5 px-2" style="border-left-color:#DC2626; background:#FEF2F2;"><span class="mono font-bold text-red-700">БЕЛКИ</span> Grand Slam Offer Formula</span>
+                <span class="nutrient-chip text-[10px] py-0.5 px-2" style="border-left-color:#EA580C; background:#FFF7ED;"><span class="mono font-bold text-orange-700">УГЛЕВОДЫ</span> Risk Reversal & Guarantees</span>
+              </div>
+            </div>
+
+            <!-- Book 2 -->
+            <div class="bg-white border border-[#DFDBD0] hover:border-[#8C5828] rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group" onclick="showToast('Открываем книгу: Deep Work')">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="risograph-stamp is-classics text-[10px] py-0.5 px-2">★ КЛАССИКА #2 • 07.11.2026</span>
+                  <h4 class="font-extrabold text-stone-900 text-sm mt-1.5 group-hover:text-[#8C5828] transition-colors">Deep Work — Cal Newport</h4>
+                </div>
+                <span class="text-xs text-stone-400 mono">~18 мин</span>
+              </div>
+              <p class="text-xs text-stone-600 mt-2 line-clamp-2">Правила сфокусированного успеха в рассеянном мире. Четыре дисциплины глубинного погружения без контекст-свитчинга.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="nutrient-chip text-[10px] py-0.5 px-2" style="border-left-color:#16A34A; background:#F0FDF4;"><span class="mono font-bold text-green-700">ВИТАМИНЫ</span> 90-минутные блоки</span>
+                <span class="nutrient-chip text-[10px] py-0.5 px-2" style="border-left-color:#2563EB; background:#EFF6FF;"><span class="mono font-bold text-blue-700">КЛЕТЧАТКА</span> Attention Residue Effect</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shelf 2: Studied Books -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="mono text-xs font-extrabold text-stone-600 uppercase tracking-wider">ПОЛКА 2 • ИЗУЧЕНО В ЭТОМ МЕСЯЦЕ</span>
+            <div class="flex-1 h-px bg-[#D5CFC0]"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="shelfGridStudied">
+            <!-- Book 3 -->
+            <div class="bg-white border border-[#DFDBD0] hover:border-stone-400 rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group" onclick="showToast('Открываем книгу: Obviously Awesome')">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="risograph-stamp text-[10px] py-0.5 px-2">✓ ИЗУЧЕНО • 06.11.2026</span>
+                  <h4 class="font-extrabold text-stone-900 text-sm mt-1.5 group-hover:text-[#8C5828] transition-colors">Obviously Awesome — April Dunford</h4>
+                </div>
+                <span class="text-xs text-stone-400 mono">~9 мин</span>
+              </div>
+              <p class="text-xs text-stone-600 mt-2 line-clamp-2">Как позиционировать продукты, чтобы клиенты мгновенно понимали их ценность и покупали.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="nutrient-chip text-[10px] py-0.5 px-2" style="border-left-color:#DC2626; background:#FEF2F2;"><span class="mono font-bold text-red-700">БЕЛКИ</span> 5 компонентов контекста</span>
+              </div>
+            </div>
+
+            <!-- Book 4 -->
+            <div class="bg-white border border-[#DFDBD0] hover:border-stone-400 rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group" onclick="showToast('Открываем книгу: StratAlchemy Knowledge Brief')">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="risograph-stamp text-[10px] py-0.5 px-2">✓ ИЗУЧЕНО • 08.11.2026</span>
+                  <h4 class="font-extrabold text-stone-900 text-sm mt-1.5 group-hover:text-[#8C5828] transition-colors">StratAlchemy Knowledge Brief</h4>
+                </div>
+                <span class="text-xs text-stone-400 mono">~5 мин</span>
+              </div>
+              <p class="text-xs text-stone-600 mt-2 line-clamp-2">4-слойная книжная архитектура, 6-BPM дыхательный корешок и капиллярная нить песочных часов.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="nutrient-chip text-[10px] py-0.5 px-2" style="border-left-color:#CA8A04; background:#FEFCE8;"><span class="mono font-bold text-yellow-700">ЖИРЫ</span> Кофейный тактильный ритуал</span>
+                <span class="nutrient-chip text-[10px] py-0.5 px-2" style="border-left-color:#16A34A; background:#F0FDF4;"><span class="mono font-bold text-green-700">ВИТАМИНЫ</span> 6 свитчей клавиатуры</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wooden Base Footer -->
+      <div class="bg-[#8C5828] h-3 shadow-inner"></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       FLOATING INTERACTIVE DOCK REPLICA (BOTTOM OR VERTICAL PILLAR)
+       =================================================================== -->
+  <div id="demoFloatingDock" class="craft-floating-dock">
+    <!-- Emblem Badge -->
+    <div class="w-8 h-8 rounded-xl bg-stone-900 text-white flex items-center justify-center text-sm shadow-inner cursor-pointer" title="Alchemy Craft Studio">
+      🧪
+    </div>
+
+    <!-- Sprint Capsule -->
+    <div id="dockSprintPill" class="mono text-xs font-bold text-stone-800 bg-[#EFECE3] border border-[#D5CFC0] rounded-lg px-2.5 py-1.5 flex items-center gap-1.5 cursor-pointer" title="Текущий спринт (нажмите для смены времени)">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span id="dockSprintTime">45:00</span>
+    </div>
+
+    <!-- UI & Zen Buttons -->
+    <button id="dockBtnUI" class="dock-btn is-active" title="Переключить интерфейс UI">UI</button>
+    <button id="dockBtnZen" class="dock-btn" title="Режим Дзен">⊙ Дзен</button>
+
+    <!-- Focus Dropdown Button -->
+    <div class="relative">
+      <button id="dockBtnFocus" class="dock-btn is-active flex items-center gap-1" title="Меню фокуса и крафтовых функций">
+        <span>⛶ Фокус ▾</span>
+      </button>
+
+      <!-- Focus Dropdown Menu -->
+      <div id="dockFocusMenu" class="dock-focus-menu hidden text-xs text-stone-800">
+        <div class="font-extrabold text-[10px] mono text-stone-500 uppercase tracking-wider px-1">КРАФТОВЫЕ МЕХАНИКИ:</div>
+        <label class="flex items-center justify-between p-1.5 hover:bg-[#F2ECE0] rounded-lg cursor-pointer">
+          <span class="font-semibold">🫁 Корешок 6 BPM</span>
+          <input type="checkbox" id="toggleSpineCheck" class="w-4 h-4 accent-[#69BD28] rounded cursor-pointer" checked />
+        </label>
+        <label class="flex items-center justify-between p-1.5 hover:bg-[#F2ECE0] rounded-lg cursor-pointer">
+          <span class="font-semibold">⏳ Песочные часы</span>
+          <input type="checkbox" id="toggleSandglassCheck" class="w-4 h-4 accent-[#69BD28] rounded cursor-pointer" checked />
+        </label>
+        <button id="focusMenuOpenShelf" class="text-left p-1.5 hover:bg-[#F2ECE0] rounded-lg font-semibold flex items-center gap-1.5 text-[#8C5828] cursor-pointer">
+          <span>📚</span> Полка Классики (Шедевры)
+        </button>
+        <div class="h-px bg-stone-300 my-0.5"></div>
+        <div class="font-extrabold text-[10px] mono text-stone-500 uppercase tracking-wider px-1">ДЛИТЕЛЬНОСТЬ СПРИНТА:</div>
+        <div class="grid grid-cols-3 gap-1">
+          <button class="dock-btn text-[11px] py-1 border border-stone-300" onclick="setSprint(25)">25м</button>
+          <button class="dock-btn text-[11px] py-1 is-active border border-stone-300" onclick="setSprint(45)">45м</button>
+          <button class="dock-btn text-[11px] py-1 border border-stone-300" onclick="setSprint(60)">60м</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <button class="dock-btn" onclick="showToast('Лазерная указка активна')">⊹ Указка</button>
+    <button class="dock-btn" onclick="showToast('Маркер цитат активен')">✎ Маркер</button>
+    <button class="dock-btn" onclick="showToast('Ластик активен')">⌫ Ластик</button>
+
+    <!-- Colors -->
+    <div class="flex items-center gap-1 px-1">
+      <span class="w-3.5 h-3.5 rounded-full bg-blue-600 border border-white shadow-sm cursor-pointer hover:scale-110 transition-transform" onclick="showToast('Выбран синий цвет заметок')"></span>
+      <span class="w-3.5 h-3.5 rounded-full bg-amber-500 border border-white shadow-sm cursor-pointer hover:scale-110 transition-transform" onclick="showToast('Выбран янтарный цвет заметок')"></span>
+      <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white shadow-sm cursor-pointer hover:scale-110 transition-transform" onclick="showToast('Выбран зелёный цвет заметок')"></span>
+      <span class="w-3.5 h-3.5 rounded-full bg-purple-500 border border-white shadow-sm cursor-pointer hover:scale-110 transition-transform" onclick="showToast('Выбран фиолетовый цвет заметок')"></span>
+    </div>
+
+    <!-- Smart Lamp Button -->
+    <button id="dockBtnLamp" class="dock-btn border border-[#D5CFC0] bg-white" title="Включить / выключить лампу">💡 Лампа</button>
+
+    <!-- Mini Equalizer Matrix Capsule -->
+    <div class="bg-stone-900 border border-stone-800 rounded-lg px-2 py-1 flex items-center gap-1 text-[10px] text-white mono" title="Живой аудио-монитор WASAPI">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#69BD28] animate-pulse"></span>
+      <span class="text-[#69BD28] font-bold">●●|</span>
+    </div>
+
+    <!-- Controls: Rotate, Minimize -->
+    <button id="dockBtnRotate" class="dock-btn text-stone-500" title="Повернуть док-панель (Горизонтально / Вертикально)">🔄</button>
+    <button id="dockBtnCollapse" class="dock-btn text-stone-500" title="Свернуть / развернуть док">—</button>
+  </div>
 
   <script>
     // --- TOAST HELPER ---
@@ -1494,6 +1898,184 @@
     document.getElementById("btnCopyLicenseKey").addEventListener("click", () => {
       copyTextSafe(document.getElementById("generatedKeyText").textContent, "Ключ ACPRO скопирован!");
     });
+
+    // --- 8. CLASSICS BOOKSHELF MODAL & 5-NUTRIENT DIGEST ---
+    const shelfModal = document.getElementById("classicsShelfModal");
+    function openClassicsShelf() {
+      if (shelfModal) shelfModal.classList.remove("hidden");
+    }
+    function closeClassicsShelf() {
+      if (shelfModal) shelfModal.classList.add("hidden");
+    }
+
+    const btnOpenShelfDemo = document.getElementById("btnOpenShelfDemo");
+    if (btnOpenShelfDemo) btnOpenShelfDemo.addEventListener("click", openClassicsShelf);
+
+    const btnCloseClassicsShelf = document.getElementById("btnCloseClassicsShelf");
+    if (btnCloseClassicsShelf) btnCloseClassicsShelf.addEventListener("click", closeClassicsShelf);
+
+    if (shelfModal) {
+      shelfModal.addEventListener("click", (e) => {
+        if (e.target === shelfModal) closeClassicsShelf();
+      });
+    }
+
+    const focusMenuOpenShelf = document.getElementById("focusMenuOpenShelf");
+    if (focusMenuOpenShelf) {
+      focusMenuOpenShelf.addEventListener("click", () => {
+        closeFocusMenu();
+        openClassicsShelf();
+      });
+    }
+
+    // Shelf category filter
+    document.querySelectorAll(".shelf-filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".shelf-filter-btn").forEach((b) => {
+          b.className = "shelf-filter-btn px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900";
+        });
+        btn.className = "shelf-filter-btn px-2.5 py-1 rounded-full bg-white font-bold text-stone-900 shadow-sm border border-[#D0C9B8]";
+        const filter = btn.getAttribute("data-filter");
+        showToast(filter === "all" ? "Показаны все изученные книги" : "Отфильтровано по нутриенту: " + btn.textContent);
+      });
+    });
+
+    // Copy all books digest
+    const btnCopyAllDigest = document.getElementById("btnCopyAllDigest");
+    if (btnCopyAllDigest) {
+      btnCopyAllDigest.addEventListener("click", () => {
+        const digestText = `# СВОДНЫЙ ДАЙДЖЕСТ КЛАССИКИ И НУТРИЕНТОВ // STRATALCHEMY\n\n` +
+          `## ★ КЛАССИКА #1: $100M Offers — Alex Hormozi (08.11.2026)\n` +
+          `- 🔴 БЕЛКИ: Grand Slam Offer Formula = (Dream Outcome × Likelihood) / (Time Delay × Effort & Sacrifice)\n` +
+          `- 🟠 Углеводы: Безусловные гарантии и реверс рисков для снятия трения\n\n` +
+          `## ★ КЛАССИКА #2: Deep Work — Cal Newport (07.11.2026)\n` +
+          `- 🟢 ВИТАМИНЫ: 90-минутные блоки глубинного погружения без контекст-свитчинга\n` +
+          `- 🔵 КЛЕТЧАТКА: Эффект Attention Residue и гигиена внимания\n\n` +
+          `## ✓ ИЗУЧЕНО: Obviously Awesome — April Dunford (06.11.2026)\n` +
+          `- 🔴 БЕЛКИ: 5 ключевых компонентов позиционирования продукта\n\n` +
+          `## ✓ ИЗУЧЕНО: StratAlchemy Knowledge Brief (08.11.2026)\n` +
+          `- 🟡 ЖИРЫ: Тактильный ритуал медленного чтения с умной лампой 3570K\n` +
+          `- 🟢 ВИТАМИНЫ: 6 кремовых свитчей при конспектировании\n`;
+        copyTextSafe(digestText, "Сводный дайджест всех книг скопирован в буфер обмена!");
+      });
+    }
+
+    // --- 9. CUSTOM AMOUNT (PAY WHAT YOU WANT) ---
+    const btnApplyCustomAmount = document.getElementById("btnApplyCustomAmount");
+    const customAmountInput = document.getElementById("customAmountInput");
+    if (btnApplyCustomAmount && customAmountInput) {
+      btnApplyCustomAmount.addEventListener("click", () => {
+        const val = parseFloat(customAmountInput.value);
+        if (isNaN(val) || val < 1) {
+          showToast("Пожалуйста, введите сумму от $1");
+          return;
+        }
+        selectedAmount = val.toFixed(2);
+        document.querySelectorAll(".tier-card").forEach((c) => {
+          c.classList.remove("border-[#69BD28]", "bg-white", "shadow-md");
+          c.classList.add("border-transparent");
+        });
+        document.getElementById("payAmountDisplay").textContent = "$" + selectedAmount + " USDT";
+        showToast("Сумма поддержки установлена: $" + selectedAmount);
+      });
+    }
+
+    // --- 10. FLOATING DOCK INTERACTIVITY ---
+    const floatingDock = document.getElementById("demoFloatingDock");
+    const dockFocusMenu = document.getElementById("dockFocusMenu");
+    const bookShell = document.querySelector(".book-folio-shell");
+    const sandglassFill = document.getElementById("demoSandglassFill");
+
+    function closeFocusMenu() {
+      if (dockFocusMenu) dockFocusMenu.classList.add("hidden");
+    }
+
+    const dockBtnFocus = document.getElementById("dockBtnFocus");
+    if (dockBtnFocus) {
+      dockBtnFocus.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (dockFocusMenu) dockFocusMenu.classList.toggle("hidden");
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (dockFocusMenu && !dockFocusMenu.contains(e.target) && e.target !== dockBtnFocus) {
+        closeFocusMenu();
+      }
+    });
+
+    // Toggle Coherent 6-BPM Breathing Spine
+    const toggleSpineCheck = document.getElementById("toggleSpineCheck");
+    if (toggleSpineCheck && bookShell) {
+      toggleSpineCheck.addEventListener("change", (e) => {
+        bookShell.classList.toggle("is-breathing-spine", e.target.checked);
+        showToast(e.target.checked ? "🫁 Дыхательный корешок 6-BPM активен (5.5с вдох / 5.5с выдох)" : "Дыхательный корешок отключён");
+      });
+    }
+
+    // Toggle Margin Sandglass Thread
+    const toggleSandglassCheck = document.getElementById("toggleSandglassCheck");
+    const sandglassThread = document.querySelector(".margin-sandglass-thread");
+    if (toggleSandglassCheck && sandglassThread) {
+      toggleSandglassCheck.addEventListener("change", (e) => {
+        sandglassThread.style.display = e.target.checked ? "block" : "none";
+        showToast(e.target.checked ? "⏳ Песочные часы на правом поле активны" : "Песочные часы скрыты");
+      });
+    }
+
+    // Set Sprint Duration
+    function setSprint(minutes) {
+      const timeDisplay = document.getElementById("dockSprintTime");
+      if (timeDisplay) timeDisplay.textContent = minutes + ":00";
+      if (sandglassFill) {
+        const pcts = { 25: "75%", 45: "67%", 60: "50%" };
+        sandglassFill.style.height = pcts[minutes] || "67%";
+      }
+      showToast("⏱ Таймер фокуса переключён на " + minutes + " мин");
+      closeFocusMenu();
+    }
+
+    // Dock Rotate Button
+    const dockBtnRotate = document.getElementById("dockBtnRotate");
+    if (dockBtnRotate && floatingDock) {
+      dockBtnRotate.addEventListener("click", () => {
+        floatingDock.classList.toggle("is-vertical");
+        showToast(floatingDock.classList.contains("is-vertical") ? "Док переключён в вертикальный пиллар справа" : "Док переключён в горизонтальную панель снизу");
+      });
+    }
+
+    // Dock Collapse Button
+    const dockBtnCollapse = document.getElementById("dockBtnCollapse");
+    if (dockBtnCollapse && floatingDock) {
+      let isCollapsed = false;
+      dockBtnCollapse.addEventListener("click", () => {
+        isCollapsed = !isCollapsed;
+        floatingDock.style.opacity = isCollapsed ? "0.35" : "1";
+        showToast(isCollapsed ? "Док свёрнут (нажмите ещё раз для возврата)" : "Док развёрнут");
+      });
+    }
+
+    // Dock Lamp Button
+    const dockBtnLamp = document.getElementById("dockBtnLamp");
+    if (dockBtnLamp && btnLamp) {
+      dockBtnLamp.addEventListener("click", () => {
+        btnLamp.click();
+        dockBtnLamp.classList.toggle("is-active", lampActive);
+      });
+    }
+
+    // Dock UI & Zen Buttons
+    const dockBtnZen = document.getElementById("dockBtnZen");
+    if (dockBtnZen) {
+      let zenActive = false;
+      dockBtnZen.addEventListener("click", () => {
+        zenActive = !zenActive;
+        dockBtnZen.classList.toggle("is-active", zenActive);
+        document.querySelector("header").style.opacity = zenActive ? "0.2" : "1";
+        document.querySelector("nav").style.opacity = zenActive ? "0.2" : "1";
+        showToast(zenActive ? "Режим Дзен включён (заголовки приглушены)" : "Режим Дзен выключен");
+      });
+    }
   </script>
 </body>
 </html>
