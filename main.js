@@ -4124,9 +4124,9 @@ class AlchemyFlowPlugin extends Plugin {
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
       // Auto-upgrade graph.json once so folders are colored
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.2") {
+      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.3") {
         this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.6.2";
+        this.settings.graphConfigVersion = "4.6.3";
         this.saveSettings();
         setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
       }
@@ -5898,7 +5898,7 @@ class AlchemyFlowPlugin extends Plugin {
       // 7. Footer Signature
       ctx.fillStyle = "#78716C";
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText("ALCHEMY CRAFT v4.6.2 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+      ctx.fillText("ALCHEMY CRAFT v4.6.3 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
 
       const url = cv.toDataURL("image/png");
       const a = document.createElement("a");
