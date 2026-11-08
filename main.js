@@ -4522,9 +4522,9 @@ class AlchemyFlowPlugin extends Plugin {
       viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
 
       // Auto-upgrade graph.json once so folders are colored
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.5") {
+      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.6") {
         this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.6.5";
+        this.settings.graphConfigVersion = "4.6.6";
         this.saveSettings();
         setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
       }
@@ -6345,7 +6345,7 @@ class AlchemyFlowPlugin extends Plugin {
       // 7. Footer Signature
       ctx.fillStyle = "#78716C";
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText("ALCHEMY CRAFT v4.6.5 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+      ctx.fillText("ALCHEMY CRAFT v4.6.6 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
 
       const url = cv.toDataURL("image/png");
       const a = document.createElement("a");
@@ -6790,6 +6790,280 @@ class AlchemyFlowPlugin extends Plugin {
       document.addEventListener("pointerdown", closeHandler);
     }, 50);
   }
+
+  jumpToMarginBookmark(lineNum, snippetText) {
+    const obsidian = require("obsidian");
+    const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!view) return;
+    if (view.editor) {
+      view.editor.setCursor({ line: lineNum, ch: 0 });
+      view.editor.scrollIntoView({ from: { line: Math.max(0, lineNum - 2), ch: 0 }, to: { line: lineNum + 2, ch: 0 } }, true);
+    }
+    const cleanNeedle = (snippetText || "").replace(/…$/, "").trim().slice(0, 24);
+    if (cleanNeedle) {
+      const blocks = view.contentEl.querySelectorAll(".cm-line, p, h1, h2, h3, h4, li, blockquote");
+      for (const b of blocks) {
+        if (b.textContent && b.textContent.includes(cleanNeedle)) {
+          b.scrollIntoView({ behavior: "smooth", block: "center" });
+          b.classList.add("artcraft-bm-flash-highlight");
+          setTimeout(() => b.classList.remove("artcraft-bm-flash-highlight"), 1600);
+          break;
+        }
+      }
+    }
+  }
+
+  cleanCurrentNoteAIWatermarks() {
+    const view = this.app.workspace.getActiveViewOfType(require("obsidian").MarkdownView);
+    if (!view || !view.editor) {
+      new Notice("Please open a markdown note to clean AI markers.");
+      return;
+    }
+    const editor = view.editor;
+    const hasSelection = editor.somethingSelected();
+    const raw = hasSelection ? editor.getSelection() : editor.getValue();
+
+    const invisibleRegex = /[\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff\u00ad]/g;
+    const matches = raw.match(invisibleRegex);
+    const count = matches ? matches.length : 0;
+
+    const cleaned = raw
+      .replace(invisibleRegex, "")
+      .replace(/[\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000]/g, " ")
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'");
+
+    if (cleaned !== raw) {
+      if (hasSelection) {
+        editor.replaceSelection(cleaned);
+      } else {
+        editor.setValue(cleaned);
+      }
+    }
+    navigator.clipboard.writeText(cleaned);
+    new Notice(`✓ Cleaned ${count} invisible AI marker(s) & copied to clipboard!`);
+  }
+
+  setupLivePreviewObserver() {
+    let rafPending = false;
+    const styleLivePreviewNodes = () => {
+      rafPending = false;
+      if (!this.settings.artcraftTheme || !this.settings.colorizeNumbers) return;
+      const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
+      const listSpans = document.querySelectorAll(".HyperMD-list-line .cm-formatting-list-ol");
+      for (let i = 0; i < listSpans.length; i++) {
+        const el = listSpans[i];
+        const txt = el.textContent;
+        if (!txt) continue;
+        const num = parseInt(txt, 10);
+        if (!isNaN(num) && num > 0) {
+          const mod = ((num - 1) % 4) + 1;
+          const modStr = String(mod);
+          if (el.getAttribute("data-artcraft-mod") !== modStr) {
+            el.setAttribute("data-artcraft-mod", modStr);
+            el.style.setProperty("background-color", colors[mod - 1], "important");
+          }
+        }
+      }
+    };
+
+    const scheduleStyle = () => {
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(styleLivePreviewNodes);
+      }
+    };
+
+    styleLivePreviewNodes();
+
+    // Instant zero-lag MutationObserver when CodeMirror 6 virtual scroller mounts new lines
+    this.cmObserver = new MutationObserver((mutations) => {
+      for (let i = 0; i < mutations.length; i++) {
+        if (mutations[i].addedNodes.length > 0 || mutations[i].type === "characterData") {
+          scheduleStyle();
+          break;
+        }
+      }
+    });
+    this.cmObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    // Passive scroll listener on capture phase so scrolling with mouse wheel colors badges on the exact same frame
+    this.onScrollCapture = () => scheduleStyle();
+    window.addEventListener("scroll", this.onScrollCapture, { capture: true, passive: true });
+    this.registerDomEvent(window, "wheel", () => scheduleStyle(), { passive: true });
+
+    // Lightweight fallback check for Graph HUD
+    this.lpInterval = setInterval(() => {
+      if (this.settings.enableBentoGraph !== false) {
+        this.injectGraphViewHUD();
+      }
+      scheduleStyle();
+    }, 1200);
+  }
+
+  enhanceMarkdownElement(rootEl) {
+    const blocks = rootEl.querySelectorAll("p, li, td, h1, h2, h3, h4");
+    blocks.forEach((block) => {
+      if (block.dataset.artcraftProcessed === "true") return;
+      this.enhanceSingleBlock(block, false);
+    });
+
+    rootEl.querySelectorAll("ol > li").forEach((li, idx) => {
+      const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
+      const c = colors[idx % 4];
+      li.style.setProperty("--artcraft-marker-color", c);
+    });
+  }
+
+  enhanceSingleBlock(block, isLivePreview = false) {
+    block.dataset.artcraftProcessed = "true";
+
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT, null);
+    const textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      const pEl = node.parentElement;
+      if (!pEl) continue;
+      if (
+        pEl.closest(
+          "code, pre, a, button, svg, .inline-title, .callout-title, .artcraft-sentence, .artcraft-step-badge, .artcraft-pill-number, .artcraft-capsule-link, .artcraft-capsule-crypto, .artcraft-task-date, .artcraft-check-circle"
+        )
+      ) {
+        continue;
+      }
+      // If block is a <li> that contains child <p> or nested <ul>/<ol>, only process direct text nodes of this <li>
+      if (block.tagName === "LI" && pEl.closest("p, ul, ol") && pEl.closest("li") === block && pEl !== block) {
+        continue;
+      }
+      textNodes.push(node);
+    }
+
+    textNodes.forEach((textNode) => {
+      const text = textNode.nodeValue || "";
+      if (!text.trim()) return;
+
+      const hasTokens =
+        /\b(0[1-4]\s*\/\/|\d+\s*(?:%|\$|k|к|тыс|млн|USD|USDT)|https?:\/\/|\.com|\.io|\.org|\.ru|0x[a-fA-F0-9]{4,}|[1-9A-HJ-NP-Za-km-z]{32,}|TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+|✅|\d{4}-\d{2}-\d{2})/i.test(
+          text
+        );
+
+      if (!hasTokens && isLivePreview) return;
+
+      const frag = document.createDocumentFragment();
+      if (!isLivePreview && this.settings.sentenceFocus) {
+        const sentences = text.match(/[^.!?]+(?:[.!?]+|$)/g) || [text];
+        sentences.forEach((sent) => {
+          if (!sent.trim()) {
+            frag.appendChild(document.createTextNode(sent));
+            return;
+          }
+          const span = document.createElement("span");
+          span.className = "artcraft-sentence";
+          this.appendWithColorizedTokens(span, sent);
+
+          span.addEventListener("click", () => {
+            if (this.mode !== "none") return;
+            const targetColor = this.settings.strokeColor;
+            const currentPin = span.getAttribute("data-pinned-color");
+            if (currentPin === targetColor) {
+              span.removeAttribute("data-pinned-color");
+              span.style.removeProperty("--artcraft-pinned-bg");
+              span.style.removeProperty("--artcraft-pinned-border");
+              span.classList.remove("is-pinned");
+            } else {
+              span.setAttribute("data-pinned-color", targetColor);
+              span.style.setProperty("--artcraft-pinned-bg", `${targetColor}24`);
+              span.style.setProperty("--artcraft-pinned-border", targetColor);
+              span.classList.add("is-pinned");
+            }
+          });
+
+          frag.appendChild(span);
+        });
+      } else {
+        this.appendWithColorizedTokens(frag, text);
+      }
+
+      if (textNode.parentNode) {
+        textNode.parentNode.replaceChild(frag, textNode);
+      }
+    });
+  }
+
+  appendWithColorizedTokens(parent, text) {
+    const tokenRegex =
+      /(\b0[1-4]\s*\/\/|\b\d+(?:[.,]\d+)?\s*(?:%|\$|k|к|тыс|млн|USD|USDT)\b|\bhttps?:\/\/[^\s<]+|\b[a-zA-Z0-9.-]+\.(?:com|io|org|ru|dev|net|ai)(?:\/[^\s<]*)?|\b0x[a-fA-F0-9]{40}\b|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b|\b(?:TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+)\b|✅\s*(?:\d{4}-\d{2}-\d{2})?|✅|\b\d{4}-\d{2}-\d{2}\b)/gi;
+
+    let lastIdx = 0;
+    let match;
+
+    while ((match = tokenRegex.exec(text)) !== null) {
+      if (match.index > lastIdx) {
+        parent.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+      }
+
+      const matchStr = match[0];
+      const stepMatch = matchStr.match(/^0([1-4])\s*\/\//);
+
+      if (stepMatch && this.settings.colorizeNumbers) {
+        const num = parseInt(stepMatch[1], 10);
+        const colors = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6"];
+        const color = colors[num - 1];
+        const span = document.createElement("span");
+        span.className = "artcraft-step-badge";
+        span.textContent = `0${num}`;
+        span.style.setProperty("background-color", color, "important");
+        span.style.setProperty("color", "#FFFFFF", "important");
+        parent.appendChild(span);
+        parent.appendChild(document.createTextNode(" // "));
+      } else if (matchStr.startsWith("✅")) {
+        const circle = document.createElement("span");
+        circle.className = "artcraft-check-circle";
+        circle.textContent = "✓";
+        parent.appendChild(circle);
+
+        const datePart = matchStr.replace(/^✅\s*/, "").trim();
+        if (datePart && /^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+          const dateSpan = document.createElement("span");
+          dateSpan.className = "artcraft-task-date";
+          dateSpan.textContent = datePart;
+          parent.appendChild(dateSpan);
+        }
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(matchStr)) {
+        const dateSpan = document.createElement("span");
+        dateSpan.className = "artcraft-task-date";
+        dateSpan.textContent = matchStr;
+        parent.appendChild(dateSpan);
+      } else if (/^\d+(?:[.,]\d+)?\s*(?:%|\$|k|к|тыс|млн|USD|USDT)$/i.test(matchStr)) {
+        const span = document.createElement("span");
+        span.className = "artcraft-pill-number";
+        span.textContent = matchStr;
+        parent.appendChild(span);
+      } else if (/^(?:https?:\/\/|[a-zA-Z0-9.-]+\.(?:com|io|org|ru|dev|net|ai))/i.test(matchStr)) {
+        const span = document.createElement("span");
+        span.className = "artcraft-capsule-link";
+        span.textContent = matchStr;
+        parent.appendChild(span);
+      } else {
+        const span = document.createElement("span");
+        span.className = "artcraft-capsule-crypto";
+        span.textContent = matchStr;
+        parent.appendChild(span);
+      }
+
+      lastIdx = tokenRegex.lastIndex;
+    }
+
+    if (lastIdx < text.length) {
+      parent.appendChild(document.createTextNode(text.slice(lastIdx)));
+    }
+  }
+
+  // --- FLOATING DOCK & OVERLAY CANVAS ---
 
   createFloatingDock() {
     if (this.dockEl) this.dockEl.remove();
@@ -9602,6 +9876,7 @@ class TimeCapsuleSealModal extends Modal {
 
 module.exports = AlchemyFlowPlugin;
 
+/* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
