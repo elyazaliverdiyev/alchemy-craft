@@ -5093,3 +5093,249 @@ body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
   background: #E0E7FF !important;
 }
 
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v4.5.0 — MULTI-SHEET 3D HARDCOVER BOOK FOLIO (LIKE SCREENSHOT),
+   SOFT BOTTOM-LEFT GRAPH STUDIO BAR, & UNIFIED SETTINGS HERO BUTTONS
+   ========================================================================== */
+
+/* 1. True Multi-Sheet 3D Hardcover Book Folio Effect (Live Preview + Reading View)
+   Creates the warm desk surface + leather spine + inner spine crease + 4 stacked sheets on right & bottom edges! */
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content {
+  background: radial-gradient(circle at 50% 20%, #ECE8DF 0%, #E2DDD1 100%) !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  padding-top: 22px !important;
+  padding-bottom: 44px !important;
+}
+
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  background: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 3.2%, #FCFBF7 96.5%, #F4F0E5 100%) !important;
+  border-top: 1px solid #DFDBD0 !important;
+  border-right: 1px solid #D4CFC2 !important;
+  border-bottom: 1px solid #D4CFC2 !important;
+  border-left: 8px solid #8C5828 !important;
+  border-radius: 4px 16px 16px 4px !important;
+  padding: 34px 46px 44px 46px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+  /* 4 Visible Stacked Book Sheets on Right & Bottom Edges + Warm Inner Spine Crease */
+  box-shadow:
+    inset 26px 0 36px -16px rgba(92, 60, 28, 0.16),
+    inset -1px 0 0 rgba(255, 255, 255, 0.7),
+    4px 3px 0 -1px #F6F3EC,
+    4px 3px 0 0 #D8D2C5,
+    8px 6px 0 -1px #EFEBE1,
+    8px 6px 0 0 #CFC8B8,
+    12px 9px 0 -1px #E8E3D7,
+    12px 9px 0 0 #C5BEB0,
+    16px 12px 0 -1px #E1DBD0,
+    16px 12px 0 0 #B8B0A0,
+    22px 20px 38px rgba(45, 35, 22, 0.13) !important;
+}
+
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content {
+  background: radial-gradient(circle at 50% 20%, #14161A 0%, #0D0E11 100%) !important;
+}
+
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  background: linear-gradient(90deg, #181A1F 0%, #1D2026 3.5%, #1F2229 96.5%, #191B20 100%) !important;
+  border-top: 1px solid #2E323C !important;
+  border-right: 1px solid #2E323C !important;
+  border-bottom: 1px solid #2E323C !important;
+  border-left: 8px solid #A16207 !important;
+  box-shadow:
+    inset 26px 0 36px -16px rgba(0, 0, 0, 0.55),
+    4px 3px 0 -1px #1A1C22,
+    4px 3px 0 0 #2E323C,
+    8px 6px 0 -1px #16181D,
+    8px 6px 0 0 #282C35,
+    12px 9px 0 -1px #131519,
+    12px 9px 0 0 #22262E,
+    20px 20px 42px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* 2. Clean, Soft, Non-Intrusive Bottom-Left Graph Studio Bar (Never overlaps text or right filter drawer!) */
+body .artcraft-graph-legend-pill,
+body .artcraft-graph-hint-pill {
+  display: none !important;
+}
+
+body .artcraft-graph-hud {
+  position: absolute !important;
+  top: auto !important;
+  bottom: 18px !important;
+  left: 18px !important;
+  right: auto !important;
+  transform: none !important;
+  z-index: 24 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  max-width: calc(100% - 36px) !important;
+  flex-wrap: wrap !important;
+  background: rgba(250, 248, 243, 0.94) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid #D6D1C4 !important;
+  border-radius: 12px !important;
+  padding: 5px 7px !important;
+  box-shadow: 0 6px 20px rgba(28, 25, 23, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body.artcraft-dark-craft .artcraft-graph-hud,
+body.theme-dark .artcraft-graph-hud {
+  background: rgba(24, 26, 31, 0.92) !important;
+  border-color: #2E323B !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+}
+
+.artcraft-graph-hud-items {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.artcraft-graph-hud.is-minimized .artcraft-graph-hud-items {
+  display: none !important;
+}
+
+.artcraft-graph-hud-sep {
+  width: 1px;
+  height: 16px;
+  background: #DFDBD0;
+  margin: 0 2px;
+}
+
+body.artcraft-dark-craft .artcraft-graph-hud-sep,
+body.theme-dark .artcraft-graph-hud-sep {
+  background: #374151;
+}
+
+body .artcraft-graph-hud-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  height: 27px !important;
+  padding: 0 9px !important;
+  border-radius: 8px !important;
+  border: 1px solid #E2DDD2 !important;
+  background: #FFFFFF !important;
+  color: #44403C !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: all 0.14s ease !important;
+}
+
+body .artcraft-graph-hud-btn svg {
+  width: 13px !important;
+  height: 13px !important;
+  flex-shrink: 0;
+}
+
+body .artcraft-graph-hud-btn:hover {
+  border-color: #A8A29E !important;
+  background: #FAF8F3 !important;
+  color: #18181B !important;
+  transform: translateY(-1px);
+}
+
+body .artcraft-graph-hud-btn.is-active,
+body .artcraft-graph-pulse-btn.is-pulse-on {
+  background: #ECFDF5 !important;
+  color: #065F46 !important;
+  border-color: #10B981 !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+body .artcraft-graph-hud-toggle-btn {
+  width: 27px !important;
+  padding: 0 !important;
+  background: #F4F1EA !important;
+  color: #57534E !important;
+}
+
+/* 3. Harmonious, Soft Cappuccino Craft Settings Hero Banner & Action Buttons */
+.artcraft-settings-bento-hero {
+  background: linear-gradient(180deg, #FCFBF8 0%, #F6F3EB 100%) !important;
+  border: 1px solid #DFD9CA !important;
+  border-left: 6px solid #8C5828 !important;
+  border-radius: 14px !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 4px 16px rgba(45, 35, 22, 0.06) !important;
+}
+
+.artcraft-settings-flask-box {
+  background: #FAF7F0 !important;
+  color: #69BD28 !important;
+  border: 1.5px solid #DFD9CA !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+.artcraft-hero-version-pill {
+  background: #ECFDF5 !important;
+  color: #065F46 !important;
+  border: 1px solid #A7F3D0 !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+.artcraft-settings-hero-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.artcraft-hero-soft-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  height: 33px !important;
+  padding: 0 13px !important;
+  border-radius: 9px !important;
+  border: 1px solid #D8D2C5 !important;
+  background: #FFFFFF !important;
+  color: #374151 !important;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.artcraft-hero-soft-btn:hover {
+  border-color: #8C5828 !important;
+  background: #FAF8F3 !important;
+  color: #111111 !important;
+  transform: translateY(-1px);
+}
+
+.artcraft-hero-soft-btn.is-primary-soft {
+  background: #F4EFE4 !important;
+  border-color: #C7B99E !important;
+  color: #4A3520 !important;
+  font-weight: 700 !important;
+}
+
+.artcraft-hero-soft-btn.is-primary-soft:hover {
+  background: #EBE3D2 !important;
+  border-color: #8C5828 !important;
+}
