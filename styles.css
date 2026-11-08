@@ -5339,3 +5339,338 @@ body .artcraft-graph-hud-toggle-btn {
   background: #EBE3D2 !important;
   border-color: #8C5828 !important;
 }
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v4.6.0 — COHERENT 6-BPM BREATHING SPINE, PERIPHERAL MARGIN
+   SANDGLASS THREAD & CLASSICS BOOKSHELF MODAL
+   ========================================================================== */
+
+/* 1. Coherent 6-BPM Breathing Book Spine (5.5s Inhale Warm Gold / 5.5s Exhale Calm Leather) */
+@keyframes artcraftCoherentSpineBreath {
+  0%, 100% {
+    border-left-color: #8C5828;
+    box-shadow:
+      inset 26px 0 36px -16px rgba(92, 60, 28, 0.16),
+      inset -1px 0 0 rgba(255, 255, 255, 0.7),
+      4px 3px 0 -1px #F6F3EC,
+      4px 3px 0 0 #D8D2C5,
+      8px 6px 0 -1px #EFEBE1,
+      8px 6px 0 0 #CFC8B8,
+      12px 9px 0 -1px #E8E3D7,
+      12px 9px 0 0 #C5BEB0,
+      16px 12px 0 -1px #E1DBD0,
+      16px 12px 0 0 #B8B0A0,
+      22px 20px 38px rgba(45, 35, 22, 0.13);
+  }
+  50% {
+    border-left-color: #D97706;
+    box-shadow:
+      inset 42px 0 54px -12px rgba(217, 119, 6, 0.26),
+      -4px 0 18px rgba(217, 119, 6, 0.28),
+      inset -1px 0 0 rgba(255, 255, 255, 0.7),
+      4px 3px 0 -1px #F6F3EC,
+      4px 3px 0 0 #D8D2C5,
+      8px 6px 0 -1px #EFEBE1,
+      8px 6px 0 0 #CFC8B8,
+      12px 9px 0 -1px #E8E3D7,
+      12px 9px 0 0 #C5BEB0,
+      16px 12px 0 -1px #E1DBD0,
+      16px 12px 0 0 #B8B0A0,
+      22px 20px 38px rgba(45, 35, 22, 0.13);
+  }
+}
+
+body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  animation: artcraftCoherentSpineBreath 11s ease-in-out infinite !important;
+}
+
+/* 2. Peripheral Margin Sandglass & Golden Ink Thread along Right Edge of Book Folio */
+body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  position: relative !important;
+}
+
+body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .cm-sizer::after,
+body.artcraft-book-spread.artcraft-margin-sandglass .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  right: 6px;
+  bottom: 18px;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    #69BD28 0%,
+    #D97706 var(--artcraft-sandglass-pct, 0%),
+    rgba(212, 207, 194, 0.35) var(--artcraft-sandglass-pct, 0%),
+    rgba(212, 207, 194, 0.35) 100%
+  );
+  pointer-events: none;
+  transition: background 0.4s ease;
+}
+
+/* 3. Classics Bookshelf Modal Styling */
+.artcraft-bookshelf-modal-root {
+  padding: 6px 4px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.artcraft-shelf-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.artcraft-shelf-filter-pill {
+  background: #FAF8F3 !important;
+  border: 1px solid #DFDBD0 !important;
+  border-radius: 999px !important;
+  padding: 4px 11px !important;
+  height: auto !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #57534E !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: all 0.14s ease !important;
+}
+
+.artcraft-shelf-filter-pill:hover {
+  border-color: #8C5828 !important;
+  color: #18181B !important;
+}
+
+.artcraft-shelf-filter-pill.is-active {
+  background: #1F2421 !important;
+  color: #FFFFFF !important;
+  border-color: #1F2421 !important;
+}
+
+.artcraft-wooden-shelf-body {
+  background: linear-gradient(180deg, #F5F1E6 0%, #EBE5D5 100%);
+  border: 1.5px solid #D6CFC0;
+  border-bottom: 8px solid #8C5828;
+  border-radius: 14px;
+  padding: 14px;
+  max-height: 390px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  box-shadow: inset 0 4px 12px rgba(92, 60, 28, 0.08);
+}
+
+.artcraft-bookshelf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .artcraft-bookshelf-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.artcraft-book-folio-card {
+  background: linear-gradient(90deg, #F0ECE1 0%, #FFFFFF 6%, #FCFBF7 100%);
+  border: 1px solid #D8D2C5;
+  border-left: 6px solid var(--book-spine-color, #8C5828);
+  border-radius: 4px 12px 12px 4px;
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  box-shadow:
+    3px 2px 0 -1px #FAF8F3,
+    3px 2px 0 0 #D6CFC0,
+    6px 4px 0 -1px #EFEBE1,
+    6px 4px 0 0 #C8C0B0,
+    10px 8px 18px rgba(45, 35, 22, 0.08);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.artcraft-book-folio-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    3px 2px 0 -1px #FAF8F3,
+    3px 2px 0 0 #8C5828,
+    6px 4px 0 -1px #EFEBE1,
+    6px 4px 0 0 #8C5828,
+    14px 12px 24px rgba(45, 35, 22, 0.14);
+}
+
+.artcraft-book-folio-card.is-gold-classic {
+  background: linear-gradient(90deg, #FEF3C7 0%, #FFFDF7 8%, #FFFFFF 100%);
+  border-color: #FCD34D;
+}
+
+.book-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.book-card-folder {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #78716C;
+}
+
+.book-card-stamp {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #15803D;
+  background: #DCFCE7;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.book-card-stamp.is-gold {
+  color: #92400E;
+  background: #FDE68A;
+}
+
+.book-card-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #18181B;
+  line-height: 1.3;
+}
+
+.book-card-bms {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.book-card-bm-item {
+  font-size: 11px;
+  color: #44403C;
+  border-left: 3px solid #DC2626;
+  padding-left: 6px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-card-empty-bm {
+  font-size: 11px;
+  color: #A8A29E;
+  font-style: italic;
+}
+
+.book-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  margin-top: auto;
+  border-top: 1px dashed #E5E0D5;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #78716C;
+}
+
+.book-open-link {
+  color: #8C5828;
+  font-weight: 700;
+}
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v4.5.1 — WAX SEAL TIME-CAPSULE VEIL & SPEED-READING PACER
+   ========================================================================== */
+.artcraft-wax-seal-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(250, 248, 243, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+body.artcraft-dark-craft .artcraft-wax-seal-veil,
+body.theme-dark .artcraft-wax-seal-veil {
+  background: rgba(18, 20, 24, 0.88);
+}
+
+.wax-seal-card {
+  max-width: 440px;
+  background: #FAF8F3;
+  border: 1.5px solid #D6CFC0;
+  border-radius: 18px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 18px 42px rgba(45, 35, 22, 0.16);
+}
+
+.wax-seal-emblem {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  height: auto !important;
+  cursor: pointer !important;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 8px 16px rgba(153, 27, 27, 0.35));
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.wax-seal-emblem:hover {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.wax-seal-badge {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #991B1B;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.wax-seal-title {
+  margin: 0 0 6px 0 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #18181B !important;
+}
+
+.wax-seal-sub {
+  margin: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  color: #57534E !important;
+}
+
+/* Acoustic Speed-Reading Pacer Beam */
+.artcraft-reading-pacer-beam {
+  position: fixed;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 28px;
+  pointer-events: none !important;
+  z-index: 9980;
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0) 0%, rgba(245, 158, 11, 0.14) 20%, rgba(245, 158, 11, 0.18) 50%, rgba(245, 158, 11, 0.14) 80%, rgba(245, 158, 11, 0) 100%);
+  border-bottom: 1.5px solid rgba(217, 119, 6, 0.45);
+  border-radius: 6px;
+  will-change: transform;
+}
