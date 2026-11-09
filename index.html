@@ -1341,16 +1341,40 @@
     }
 
     // --- 1. STAGE NAVIGATION TABS (01..04) ---
+    function activateStageTab(target) {
+      document.querySelectorAll(".stage-tab").forEach((b) => {
+        b.classList.toggle("is-active", b.getAttribute("data-tab") === target);
+      });
+      document.querySelectorAll(".studio-panel").forEach((p) => {
+        p.classList.toggle("hidden", p.id !== "panel-" + target);
+      });
+    }
+
     document.querySelectorAll(".stage-tab").forEach((btn) => {
       btn.addEventListener("click", () => {
         const target = btn.getAttribute("data-tab");
-        document.querySelectorAll(".stage-tab").forEach((b) => b.classList.remove("is-active"));
-        btn.classList.add("is-active");
-        document.querySelectorAll(".studio-panel").forEach((p) => {
-          p.classList.toggle("hidden", p.id !== "panel-" + target);
-        });
+        activateStageTab(target);
       });
     });
+
+    function handleHashTab() {
+      const hash = (window.location.hash || "").replace("#", "").toLowerCase();
+      if (!hash) return;
+      if (hash.includes("checkout") || hash.includes("roastery") || hash.includes("donate") || hash.includes("pro")) {
+        activateStageTab("checkout");
+        const panel = document.getElementById("panel-checkout");
+        if (panel) panel.scrollIntoView({ behavior: "smooth" });
+      } else if (hash.includes("sonic") || hash.includes("audio") || hash.includes("equalizer")) {
+        activateStageTab("sonic");
+      } else if (hash.includes("graph") || hash.includes("resonance")) {
+        activateStageTab("graph");
+      } else if (hash.includes("book") || hash.includes("folio")) {
+        activateStageTab("book");
+      }
+    }
+    window.addEventListener("DOMContentLoaded", handleHashTab);
+    window.addEventListener("hashchange", handleHashTab);
+    handleHashTab();
 
     // --- 2. 6-LANGUAGE LOCALIZATION (EN FIRST, THEN RU, ZH, JA, ES, DE) ---
     let currentLang = "en";
@@ -2247,6 +2271,7 @@
 
     // --- 7. STAGE 04: ALCHEMIST ROASTERY CHECKOUT (1:1 MATCH WITH SCREENSHOT) ---
     let selectedAmount = "9.99";
+    let selectedTier = "silver";
     let activePayMethod = "evm";
 
     const payMethods = {
@@ -2291,6 +2316,7 @@
     document.querySelectorAll(".roastery-tier-card").forEach((card) => {
       card.addEventListener("click", () => {
         const amt = card.getAttribute("data-amount");
+        selectedTier = card.getAttribute("data-tier") || "silver";
         document.querySelectorAll(".roastery-tier-card").forEach((c) => c.classList.remove("is-selected"));
         document.querySelectorAll(".quick-amt-pill").forEach((q) => q.classList.remove("is-active"));
         card.classList.add("is-selected");
@@ -2368,7 +2394,7 @@
               if (txIn) txIn.value = String(d.invoice_id);
             }
             window.open(payUrl, "_blank");
-            showToast("Invoice created! Opening @CryptoBot...");
+            showToast("Invoice created! Opening @CryptoBot in Telegram...");
           } else {
             showToast("Failed to create invoice. Opening @CryptoBot fallback...");
             window.open("https://t.me/CryptoBot?start=alchemycraft", "_blank");
@@ -2383,7 +2409,7 @@
       });
     }
 
-    // Deterministic ACPRO Key Generator (Matches Plugin Verification Algorithm!)
+    // Deterministic ACPRO Key Generator (Matches Plugin Verification Algorithm 100%!)
     function generateLicenseKey(seedStr) {
       const clean = (seedStr || "PRO").toUpperCase().replace(/[^A-Z0-9]/g, "");
       let h1 = 0x811c9dc5;
@@ -2393,10 +2419,11 @@
       }
       const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
       const block = (n) => {
-        let s = "", v = n >>> 0;
+        let s = "";
+        let v = n >>> 0;
         for (let i = 0; i < 4; i++) {
-          s += alphabet[v % alphabet.length];
-          v = Math.floor(v / alphabet.length) ^ ((v << 3) >>> 0);
+          s += alphabet[Math.abs(v) % alphabet.length];
+          v = (Math.floor(Math.abs(v) / alphabet.length) ^ (v << 3)) >>> 0;
         }
         return s;
       };
@@ -2407,12 +2434,43 @@
       return `ACPRO-${b1}-${b2}-${b3}-${String(chk).padStart(4, "0")}`;
     }
 
-    document.getElementById("btnVerifyAndGenKey").addEventListener("click", () => {
+    document.getElementById("btnVerifyAndGenKey").addEventListener("click", async () => {
       const val = document.getElementById("txVerifyInput").value.trim();
       if (val.length < 4) {
         showToast("Please paste your transfer TXID, Bybit ID, or @CryptoBot Invoice ID");
         return;
       }
+      const btn = document.getElementById("btnVerifyAndGenKey");
+      const origText = btn.textContent;
+      btn.textContent = "⏳ Verifying...";
+
+      try {
+        const cleanId = val.replace(/[^0-9]/g, "");
+        if (cleanId.length >= 5 && /^\d+$/.test(val)) {
+          const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
+          const res = await fetch(SITE_CONFIG.supabaseFunctionUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": sbKey,
+              "Authorization": "Bearer " + sbKey,
+            },
+            body: JSON.stringify({
+              action: "check_invoice",
+              invoice_id: parseInt(cleanId, 10)
+            })
+          });
+          const d = await res.json();
+          if (d && d.paid) {
+            showToast("✅ Payment confirmed via @CryptoBot!");
+          }
+        }
+      } catch (err) {
+        console.warn("Status check notice:", err);
+      } finally {
+        btn.textContent = origText;
+      }
+
       const key = generateLicenseKey(val);
       document.getElementById("generatedKeyText").textContent = key;
       document.getElementById("licenseOutputBox").classList.remove("hidden");

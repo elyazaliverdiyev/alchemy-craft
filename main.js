@@ -1371,8 +1371,8 @@ function generateSiCraftLicenseKey(seedStr) {
     let s = "";
     let v = n >>> 0;
     for (let i = 0; i < 4; i++) {
-      s += alphabet[v % alphabet.length];
-      v = Math.floor(v / alphabet.length) ^ ((v << 3) >>> 0);
+      s += alphabet[Math.abs(v) % alphabet.length];
+      v = (Math.floor(Math.abs(v) / alphabet.length) ^ (v << 3)) >>> 0;
     }
     return s;
   };
