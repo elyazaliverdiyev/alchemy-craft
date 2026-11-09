@@ -1,14 +1,17 @@
-# Alchemy Craft — Tactile Book Folio, Sonic Studio & Smart LED Lamp (v4.6.8)
+# Alchemy Craft — Tactile Book Folio, Sonic Studio & Smart LED Lamp (v4.6.9)
 
 > **A warm, eye-friendly Cappuccino & Swiss Bento reading, active book-digestion, audio-reactive, and knowledge graph studio.**
 
 - **Official Interactive Studio & Checkout Website:** [https://elyazaliverdiyev.github.io/alchemy-craft/](https://elyazaliverdiyev.github.io/alchemy-craft/)
 - **Author:** Elyaz Aliverdiyev ([@StratAlchemy](https://t.me/StratAlchemy))
-- **Version:** `4.6.8`
+- **Version:** `4.6.9`
 
 ---
 
-## ✨ What's New in v4.6.8
+## ✨ What's New in v4.6.9
+
+- 🔒 **Instant @CryptoBot Payment Gateway:** Seamless and secure payment creation and verification through serverless Supabase backend with zero secret leaks.
+- ☕ **Native Community Plugins 'Donate' Button:** Added `fundingUrl` in `manifest.json` with direct Roastery support.
 
 - **📚 100% Flush Book Folio & 4-Sheet Deckled Edges:** The book spine is aligned strictly flush (`margin-left: 0`) against the left sidebar panel, eliminating empty gaps, accompanied by 4 tactile deckled sheets cascading along the right and bottom edges with authentic paper shadow depths.
 - **🧭 Brass Astrolabe Reading & Link Compass:** Smoothly rotating brass astrolabe on scroll displaying reading depth (0–100%) and note link metrics, with a quick navigation menu on click.
