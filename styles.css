@@ -7,7 +7,7 @@
    - Excel Green Table Headers (#69BD28) & Crisp Orange Code Capsules
    ========================================================================== */
 
-body.artcraft-theme-active {
+html body.artcraft-theme-active {
   --artcraft-bg-canvas: #F4F3EF;
   --artcraft-bg-card: #F9F8F5;
   --artcraft-bg-hover: #EFECE6;
@@ -29,69 +29,69 @@ body.artcraft-theme-active {
   --artcraft-badge-purple: #8B5CF6;
 
   /* Override Obsidian native variables */
-  --background-primary: var(--artcraft-bg-canvas) !important;
-  --background-primary-alt: var(--artcraft-bg-card) !important;
-  --background-secondary: var(--artcraft-bg-sidebar) !important;
-  --background-secondary-alt: var(--artcraft-bg-sidebar) !important;
-  --background-modifier-border: var(--artcraft-border-hairline) !important;
-  --text-normal: var(--artcraft-ink-primary) !important;
-  --text-muted: var(--artcraft-ink-muted) !important;
-  --font-text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-  --font-monospace: "JetBrains Mono", "IBM Plex Mono", Consolas, monospace !important;
-  --line-width: 52rem !important;
+  --background-primary: var(--artcraft-bg-canvas);
+  --background-primary-alt: var(--artcraft-bg-card);
+  --background-secondary: var(--artcraft-bg-sidebar);
+  --background-secondary-alt: var(--artcraft-bg-sidebar);
+  --background-modifier-border: var(--artcraft-border-hairline);
+  --text-normal: var(--artcraft-ink-primary);
+  --text-muted: var(--artcraft-ink-muted);
+  --font-text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-monospace: "JetBrains Mono", "IBM Plex Mono", Consolas, monospace;
+  --line-width: 52rem;
 }
 
 /* ==========================================================================
    1. ГЛАВНЫЙ ЗАГОЛОВОК ЗАМЕТКИ (Inline Title) — ВМЕСТО "ГРУСТНОГО И ПРОСТОГО"
    Делаем мощный швейцарский баннер как шапка на наших постерах!
    ========================================================================== */
-body.artcraft-theme-active .inline-title {
-  font-family: "Inter", sans-serif !important;
-  font-size: 2.15rem !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.035em !important;
-  line-height: 1.15 !important;
-  color: #111111 !important;
-  background-color: #FFFFFF !important;
-  border: 1.5px solid #111111 !important;
-  border-left: 8px solid var(--artcraft-excel-green) !important;
-  border-radius: 10px !important;
-  padding: 18px 22px !important;
-  margin-top: 10px !important;
-  margin-bottom: 18px !important;
-  box-shadow: 0 4px 0 #111111 !important;
-  text-decoration: none !important;
+html body.artcraft-theme-active .inline-title {
+  font-family: "Inter", sans-serif;
+  font-size: 2.15rem;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: #111111;
+  background-color: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-left: 8px solid var(--artcraft-excel-green);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-top: 10px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 0 #111111;
+  text-decoration: none;
   position: relative;
 }
 
-body.artcraft-theme-active .inline-title::before {
+html body.artcraft-theme-active .inline-title::before {
   content: var(--artcraft-header-tag, "STRATALCHEMY // KNOWLEDGE BRIEF");
   display: var(--artcraft-header-tag-display, block);
-  font-family: var(--font-monospace) !important;
-  font-size: 0.68rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.08em !important;
-  color: #FFFFFF !important;
-  background-color: #111111 !important;
-  padding: 3px 9px !important;
-  border-radius: 4px !important;
-  width: fit-content !important;
-  margin-bottom: 8px !important;
+  font-family: var(--font-monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+  background-color: #111111;
+  padding: 3px 9px;
+  border-radius: 4px;
+  width: fit-content;
+  margin-bottom: 8px;
 }
 
 /* Красивая карточка для YAML Frontmatter / Свойств */
-body.artcraft-theme-active .metadata-container,
-body.artcraft-theme-active .cm-line.HyperMD-frontmatter {
-  background-color: #F9F8F5 !important;
-  border-color: #D5D3CC !important;
-  font-family: var(--font-monospace) !important;
+html body.artcraft-theme-active .metadata-container,
+html body.artcraft-theme-active .cm-line.HyperMD-frontmatter {
+  background-color: #F9F8F5;
+  border-color: #D5D3CC;
+  font-family: var(--font-monospace);
 }
 
-body.artcraft-theme-active .metadata-container {
-  border: 1px solid #D5D3CC !important;
-  border-radius: 8px !important;
-  padding: 10px 14px !important;
-  margin-bottom: 20px !important;
+html body.artcraft-theme-active .metadata-container {
+  border: 1px solid #D5D3CC;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
 }
 
 /* ==========================================================================
@@ -100,123 +100,123 @@ body.artcraft-theme-active .metadata-container {
    ========================================================================== */
 
 /* А) Автоматическое превращение нумерованных списков (1. 2. 3. 4.) в Live Preview в цветные квадраты! */
-body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 28px !important;
-  height: 26px !important;
-  padding: 0 7px !important;
-  margin-right: 8px !important;
-  border-radius: 6px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.85rem !important;
-  font-weight: 800 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14) !important;
-  vertical-align: middle !important;
+html body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 7px;
+  margin-right: 8px;
+  border-radius: 6px;
+  font-family: var(--font-monospace);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
+  vertical-align: middle;
 }
 
 /* Раскрашиваем 1, 2, 3, 4 в фирменные цвета наших постеров: Синий, Оранжевый, Зеленый, Фиолетовый */
-body.artcraft-theme-active .HyperMD-list-line-1:nth-of-type(4n+1) .cm-formatting-list-ol,
-body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol {
-  background-color: var(--artcraft-badge-blue) !important;
+html body.artcraft-theme-active .HyperMD-list-line-1:nth-of-type(4n+1) .cm-formatting-list-ol,
+html body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol {
+  background-color: var(--artcraft-badge-blue);
 }
 
 /* Б) Нумерованные списки в режиме Чтения (Reading View <ol><li>) */
-body.artcraft-theme-active .markdown-rendered ol {
-  counter-reset: artcraft-counter !important;
-  list-style: none !important;
-  padding-left: 6px !important;
+html body.artcraft-theme-active .markdown-rendered ol {
+  counter-reset: artcraft-counter;
+  list-style: none;
+  padding-left: 6px;
 }
 
-body.artcraft-theme-active .markdown-rendered ol > li {
-  counter-increment: artcraft-counter !important;
-  position: relative !important;
-  padding-left: 44px !important;
-  margin-bottom: 12px !important;
+html body.artcraft-theme-active .markdown-rendered ol > li {
+  counter-increment: artcraft-counter;
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 12px;
 }
 
-body.artcraft-theme-active .markdown-rendered ol > li::before {
-  content: counter(artcraft-counter, decimal-leading-zero) !important;
-  position: absolute !important;
-  left: 4px !important;
-  top: 2px !important;
-  width: 30px !important;
-  height: 28px !important;
-  border-radius: 7px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.84rem !important;
-  font-weight: 800 !important;
-  color: #FFFFFF !important;
-  background-color: var(--artcraft-badge-blue) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+html body.artcraft-theme-active .markdown-rendered ol > li::before {
+  content: counter(artcraft-counter, decimal-leading-zero);
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  width: 30px;
+  height: 28px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-monospace);
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  background-color: var(--artcraft-badge-blue);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+1)::before {
-  background-color: var(--artcraft-badge-blue) !important; /* 01 Синий */
+html body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+1)::before {
+  background-color: var(--artcraft-badge-blue); /* 01 Синий */
 }
-body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+2)::before {
-  background-color: var(--artcraft-badge-orange) !important; /* 02 Оранжевый */
+html body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+2)::before {
+  background-color: var(--artcraft-badge-orange); /* 02 Оранжевый */
 }
-body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+3)::before {
-  background-color: var(--artcraft-badge-green) !important; /* 03 Изумрудный */
+html body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+3)::before {
+  background-color: var(--artcraft-badge-green); /* 03 Изумрудный */
 }
-body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+4)::before {
-  background-color: var(--artcraft-badge-purple) !important; /* 04 Фиолетовый */
+html body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+4)::before {
+  background-color: var(--artcraft-badge-purple); /* 04 Фиолетовый */
 }
 
 /* В) Крупные квадратные бейджи [01], [02], [03], [04] (в таблицах, заголовках и тексте в обоих режимах!) */
 .artcraft-step-badge {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 32px !important;
-  height: 28px !important;
-  padding: 0 8px !important;
-  border-radius: 7px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.88rem !important;
-  font-weight: 800 !important;
-  color: #FFFFFF !important;
-  margin-right: 7px !important;
-  vertical-align: middle !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16) !important;
-  letter-spacing: 0.02em !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 7px;
+  font-family: var(--font-monospace);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-right: 7px;
+  vertical-align: middle;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+  letter-spacing: 0.02em;
 }
 
-.artcraft-step-1 { background-color: var(--artcraft-badge-blue) !important; }
-.artcraft-step-2 { background-color: var(--artcraft-badge-orange) !important; }
-.artcraft-step-3 { background-color: var(--artcraft-badge-green) !important; }
-.artcraft-step-4 { background-color: var(--artcraft-badge-purple) !important; }
+.artcraft-step-1 { background-color: var(--artcraft-badge-blue); }
+.artcraft-step-2 { background-color: var(--artcraft-badge-orange); }
+.artcraft-step-3 { background-color: var(--artcraft-badge-green); }
+.artcraft-step-4 { background-color: var(--artcraft-badge-purple); }
 
 /* Капсулы для сумм ($) и метрик (%, x, ms) */
 .artcraft-num-money {
-  display: inline-block !important;
-  background-color: #10B981 !important;
-  color: #FFFFFF !important;
-  border-radius: 6px !important;
-  padding: 1px 8px !important;
-  margin: 0 2px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.88em !important;
-  font-weight: 800 !important;
-  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.25) !important;
+  display: inline-block;
+  background-color: #10B981;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 1px 8px;
+  margin: 0 2px;
+  font-family: var(--font-monospace);
+  font-size: 0.88em;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.25);
 }
 
 .artcraft-num-metric {
-  display: inline-block !important;
-  background-color: #2563EB !important;
-  color: #FFFFFF !important;
-  border-radius: 6px !important;
-  padding: 1px 7px !important;
-  margin: 0 2px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.86em !important;
-  font-weight: 700 !important;
+  display: inline-block;
+  background-color: #2563EB;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 1px 7px;
+  margin: 0 2px;
+  font-family: var(--font-monospace);
+  font-size: 0.86em;
+  font-weight: 700;
 }
 
 /* ==========================================================================
@@ -224,188 +224,188 @@ body.artcraft-theme-active .markdown-rendered ol > li:nth-child(4n+4)::before {
    Идеальное отображение стрелочки раскрытия (collapse-indicator) и в корневых,
    и во вложенных папках без наложения на цветной бордер!
    ========================================================================== */
-body.artcraft-theme-active .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
-body.artcraft-theme-active .nav-files-container {
-  background-color: #EDEBE4 !important;
+html body.artcraft-theme-active .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
+html body.artcraft-theme-active .nav-files-container {
+  background-color: #EDEBE4;
 }
 
-body.artcraft-theme-active .nav-folder-children {
-  padding-left: 12px !important;
-  margin-left: 6px !important;
-  border-left: 1.5px solid #D5D3CC !important;
+html body.artcraft-theme-active .nav-folder-children {
+  padding-left: 12px;
+  margin-left: 6px;
+  border-left: 1.5px solid #D5D3CC;
 }
 
 /* Папки — flex-выравнивание, чтобы стрелка всегда стояла ВНУТРИ карточки справа от цветной полосы! */
-body.artcraft-theme-active .nav-folder-title {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  font-family: "Inter", sans-serif !important;
-  font-size: 0.84rem !important;
-  font-weight: 700 !important;
-  color: #1F2937 !important;
-  padding: 5px 10px 5px 10px !important;
-  margin: 3px 4px !important;
-  padding-inline-start: 10px !important;
-  margin-inline-start: 4px !important;
-  border-radius: 7px !important;
-  background-color: #F9F8F5 !important;
-  border: 1px solid #DFDDD4 !important;
-  transform: none !important;
-  transition: background-color 0.12s ease, border-color 0.12s ease !important;
+html body.artcraft-theme-active .nav-folder-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1F2937;
+  padding: 5px 10px 5px 10px;
+  margin: 3px 4px;
+  padding-inline-start: 10px;
+  margin-inline-start: 4px;
+  border-radius: 7px;
+  background-color: #F9F8F5;
+  border: 1px solid #DFDDD4;
+  transform: none;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
 }
 
 /* Сама стрелочка (collapse-indicator) — отменяем отрицательный отступ темы Minimal! */
-body.artcraft-theme-active .nav-folder-title .nav-folder-collapse-indicator,
-body.artcraft-theme-active .nav-folder-title .collapse-icon {
-  position: static !important;
-  margin-left: 0 !important;
-  margin-inline-start: 0 !important;
-  padding: 0 !important;
-  width: 16px !important;
-  height: 16px !important;
-  flex-shrink: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: #4B5563 !important;
-  opacity: 0.9 !important;
+html body.artcraft-theme-active .nav-folder-title .nav-folder-collapse-indicator,
+html body.artcraft-theme-active .nav-folder-title .collapse-icon {
+  position: static;
+  margin-left: 0;
+  margin-inline-start: 0;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4B5563;
+  opacity: 0.9;
 }
 
-body.artcraft-theme-active .nav-folder-title:hover .nav-folder-collapse-indicator,
-body.artcraft-theme-active .nav-folder-title:hover .collapse-icon {
-  color: #111111 !important;
-  opacity: 1 !important;
+html body.artcraft-theme-active .nav-folder-title:hover .nav-folder-collapse-indicator,
+html body.artcraft-theme-active .nav-folder-title:hover .collapse-icon {
+  color: #111111;
+  opacity: 1;
 }
 
-body.artcraft-theme-active .nav-folder-title:hover {
-  background-color: #FFFFFF !important;
-  border-color: #111111 !important;
-  transform: none !important;
+html body.artcraft-theme-active .nav-folder-title:hover {
+  background-color: #FFFFFF;
+  border-color: #111111;
+  transform: none;
 }
 
 /* Файлы заметок в сайдбаре — без прыгающих отступов */
-body.artcraft-theme-active .nav-file-title {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  font-family: "Inter", sans-serif !important;
-  font-size: 0.83rem !important;
-  font-weight: 500 !important;
-  color: #374151 !important;
-  padding: 5px 10px !important;
-  margin: 2px 4px !important;
-  padding-inline-start: 10px !important;
-  margin-inline-start: 4px !important;
-  border-radius: 6px !important;
-  border: 1px solid transparent !important;
-  transform: none !important;
-  transition: background-color 0.12s ease, border-color 0.12s ease !important;
+html body.artcraft-theme-active .nav-file-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: #374151;
+  padding: 5px 10px;
+  margin: 2px 4px;
+  padding-inline-start: 10px;
+  margin-inline-start: 4px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transform: none;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
 }
 
-body.artcraft-theme-active .nav-file-title:hover {
-  background-color: #F9F8F5 !important;
-  border-color: #D5D3CC !important;
-  color: #111111 !important;
-  transform: none !important;
+html body.artcraft-theme-active .nav-file-title:hover {
+  background-color: #F9F8F5;
+  border-color: #D5D3CC;
+  color: #111111;
+  transform: none;
 }
 
 /* Активная открытая заметка в сайдбаре */
-body.artcraft-theme-active .nav-file-title.is-active {
-  background-color: #FFFFFF !important;
-  color: #111111 !important;
-  font-weight: 700 !important;
-  border: 1px solid #111111 !important;
-  border-left: 5px solid var(--artcraft-excel-green) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+html body.artcraft-theme-active .nav-file-title.is-active {
+  background-color: #FFFFFF;
+  color: #111111;
+  font-weight: 700;
+  border: 1px solid #111111;
+  border-left: 5px solid var(--artcraft-excel-green);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 /* Цветная полоска для разных папок слева (4 цвета по циклу) */
-body.artcraft-theme-active .nav-folder:nth-of-type(4n+1) > .nav-folder-title {
-  border-left: 4px solid var(--artcraft-badge-blue) !important;
+html body.artcraft-theme-active .nav-folder:nth-of-type(4n+1) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-blue);
 }
-body.artcraft-theme-active .nav-folder:nth-of-type(4n+2) > .nav-folder-title {
-  border-left: 4px solid var(--artcraft-badge-orange) !important;
+html body.artcraft-theme-active .nav-folder:nth-of-type(4n+2) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-orange);
 }
-body.artcraft-theme-active .nav-folder:nth-of-type(4n+3) > .nav-folder-title {
-  border-left: 4px solid var(--artcraft-badge-green) !important;
+html body.artcraft-theme-active .nav-folder:nth-of-type(4n+3) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-green);
 }
-body.artcraft-theme-active .nav-folder:nth-of-type(4n+4) > .nav-folder-title {
-  border-left: 4px solid var(--artcraft-badge-purple) !important;
+html body.artcraft-theme-active .nav-folder:nth-of-type(4n+4) > .nav-folder-title {
+  border-left: 4px solid var(--artcraft-badge-purple);
 }
 
 /* ==========================================================================
    3.2. КРУГЛЫЕ СВЕТЛО-ЗЕЛЕНЫЕ ЧЕКБОКСЫ ЗАДАЧ (#69BD28 + БЕЛАЯ ПТИЧКА)
    И КРУГЛЫЙ БЕЙДЖ ДЛЯ ЭМОДЗИ ГАЛОЧКИ (✅ -> круглый светло-зеленый!)
    ========================================================================== */
-body.artcraft-theme-active {
-  --checkbox-color: #69BD28 !important;
-  --checkbox-color-hover: #559E1D !important;
-  --checkbox-marker-color: #FFFFFF !important;
-  --checkbox-border-color: #94A3B8 !important;
-  --checkbox-border-color-hover: #69BD28 !important;
-  --checklist-done-Color: #374151 !important;
-  --checklist-done-decoration: none !important;
+html body.artcraft-theme-active {
+  --checkbox-color: #69BD28;
+  --checkbox-color-hover: #559E1D;
+  --checkbox-marker-color: #FFFFFF;
+  --checkbox-border-color: #94A3B8;
+  --checkbox-border-color-hover: #69BD28;
+  --checklist-done-Color: #374151;
+  --checklist-done-decoration: none;
 }
 
-body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox,
-body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"] {
-  border-radius: 50% !important;
-  width: 18px !important;
-  height: 18px !important;
-  border: 1.8px solid #94A3B8 !important;
-  cursor: pointer !important;
-  transition: all 0.14s ease !important;
+html body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox,
+html body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"] {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  border: 1.8px solid #94A3B8;
+  cursor: pointer;
+  transition: all 0.14s ease;
 }
 
-body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox:checked,
-body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked,
-body.artcraft-theme-active input[type="checkbox"][data-task="x"] {
-  background-color: #69BD28 !important;
-  border-color: #559E1D !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 2px 4px rgba(105, 189, 40, 0.28) !important;
+html body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox:checked,
+html body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked,
+html body.artcraft-theme-active input[type="checkbox"][data-task="x"] {
+  background-color: #69BD28;
+  border-color: #559E1D;
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(105, 189, 40, 0.28);
 }
 
 /* Убираем бледность и зачеркивание у выполненных задач, чтобы текст оставался четким */
-body.artcraft-theme-active .HyperMD-task-line[data-task="x"],
-body.artcraft-theme-active li.task-list-item.is-checked {
-  color: #1F2937 !important;
-  text-decoration: none !important;
+html body.artcraft-theme-active .HyperMD-task-line[data-task="x"],
+html body.artcraft-theme-active li.task-list-item.is-checked {
+  color: #1F2937;
+  text-decoration: none;
 }
 
 /* Круглый светло-зеленый бейдж с белой галочкой вместо квадратного эмодзи ✅ */
 .artcraft-check-circle {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 18px !important;
-  height: 18px !important;
-  border-radius: 50% !important;
-  background-color: #69BD28 !important;
-  border: 1px solid #559E1D !important;
-  color: #FFFFFF !important;
-  font-size: 11px !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  margin: 0 4px !important;
-  vertical-align: middle !important;
-  box-shadow: 0 1px 3px rgba(105, 189, 40, 0.3) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #69BD28;
+  border: 1px solid #559E1D;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0 4px;
+  vertical-align: middle;
+  box-shadow: 0 1px 3px rgba(105, 189, 40, 0.3);
 }
 
 /* Бежево-зеленая капсула для даты выполнения задачи (📅 2026-10-25) */
 .artcraft-task-date {
-  display: inline-block !important;
-  background-color: #ECFDF5 !important;
-  color: #065F46 !important;
-  border: 1px solid #A7F3D0 !important;
-  border-radius: 999px !important;
-  padding: 1px 8px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.78rem !important;
-  font-weight: 700 !important;
-  margin-left: 2px !important;
-  vertical-align: middle !important;
+  display: inline-block;
+  background-color: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-family: var(--font-monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-left: 2px;
+  vertical-align: middle;
 }
 
 /* Плавная полоса прогресса задач (Task Progress Bar) вверху заметки */
@@ -424,14 +424,19 @@ body.artcraft-theme-active li.task-list-item.is-checked {
   flex-shrink: 0;
 }
 
-body.is-phone .artcraft-task-progress-wrap,
-body.is-mobile .artcraft-task-progress-wrap,
+html body.is-phone .artcraft-task-progress-wrap,
+html body.is-mobile .artcraft-task-progress-wrap {
+  margin-top: calc(var(--header-height, 48px) + env(safe-area-inset-top, 0px));
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  gap: 8px;
+}
 @media (max-width: 680px) {
   .artcraft-task-progress-wrap {
-    margin-top: calc(var(--header-height, 48px) + env(safe-area-inset-top, 0px)) !important;
-    padding: 6px 12px !important;
-    font-size: 0.72rem !important;
-    gap: 8px !important;
+    margin-top: calc(var(--header-height, 48px) + env(safe-area-inset-top, 0px));
+    padding: 6px 12px;
+    font-size: 0.72rem;
+    gap: 8px;
   }
 }
 
@@ -455,183 +460,183 @@ body.is-mobile .artcraft-task-progress-wrap,
    3.5. КРАСИВЫЕ ТЕПЛЫЕ КАРТОЧКИ CALLOUTS (> [!NOTE], > [!TIP], > [!IMPORTANT])
    Никакого кислотно-желтого цвета! Теплый крафтовый крем и мягкие акценты.
    ========================================================================== */
-body.artcraft-theme-active .callout,
-body.artcraft-theme-active .markdown-rendered .callout,
-body.artcraft-theme-active .cm-embed-block .callout {
-  background-color: #FAF8F5 !important;
-  color: #111111 !important;
-  border: 1.5px solid #D5D3CC !important;
-  border-left: 6px solid var(--artcraft-badge-blue) !important;
-  border-radius: 9px !important;
-  padding: 14px 18px !important;
-  margin: 14px 0 !important;
-  box-shadow: 0 2px 8px rgba(17, 17, 17, 0.04) !important;
+html body.artcraft-theme-active .callout,
+html body.artcraft-theme-active .markdown-rendered .callout,
+html body.artcraft-theme-active .cm-embed-block .callout {
+  background-color: #FAF8F5;
+  color: #111111;
+  border: 1.5px solid #D5D3CC;
+  border-left: 6px solid var(--artcraft-badge-blue);
+  border-radius: 9px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  box-shadow: 0 2px 8px rgba(17, 17, 17, 0.04);
 }
 
-body.artcraft-theme-active .callout[data-callout="note"],
-body.artcraft-theme-active .callout[data-callout="info"] {
-  background-color: #F4F7FB !important;
-  border-color: #BFDBFE !important;
-  border-left: 6px solid #2563EB !important;
+html body.artcraft-theme-active .callout[data-callout="note"],
+html body.artcraft-theme-active .callout[data-callout="info"] {
+  background-color: #F4F7FB;
+  border-color: #BFDBFE;
+  border-left: 6px solid #2563EB;
 }
 
-body.artcraft-theme-active .callout[data-callout="note"] .callout-title,
-body.artcraft-theme-active .callout[data-callout="info"] .callout-title {
-  color: #1E3A8A !important;
-  font-weight: 800 !important;
-  font-size: 0.96rem !important;
-  margin-bottom: 6px !important;
+html body.artcraft-theme-active .callout[data-callout="note"] .callout-title,
+html body.artcraft-theme-active .callout[data-callout="info"] .callout-title {
+  color: #1E3A8A;
+  font-weight: 800;
+  font-size: 0.96rem;
+  margin-bottom: 6px;
 }
 
-body.artcraft-theme-active .callout[data-callout="tip"],
-body.artcraft-theme-active .callout[data-callout="success"],
-body.artcraft-theme-active .callout[data-callout="check"] {
-  background-color: #F2FBF6 !important;
-  border-color: #A7F3D0 !important;
-  border-left: 6px solid #10B981 !important;
+html body.artcraft-theme-active .callout[data-callout="tip"],
+html body.artcraft-theme-active .callout[data-callout="success"],
+html body.artcraft-theme-active .callout[data-callout="check"] {
+  background-color: #F2FBF6;
+  border-color: #A7F3D0;
+  border-left: 6px solid #10B981;
 }
 
-body.artcraft-theme-active .callout[data-callout="tip"] .callout-title,
-body.artcraft-theme-active .callout[data-callout="success"] .callout-title {
-  color: #065F46 !important;
-  font-weight: 800 !important;
+html body.artcraft-theme-active .callout[data-callout="tip"] .callout-title,
+html body.artcraft-theme-active .callout[data-callout="success"] .callout-title {
+  color: #065F46;
+  font-weight: 800;
 }
 
-body.artcraft-theme-active .callout[data-callout="warning"],
-body.artcraft-theme-active .callout[data-callout="important"],
-body.artcraft-theme-active .callout[data-callout="question"] {
-  background-color: #FFFBEB !important;
-  border-color: #FDE68A !important;
-  border-left: 6px solid #D97706 !important;
+html body.artcraft-theme-active .callout[data-callout="warning"],
+html body.artcraft-theme-active .callout[data-callout="important"],
+html body.artcraft-theme-active .callout[data-callout="question"] {
+  background-color: #FFFBEB;
+  border-color: #FDE68A;
+  border-left: 6px solid #D97706;
 }
 
-body.artcraft-theme-active .callout[data-callout="warning"] .callout-title,
-body.artcraft-theme-active .callout[data-callout="important"] .callout-title {
-  color: #92400E !important;
-  font-weight: 800 !important;
+html body.artcraft-theme-active .callout[data-callout="warning"] .callout-title,
+html body.artcraft-theme-active .callout[data-callout="important"] .callout-title {
+  color: #92400E;
+  font-weight: 800;
 }
 
-body.artcraft-theme-active .callout-content,
-body.artcraft-theme-active .callout-content p {
-  color: #1F2937 !important;
-  line-height: 1.7 !important;
+html body.artcraft-theme-active .callout-content,
+html body.artcraft-theme-active .callout-content p {
+  color: #1F2937;
+  line-height: 1.7;
 }
 
 /* ==========================================================================
    4. ЗАГОЛОВКИ ВНУТРИ ЗАМЕТКИ (H1, H2, H3, H4)
    ========================================================================== */
-body.artcraft-theme-active .markdown-rendered h1,
-body.artcraft-theme-active .HyperMD-header-1 {
-  font-weight: 800 !important;
-  letter-spacing: -0.03em !important;
-  color: var(--artcraft-ink-primary) !important;
+html body.artcraft-theme-active .markdown-rendered h1,
+html body.artcraft-theme-active .HyperMD-header-1 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--artcraft-ink-primary);
   background: linear-gradient(90deg, rgba(105, 189, 40, 0.16) 0%, rgba(244, 243, 239, 0) 100%);
-  border-left: 6px solid var(--artcraft-excel-green) !important;
-  border-bottom: 2px solid var(--artcraft-ink-primary) !important;
-  padding: 8px 14px !important;
-  border-radius: 6px 6px 0 0 !important;
+  border-left: 6px solid var(--artcraft-excel-green);
+  border-bottom: 2px solid var(--artcraft-ink-primary);
+  padding: 8px 14px;
+  border-radius: 6px 6px 0 0;
 }
 
-body.artcraft-theme-active .markdown-rendered h2,
-body.artcraft-theme-active .HyperMD-header-2 {
-  font-weight: 800 !important;
-  letter-spacing: -0.02em !important;
-  color: #1E3A8A !important;
-  background-color: #EEF4FF !important;
-  border: 1px solid #BFDBFE !important;
-  border-left: 6px solid var(--artcraft-badge-blue) !important;
-  padding: 8px 14px !important;
-  border-radius: 8px !important;
+html body.artcraft-theme-active .markdown-rendered h2,
+html body.artcraft-theme-active .HyperMD-header-2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1E3A8A;
+  background-color: #EEF4FF;
+  border: 1px solid #BFDBFE;
+  border-left: 6px solid var(--artcraft-badge-blue);
+  padding: 8px 14px;
+  border-radius: 8px;
 }
 
-body.artcraft-theme-active .markdown-rendered h3,
-body.artcraft-theme-active .HyperMD-header-3 {
-  font-weight: 700 !important;
-  color: #9A3412 !important;
-  background-color: #FFF7ED !important;
-  border: 1px solid #FED7AA !important;
-  border-left: 6px solid var(--artcraft-badge-orange) !important;
-  padding: 6px 12px !important;
-  border-radius: 7px !important;
+html body.artcraft-theme-active .markdown-rendered h3,
+html body.artcraft-theme-active .HyperMD-header-3 {
+  font-weight: 700;
+  color: #9A3412;
+  background-color: #FFF7ED;
+  border: 1px solid #FED7AA;
+  border-left: 6px solid var(--artcraft-badge-orange);
+  padding: 6px 12px;
+  border-radius: 7px;
 }
 
-body.artcraft-theme-active .markdown-rendered h4,
-body.artcraft-theme-active .HyperMD-header-4 {
-  font-weight: 700 !important;
-  color: #5B21B6 !important;
-  background-color: #F5F3FF !important;
-  border-left: 5px solid var(--artcraft-badge-purple) !important;
-  padding: 5px 12px !important;
-  border-radius: 6px !important;
+html body.artcraft-theme-active .markdown-rendered h4,
+html body.artcraft-theme-active .HyperMD-header-4 {
+  font-weight: 700;
+  color: #5B21B6;
+  background-color: #F5F3FF;
+  border-left: 5px solid var(--artcraft-badge-purple);
+  padding: 5px 12px;
+  border-radius: 6px;
 }
 
 /* ==========================================================================
    5. КАПСУЛЫ КОДА `code` И ТАБЛИЦЫ EXCEL GREEN (#69BD28)
    ========================================================================== */
-body.artcraft-theme-active .markdown-rendered code:not(pre code),
-body.artcraft-theme-active .cm-s-obsidian span.cm-inline-code {
-  background-color: #FFF1E6 !important;
-  color: #C2410C !important;
-  border: 1px solid #FDBA74 !important;
-  border-bottom: 2px solid #FB923C !important;
-  border-radius: 6px !important;
-  padding: 2px 7px !important;
-  margin: 0 2px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.88em !important;
-  font-weight: 700 !important;
+html body.artcraft-theme-active .markdown-rendered code:not(pre code),
+html body.artcraft-theme-active .cm-s-obsidian span.cm-inline-code {
+  background-color: #FFF1E6;
+  color: #C2410C;
+  border: 1px solid #FDBA74;
+  border-bottom: 2px solid #FB923C;
+  border-radius: 6px;
+  padding: 2px 7px;
+  margin: 0 2px;
+  font-family: var(--font-monospace);
+  font-size: 0.88em;
+  font-weight: 700;
 }
 
-body.artcraft-theme-active .markdown-rendered table {
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-  width: 100% !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 9px !important;
-  overflow: hidden !important;
-  background-color: #FFFFFF !important;
-  box-shadow: 0 3px 0 #111111 !important;
-  margin: 1.2em 0 !important;
+html body.artcraft-theme-active .markdown-rendered table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  border: 1.5px solid #111111;
+  border-radius: 9px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+  box-shadow: 0 3px 0 #111111;
+  margin: 1.2em 0;
 }
 
-body.artcraft-theme-active .markdown-rendered th {
-  background-color: var(--artcraft-excel-green) !important;
-  color: #FFFFFF !important;
-  font-family: var(--font-text) !important;
-  font-size: 0.92em !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.03em !important;
-  padding: 12px 15px !important;
-  border-bottom: 2px solid var(--artcraft-excel-green-border) !important;
-  border-right: 1px solid var(--artcraft-excel-green-border) !important;
+html body.artcraft-theme-active .markdown-rendered th {
+  background-color: var(--artcraft-excel-green);
+  color: #FFFFFF;
+  font-family: var(--font-text);
+  font-size: 0.92em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 12px 15px;
+  border-bottom: 2px solid var(--artcraft-excel-green-border);
+  border-right: 1px solid var(--artcraft-excel-green-border);
 }
 
-body.artcraft-theme-active .markdown-rendered td {
-  padding: 11px 15px !important;
-  border-bottom: 1px solid #CBD5E1 !important;
-  border-right: 1px solid #CBD5E1 !important;
-  color: #111111 !important;
+html body.artcraft-theme-active .markdown-rendered td {
+  padding: 11px 15px;
+  border-bottom: 1px solid #CBD5E1;
+  border-right: 1px solid #CBD5E1;
+  color: #111111;
 }
 
-body.artcraft-theme-active .markdown-rendered tbody tr:nth-child(odd) td {
-  background-color: #EDF5FF !important;
+html body.artcraft-theme-active .markdown-rendered tbody tr:nth-child(odd) td {
+  background-color: #EDF5FF;
 }
 
-body.artcraft-theme-active .markdown-rendered tbody tr:nth-child(even) td {
-  background-color: #FFFFFF !important;
+html body.artcraft-theme-active .markdown-rendered tbody tr:nth-child(even) td {
+  background-color: #FFFFFF;
 }
 
-body.artcraft-theme-active .markdown-rendered tbody tr:hover td {
-  background-color: #FEF3C7 !important;
+html body.artcraft-theme-active .markdown-rendered tbody tr:hover td {
+  background-color: #FEF3C7;
 }
 
 /* ==========================================================================
    6. HOVER КАРТОЧЕК, ПРЕДЛОЖЕНИЙ И ПЛАВАЮЩИЙ ДОК ARTCRAFT
    ========================================================================== */
-body.artcraft-hover-cards .markdown-rendered p:hover,
-body.artcraft-hover-cards .cm-line:hover {
-  background-color: var(--artcraft-bg-hover) !important;
+html body.artcraft-hover-cards .markdown-rendered p:hover,
+html body.artcraft-hover-cards .cm-line:hover {
+  background-color: var(--artcraft-bg-hover);
   border-radius: 6px;
 }
 
@@ -643,29 +648,29 @@ body.artcraft-hover-cards .cm-line:hover {
   cursor: pointer;
 }
 
-body.artcraft-sentence-focus .artcraft-sentence:hover {
-  background-color: rgba(253, 230, 138, 0.7) !important;
-  color: #111111 !important;
+html body.artcraft-sentence-focus .artcraft-sentence:hover {
+  background-color: rgba(253, 230, 138, 0.7);
+  color: #111111;
 }
 
 .artcraft-sentence.artcraft-pinned-blue {
-  background-color: #DBEAFE !important;
-  color: #1E3A8A !important;
+  background-color: #DBEAFE;
+  color: #1E3A8A;
   border-bottom: 2px solid #2563EB;
 }
 .artcraft-sentence.artcraft-pinned-orange {
-  background-color: #FFEDD5 !important;
-  color: #9A3412 !important;
+  background-color: #FFEDD5;
+  color: #9A3412;
   border-bottom: 2px solid #EA580C;
 }
 .artcraft-sentence.artcraft-pinned-green {
-  background-color: #DCFCE7 !important;
-  color: #065F46 !important;
+  background-color: #DCFCE7;
+  color: #065F46;
   border-bottom: 2px solid #10B981;
 }
 .artcraft-sentence.artcraft-pinned-purple {
-  background-color: #EDE9FE !important;
-  color: #5B21B6 !important;
+  background-color: #EDE9FE;
+  color: #5B21B6;
   border-bottom: 2px solid #7C3AED;
 }
 
@@ -804,44 +809,44 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
 }
 
 .artcraft-dock-collapse-btn {
-  font-size: 14px !important;
-  font-weight: 800 !important;
-  padding: 5px 8px !important;
-  background: #EFECE6 !important;
-  color: #4B5563 !important;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 8px;
+  background: #EFECE6;
+  color: #4B5563;
 }
 
 .artcraft-dock-collapse-btn:hover {
-  background: #111111 !important;
-  color: #FFFFFF !important;
+  background: #111111;
+  color: #FFFFFF;
 }
 
 /* ==========================================================================
    СВЕРНУТОЕ СОСТОЯНИЕ (FLOATING ALCHEMY ORB / FAB)
    ========================================================================== */
 .artcraft-floating-dock.is-collapsed {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
-  padding: 0 !important;
-  border-radius: 50% !important;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0;
+  border-radius: 50%;
   cursor: pointer;
-  justify-content: center !important;
-  background: #FFFFFF !important;
+  justify-content: center;
+  background: #FFFFFF;
   animation: alchemyOrbAura 3.6s ease-in-out infinite;
   transform: scale(1);
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-svg-flask {
-  width: 22px !important;
-  height: 22px !important;
+  width: 22px;
+  height: 22px;
   transform: rotate(360deg) scale(1.15);
   filter: drop-shadow(0 2px 4px rgba(17, 17, 17, 0.15));
 }
 
 .artcraft-floating-dock.is-collapsed:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(17, 17, 17, 0.3), 0 0 0 2px #111111 !important;
+  box-shadow: 0 6px 20px rgba(17, 17, 17, 0.3), 0 0 0 2px #111111;
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-dock-content {
@@ -853,53 +858,50 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-dock-badge {
-  margin: 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
-  color: #111111 !important;
-  font-size: 20px !important;
-  display: flex !important;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: #111111;
+  font-size: 20px;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-dock-badge-full {
-  display: none !important;
+  display: none;
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-dock-badge-short {
-  display: inline-block !important;
+  display: inline-block;
 }
 
 /* ==========================================================================
    МОБИЛЬНАЯ АДАПТАЦИЯ (IPHONE / ANDROID)
    ========================================================================== */
-body.is-phone .artcraft-floating-dock:not(.is-vertical),
-body.is-mobile .artcraft-floating-dock:not(.is-vertical),
 @media (max-width: 680px) {
   .artcraft-floating-dock:not(.is-vertical) {
-    right: auto !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    bottom: calc(10px + env(safe-area-inset-bottom, 12px)) !important;
-    max-width: calc(100vw - 16px) !important;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(10px + env(safe-area-inset-bottom, 12px));
+    max-width: calc(100vw - 16px);
     width: max-content;
-    overflow-x: auto !important;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding: 5px 7px !important;
-    gap: 4px !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 14px rgba(17, 17, 17, 0.22), 0 2px 0 #111111 !important;
+    padding: 5px 7px;
+    gap: 4px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(17, 17, 17, 0.22), 0 2px 0 #111111;
   }
 
   /* Свернутый шар на мобилке: аккуратно в правом нижнем углу! */
   .artcraft-floating-dock.is-collapsed {
-    left: auto !important;
-    right: 16px !important;
-    transform: none !important;
-    bottom: calc(14px + env(safe-area-inset-bottom, 12px)) !important;
-    overflow: hidden !important;
+    left: auto;
+    right: 16px;
+    transform: none;
+    bottom: calc(14px + env(safe-area-inset-bottom, 12px));
+    overflow: hidden;
   }
 
   .artcraft-floating-dock::-webkit-scrollbar {
@@ -907,39 +909,39 @@ body.is-mobile .artcraft-floating-dock:not(.is-vertical),
   }
 
   .artcraft-dock-badge-full {
-    display: none !important;
+    display: none;
   }
 
   .artcraft-dock-badge-short {
-    display: inline-block !important;
+    display: inline-block;
   }
 
   .artcraft-dock-badge {
-    padding: 4px 6px !important;
+    padding: 4px 6px;
   }
 
   .artcraft-dock-btn {
-    padding: 5px 7px !important;
-    font-size: 10.5px !important;
+    padding: 5px 7px;
+    font-size: 10.5px;
     flex-shrink: 0;
   }
 
   .artcraft-timer-pill {
-    padding: 4px 7px !important;
-    font-size: 10px !important;
+    padding: 4px 7px;
+    font-size: 10px;
     flex-shrink: 0;
   }
 
   .artcraft-color-dot {
-    width: 14px !important;
-    height: 14px !important;
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
   }
 }
 
 /* Автоматическое приглушение при открытом мобильном меню / drawer */
-body.is-phone.has-active-menu .artcraft-floating-dock:not(.is-collapsed),
-body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
+html body.is-phone.has-active-menu .artcraft-floating-dock:not(.is-collapsed),
+html body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
   opacity: 0.15;
   pointer-events: none;
 }
@@ -967,9 +969,9 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
 }
 
 .artcraft-timer-pill.is-running {
-  background: var(--artcraft-excel-green, #69BD28) !important;
-  color: #FFFFFF !important;
-  border-color: #559E1D !important;
+  background: var(--artcraft-excel-green, #69BD28);
+  color: #FFFFFF;
+  border-color: #559E1D;
 }
 
 .artcraft-timer-dot {
@@ -985,9 +987,9 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
 }
 
 .artcraft-timer-pill.is-break.is-running {
-  background: #2563EB !important;
-  color: #FFFFFF !important;
-  border-color: #1D4ED8 !important;
+  background: #2563EB;
+  color: #FFFFFF;
+  border-color: #1D4ED8;
 }
 
 .artcraft-timer-pill.is-break .artcraft-timer-dot {
@@ -1011,8 +1013,8 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
 }
 
 .artcraft-dock-icon-btn {
-  padding: 5px 8px !important;
-  font-size: 13px !important;
+  padding: 5px 8px;
+  font-size: 13px;
   font-weight: 700;
   min-width: 26px;
   justify-content: center;
@@ -1024,9 +1026,9 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
 }
 
 .artcraft-dock-btn.is-active {
-  background: var(--artcraft-excel-green, #69BD28) !important;
-  color: #FFFFFF !important;
-  border-color: #559E1D !important;
+  background: var(--artcraft-excel-green, #69BD28);
+  color: #FFFFFF;
+  border-color: #559E1D;
 }
 
 .artcraft-color-dot {
@@ -1057,12 +1059,15 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
   -webkit-app-region: no-drag;
 }
 
-body.is-phone .artcraft-overlay-canvas,
-body.is-mobile .artcraft-overlay-canvas,
+html body.is-phone .artcraft-overlay-canvas,
+html body.is-mobile .artcraft-overlay-canvas {
+  top: 0;
+  height: 100dvh;
+}
 @media (max-width: 680px) {
   .artcraft-overlay-canvas {
-    top: 0 !important;
-    height: 100dvh !important;
+    top: 0;
+    height: 100dvh;
   }
 }
 
@@ -1072,33 +1077,33 @@ body.is-mobile .artcraft-overlay-canvas,
 
 /* Mode-specific cursor handling */
 .artcraft-overlay-canvas.mode-laser {
-  cursor: none !important;
+  cursor: none;
 }
 
 .artcraft-overlay-canvas.mode-draw {
-  cursor: crosshair !important;
+  cursor: crosshair;
 }
 
 .artcraft-overlay-canvas.mode-eraser {
-  cursor: crosshair !important;
+  cursor: crosshair;
 }
 
 /* ==========================================================================
    7. РЕЖИМ ДЗЕН (ZEN FOCUS MODE) — СКРЫВАЕТ САЙДБАРЫ И ЛИШНИЙ ИНТЕРФЕЙС
    ========================================================================== */
-body.artcraft-zen-mode .workspace-split.mod-left-split,
-body.artcraft-zen-mode .workspace-split.mod-right-split,
-body.artcraft-zen-mode .workspace-ribbon,
-body.artcraft-zen-mode .status-bar {
-  display: none !important;
+html body.artcraft-zen-mode .workspace-split.mod-left-split,
+html body.artcraft-zen-mode .workspace-split.mod-right-split,
+html body.artcraft-zen-mode .workspace-ribbon,
+html body.artcraft-zen-mode .status-bar {
+  display: none;
 }
 
-body.artcraft-zen-mode .workspace-tab-header-container {
+html body.artcraft-zen-mode .workspace-tab-header-container {
   opacity: 0.15;
   transition: opacity 0.2s ease;
 }
 
-body.artcraft-zen-mode .workspace-tab-header-container:hover {
+html body.artcraft-zen-mode .workspace-tab-header-container:hover {
   opacity: 1;
 }
 
@@ -1207,13 +1212,13 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .artcraft-open-modal-btn {
-  background: var(--artcraft-excel-green, #69BD28) !important;
-  color: #FFFFFF !important;
-  border: 1.5px solid #559E1D !important;
-  border-radius: 6px !important;
-  font-weight: 800 !important;
-  font-size: 13px !important;
-  padding: 8px 18px !important;
+  background: var(--artcraft-excel-green, #69BD28);
+  color: #FFFFFF;
+  border: 1.5px solid #559E1D;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 8px 18px;
   cursor: pointer;
   box-shadow: 0 2px 0 #3E7912;
 }
@@ -1267,14 +1272,14 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
    ========================================================================== */
 
 .modal.artcraft-pro-modal-root {
-  max-width: 540px !important;
-  padding: 22px 24px !important;
-  background: #F9F8F6 !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 0 #111111, 0 20px 40px rgba(0,0,0,0.15) !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif !important;
-  color: #111111 !important;
+  max-width: 540px;
+  padding: 22px 24px;
+  background: #F9F8F6;
+  border: 1.5px solid #111111;
+  border-radius: 12px;
+  box-shadow: 0 8px 0 #111111, 0 20px 40px rgba(0,0,0,0.15);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  color: #111111;
 }
 
 .artcraft-modal-header-card {
@@ -1295,18 +1300,18 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .artcraft-modal-title {
-  margin: 0 0 4px 0 !important;
-  font-size: 20px !important;
-  font-weight: 900 !important;
-  color: #111111 !important;
-  letter-spacing: -0.02em !important;
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #111111;
+  letter-spacing: -0.02em;
 }
 
 .artcraft-modal-desc {
-  margin: 0 !important;
-  font-size: 12.5px !important;
-  color: #4B5563 !important;
-  line-height: 1.45 !important;
+  margin: 0;
+  font-size: 12.5px;
+  color: #4B5563;
+  line-height: 1.45;
 }
 
 .artcraft-section-label {
@@ -1342,8 +1347,8 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .artcraft-net-tile.is-selected {
-  background: #111111 !important;
-  border-color: #111111 !important;
+  background: #111111;
+  border-color: #111111;
   box-shadow: 0 2px 0 rgba(0,0,0,0.2);
 }
 
@@ -1357,7 +1362,7 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .artcraft-net-tile.is-selected .tile-top {
-  color: #FFFFFF !important;
+  color: #FFFFFF;
 }
 
 .artcraft-net-tile .tile-hint {
@@ -1367,7 +1372,7 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .artcraft-net-tile.is-selected .tile-hint {
-  color: #9CA3AF !important;
+  color: #9CA3AF;
 }
 
 /* Active Payment Card (Clean & Focused) */
@@ -1416,15 +1421,15 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .card-copy-amount {
-  padding: 3px 8px !important;
-  font-size: 10.5px !important;
-  background: #F3F4F6 !important;
-  border: 1px solid #CBD5E1 !important;
-  border-radius: 4px !important;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  background: #F3F4F6;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
 }
 
 .card-copy-amount:hover {
-  background: #E5E7EB !important;
+  background: #E5E7EB;
 }
 
 .meta-gas-tag {
@@ -1455,31 +1460,31 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 
 .card-address-input {
   flex: 1;
-  background: #F3F4F6 !important;
-  border: 1px solid #D1D5DB !important;
-  border-radius: 6px !important;
-  padding: 7px 10px !important;
-  font-family: "JetBrains Mono", monospace !important;
-  font-size: 11px !important;
-  color: #111111 !important;
-  user-select: all !important;
+  background: #F3F4F6;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #111111;
+  user-select: all;
 }
 
 .card-copy-btn {
-  background: #111111 !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  border-radius: 6px !important;
-  padding: 7px 12px !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  white-space: nowrap !important;
-  transition: background 0.12s ease !important;
+  background: #111111;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease;
 }
 
 .card-copy-btn:hover {
-  background: #374151 !important;
+  background: #374151;
 }
 
 .card-note-text {
@@ -1533,20 +1538,20 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .support-tg-btn {
-  background: #2563EB !important;
-  color: #FFFFFF !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 6px !important;
-  padding: 6px 14px !important;
-  font-size: 11px !important;
-  font-weight: 800 !important;
-  white-space: nowrap !important;
-  cursor: pointer !important;
-  transition: all 0.12s ease !important;
+  background: #2563EB;
+  color: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.12s ease;
 }
 
 .support-tg-btn:hover {
-  background: #1D4ED8 !important;
+  background: #1D4ED8;
   transform: translateY(-1px);
 }
 
@@ -1574,33 +1579,33 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 
 .verify-tx-input {
   flex: 1;
-  background: #F9FAFB !important;
-  border: 1.5px solid #D1D5DB !important;
-  border-radius: 6px !important;
-  padding: 8px 10px !important;
-  font-family: "JetBrains Mono", monospace !important;
-  font-size: 11px !important;
+  background: #F9FAFB;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
 }
 
 .verify-tx-input:focus {
-  border-color: #111111 !important;
-  background: #FFFFFF !important;
+  border-color: #111111;
+  background: #FFFFFF;
 }
 
 .verify-activate-button {
-  background: #111111 !important;
-  color: #FFFFFF !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 6px !important;
-  font-weight: 800 !important;
-  font-size: 12px !important;
-  padding: 8px 14px !important;
-  cursor: pointer !important;
-  white-space: nowrap !important;
+  background: #111111;
+  color: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .verify-activate-button:hover {
-  background: #374151 !important;
+  background: #374151;
 }
 
 .verify-status-msg {
@@ -1611,14 +1616,14 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 /* Midnight Dark Craft Mode */
-body.artcraft-dark-craft {
-  --background-primary: #121212 !important;
-  --background-secondary: #1A1A1A !important;
-  --text-normal: #E5E7EB !important;
-  --text-muted: #9CA3AF !important;
+html body.artcraft-dark-craft {
+  --background-primary: #121212;
+  --background-secondary: #1A1A1A;
+  --text-normal: #E5E7EB;
+  --text-muted: #9CA3AF;
 }
-body.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] {
-  background-color: #121212 !important;
+html body.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] {
+  background-color: #121212;
 }
 
 /* ==========================================================================
@@ -1631,93 +1636,92 @@ body.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] {
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
-  flex-direction: column !important;
-  right: 12px !important;
-  left: auto !important;
-  top: 50% !important;
-  bottom: auto !important;
-  transform: translateY(-50%) !important;
-  max-width: 142px !important;
-  width: 142px !important;
-  max-height: calc(100dvh - 80px) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  scrollbar-width: none;
-  padding: 8px 5px !important;
-  border-radius: 14px !important;
-  gap: 5px !important;
-  box-shadow: 4px 4px 0 #111111, 8px 12px 28px rgba(17, 17, 17, 0.2) !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  flex-direction: column;
+  right: 12px;
+  left: auto;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+  max-width: 142px;
+  width: 142px;
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 5px;
+  border-radius: 14px;
+  gap: 5px;
+  box-shadow: 4px 4px 0 #111111, 8px 12px 28px rgba(17, 17, 17, 0.2);
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed)::-webkit-scrollbar,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed)::-webkit-scrollbar,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed)::-webkit-scrollbar {
-  display: none !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed)::-webkit-scrollbar,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed)::-webkit-scrollbar {
+  display: none;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
-  flex-direction: column !important;
-  gap: 5px !important;
-  width: 100% !important;
-  align-items: center !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  align-items: center;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-full,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-full,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-full {
-  display: none !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-full,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-full {
+  display: none;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-short,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-short,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-short {
-  display: inline-block !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-short,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-short {
+  display: inline-block;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
-  width: 38px !important;
-  padding: 5px 2px !important;
-  font-size: 10px !important;
-  justify-content: center !important;
-  text-align: center !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 38px;
+  padding: 5px 2px;
+  font-size: 10px;
+  justify-content: center;
+  text-align: center;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill {
-  width: 38px !important;
-  padding: 4px 2px !important;
-  font-size: 9px !important;
-  justify-content: center !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill {
+  width: 38px;
+  padding: 4px 2px;
+  font-size: 9px;
+  justify-content: center;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 4px !important;
-  padding: 2px 0 !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  padding: 2px 0;
 }
 
 @media (max-width: 680px) {
   body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
   .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
-    right: 8px !important;
-    left: auto !important;
-    top: 50% !important;
-    bottom: auto !important;
-    transform: translateY(-50%) !important;
-    max-width: 136px !important;
-    width: 136px !important;
-    max-height: calc(100dvh - 120px) !important;
-    padding: 6px 4px !important;
+    right: 8px;
+    left: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    max-width: 136px;
+    width: 136px;
+    max-height: calc(100dvh - 120px);
+    padding: 6px 4px;
   }
 }
 
@@ -1728,51 +1732,51 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
 
 /* Fix missing token capsule classes */
 .artcraft-pill-number {
-  display: inline-block !important;
-  background-color: #10B981 !important;
-  color: #FFFFFF !important;
-  border-radius: 6px !important;
-  padding: 1px 8px !important;
-  margin: 0 2px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.86em !important;
-  font-weight: 800 !important;
-  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.25) !important;
+  display: inline-block;
+  background-color: #10B981;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 1px 8px;
+  margin: 0 2px;
+  font-family: var(--font-monospace);
+  font-size: 0.86em;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.25);
 }
 
 .artcraft-capsule-link {
-  display: inline-block !important;
-  background-color: #EFF6FF !important;
-  color: #1D4ED8 !important;
-  border: 1px solid #93C5FD !important;
-  border-radius: 6px !important;
-  padding: 1px 7px !important;
-  margin: 0 2px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.84em !important;
-  font-weight: 700 !important;
+  display: inline-block;
+  background-color: #EFF6FF;
+  color: #1D4ED8;
+  border: 1px solid #93C5FD;
+  border-radius: 6px;
+  padding: 1px 7px;
+  margin: 0 2px;
+  font-family: var(--font-monospace);
+  font-size: 0.84em;
+  font-weight: 700;
 }
 
 .artcraft-capsule-crypto {
-  display: inline-block !important;
-  background-color: #FFF1E6 !important;
-  color: #C2410C !important;
-  border: 1px solid #FDBA74 !important;
-  border-radius: 6px !important;
-  padding: 1px 7px !important;
-  margin: 0 2px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.84em !important;
-  font-weight: 700 !important;
+  display: inline-block;
+  background-color: #FFF1E6;
+  color: #C2410C;
+  border: 1px solid #FDBA74;
+  border-radius: 6px;
+  padding: 1px 7px;
+  margin: 0 2px;
+  font-family: var(--font-monospace);
+  font-size: 0.84em;
+  font-weight: 700;
 }
 
 /* Dynamic sentence pinning via CSS variables (supports all 8 Pro colors!) */
 .artcraft-sentence.is-pinned {
-  background-color: var(--artcraft-pinned-bg, #DBEAFE) !important;
-  color: var(--text-normal, #111111) !important;
-  border-bottom: 2px solid var(--artcraft-pinned-border, #2563EB) !important;
-  border-radius: 4px !important;
-  padding: 1px 4px !important;
+  background-color: var(--artcraft-pinned-bg, #DBEAFE);
+  color: var(--text-normal, #111111);
+  border-bottom: 2px solid var(--artcraft-pinned-border, #2563EB);
+  border-radius: 4px;
+  padding: 1px 4px;
 }
 
 /* Task Progress Bar Mobile-Safe Close Button */
@@ -1797,56 +1801,56 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
 
 /* Fix Vertical Dock Pillar so text/buttons never clip or overflow */
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
-  max-width: 68px !important;
-  width: 68px !important;
-  padding: 8px 6px !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  max-width: 68px;
+  width: 68px;
+  padding: 8px 6px;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
-  width: 54px !important;
-  padding: 5px 4px !important;
-  font-size: 10px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 54px;
+  padding: 5px 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill {
-  width: 54px !important;
-  padding: 4px 3px !important;
-  font-size: 9.5px !important;
-  white-space: nowrap !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill {
+  width: 54px;
+  padding: 4px 3px;
+  font-size: 9.5px;
+  white-space: nowrap;
 }
 
 /* ==========================================================================
    10. SWISS BENTO GRAPH STUDIO (OBSIDIAN GRAPH VIEW ENHANCEMENTS & HUD)
    ========================================================================== */
-body.artcraft-bento-graph .workspace-leaf-content[data-type="graph"] .view-content,
-body.artcraft-bento-graph .workspace-leaf-content[data-type="localgraph"] .view-content {
-  position: relative !important;
-  background-color: var(--artcraft-bg-canvas, #F4F3EF) !important;
-  background-image: radial-gradient(rgba(17, 17, 17, 0.14) 1px, transparent 1px) !important;
-  background-size: 24px 24px !important;
-  --graph-node: #2563EB !important;
-  --graph-node-unresolved: #94A3B8 !important;
-  --graph-node-focused: #69BD28 !important;
-  --graph-node-tag: #10B981 !important;
-  --graph-node-attachment: #F59E0B !important;
-  --graph-line: rgba(120, 113, 108, 0.28) !important;
-  --graph-line-highlight: #69BD28 !important;
+html body.artcraft-bento-graph .workspace-leaf-content[data-type="graph"] .view-content,
+html body.artcraft-bento-graph .workspace-leaf-content[data-type="localgraph"] .view-content {
+  position: relative;
+  background-color: var(--artcraft-bg-canvas, #F4F3EF);
+  background-image: radial-gradient(rgba(17, 17, 17, 0.14) 1px, transparent 1px);
+  background-size: 24px 24px;
+  --graph-node: #2563EB;
+  --graph-node-unresolved: #94A3B8;
+  --graph-node-focused: #69BD28;
+  --graph-node-tag: #10B981;
+  --graph-node-attachment: #F59E0B;
+  --graph-line: rgba(120, 113, 108, 0.28);
+  --graph-line-highlight: #69BD28;
 }
 
-body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type="graph"] .view-content,
-body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type="localgraph"] .view-content {
-  background-color: #111214 !important;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px) !important;
-  background-size: 24px 24px !important;
+html body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type="graph"] .view-content,
+html body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type="localgraph"] .view-content {
+  background-color: #111214;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* Radar Preset Concentric Rings */
@@ -1910,16 +1914,16 @@ body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type=
 }
 
 .artcraft-graph-hud-btn.is-active {
-  background: #69BD28 !important;
-  color: #FFFFFF !important;
-  border-color: #111111 !important;
+  background: #69BD28;
+  color: #FFFFFF;
+  border-color: #111111;
   box-shadow: 0 2px 0 #111111;
 }
 
 .artcraft-graph-color-btn {
-  background: #FEF3C7 !important;
-  color: #92400E !important;
-  border-color: #F59E0B !important;
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #F59E0B;
 }
 
 /* ==========================================================================
@@ -2061,13 +2065,13 @@ body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type=
 
 /* 6-Tile Checkout Grid & Universal EVM Badges */
 .artcraft-net-grid-6 {
-  grid-template-columns: repeat(3, 1fr) !important;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 @media (max-width: 560px) {
   .artcraft-net-grid-6,
   .artcraft-analytics-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -2108,123 +2112,123 @@ body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type=
 }
 
 .artcraft-pay-action-btn {
-  border: 1.5px solid #111111 !important;
-  border-radius: 8px !important;
-  padding: 10px 12px !important;
-  font-size: 11.5px !important;
-  font-weight: 800 !important;
-  color: #FFFFFF !important;
-  cursor: pointer !important;
-  box-shadow: 0 3px 0 #111111 !important;
-  transition: transform 0.14s ease !important;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #111111;
+  transition: transform 0.14s ease;
 }
 
 .artcraft-pay-action-btn:hover {
   transform: translateY(-2px);
 }
 
-.artcraft-pay-action-btn.is-green { background: #69BD28 !important; }
-.artcraft-pay-action-btn.is-blue { background: #2563EB !important; }
-.artcraft-pay-action-btn.is-dark { background: #1F2937 !important; }
+.artcraft-pay-action-btn.is-green { background: #69BD28; }
+.artcraft-pay-action-btn.is-blue { background: #2563EB; }
+.artcraft-pay-action-btn.is-dark { background: #1F2937; }
 
 /* ==========================================================================
    12. COMPLETE MIDNIGHT DARK CRAFT MODE (PRO EXCLUSIVE)
    Fixes white backgrounds on titles, tables, callouts, sidebar & dock in dark mode
    ========================================================================== */
-body.artcraft-dark-craft {
-  --artcraft-bg-canvas: #111214 !important;
-  --artcraft-bg-card: #1A1C20 !important;
-  --artcraft-bg-hover: #22252A !important;
-  --artcraft-bg-sidebar: #16181C !important;
-  --artcraft-ink-primary: #F3F4F6 !important;
-  --artcraft-ink-secondary: #D1D5DB !important;
-  --artcraft-ink-muted: #9CA3AF !important;
-  --artcraft-border-hairline: #2E323B !important;
-  --artcraft-border-strong: #374151 !important;
+html body.artcraft-dark-craft {
+  --artcraft-bg-canvas: #111214;
+  --artcraft-bg-card: #1A1C20;
+  --artcraft-bg-hover: #22252A;
+  --artcraft-bg-sidebar: #16181C;
+  --artcraft-ink-primary: #F3F4F6;
+  --artcraft-ink-secondary: #D1D5DB;
+  --artcraft-ink-muted: #9CA3AF;
+  --artcraft-border-hairline: #2E323B;
+  --artcraft-border-strong: #374151;
 
-  --background-primary: #111214 !important;
-  --background-primary-alt: #1A1C20 !important;
-  --background-secondary: #16181C !important;
-  --background-secondary-alt: #16181C !important;
-  --text-normal: #F3F4F6 !important;
-  --text-muted: #9CA3AF !important;
+  --background-primary: #111214;
+  --background-primary-alt: #1A1C20;
+  --background-secondary: #16181C;
+  --background-secondary-alt: #16181C;
+  --text-normal: #F3F4F6;
+  --text-muted: #9CA3AF;
 }
 
-body.artcraft-dark-craft .inline-title {
-  background-color: #1A1C20 !important;
-  color: #F3F4F6 !important;
-  border-color: #374151 !important;
-  box-shadow: 0 4px 0 #000000 !important;
+html body.artcraft-dark-craft .inline-title {
+  background-color: #1A1C20;
+  color: #F3F4F6;
+  border-color: #374151;
+  box-shadow: 0 4px 0 #000000;
 }
 
-body.artcraft-dark-craft .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
-body.artcraft-dark-craft .nav-files-container {
-  background-color: #16181C !important;
+html body.artcraft-dark-craft .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
+html body.artcraft-dark-craft .nav-files-container {
+  background-color: #16181C;
 }
 
-body.artcraft-dark-craft .nav-folder-title {
-  background-color: #1E2026 !important;
-  color: #E5E7EB !important;
-  border-color: #2E323B !important;
+html body.artcraft-dark-craft .nav-folder-title {
+  background-color: #1E2026;
+  color: #E5E7EB;
+  border-color: #2E323B;
 }
 
-body.artcraft-dark-craft .nav-file-title {
-  color: #D1D5DB !important;
+html body.artcraft-dark-craft .nav-file-title {
+  color: #D1D5DB;
 }
 
-body.artcraft-dark-craft .nav-file-title.is-active {
-  background-color: #252830 !important;
-  color: #FFFFFF !important;
-  border-color: #4B5563 !important;
+html body.artcraft-dark-craft .nav-file-title.is-active {
+  background-color: #252830;
+  color: #FFFFFF;
+  border-color: #4B5563;
 }
 
-body.artcraft-dark-craft .markdown-rendered table {
-  background-color: #1A1C20 !important;
-  border-color: #374151 !important;
-  box-shadow: 0 3px 0 #000000 !important;
+html body.artcraft-dark-craft .markdown-rendered table {
+  background-color: #1A1C20;
+  border-color: #374151;
+  box-shadow: 0 3px 0 #000000;
 }
 
-body.artcraft-dark-craft .markdown-rendered td {
-  color: #E5E7EB !important;
-  border-color: #2E323B !important;
+html body.artcraft-dark-craft .markdown-rendered td {
+  color: #E5E7EB;
+  border-color: #2E323B;
 }
 
-body.artcraft-dark-craft .markdown-rendered tbody tr:nth-child(odd) td {
-  background-color: #1E2229 !important;
+html body.artcraft-dark-craft .markdown-rendered tbody tr:nth-child(odd) td {
+  background-color: #1E2229;
 }
 
-body.artcraft-dark-craft .markdown-rendered tbody tr:nth-child(even) td {
-  background-color: #17191E !important;
+html body.artcraft-dark-craft .markdown-rendered tbody tr:nth-child(even) td {
+  background-color: #17191E;
 }
 
-body.artcraft-dark-craft .callout {
-  background-color: #1A1C20 !important;
-  color: #E5E7EB !important;
-  border-color: #374151 !important;
+html body.artcraft-dark-craft .callout {
+  background-color: #1A1C20;
+  color: #E5E7EB;
+  border-color: #374151;
 }
 
-body.artcraft-dark-craft .callout-content,
-body.artcraft-dark-craft .callout-content p {
-  color: #D1D5DB !important;
+html body.artcraft-dark-craft .callout-content,
+html body.artcraft-dark-craft .callout-content p {
+  color: #D1D5DB;
 }
 
-body.artcraft-dark-craft .artcraft-floating-dock {
-  background: rgba(26, 28, 32, 0.95) !important;
-  border-color: #4B5563 !important;
-  box-shadow: 0 4px 0 #000000, 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+html body.artcraft-dark-craft .artcraft-floating-dock {
+  background: rgba(26, 28, 32, 0.95);
+  border-color: #4B5563;
+  box-shadow: 0 4px 0 #000000, 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
-body.artcraft-dark-craft .artcraft-dock-btn {
-  background: #252830 !important;
-  color: #F3F4F6 !important;
-  border-color: #374151 !important;
+html body.artcraft-dark-craft .artcraft-dock-btn {
+  background: #252830;
+  color: #F3F4F6;
+  border-color: #374151;
 }
 
-body.artcraft-dark-craft .artcraft-task-progress-wrap,
-body.artcraft-dark-craft .artcraft-graph-hud {
-  background: #1A1C20 !important;
-  color: #F3F4F6 !important;
-  border-color: #374151 !important;
+html body.artcraft-dark-craft .artcraft-task-progress-wrap,
+html body.artcraft-dark-craft .artcraft-graph-hud {
+  background: #1A1C20;
+  color: #F3F4F6;
+  border-color: #374151;
 }
 
 /* ==========================================================================
@@ -2233,60 +2237,60 @@ body.artcraft-dark-craft .artcraft-graph-hud {
    ========================================================================== */
 
 /* Zero-lag Instant Scroll Color Rules for Live Preview Numbered Lists */
-body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="1"] {
-  background-color: var(--artcraft-badge-blue, #2563EB) !important;
+html body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="1"] {
+  background-color: var(--artcraft-badge-blue, #2563EB);
 }
-body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="2"] {
-  background-color: var(--artcraft-badge-orange, #F59E0B) !important;
+html body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="2"] {
+  background-color: var(--artcraft-badge-orange, #F59E0B);
 }
-body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="3"] {
-  background-color: var(--artcraft-badge-green, #10B981) !important;
+html body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="3"] {
+  background-color: var(--artcraft-badge-green, #10B981);
 }
-body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="4"] {
-  background-color: var(--artcraft-badge-purple, #8B5CF6) !important;
+html body.artcraft-theme-active .HyperMD-list-line .cm-formatting-list-ol[data-artcraft-mod="4"] {
+  background-color: var(--artcraft-badge-purple, #8B5CF6);
 }
 
 /* Pure CSS sibling cycle fallback BEFORE JS MutationObserver even fires (0ms frame-0 accuracy!) */
-body.artcraft-theme-active .cm-line:not(.HyperMD-list-line-nobullet) + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
-  background-color: var(--artcraft-badge-blue, #2563EB) !important;
+html body.artcraft-theme-active .cm-line:not(.HyperMD-list-line-nobullet) + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-blue, #2563EB);
 }
-body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
-  background-color: var(--artcraft-badge-orange, #F59E0B) !important;
+html body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-orange, #F59E0B);
 }
-body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
-  background-color: var(--artcraft-badge-green, #10B981) !important;
+html body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-green, #10B981);
 }
-body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
-  background-color: var(--artcraft-badge-purple, #8B5CF6) !important;
+html body.artcraft-theme-active .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line + .HyperMD-list-line .cm-formatting-list-ol:not([data-artcraft-mod]) {
+  background-color: var(--artcraft-badge-purple, #8B5CF6);
 }
 
 /* Spotlight Paragraph Focus Dimmer Mode */
-body.artcraft-spotlight-mode .markdown-rendered p,
-body.artcraft-spotlight-mode .markdown-rendered li,
-body.artcraft-spotlight-mode .cm-line:not(.cm-active) {
+html body.artcraft-spotlight-mode .markdown-rendered p,
+html body.artcraft-spotlight-mode .markdown-rendered li,
+html body.artcraft-spotlight-mode .cm-line:not(.cm-active) {
   opacity: 0.42;
   transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s ease;
 }
 
-body.artcraft-spotlight-mode .markdown-rendered p:hover,
-body.artcraft-spotlight-mode .markdown-rendered li:hover,
-body.artcraft-spotlight-mode .cm-line:hover,
-body.artcraft-spotlight-mode .cm-line.cm-active {
-  opacity: 1 !important;
+html body.artcraft-spotlight-mode .markdown-rendered p:hover,
+html body.artcraft-spotlight-mode .markdown-rendered li:hover,
+html body.artcraft-spotlight-mode .cm-line:hover,
+html body.artcraft-spotlight-mode .cm-line.cm-active {
+  opacity: 1;
 }
 
 /* 🤖 AI Agent Context Bridge Button in Floating Dock */
 .artcraft-agent-btn {
-  background: linear-gradient(135deg, #111111 0%, #1E293B 100%) !important;
-  color: #FFFFFF !important;
-  border: 1.5px solid #69BD28 !important;
-  box-shadow: 0 2px 0 #69BD28 !important;
-  font-weight: 800 !important;
+  background: linear-gradient(135deg, #111111 0%, #1E293B 100%);
+  color: #FFFFFF;
+  border: 1.5px solid #69BD28;
+  box-shadow: 0 2px 0 #69BD28;
+  font-weight: 800;
 }
 
 .artcraft-agent-btn:hover {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 4px 0 #69BD28, 0 0 12px rgba(105, 189, 40, 0.35) !important;
+  box-shadow: 0 4px 0 #69BD28, 0 0 12px rgba(105, 189, 40, 0.35);
 }
 
 /* Complex Spring & Tactile Micro-Animations for Checkboxes & Badges */
@@ -2296,8 +2300,8 @@ body.artcraft-spotlight-mode .cm-line.cm-active {
   100% { transform: scale(1) rotate(0deg); }
 }
 
-body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox:checked,
-body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked {
+html body.artcraft-theme-active input[type="checkbox"].task-list-item-checkbox:checked,
+html body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked {
   animation: artcraftCheckboxPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -2308,10 +2312,10 @@ body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked {
 
 /* Fix Obsidian Context Menu / Pomodoro Presets Menu z-index so 'Stopwatch' is NEVER behind the dock! */
 .menu {
-  z-index: 10050 !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 10px !important;
-  box-shadow: 0 6px 0 #111111, 0 14px 32px rgba(0, 0, 0, 0.2) !important;
+  z-index: 10050;
+  border: 1.5px solid #111111;
+  border-radius: 10px;
+  box-shadow: 0 6px 0 #111111, 0 14px 32px rgba(0, 0, 0, 0.2);
 }
 
 /* Custom Minimalist Swiss Bento Vector SVG Icons inside Dock */
@@ -2352,22 +2356,22 @@ body.artcraft-theme-active .HyperMD-task-line input[type="checkbox"]:checked {
 }
 
 /* 🏮 Magic Cursor Lantern (Lumina Lamp) — Dynamic Text Illumination & 3D Reactive Shadows */
-body.artcraft-magic-lamp .markdown-rendered p,
-body.artcraft-magic-lamp .markdown-rendered li,
-body.artcraft-magic-lamp .cm-line {
+html body.artcraft-magic-lamp .markdown-rendered p,
+html body.artcraft-magic-lamp .markdown-rendered li,
+html body.artcraft-magic-lamp .cm-line {
   transition: text-shadow 0.12s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-body.artcraft-magic-lamp .is-lamp-lit {
+html body.artcraft-magic-lamp .is-lamp-lit {
   text-shadow: 0 0 calc(14px * var(--sicraft-light-intensity, 0.5)) rgba(245, 158, 11, 0.32);
 }
 
-body.artcraft-magic-lamp .markdown-rendered table.is-lamp-lit,
-body.artcraft-magic-lamp .markdown-rendered .callout.is-lamp-lit,
-body.artcraft-magic-lamp .inline-title.is-lamp-lit {
+html body.artcraft-magic-lamp .markdown-rendered table.is-lamp-lit,
+html body.artcraft-magic-lamp .markdown-rendered .callout.is-lamp-lit,
+html body.artcraft-magic-lamp .inline-title.is-lamp-lit {
   box-shadow: var(--sicraft-shadow-x, 0px) var(--sicraft-shadow-y, 4px) 0 #111111,
-              0 0 calc(26px * var(--sicraft-light-intensity, 0.5)) rgba(245, 158, 11, 0.28) !important;
-  border-color: #F59E0B !important;
+              0 0 calc(26px * var(--sicraft-light-intensity, 0.5)) rgba(245, 158, 11, 0.28);
+  border-color: #F59E0B;
 }
 
 /* ==========================================================================
@@ -2375,57 +2379,57 @@ body.artcraft-magic-lamp .inline-title.is-lamp-lit {
    ========================================================================== */
 
 /* Obsidian Canvas (.canvas-node) Swiss Bento Styling */
-body.artcraft-theme-active .canvas-node-container {
-  border: 2px solid #111111 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 5px 0 #111111, 0 12px 24px rgba(17, 17, 17, 0.12) !important;
-  background-color: var(--artcraft-bg-card, #FFFFFF) !important;
+html body.artcraft-theme-active .canvas-node-container {
+  border: 2px solid #111111;
+  border-radius: 12px;
+  box-shadow: 0 5px 0 #111111, 0 12px 24px rgba(17, 17, 17, 0.12);
+  background-color: var(--artcraft-bg-card, #FFFFFF);
 }
 
-body.artcraft-theme-active .canvas-node.is-focused .canvas-node-container {
-  border-color: #69BD28 !important;
-  box-shadow: 0 6px 0 #69BD28, 0 16px 32px rgba(105, 189, 40, 0.22) !important;
+html body.artcraft-theme-active .canvas-node.is-focused .canvas-node-container {
+  border-color: #69BD28;
+  box-shadow: 0 6px 0 #69BD28, 0 16px 32px rgba(105, 189, 40, 0.22);
 }
 
 /* Tags (#tag) Swiss Capsule Styling */
-body.artcraft-theme-active a.tag,
-body.artcraft-theme-active .cm-hashtag {
-  background-color: #EEF4FF !important;
-  color: #1E3A8A !important;
-  border: 1px solid #93C5FD !important;
-  border-radius: 6px !important;
-  padding: 1px 7px !important;
-  font-family: var(--font-monospace) !important;
-  font-size: 0.82em !important;
-  font-weight: 700 !important;
-  text-decoration: none !important;
+html body.artcraft-theme-active a.tag,
+html body.artcraft-theme-active .cm-hashtag {
+  background-color: #EEF4FF;
+  color: #1E3A8A;
+  border: 1px solid #93C5FD;
+  border-radius: 6px;
+  padding: 1px 7px;
+  font-family: var(--font-monospace);
+  font-size: 0.82em;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 /* Blockquotes (> Quote) Editorial Styling */
-body.artcraft-theme-active .markdown-rendered blockquote {
-  background-color: #FFFFFF !important;
-  border: 1.5px solid #111111 !important;
-  border-left: 6px solid #69BD28 !important;
-  border-radius: 9px !important;
-  padding: 12px 18px !important;
-  box-shadow: 0 3px 0 #111111 !important;
-  color: #111111 !important;
-  font-style: normal !important;
+html body.artcraft-theme-active .markdown-rendered blockquote {
+  background-color: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-left: 6px solid #69BD28;
+  border-radius: 9px;
+  padding: 12px 18px;
+  box-shadow: 0 3px 0 #111111;
+  color: #111111;
+  font-style: normal;
 }
 
 /* Right Sidebar Outline & Backlinks Pane */
-body.artcraft-theme-active .workspace-split.mod-right-split .view-content {
-  background-color: var(--artcraft-bg-sidebar, #EDEBE4) !important;
+html body.artcraft-theme-active .workspace-split.mod-right-split .view-content {
+  background-color: var(--artcraft-bg-sidebar, #EDEBE4);
 }
 
-body.artcraft-theme-active .tree-item-self {
-  border-radius: 6px !important;
-  font-weight: 600 !important;
+html body.artcraft-theme-active .tree-item-self {
+  border-radius: 6px;
+  font-weight: 600;
 }
 
-body.artcraft-theme-active .tree-item-self:hover {
-  background-color: #FFFFFF !important;
-  color: #111111 !important;
+html body.artcraft-theme-active .tree-item-self:hover {
+  background-color: #FFFFFF;
+  color: #111111;
 }
 
 /* ==========================================================================
@@ -2435,62 +2439,62 @@ body.artcraft-theme-active .tree-item-self:hover {
 
 /* Fix Vertical Dock Pillar: 2-Column Bento Grid so ALL tools fit with ZERO scrollbars & ZERO text clipping! */
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
-  flex-direction: column !important;
-  right: 14px !important;
-  left: auto !important;
-  top: 50% !important;
-  bottom: auto !important;
-  transform: translateY(-50%) !important;
-  width: 112px !important;
-  max-width: 112px !important;
-  max-height: none !important;
-  overflow: visible !important;
-  padding: 10px 8px !important;
-  border-radius: 14px !important;
-  gap: 6px !important;
-  box-shadow: 0 5px 0 #111111, 0 14px 32px rgba(17, 17, 17, 0.22) !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  flex-direction: column;
+  right: 14px;
+  left: auto;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+  width: 112px;
+  max-width: 112px;
+  max-height: none;
+  overflow: visible;
+  padding: 10px 8px;
+  border-radius: 14px;
+  gap: 6px;
+  box-shadow: 0 5px 0 #111111, 0 14px 32px rgba(17, 17, 17, 0.22);
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 5px !important;
-  width: 100% !important;
-  align-items: stretch !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  width: 100%;
+  align-items: stretch;
 }
 
 /* Full-width items in the 2-column vertical dock (Timer, Color Palette, Equalizer) */
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap,
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pill {
-  grid-column: span 2 !important;
-  width: 100% !important;
-  margin: 0 !important;
-  justify-content: center !important;
+  grid-column: span 2;
+  width: 100%;
+  margin: 0;
+  justify-content: center;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap {
-  display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
-  justify-items: center !important;
-  gap: 4px !important;
-  padding: 3px 0 !important;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+  gap: 4px;
+  padding: 3px 0;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
-  width: 100% !important;
-  min-width: 0 !important;
-  padding: 5px 3px !important;
-  font-size: 9.5px !important;
-  justify-content: center !important;
-  gap: 3px !important;
-  overflow: hidden !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 3px;
+  font-size: 9.5px;
+  justify-content: center;
+  gap: 3px;
+  overflow: hidden;
 }
 
 /* ==========================================================================
@@ -2528,8 +2532,8 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
 }
 
 .sicraft-led-power-btn.is-on {
-  background: #F97316 !important;
-  color: #FFFFFF !important;
+  background: #F97316;
+  color: #FFFFFF;
   box-shadow: 0 3px 0 #111111, 0 0 16px rgba(249, 115, 22, 0.45);
 }
 
@@ -2570,11 +2574,11 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
 }
 
 .sicraft-slider-bright {
-  background: linear-gradient(90deg, #374151 0%, #F59E0B 50%, #FDE047 100%) !important;
+  background: linear-gradient(90deg, #374151 0%, #F59E0B 50%, #FDE047 100%);
 }
 
 .sicraft-slider-kelvin {
-  background: linear-gradient(90deg, #EA580C 0%, #FBBF24 38%, #FEF9C3 68%, #DBEAFE 100%) !important;
+  background: linear-gradient(90deg, #EA580C 0%, #FBBF24 38%, #FEF9C3 68%, #DBEAFE 100%);
 }
 
 .sicraft-led-slider::-webkit-slider-thumb {
@@ -2613,9 +2617,9 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
 .sicraft-k-btn:hover,
 .sicraft-shape-btn:hover,
 .sicraft-shape-btn.is-active {
-  background: #F59E0B !important;
-  color: #111111 !important;
-  border-color: #FFFFFF !important;
+  background: #F59E0B;
+  color: #111111;
+  border-color: #FFFFFF;
 }
 
 
@@ -2641,91 +2645,91 @@ body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-
 
 /* Full-width protection for Settings cards inside narrow modals */
 .artcraft-settings-full-width {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden !important;
-  flex-wrap: wrap !important;
-  gap: 10px !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .artcraft-settings-full-width * {
-  box-sizing: border-box !important;
+  box-sizing: border-box;
 }
 
 .artcraft-settings-full-width .setting-item-info {
-  min-width: 180px !important;
-  flex: 1 1 220px !important;
+  min-width: 180px;
+  flex: 1 1 220px;
 }
 
 .artcraft-settings-full-width .setting-item-control {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: flex-start !important;
-  gap: 8px !important;
-  width: 100% !important;
-  max-width: 100% !important;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .artcraft-settings-full-width .setting-item-control button {
-  max-width: 100% !important;
-  white-space: normal !important;
-  height: auto !important;
-  min-height: 32px !important;
-  padding: 6px 12px !important;
-  line-height: 1.25 !important;
+  max-width: 100%;
+  white-space: normal;
+  height: auto;
+  min-height: 32px;
+  padding: 6px 12px;
+  line-height: 1.25;
 }
 
 /* Tactile Spring Physics & Tabular Nums for Floating Dock */
 .artcraft-timer-pill {
-  font-variant-numeric: tabular-nums !important;
-  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .artcraft-dock-btn {
-  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.16s ease, box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.16s ease, box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .artcraft-dock-btn:active,
 .artcraft-timer-pill:active {
-  transform: translateY(1px) scale(0.96) !important;
+  transform: translateY(1px) scale(0.96);
 }
 
 /* Upgraded 142px 2-Column Vertical Dock (v4.3.0) */
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
-  width: 142px !important;
-  max-width: 142px !important;
-  padding: 10px 8px !important;
-  border-radius: 14px !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  width: 142px;
+  max-width: 142px;
+  padding: 10px 8px;
+  border-radius: 14px;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
-  width: 100% !important;
-  min-width: 0 !important;
-  padding: 6px 5px !important;
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  justify-content: center !important;
-  gap: 4px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn.is-full-row,
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-timer-pill,
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-color-dots-wrap,
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pill {
-  grid-column: span 2 !important;
-  width: 100% !important;
+  grid-column: span 2;
+  width: 100%;
 }
 
 .artcraft-dock-eq-canvas {
-  width: 62px !important;
-  height: 20px !important;
+  width: 62px;
+  height: 20px;
   display: block;
 }
 
@@ -2739,7 +2743,7 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   right: 0;
   bottom: 0;
   z-index: 9985;
-  pointer-events: none !important;
+  pointer-events: none;
   overflow: hidden;
   display: none;
   contain: strict;
@@ -2751,7 +2755,7 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   left: 0;
   width: 5000px;
   height: 5000px;
-  pointer-events: none !important;
+  pointer-events: none;
   will-change: transform;
   transform: translate3d(-2500px, -2500px, 0);
   backface-visibility: hidden;
@@ -2762,14 +2766,14 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
    ========================================================================== */
 .artcraft-dock-eq-pill {
   position: relative;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  padding: 2px 7px !important;
-  background: #111214 !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 7px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 2px 7px;
+  background: #111214;
+  border: 1.5px solid #111111;
+  border-radius: 7px;
   cursor: pointer;
 }
 
@@ -2814,7 +2818,7 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none !important;
+  pointer-events: none;
   z-index: 6;
 }
 
@@ -2865,47 +2869,47 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
 
 /* Center-Top Cockpit for Graph HUD — NEVER overlaps right-side Obsidian settings drawer */
 .artcraft-graph-hud {
-  position: absolute !important;
-  top: 14px !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  z-index: 24 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  background: rgba(255, 255, 255, 0.96) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border: 1.5px solid #111111 !important;
-  border-radius: 999px !important;
-  padding: 4px 6px !important;
-  box-shadow: 0 4px 0 #111111, 0 8px 20px rgba(0, 0, 0, 0.12) !important;
-  font-family: "JetBrains Mono", monospace !important;
-  white-space: nowrap !important;
-  pointer-events: auto !important;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  z-index: 24;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid #111111;
+  border-radius: 999px;
+  padding: 4px 6px;
+  box-shadow: 0 4px 0 #111111, 0 8px 20px rgba(0, 0, 0, 0.12);
+  font-family: "JetBrains Mono", monospace;
+  white-space: nowrap;
+  pointer-events: auto;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .artcraft-graph-hud.is-minimized {
-  padding: 4px 8px !important;
+  padding: 4px 8px;
 }
 
 .artcraft-graph-hud.is-minimized .artcraft-graph-hud-btn:not([data-action="toggle-hud"]) {
-  display: none !important;
+  display: none;
 }
 
 .artcraft-graph-hud-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .artcraft-graph-pulse-btn.is-pulse-on {
-  background: #2563EB !important;
-  color: #FFFFFF !important;
-  border-color: #111111 !important;
-  box-shadow: 0 2px 0 #111111 !important;
+  background: #2563EB;
+  color: #FFFFFF;
+  border-color: #111111;
+  box-shadow: 0 2px 0 #111111;
 }
 
 .artcraft-graph-hint-pill {
@@ -2928,29 +2932,29 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   pointer-events: none;
 }
 
-body.artcraft-dark-craft .artcraft-graph-legend-pill,
-body.artcraft-dark-craft .artcraft-graph-hud {
-  background: #1A1C20 !important;
-  color: #F3F4F6 !important;
-  border-color: #374151 !important;
+html body.artcraft-dark-craft .artcraft-graph-legend-pill,
+html body.artcraft-dark-craft .artcraft-graph-hud {
+  background: #1A1C20;
+  color: #F3F4F6;
+  border-color: #374151;
 }
 
 /* ==========================================================================
    10. SONIC & AMBIENT STUDIO MODAL + WIDE CRAFT MODAL CONTAINER FIX
    ========================================================================== */
 .modal.artcraft-wide-craft-modal {
-  width: 680px !important;
-  max-width: 94vw !important;
-  padding: 20px 22px !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden !important;
+  width: 680px;
+  max-width: 94vw;
+  padding: 20px 22px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .modal.artcraft-wide-craft-modal .modal-content {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .svg-inline-icon {
@@ -2989,19 +2993,19 @@ body.artcraft-dark-craft .artcraft-graph-hud {
 }
 
 .artcraft-task-progress-wrap {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 10px 28px 0 28px !important;
-  margin: 0 !important;
-  width: 100% !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 10px 28px 0 28px;
+  margin: 0;
+  width: 100%;
   z-index: 6;
   flex-shrink: 0;
 }
 
-body.artcraft-dark-craft .artcraft-task-progress-wrap {
-  background: transparent !important;
-  border: none !important;
+html body.artcraft-dark-craft .artcraft-task-progress-wrap {
+  background: transparent;
+  border: none;
 }
 
 .artcraft-top-bar-inner {
@@ -3129,51 +3133,51 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .artcraft-craft-mini-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  background: #FAF8F3 !important;
-  color: #44403C !important;
-  border: 1px solid #DFDBD0 !important;
-  border-radius: 7px !important;
-  padding: 3px 9px !important;
-  font-family: "JetBrains Mono", monospace !important;
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  height: 25px !important;
-  cursor: pointer !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
-  transition: all 0.14s ease !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FAF8F3;
+  color: #44403C;
+  border: 1px solid #DFDBD0;
+  border-radius: 7px;
+  padding: 3px 9px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  height: 25px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 0.14s ease;
 }
 
 .artcraft-craft-mini-btn svg {
-  width: 12px !important;
-  height: 12px !important;
-  color: #8C5828 !important;
+  width: 12px;
+  height: 12px;
+  color: #8C5828;
   flex-shrink: 0;
 }
 
 .artcraft-craft-mini-btn:hover {
-  border-color: #8C5828 !important;
-  color: #18181B !important;
-  background: #FFFFFF !important;
+  border-color: #8C5828;
+  color: #18181B;
+  background: #FFFFFF;
   transform: translateY(-1px);
 }
 
 .artcraft-craft-mini-btn.is-active {
-  background: #ECFDF5 !important;
-  border-color: #10B981 !important;
-  color: #065F46 !important;
+  background: #ECFDF5;
+  border-color: #10B981;
+  color: #065F46;
 }
 
 .artcraft-craft-mini-btn.is-active svg {
-  color: #059669 !important;
+  color: #059669;
 }
 
 .artcraft-craft-mini-btn.is-digest-btn {
-  background: #FFF7ED !important;
-  border-color: #FDBA74 !important;
-  color: #9A3412 !important;
+  background: #FFF7ED;
+  border-color: #FDBA74;
+  color: #9A3412;
 }
 
 /* ==========================================================================
@@ -3234,23 +3238,23 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 
 .bm-tag-edit,
 .bm-tag-del {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 2px !important;
-  font-size: 11.5px !important;
-  line-height: 1 !important;
-  color: #9CA3AF !important;
-  cursor: pointer !important;
-  height: auto !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0 2px;
+  font-size: 11.5px;
+  line-height: 1;
+  color: #9CA3AF;
+  cursor: pointer;
+  height: auto;
 }
 
 .bm-tag-edit:hover {
-  color: #2563EB !important;
+  color: #2563EB;
 }
 
 .bm-tag-del:hover {
-  color: #DC2626 !important;
+  color: #DC2626;
 }
 
 @keyframes artcraftBmFlash {
@@ -3320,14 +3324,14 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .focus-pop-close {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  font-size: 16px !important;
-  color: #78716C !important;
-  cursor: pointer !important;
-  padding: 0 4px !important;
-  height: 22px !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  font-size: 16px;
+  color: #78716C;
+  cursor: pointer;
+  padding: 0 4px;
+  height: 22px;
 }
 
 .focus-pop-list {
@@ -3427,33 +3431,33 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .focus-pop-act-btn {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 7px !important;
-  width: 100% !important;
-  padding: 7px 10px !important;
-  height: auto !important;
-  border-radius: 9px !important;
-  border: 1.5px solid #DCD7CA !important;
-  background: #FFFFFF !important;
-  color: #1F2937 !important;
-  font-size: 11.5px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05) !important;
-  transition: all 0.14s ease !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  width: 100%;
+  padding: 7px 10px;
+  height: auto;
+  border-radius: 9px;
+  border: 1.5px solid #DCD7CA;
+  background: #FFFFFF;
+  color: #1F2937;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.14s ease;
 }
 
 .focus-pop-act-btn:hover {
-  border-color: #18181B !important;
+  border-color: #18181B;
   transform: translateY(-1px);
 }
 
 .focus-pop-act-btn.is-primary {
-  background: #18181B !important;
-  color: #FFFFFF !important;
-  border-color: #18181B !important;
+  background: #18181B;
+  color: #FFFFFF;
+  border-color: #18181B;
 }
 
 .focus-pop-act-btn svg {
@@ -3488,29 +3492,29 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .nutrient-type-card {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 9px 10px !important;
-  height: auto !important;
-  border-radius: 10px !important;
-  background: #FFFFFF !important;
-  border: 1.5px solid #E2DDD2 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
-  text-align: left !important;
-  transition: all 0.14s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  height: auto;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1.5px solid #E2DDD2;
+  cursor: pointer;
+  box-shadow: none;
+  text-align: left;
+  transition: all 0.14s ease;
 }
 
 .nutrient-type-card:hover {
-  border-color: #8C5828 !important;
+  border-color: #8C5828;
   transform: translateY(-1px);
 }
 
 .nutrient-type-card.is-selected {
-  border-color: #18181B !important;
-  background: #FAF8F3 !important;
-  box-shadow: 0 3px 0 #18181B !important;
+  border-color: #18181B;
+  background: #FAF8F3;
+  box-shadow: 0 3px 0 #18181B;
 }
 
 .nutrient-color-tab {
@@ -3581,14 +3585,14 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 
 .nutrient-text-input,
 .nutrient-quote-textarea {
-  width: 100% !important;
-  border: 1.5px solid #D6D1C4 !important;
-  border-radius: 8px !important;
-  background: #FFFFFF !important;
-  padding: 8px 10px !important;
-  font-size: 12.5px !important;
-  color: #18181B !important;
-  margin-top: 4px !important;
+  width: 100%;
+  border: 1.5px solid #D6D1C4;
+  border-radius: 8px;
+  background: #FFFFFF;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: #18181B;
+  margin-top: 4px;
 }
 
 .nutrient-modal-footer {
@@ -3652,10 +3656,10 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
    SONIC & AMBIENT STUDIO MODAL LAYOUT (ZERO OVERFLOW)
    ========================================================================== */
 .artcraft-sonic-modal-root {
-  padding: 4px 2px !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
+  padding: 4px 2px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .sonic-studio-wrap {
@@ -3697,40 +3701,40 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-title {
-  margin: 0 0 3px 0 !important;
-  font-size: 18px !important;
-  font-weight: 800 !important;
-  color: #1F2937 !important;
+  margin: 0 0 3px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #1F2937;
   letter-spacing: -0.01em;
 }
 
 .sonic-studio-sub {
-  margin: 0 !important;
-  font-size: 12px !important;
-  line-height: 1.45 !important;
-  color: #78756E !important;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #78756E;
 }
 
 .sonic-stop-all-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  background: #FEF2F2 !important;
-  color: #B91C1C !important;
-  border: 1px solid #FECACA !important;
-  border-radius: 8px !important;
-  padding: 6px 11px !important;
-  font-size: 11.5px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FEF2F2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 6px 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: none;
   flex-shrink: 0;
-  transition: all 0.14s ease !important;
+  transition: all 0.14s ease;
 }
 
 .sonic-stop-all-btn:hover {
-  background: #FEE2E2 !important;
-  border-color: #F87171 !important;
+  background: #FEE2E2;
+  border-color: #F87171;
 }
 
 .sonic-card {
@@ -3753,40 +3757,40 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 
 .sonic-recipe-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px;
   width: 100%;
 }
 
 .sonic-recipe-btn {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  background: #FFFFFF !important;
-  border: 1px solid #E0D8C8 !important;
-  border-radius: 9px !important;
-  padding: 7px 9px !important;
-  cursor: pointer !important;
-  text-align: left !important;
-  box-shadow: none !important;
-  height: auto !important;
-  transition: all 0.14s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 1px solid #E0D8C8;
+  border-radius: 9px;
+  padding: 7px 9px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none;
+  height: auto;
+  transition: all 0.14s ease;
 }
 
 .sonic-recipe-btn:hover {
-  border-color: #A67C52 !important;
-  background: #FFFDF9 !important;
+  border-color: #A67C52;
+  background: #FFFDF9;
 }
 
 .sonic-recipe-btn.is-active {
-  background: #ECFDF5 !important;
-  border-color: #10B981 !important;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12) !important;
+  background: #ECFDF5;
+  border-color: #10B981;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12);
 }
 
 .sonic-card-top {
@@ -3838,22 +3842,22 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-play-btn {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 9px !important;
-  background: #69BD28 !important;
-  color: #FFFFFF !important;
-  border: 1.5px solid #1F2937 !important;
-  box-shadow: 0 2px 0 #1F2937 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #69BD28;
+  color: #FFFFFF;
+  border: 1.5px solid #1F2937;
+  box-shadow: 0 2px 0 #1F2937;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   flex-shrink: 0;
 }
 
 .sonic-play-btn:hover {
-  background: #5AA620 !important;
+  background: #5AA620;
 }
 
 .sonic-track-meta {
@@ -3894,24 +3898,24 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-load-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  background: #FAF9F5 !important;
-  color: #1F2937 !important;
-  border: 1px solid #D5D1C5 !important;
-  border-radius: 8px !important;
-  padding: 6px 10px !important;
-  font-size: 11.5px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FAF9F5;
+  color: #1F2937;
+  border: 1px solid #D5D1C5;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
   flex-shrink: 0;
 }
 
 .sonic-load-btn:hover {
-  background: #FFFFFF !important;
-  border-color: #1F2937 !important;
+  background: #FFFFFF;
+  border-color: #1F2937;
 }
 
 .sonic-source-pills {
@@ -3922,25 +3926,25 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-src-pill {
-  min-width: 0 !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 7px !important;
-  background: #FFFFFF !important;
-  color: #4B5563 !important;
-  border: 1px solid #E2DFD5 !important;
-  border-radius: 8px !important;
-  padding: 7px 10px !important;
-  font-size: 11.5px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
-  transition: all 0.14s ease !important;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: #FFFFFF;
+  color: #4B5563;
+  border: 1px solid #E2DFD5;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.14s ease;
 }
 
 .sonic-src-pill span:last-child {
@@ -3950,45 +3954,45 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-src-pill:hover {
-  border-color: #9CA3AF !important;
-  color: #1F2937 !important;
+  border-color: #9CA3AF;
+  color: #1F2937;
 }
 
 .sonic-src-pill.is-active {
-  background: #ECFDF5 !important;
-  border-color: #10B981 !important;
-  color: #065F46 !important;
-  font-weight: 700 !important;
+  background: #ECFDF5;
+  border-color: #10B981;
+  color: #065F46;
+  font-weight: 700;
 }
 
 /* 2-Column Spacious Grid for 6 Craft Equalizer Modes (Zero Overflow!) */
 .sonic-eq-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
   width: 100%;
 }
 
 .sonic-eq-btn {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  background: #FFFFFF !important;
-  border: 1px solid #E2DFD5 !important;
-  border-radius: 8px !important;
-  padding: 8px 11px !important;
-  font-size: 11.5px !important;
-  font-weight: 600 !important;
-  color: #4B5563 !important;
-  cursor: pointer !important;
-  text-align: left !important;
-  box-shadow: none !important;
-  transition: all 0.14s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 1px solid #E2DFD5;
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4B5563;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none;
+  transition: all 0.14s ease;
 }
 
 .sonic-eq-lbl {
@@ -3998,54 +4002,54 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-eq-btn:hover {
-  border-color: #9CA3AF !important;
-  color: #1F2937 !important;
+  border-color: #9CA3AF;
+  color: #1F2937;
 }
 
 .sonic-eq-btn.is-active {
-  background: #1F2937 !important;
-  color: #FFFFFF !important;
-  border-color: #1F2937 !important;
-  font-weight: 700 !important;
+  background: #1F2937;
+  color: #FFFFFF;
+  border-color: #1F2937;
+  font-weight: 700;
 }
 
 /* 3-Column Strict Minmax Grid for 12 Focus Soundscapes */
 .sonic-ambient-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px;
   width: 100%;
 }
 
 .sonic-amb-tile {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  background: #FFFFFF !important;
-  border: 1px solid #E5E2D9 !important;
-  border-radius: 9px !important;
-  padding: 7px 9px !important;
-  cursor: pointer !important;
-  text-align: left !important;
-  box-shadow: none !important;
-  height: auto !important;
-  transition: all 0.14s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 1px solid #E5E2D9;
+  border-radius: 9px;
+  padding: 7px 9px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none;
+  height: auto;
+  transition: all 0.14s ease;
 }
 
 .sonic-amb-tile:hover {
-  border-color: #B8B3A6 !important;
-  background: #FDFCFA !important;
+  border-color: #B8B3A6;
+  background: #FDFCFA;
 }
 
 .sonic-amb-tile.is-active {
-  background: #ECFDF5 !important;
-  border-color: #10B981 !important;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12) !important;
+  background: #ECFDF5;
+  border-color: #10B981;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12);
 }
 
 .amb-icon {
@@ -4102,10 +4106,10 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
    11. SOFT, CALM, ZERO-CLUTTER CAPPUCCINO CRAFT PRO & PROMO MODAL
    ========================================================================== */
 .artcraft-pro-modal-root {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 4px 2px !important;
-  box-sizing: border-box !important;
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 2px;
+  box-sizing: border-box;
 }
 
 .artcraft-soft-pro-header {
@@ -4131,20 +4135,20 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .artcraft-soft-pro-title {
-  margin: 0 0 6px 0 !important;
-  font-size: 20px !important;
-  font-weight: 800 !important;
-  color: #1F2937 !important;
+  margin: 0 0 6px 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1F2937;
   letter-spacing: -0.01em;
 }
 
 .artcraft-soft-pro-sub {
-  margin: 0 auto !important;
+  margin: 0 auto;
   max-width: 540px;
-  font-size: 12.5px !important;
-  line-height: 1.5 !important;
-  color: #78756E !important;
-  font-weight: 400 !important;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #78756E;
+  font-weight: 400;
 }
 
 /* Segmented Switcher (Support Tiers vs Promo Key) */
@@ -4160,38 +4164,38 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 
 .artcraft-ko-tab {
   flex: 1;
-  min-width: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 7px !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 7px !important;
-  padding: 8px 12px !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  color: #6B7280 !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .artcraft-ko-tab:hover {
-  color: #1F2937 !important;
+  color: #1F2937;
 }
 
 .artcraft-ko-tab.is-active {
-  background: #FFFFFF !important;
-  color: #111111 !important;
-  font-weight: 700 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  background: #FFFFFF;
+  color: #111111;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* 3 Illustrated Cappuccino Craft Tier Cards (Strict Minmax Grid, Zero Overflow) */
 .artcraft-ko-tier-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 14px;
   width: 100%;
@@ -4199,9 +4203,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 
 .artcraft-ko-tier-card {
   position: relative;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   background: #FAF9F5;
   border: 1.5px solid #E6E2D8;
   border-radius: 12px;
@@ -4249,9 +4253,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .ko-tier-art svg {
-  width: 124px !important;
-  height: 62px !important;
-  display: block !important;
+  width: 124px;
+  height: 62px;
+  display: block;
   overflow: visible;
 }
 
@@ -4260,8 +4264,8 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   font-weight: 800;
   color: #1F2937;
   margin-bottom: 3px;
-  white-space: normal !important;
-  word-break: break-word !important;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .ko-tier-price {
@@ -4272,12 +4276,12 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .ko-tier-desc {
-  margin: 0 !important;
-  font-size: 11px !important;
-  line-height: 1.42 !important;
-  color: #78756E !important;
-  white-space: normal !important;
-  word-break: break-word !important;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.42;
+  color: #78756E;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* Soft Payment Method Pills */
@@ -4296,30 +4300,30 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .artcraft-soft-method-pill {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  background: #FAF9F6 !important;
-  border: 1px solid #E5E3DC !important;
-  border-radius: 8px !important;
-  padding: 6px 10px !important;
-  font-size: 11.5px !important;
-  font-weight: 600 !important;
-  color: #4B5563 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
-  transition: all 0.14s ease !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FAF9F6;
+  border: 1px solid #E5E3DC;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4B5563;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.14s ease;
 }
 
 .artcraft-soft-method-pill:hover {
-  border-color: #9CA3AF !important;
-  color: #111111 !important;
+  border-color: #9CA3AF;
+  color: #111111;
 }
 
 .artcraft-soft-method-pill.is-active {
-  background: #1F2937 !important;
-  color: #FFFFFF !important;
-  border-color: #1F2937 !important;
+  background: #1F2937;
+  color: #FFFFFF;
+  border-color: #1F2937;
 }
 
 .artcraft-soft-pay-detail {
@@ -4356,23 +4360,23 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .soft-amount-copy-pill {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  background: #ECFDF5 !important;
-  color: #065F46 !important;
-  border: 1px solid #A7F3D0 !important;
-  border-radius: 7px !important;
-  padding: 3px 9px !important;
-  font-size: 11.5px !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+  border-radius: 7px;
+  padding: 3px 9px;
+  font-size: 11.5px;
+  cursor: pointer;
+  box-shadow: none;
 }
 
 .card-copy-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .soft-pay-muted-hint {
@@ -4383,21 +4387,21 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .artcraft-pay-action-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .artcraft-pay-action-btn.is-soft {
-  background: #FFFFFF !important;
-  color: #374151 !important;
-  border: 1px solid #D1D5DB !important;
-  box-shadow: none !important;
+  background: #FFFFFF;
+  color: #374151;
+  border: 1px solid #D1D5DB;
+  box-shadow: none;
 }
 
 .artcraft-pay-action-btn.is-soft:hover {
-  background: #F3F4F6 !important;
+  background: #F3F4F6;
 }
 
 /* Soft Verification & Dedicated Promo View */
@@ -4426,10 +4430,10 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .soft-verify-sub {
-  margin: 0 0 12px 0 !important;
-  font-size: 12px !important;
-  line-height: 1.5 !important;
-  color: #78756E !important;
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #78756E;
 }
 
 .soft-verify-row {
@@ -4438,17 +4442,17 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .soft-input {
-  border: 1px solid #D1D5DB !important;
-  background: #FFFFFF !important;
-  border-radius: 8px !important;
-  font-size: 12px !important;
+  border: 1px solid #D1D5DB;
+  background: #FFFFFF;
+  border-radius: 8px;
+  font-size: 12px;
 }
 
 .soft-btn {
-  background: #1F2937 !important;
-  border-radius: 8px !important;
-  border: none !important;
-  font-weight: 700 !important;
+  background: #1F2937;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
 }
 
 .artcraft-soft-support-row {
@@ -4472,45 +4476,45 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .soft-tg-link-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  background: #FFFFFF !important;
-  color: #2563EB !important;
-  border: 1px solid #BFDBFE !important;
-  border-radius: 7px !important;
-  padding: 5px 10px !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFFFFF;
+  color: #2563EB;
+  border: 1px solid #BFDBFE;
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
 }
 
 .soft-tg-link-btn:hover {
-  background: #EFF6FF !important;
+  background: #EFF6FF;
 }
 
 .artcraft-open-modal-btn,
 .artcraft-open-promo-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 7px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
 }
 
 .artcraft-open-promo-btn {
-  background: #FAF9F6 !important;
-  color: #374151 !important;
-  border: 1.5px solid #D1D5DB !important;
-  border-radius: 8px !important;
-  padding: 8px 14px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
+  background: #FAF9F6;
+  color: #374151;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .artcraft-open-promo-btn:hover {
-  border-color: #111111 !important;
-  background: #FFFFFF !important;
+  border-color: #111111;
+  background: #FFFFFF;
 }
 
 /* ==========================================================================
@@ -4575,49 +4579,49 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .artcraft-calm-settings-root .artcraft-settings-group-items .setting-item {
-  border-top: 1px solid #EFECE6 !important;
-  padding: 11px 0 !important;
+  border-top: 1px solid #EFECE6;
+  padding: 11px 0;
 }
 
 .artcraft-calm-settings-root .artcraft-settings-group-items .setting-item:first-child {
-  border-top: none !important;
+  border-top: none;
 }
 
 /* Primary Setting Name: Crisp, High-Readability Dark Ink */
 .artcraft-calm-settings-root .setting-item-name {
-  font-size: 13.2px !important;
-  font-weight: 700 !important;
-  color: #1F2937 !important;
-  margin-bottom: 2px !important;
+  font-size: 13.2px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 2px;
 }
 
 /* Secondary Setting Description: Soft, Calm, Smaller Muted Grey */
 .artcraft-calm-settings-root .setting-item-description {
-  font-size: 11.5px !important;
-  line-height: 1.45 !important;
-  color: #7E7A72 !important;
-  font-weight: 400 !important;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #7E7A72;
+  font-weight: 400;
   max-width: 580px;
 }
 
-body.theme-dark .artcraft-calm-settings-root .artcraft-settings-group-card,
-body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-group-card {
+html body.theme-dark .artcraft-calm-settings-root .artcraft-settings-group-card,
+html body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-group-card {
   background: #181A1E;
   border-color: #2A2E37;
 }
 
-body.theme-dark .artcraft-calm-settings-root .settings-group-title,
-body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-title,
-body.theme-dark .artcraft-calm-settings-root .setting-item-name,
-body.artcraft-dark-craft .artcraft-calm-settings-root .setting-item-name {
-  color: #F3F4F6 !important;
+html body.theme-dark .artcraft-calm-settings-root .settings-group-title,
+html body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-title,
+html body.theme-dark .artcraft-calm-settings-root .setting-item-name,
+html body.artcraft-dark-craft .artcraft-calm-settings-root .setting-item-name {
+  color: #F3F4F6;
 }
 
-body.theme-dark .artcraft-calm-settings-root .setting-item-description,
-body.artcraft-dark-craft .artcraft-calm-settings-root .setting-item-description,
-body.theme-dark .artcraft-calm-settings-root .settings-group-sub,
-body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-sub {
-  color: #9CA3AF !important;
+html body.theme-dark .artcraft-calm-settings-root .setting-item-description,
+html body.artcraft-dark-craft .artcraft-calm-settings-root .setting-item-description,
+html body.theme-dark .artcraft-calm-settings-root .settings-group-sub,
+html body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-sub {
+  color: #9CA3AF;
 }
 
 @media (max-width: 640px) {
@@ -4626,7 +4630,7 @@ body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-sub {
   .sonic-ambient-grid,
   .sonic-recipe-grid,
   .sonic-source-pills {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
   .soft-verify-row {
     flex-direction: column;
@@ -4644,36 +4648,36 @@ body.artcraft-dark-craft .artcraft-calm-settings-root .settings-group-sub {
 
 /* 1. Right-side vertical dock: wider pillar + labels that never clip */
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
-  width: 196px !important;
-  max-width: 196px !important;
-  padding: 10px 10px !important;
-  box-sizing: border-box !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
+  width: 196px;
+  max-width: 196px;
+  padding: 10px 10px;
+  box-sizing: border-box;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 6px !important;
-  width: 100% !important;
-  align-items: stretch !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  align-items: stretch;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
-body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
-  width: 100% !important;
-  min-width: 0 !important;
-  padding: 6px 6px !important;
-  font-size: 11px !important;
-  gap: 5px !important;
-  justify-content: center !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
+html body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn,
+html body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 6px;
+  font-size: 11px;
+  gap: 5px;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn .artcraft-btn-label {
@@ -4689,165 +4693,165 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-btn .
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-collapse-btn {
-  grid-column: span 2 !important;
-  width: 100% !important;
-  height: 28px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  grid-column: span 2;
+  width: 100%;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pill {
-  padding: 4px 8px !important;
+  padding: 4px 8px;
 }
 
 /* 2. Calm equalizer pill: no green neon halo, no glowing status dot */
 .artcraft-dock-eq-pill,
 .artcraft-dock-eq-pill.is-synced,
 .artcraft-dock-eq-pill.is-audio-live {
-  box-shadow: 0 2px 0 #111111 !important;
-  border-color: #111111 !important;
+  box-shadow: 0 2px 0 #111111;
+  border-color: #111111;
 }
 
 .artcraft-eq-status-dot.is-live {
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 /* 3. Note top strip: meta group left, actions right; never drops down into awkward gap */
 .artcraft-top-bar-inner {
-  max-width: var(--file-line-width, 840px) !important;
-  margin: 0 auto !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  max-width: var(--file-line-width, 840px);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .artcraft-header-main-row {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
-  flex-wrap: nowrap !important;
-  width: 100% !important;
-  min-width: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: nowrap;
+  width: 100%;
+  min-width: 0;
 }
 
 .artcraft-header-meta-group {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  flex-wrap: nowrap !important;
-  flex: 0 0 auto !important;
-  min-width: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .artcraft-reading-stats-pill {
-  padding: 2.5px 7px !important;
-  font-size: 10px !important;
-  white-space: nowrap !important;
-  flex-shrink: 0 !important;
+  padding: 2.5px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .artcraft-compact-task-pill {
-  padding: 2.5px 7px !important;
-  font-size: 10px !important;
-  white-space: nowrap !important;
-  flex-shrink: 0 !important;
+  padding: 2.5px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .artcraft-compact-task-pill .artcraft-task-progress-bar-bg {
-  width: 38px !important;
-  height: 5px !important;
+  width: 38px;
+  height: 5px;
 }
 
 .artcraft-note-craft-actions {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  flex-wrap: nowrap !important;
-  margin-left: auto !important;
-  flex-shrink: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .artcraft-craft-mini-btn {
-  padding: 2.5px 7px !important;
-  font-size: 10.5px !important;
+  padding: 2.5px 7px;
+  font-size: 10.5px;
 }
 
 .artcraft-ink-stamp-badge {
-  padding: 2px 7px !important;
-  font-size: 10px !important;
+  padding: 2px 7px;
+  font-size: 10px;
 }
 
 .artcraft-margin-bookmarks-strip {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  gap: 6px 8px !important;
-  padding: 4px 0 2px 0 !important;
-  width: 100% !important;
-  overflow: visible !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 4px 0 2px 0;
+  width: 100%;
+  overflow: visible;
 }
 
 .artcraft-bm-pill {
-  flex: 0 0 auto !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  max-width: 260px !important;
-  height: 25px !important;
-  padding: 2px 7px 2px 8px !important;
-  border-radius: 6px !important;
-  box-sizing: border-box !important;
-  white-space: nowrap !important;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 260px;
+  height: 25px;
+  padding: 2px 7px 2px 8px;
+  border-radius: 6px;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .artcraft-bm-pill .bm-tag-text {
-  max-width: 130px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .artcraft-bm-pill .bm-tag-edit,
 .artcraft-bm-pill .bm-tag-del {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 16px !important;
-  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  padding: 0;
 }
 
 .artcraft-bm-pill .bm-tag-edit svg,
 .artcraft-bm-pill .bm-tag-del svg {
-  width: 11px !important;
-  height: 11px !important;
+  width: 11px;
+  height: 11px;
 }
 
 .artcraft-bm-digest-chip {
   flex: 0 0 auto;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  height: 24px !important;
-  padding: 2px 10px !important;
-  border-radius: 999px !important;
-  background: #FFF7ED !important;
-  border: 1px solid #FDBA74 !important;
-  color: #9A3412 !important;
-  font-family: "JetBrains Mono", monospace !important;
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #FFF7ED;
+  border: 1px solid #FDBA74;
+  color: #9A3412;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: none;
 }
 
 .artcraft-bm-digest-chip svg {
-  width: 12px !important;
-  height: 12px !important;
+  width: 12px;
+  height: 12px;
 }
 
 .artcraft-bm-digest-chip:hover {
-  background: #FFEDD5 !important;
+  background: #FFEDD5;
 }
 
 /* 4. Pay-what-you-want donation row in the Pro / Support modal */
@@ -4918,21 +4922,21 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
 }
 
 .ko-custom-chip {
-  background: #FFFFFF !important;
-  border: 1px solid #E2DDD2 !important;
-  border-radius: 999px !important;
-  padding: 2px 9px !important;
-  height: auto !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  color: #4B5563 !important;
-  box-shadow: none !important;
-  cursor: pointer !important;
+  background: #FFFFFF;
+  border: 1px solid #E2DDD2;
+  border-radius: 999px;
+  padding: 2px 9px;
+  height: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: #4B5563;
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .ko-custom-chip:hover {
-  border-color: #69BD28 !important;
-  color: #15803D !important;
+  border-color: #69BD28;
+  color: #15803D;
 }
 
 .ko-custom-input-wrap {
@@ -4952,14 +4956,14 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
 }
 
 .ko-custom-input {
-  width: 72px !important;
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-  padding: 5px 0 !important;
-  font-family: "JetBrains Mono", monospace !important;
-  font-weight: 800 !important;
-  font-size: 13px !important;
+  width: 72px;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 5px 0;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 800;
+  font-size: 13px;
 }
 
 /* 5. Sonic Studio: audio input / loopback picker */
@@ -4986,21 +4990,21 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   flex: 1 1 200px;
   min-width: 0;
   max-width: 100%;
-  font-size: 11.5px !important;
-  height: 30px !important;
+  font-size: 11.5px;
+  height: 30px;
 }
 
 .sonic-device-refresh {
   flex-shrink: 0;
-  height: 30px !important;
-  padding: 0 12px !important;
-  font-size: 11.5px !important;
-  font-weight: 600 !important;
-  background: #FAF9F5 !important;
-  border: 1px solid #D5D1C5 !important;
-  border-radius: 8px !important;
-  box-shadow: none !important;
-  cursor: pointer !important;
+  height: 30px;
+  padding: 0 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: #FAF9F5;
+  border: 1px solid #D5D1C5;
+  border-radius: 8px;
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .sonic-device-hint {
@@ -5041,50 +5045,50 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
 }
 
 .artcraft-website-btn {
-  background: #111111 !important;
-  color: #FFFFFF !important;
-  border: 1px solid #111111 !important;
-  text-decoration: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
+  background: #111111;
+  color: #FFFFFF;
+  border: 1px solid #111111;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .artcraft-website-btn:hover {
-  background: #2563EB !important;
-  border-color: #111111 !important;
-  color: #FFFFFF !important;
+  background: #2563EB;
+  border-color: #111111;
+  color: #FFFFFF;
   transform: translateY(-1px);
 }
 
 /* 8. 3D Mind-Palace & Alchemical Graph Styling */
 .artcraft-graph-canvas-wrap {
-  position: relative !important;
+  position: relative;
   background-color: var(--bg-canvas, #F4F3EF);
 }
 
-body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
-  background-color: #111214 !important;
+html body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
+  background-color: #111214;
 }
 
 .artcraft-graph-hud-btn.artcraft-graph-resonance-btn {
-  background: #FFFBEB !important;
-  color: #92400E !important;
-  border-color: #F59E0B !important;
+  background: #FFFBEB;
+  color: #92400E;
+  border-color: #F59E0B;
 }
 
 .artcraft-graph-hud-btn.artcraft-graph-resonance-btn:hover {
-  background: #FEF3C7 !important;
+  background: #FEF3C7;
 }
 
 .artcraft-graph-hud-btn.artcraft-graph-walk-btn {
-  background: #EEF2FF !important;
-  color: #3730A3 !important;
-  border-color: #6366F1 !important;
+  background: #EEF2FF;
+  color: #3730A3;
+  border-color: #6366F1;
 }
 
 .artcraft-graph-hud-btn.artcraft-graph-walk-btn:hover {
-  background: #E0E7FF !important;
+  background: #E0E7FF;
 }
 
 
@@ -5100,7 +5104,7 @@ body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
     Spine + Material-True Coherent 6-BPM Breathing + Astrolabe & Ex-Libris Seal)
    ========================================================================== */
 
-body.artcraft-book-spread {
+html body.artcraft-book-spread {
   --artcraft-spine-base: #8C5828;
   --artcraft-spine-dark: #5E3714;
   --artcraft-spine-glow: rgba(217, 119, 6, 0.42);
@@ -5109,7 +5113,7 @@ body.artcraft-book-spread {
   --artcraft-page-grad: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 2.8%, #FCFBF7 96.5%, #F4F0E5 100%);
 }
 
-body.artcraft-book-spread[data-spine-material="emerald"] {
+html body.artcraft-book-spread[data-spine-material="emerald"] {
   --artcraft-spine-base: #14532D;
   --artcraft-spine-dark: #0A2E18;
   --artcraft-spine-glow: rgba(16, 185, 129, 0.45);
@@ -5118,7 +5122,7 @@ body.artcraft-book-spread[data-spine-material="emerald"] {
   --artcraft-page-grad: linear-gradient(90deg, #EBF3EE 0%, #FAF9F5 2.8%, #FCFBF8 96.5%, #F2EFE6 100%);
 }
 
-body.artcraft-book-spread[data-spine-material="crimson"] {
+html body.artcraft-book-spread[data-spine-material="crimson"] {
   --artcraft-spine-base: #7F1D1D;
   --artcraft-spine-dark: #4C0D0D;
   --artcraft-spine-glow: rgba(244, 63, 94, 0.45);
@@ -5127,7 +5131,7 @@ body.artcraft-book-spread[data-spine-material="crimson"] {
   --artcraft-page-grad: linear-gradient(90deg, #F5EAE8 0%, #FCF9F5 2.8%, #FFFDF9 96.5%, #F4EFE6 100%);
 }
 
-body.artcraft-book-spread[data-spine-material="linen"] {
+html body.artcraft-book-spread[data-spine-material="linen"] {
   --artcraft-spine-base: #334155;
   --artcraft-spine-dark: #1E293B;
   --artcraft-spine-glow: rgba(96, 165, 250, 0.42);
@@ -5137,57 +5141,57 @@ body.artcraft-book-spread[data-spine-material="linen"] {
 }
 
 /* 1. Warm Desk Surface for the Markdown View & Scroller */
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  background: radial-gradient(circle at 50% 16%, #EFEBE0 0%, #E3DDD0 100%) !important;
-  border-left: none !important;
-  box-shadow: none !important;
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: radial-gradient(circle at 50% 16%, #EFEBE0 0%, #E3DDD0 100%);
+  border-left: none;
+  box-shadow: none;
 }
 
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  overflow-x: hidden !important;
-  padding-top: 6px !important;
-  padding-bottom: 72px !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  box-sizing: border-box !important;
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  overflow-x: hidden;
+  padding-top: 6px;
+  padding-bottom: 72px;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
 }
 
 /* 2. Top Header Bar Aligns Flush with Book Folio Width */
-body.artcraft-book-spread .artcraft-task-progress-wrap {
-  width: calc(100% - 38px) !important;
-  max-width: calc(100% - 38px) !important;
-  margin-left: 0 !important;
-  margin-right: 38px !important;
-  margin-top: 4px !important;
-  margin-bottom: 6px !important;
-  padding: 0 18px !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+html body.artcraft-book-spread .artcraft-task-progress-wrap {
+  width: calc(100% - 38px);
+  max-width: calc(100% - 38px);
+  margin-left: 0;
+  margin-right: 38px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  padding: 0 18px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 /* 3. The 3D Book Folio Physical Page — 100% FLUSH ("впритык") to Left Sidebar Divide! */
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  width: calc(100% - 36px) !important;
-  max-width: calc(100% - 36px) !important;
-  margin-left: 0 !important;
-  margin-right: 36px !important;
-  margin-top: 2px !important;
-  margin-bottom: 56px !important;
-  background: var(--artcraft-page-grad) !important;
-  border-top: 1px solid #DFDBD0 !important;
-  border-right: 1px solid #D4CFC2 !important;
-  border-bottom: 1px solid #D4CFC2 !important;
-  border-left: 12px solid var(--artcraft-spine-base) !important;
-  border-radius: 0 18px 18px 0 !important;
-  padding: 32px 54px 52px 46px !important;
-  box-sizing: border-box !important;
-  position: relative !important;
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  width: calc(100% - 36px);
+  max-width: calc(100% - 36px);
+  margin-left: 0;
+  margin-right: 36px;
+  margin-top: 2px;
+  margin-bottom: 56px;
+  background: var(--artcraft-page-grad);
+  border-top: 1px solid #DFDBD0;
+  border-right: 1px solid #D4CFC2;
+  border-bottom: 1px solid #D4CFC2;
+  border-left: 12px solid var(--artcraft-spine-base);
+  border-radius: 0 18px 18px 0;
+  padding: 32px 54px 52px 46px;
+  box-sizing: border-box;
+  position: relative;
   /* 4 Distinct Stacked Book Sheets on Right & Bottom Edges + Deep Bookbinder Gutter Shadow */
   box-shadow:
     inset 30px 0 40px -18px var(--artcraft-spine-gutter),
@@ -5201,8 +5205,8 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
     15px 12px 0 0 #C0B8A8,
     20px 16px 0 -1px #E0DAD0,
     20px 16px 0 0 #B4AC9B,
-    28px 26px 48px rgba(45, 35, 22, 0.14) !important;
-  transition: border-left-color 0.3s ease, box-shadow 0.3s ease !important;
+    28px 26px 48px rgba(45, 35, 22, 0.14);
+  transition: border-left-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* 4. Intricate Bookbinder Saddle-Stitching & Raised Ribs Along the Flush Left Spine */
@@ -5217,15 +5221,15 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
   }
 }
 
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  left: -12px !important;
-  width: 12px !important;
-  border-radius: 0 !important;
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12px;
+  width: 12px;
+  border-radius: 0;
   /* Combines 3D cylindrical leather highlight + raised horizontal bookbinder ribs every 140px + fine gold saddle stitch */
   background:
     repeating-linear-gradient(
@@ -5249,45 +5253,45 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
       var(--artcraft-spine-base) 45%,
       rgba(255, 255, 255, 0.18) 78%,
       var(--artcraft-spine-dark) 100%
-    ) !important;
-  background-size: 100% 100%, 1.5px 100%, 100% 100% !important;
-  background-position: 0 0, 9px 0, 0 0 !important;
-  background-repeat: repeat-y, repeat-y, no-repeat !important;
-  box-shadow: 2px 0 8px var(--artcraft-spine-gutter) !important;
-  pointer-events: none !important;
-  z-index: 5 !important;
-  transform: none !important;
-  opacity: 0.92 !important;
+    );
+  background-size: 100% 100%, 1.5px 100%, 100% 100%;
+  background-position: 0 0, 9px 0, 0 0;
+  background-repeat: repeat-y, repeat-y, no-repeat;
+  box-shadow: 2px 0 8px var(--artcraft-spine-gutter);
+  pointer-events: none;
+  z-index: 5;
+  transform: none;
+  opacity: 0.92;
 }
 
-body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
-body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
-  animation: artcraftSilkSpineWave 11s ease-in-out infinite !important;
+html body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
+html body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer::before {
+  animation: artcraftSilkSpineWave 11s ease-in-out infinite;
 }
 
 /* Ensure Live Preview content stays neatly inside the sheet */
-body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-content {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
+html body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-content {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* 5. Dark Mode 3D Hardcover Book Folio */
-body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
-body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
-body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
-body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  background: radial-gradient(circle at 50% 16%, #15171C 0%, #0D0E11 100%) !important;
+html body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
+html body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
+html body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+html body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: radial-gradient(circle at 50% 16%, #15171C 0%, #0D0E11 100%);
 }
 
-body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  background: linear-gradient(90deg, #181A1F 0%, #1D2026 3.5%, #1F2229 96.5%, #191B20 100%) !important;
-  border-top: 1px solid #2E323C !important;
-  border-right: 1px solid #2E323C !important;
-  border-bottom: 1px solid #2E323C !important;
-  border-left: 12px solid var(--artcraft-spine-base) !important;
+html body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+html body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  background: linear-gradient(90deg, #181A1F 0%, #1D2026 3.5%, #1F2229 96.5%, #191B20 100%);
+  border-top: 1px solid #2E323C;
+  border-right: 1px solid #2E323C;
+  border-bottom: 1px solid #2E323C;
+  border-left: 12px solid var(--artcraft-spine-base);
   box-shadow:
     inset 28px 0 38px -18px rgba(0, 0, 0, 0.65),
     5px 4px 0 -1px #1A1C22,
@@ -5296,7 +5300,7 @@ body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type=
     10px 8px 0 0 #282C35,
     15px 12px 0 -1px #131519,
     15px 12px 0 0 #22262E,
-    28px 26px 48px rgba(0, 0, 0, 0.60) !important;
+    28px 26px 48px rgba(0, 0, 0, 0.60);
 }
 
 /* ==========================================================================
@@ -5443,7 +5447,7 @@ body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type=
   display: flex;
   flex-direction: column;
   align-items: center;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 88%, 0 100%);
+  border-radius: 0 0 6px 6px;
 }
 
 .spine-foil-title {
@@ -5460,63 +5464,63 @@ body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type=
 }
 
 /* D. Alchemist UV Secret Margin Ink (Revealed by Smart Lamp or Hover) */
-body.artcraft-uv-secret-ink .markdown-rendered mark,
-body.artcraft-uv-secret-ink .cm-s-obsidian span.cm-highlight {
-  background: rgba(16, 185, 129, 0.04) !important;
-  color: rgba(120, 113, 108, 0.22) !important;
-  border-bottom: 1px dashed rgba(16, 185, 129, 0.35) !important;
-  border-radius: 4px !important;
-  padding: 1px 5px !important;
+html body.artcraft-uv-secret-ink .markdown-rendered mark,
+html body.artcraft-uv-secret-ink .cm-s-obsidian span.cm-highlight {
+  background: rgba(16, 185, 129, 0.04);
+  color: rgba(120, 113, 108, 0.22);
+  border-bottom: 1px dashed rgba(16, 185, 129, 0.35);
+  border-radius: 4px;
+  padding: 1px 5px;
   filter: blur(0.45px);
-  transition: all 0.25s ease !important;
+  transition: all 0.25s ease;
 }
 
-body.artcraft-uv-secret-ink.artcraft-magic-lamp .markdown-rendered mark,
-body.artcraft-uv-secret-ink.artcraft-magic-lamp .cm-s-obsidian span.cm-highlight,
-body.artcraft-uv-secret-ink .markdown-rendered mark:hover,
-body.artcraft-uv-secret-ink .cm-s-obsidian span.cm-highlight:hover {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.22) 0%, rgba(245, 158, 11, 0.24) 100%) !important;
-  color: #065F46 !important;
-  border-bottom: 1.5px solid #10B981 !important;
-  filter: none !important;
-  text-shadow: 0 0 10px rgba(16, 185, 129, 0.45), 0 0 18px rgba(253, 224, 71, 0.35) !important;
-  box-shadow: 0 0 14px rgba(16, 185, 129, 0.22) !important;
+html body.artcraft-uv-secret-ink.artcraft-magic-lamp .markdown-rendered mark,
+html body.artcraft-uv-secret-ink.artcraft-magic-lamp .cm-s-obsidian span.cm-highlight,
+html body.artcraft-uv-secret-ink .markdown-rendered mark:hover,
+html body.artcraft-uv-secret-ink .cm-s-obsidian span.cm-highlight:hover {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.22) 0%, rgba(245, 158, 11, 0.24) 100%);
+  color: #065F46;
+  border-bottom: 1.5px solid #10B981;
+  filter: none;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.45), 0 0 18px rgba(253, 224, 71, 0.35);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.22);
 }
 
 /* 2. Clean, Soft, Non-Intrusive Bottom-Left Graph Studio Bar (Never overlaps text or right filter drawer!) */
 body .artcraft-graph-legend-pill,
 body .artcraft-graph-hint-pill {
-  display: none !important;
+  display: none;
 }
 
 body .artcraft-graph-hud {
-  position: absolute !important;
-  top: auto !important;
-  bottom: 18px !important;
-  left: 18px !important;
-  right: auto !important;
-  transform: none !important;
-  z-index: 24 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  max-width: calc(100% - 36px) !important;
-  flex-wrap: wrap !important;
-  background: rgba(250, 248, 243, 0.94) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border: 1px solid #D6D1C4 !important;
-  border-radius: 12px !important;
-  padding: 5px 7px !important;
-  box-shadow: 0 6px 20px rgba(28, 25, 23, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  position: absolute;
+  top: auto;
+  bottom: 18px;
+  left: 18px;
+  right: auto;
+  transform: none;
+  z-index: 24;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 36px);
+  flex-wrap: wrap;
+  background: rgba(250, 248, 243, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid #D6D1C4;
+  border-radius: 12px;
+  padding: 5px 7px;
+  box-shadow: 0 6px 20px rgba(28, 25, 23, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-body.artcraft-dark-craft .artcraft-graph-hud,
-body.theme-dark .artcraft-graph-hud {
-  background: rgba(24, 26, 31, 0.92) !important;
-  border-color: #2E323B !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+html body.artcraft-dark-craft .artcraft-graph-hud,
+html body.theme-dark .artcraft-graph-hud {
+  background: rgba(24, 26, 31, 0.92);
+  border-color: #2E323B;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .artcraft-graph-hud-items {
@@ -5527,7 +5531,7 @@ body.theme-dark .artcraft-graph-hud {
 }
 
 .artcraft-graph-hud.is-minimized .artcraft-graph-hud-items {
-  display: none !important;
+  display: none;
 }
 
 .artcraft-graph-hud-sep {
@@ -5537,127 +5541,127 @@ body.theme-dark .artcraft-graph-hud {
   margin: 0 2px;
 }
 
-body.artcraft-dark-craft .artcraft-graph-hud-sep,
-body.theme-dark .artcraft-graph-hud-sep {
+html body.artcraft-dark-craft .artcraft-graph-hud-sep,
+html body.theme-dark .artcraft-graph-hud-sep {
   background: #374151;
 }
 
 body .artcraft-graph-hud-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  height: 27px !important;
-  padding: 0 9px !important;
-  border-radius: 8px !important;
-  border: 1px solid #E2DDD2 !important;
-  background: #FFFFFF !important;
-  color: #44403C !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  box-shadow: none !important;
-  cursor: pointer !important;
-  transition: all 0.14s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 27px;
+  padding: 0 9px;
+  border-radius: 8px;
+  border: 1px solid #E2DDD2;
+  background: #FFFFFF;
+  color: #44403C;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.14s ease;
 }
 
 body .artcraft-graph-hud-btn svg {
-  width: 13px !important;
-  height: 13px !important;
+  width: 13px;
+  height: 13px;
   flex-shrink: 0;
 }
 
 body .artcraft-graph-hud-btn:hover {
-  border-color: #A8A29E !important;
-  background: #FAF8F3 !important;
-  color: #18181B !important;
+  border-color: #A8A29E;
+  background: #FAF8F3;
+  color: #18181B;
   transform: translateY(-1px);
 }
 
 body .artcraft-graph-hud-btn.is-active,
 body .artcraft-graph-pulse-btn.is-pulse-on {
-  background: #ECFDF5 !important;
-  color: #065F46 !important;
-  border-color: #10B981 !important;
-  box-shadow: none !important;
-  font-weight: 700 !important;
+  background: #ECFDF5;
+  color: #065F46;
+  border-color: #10B981;
+  box-shadow: none;
+  font-weight: 700;
 }
 
 body .artcraft-graph-hud-toggle-btn {
-  width: 27px !important;
-  padding: 0 !important;
-  background: #F4F1EA !important;
-  color: #57534E !important;
+  width: 27px;
+  padding: 0;
+  background: #F4F1EA;
+  color: #57534E;
 }
 
 /* 3. Harmonious, Soft Cappuccino Craft Settings Hero Banner & Action Buttons */
 .artcraft-settings-bento-hero {
-  background: linear-gradient(180deg, #FCFBF8 0%, #F6F3EB 100%) !important;
-  border: 1px solid #DFD9CA !important;
-  border-left: 6px solid #8C5828 !important;
-  border-radius: 14px !important;
-  padding: 16px 20px !important;
-  box-shadow: 0 4px 16px rgba(45, 35, 22, 0.06) !important;
+  background: linear-gradient(180deg, #FCFBF8 0%, #F6F3EB 100%);
+  border: 1px solid #DFD9CA;
+  border-left: 6px solid #8C5828;
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 16px rgba(45, 35, 22, 0.06);
 }
 
 .artcraft-settings-flask-box {
-  background: #FAF7F0 !important;
-  color: #69BD28 !important;
-  border: 1.5px solid #DFD9CA !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  background: #FAF7F0;
+  color: #69BD28;
+  border: 1.5px solid #DFD9CA;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .artcraft-hero-version-pill {
-  background: #ECFDF5 !important;
-  color: #065F46 !important;
-  border: 1px solid #A7F3D0 !important;
-  box-shadow: none !important;
-  font-weight: 700 !important;
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+  box-shadow: none;
+  font-weight: 700;
 }
 
 .artcraft-settings-hero-actions {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  flex-wrap: wrap !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .artcraft-hero-soft-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  height: 33px !important;
-  padding: 0 13px !important;
-  border-radius: 9px !important;
-  border: 1px solid #D8D2C5 !important;
-  background: #FFFFFF !important;
-  color: #374151 !important;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
-  font-size: 11.5px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
-  text-decoration: none !important;
-  transition: all 0.15s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 33px;
+  padding: 0 13px;
+  border-radius: 9px;
+  border: 1px solid #D8D2C5;
+  background: #FFFFFF;
+  color: #374151;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  text-decoration: none;
+  transition: all 0.15s ease;
 }
 
 .artcraft-hero-soft-btn:hover {
-  border-color: #8C5828 !important;
-  background: #FAF8F3 !important;
-  color: #111111 !important;
+  border-color: #8C5828;
+  background: #FAF8F3;
+  color: #111111;
   transform: translateY(-1px);
 }
 
 .artcraft-hero-soft-btn.is-primary-soft {
-  background: #F4EFE4 !important;
-  border-color: #C7B99E !important;
-  color: #4A3520 !important;
-  font-weight: 700 !important;
+  background: #F4EFE4;
+  border-color: #C7B99E;
+  color: #4A3520;
+  font-weight: 700;
 }
 
 .artcraft-hero-soft-btn.is-primary-soft:hover {
-  background: #EBE3D2 !important;
-  border-color: #8C5828 !important;
+  background: #EBE3D2;
+  border-color: #8C5828;
 }
 
 /* 3. Classics Bookshelf Modal Styling */
@@ -5674,28 +5678,28 @@ body .artcraft-graph-hud-toggle-btn {
 }
 
 .artcraft-shelf-filter-pill {
-  background: #FAF8F3 !important;
-  border: 1px solid #DFDBD0 !important;
-  border-radius: 999px !important;
-  padding: 4px 11px !important;
-  height: auto !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  color: #57534E !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
-  transition: all 0.14s ease !important;
+  background: #FAF8F3;
+  border: 1px solid #DFDBD0;
+  border-radius: 999px;
+  padding: 4px 11px;
+  height: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: #57534E;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.14s ease;
 }
 
 .artcraft-shelf-filter-pill:hover {
-  border-color: #8C5828 !important;
-  color: #18181B !important;
+  border-color: #8C5828;
+  color: #18181B;
 }
 
 .artcraft-shelf-filter-pill.is-active {
-  background: #1F2421 !important;
-  color: #FFFFFF !important;
-  border-color: #1F2421 !important;
+  background: #1F2421;
+  color: #FFFFFF;
+  border-color: #1F2421;
 }
 
 .artcraft-wooden-shelf-body {
@@ -5849,8 +5853,8 @@ body .artcraft-graph-hud-toggle-btn {
   padding: 24px;
 }
 
-body.artcraft-dark-craft .artcraft-wax-seal-veil,
-body.theme-dark .artcraft-wax-seal-veil {
+html body.artcraft-dark-craft .artcraft-wax-seal-veil,
+html body.theme-dark .artcraft-wax-seal-veil {
   background: rgba(18, 20, 24, 0.88);
 }
 
@@ -5865,15 +5869,15 @@ body.theme-dark .artcraft-wax-seal-veil {
 }
 
 .wax-seal-emblem {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  height: auto !important;
-  cursor: pointer !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  height: auto;
+  cursor: pointer;
   margin-bottom: 12px;
   filter: drop-shadow(0 8px 16px rgba(153, 27, 27, 0.35));
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .wax-seal-emblem:hover {
@@ -5895,17 +5899,17 @@ body.theme-dark .artcraft-wax-seal-veil {
 }
 
 .wax-seal-title {
-  margin: 0 0 6px 0 !important;
-  font-size: 18px !important;
-  font-weight: 800 !important;
-  color: #18181B !important;
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #18181B;
 }
 
 .wax-seal-sub {
-  margin: 0 !important;
-  font-size: 12px !important;
-  line-height: 1.5 !important;
-  color: #57534E !important;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #57534E;
 }
 
 /* Acoustic Speed-Reading Pacer Beam */
@@ -5915,7 +5919,7 @@ body.theme-dark .artcraft-wax-seal-veil {
   left: 15%;
   right: 15%;
   height: 28px;
-  pointer-events: none !important;
+  pointer-events: none;
   z-index: 9980;
   background: linear-gradient(90deg, rgba(245, 158, 11, 0) 0%, rgba(245, 158, 11, 0.14) 20%, rgba(245, 158, 11, 0.18) 50%, rgba(245, 158, 11, 0.14) 80%, rgba(245, 158, 11, 0) 100%);
   border-bottom: 1.5px solid rgba(217, 119, 6, 0.45);
@@ -5936,31 +5940,31 @@ body.theme-dark .artcraft-wax-seal-veil {
 }
 
 .spine-mat-chip {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  padding: 5px 6px !important;
-  height: auto !important;
-  border-radius: 8px !important;
-  border: 1.5px solid #E2DDD2 !important;
-  background: #FFFFFF !important;
-  color: #374151 !important;
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
-  transition: all 0.14s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 6px;
+  height: auto;
+  border-radius: 8px;
+  border: 1.5px solid #E2DDD2;
+  background: #FFFFFF;
+  color: #374151;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.14s ease;
 }
 
 .spine-mat-chip:hover {
-  border-color: #8C5828 !important;
+  border-color: #8C5828;
 }
 
 .spine-mat-chip.is-active {
-  background: #18181B !important;
-  color: #FFFFFF !important;
-  border-color: #18181B !important;
+  background: #18181B;
+  color: #FFFFFF;
+  border-color: #18181B;
 }
 
 .spine-swatch {
@@ -5974,16 +5978,16 @@ body.theme-dark .artcraft-wax-seal-veil {
 
 
 /* Chrono-Ink Archival Patina for Mature Notes (>14 days old) */
-body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .markdown-rendered p,
-body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .cm-line {
+html body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .markdown-rendered p,
+html body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[data-type="markdown"] .cm-line {
   color: #2C221E;
 }
 
 /* Force removal of peripheral sandglass line */
 .artcraft-margin-sandglass .cm-sizer::after,
 .artcraft-margin-sandglass .markdown-preview-sizer::after {
-  display: none !important;
-  content: none !important;
+  display: none;
+  content: none;
 }
 
 
@@ -5991,8 +5995,8 @@ body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[dat
    TIME CAPSULE WAX SEAL & MODAL STYLES (v4.6.6)
    ========================================================================== */
 .artcraft-capsule-modal {
-  padding: 8px !important;
-  max-width: 520px !important;
+  padding: 8px;
+  max-width: 520px;
 }
 
 .capsule-head {
@@ -6015,9 +6019,9 @@ body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[dat
 }
 
 .capsule-title {
-  margin: 0 0 4px 0 !important;
-  font-size: 20px !important;
-  font-weight: 800 !important;
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  font-weight: 800;
   color: #18181B;
 }
 
@@ -6091,25 +6095,25 @@ body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[dat
 }
 
 .capsule-chip {
-  background: #FFFFFF !important;
-  border: 1.5px solid #E5E0D4 !important;
-  border-radius: 8px !important;
-  padding: 6px 12px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  color: #44403C !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E0D4;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #44403C;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .capsule-chip:hover {
-  border-color: #8C5828 !important;
+  border-color: #8C5828;
 }
 
 .capsule-chip.is-active {
-  background: #8C5828 !important;
-  color: #FFFFFF !important;
-  border-color: #8C5828 !important;
+  background: #8C5828;
+  color: #FFFFFF;
+  border-color: #8C5828;
 }
 
 .capsule-date-wrap {
@@ -6158,10 +6162,10 @@ body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[dat
 }
 
 .capsule-actions button {
-  padding: 8px 16px !important;
-  border-radius: 8px !important;
-  font-weight: 700 !important;
-  font-size: 12.5px !important;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12.5px;
 }
 
 /* Wax Seal Veil on Active Note */
@@ -6199,13 +6203,13 @@ body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[dat
 .wax-seal-emblem {
   position: relative;
   display: inline-block;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  cursor: pointer !important;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  cursor: pointer;
   filter: drop-shadow(0 10px 20px rgba(153, 27, 27, 0.40));
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .wax-seal-emblem:hover {
@@ -6276,7 +6280,7 @@ body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-content[dat
   text-align: left;
   font-size: 12.5px;
   color: #292524;
-  margin: 12px 0 !important;
+  margin: 12px 0;
   font-style: italic;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
