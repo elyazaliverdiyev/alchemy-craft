@@ -2327,6 +2327,7 @@
     document.querySelectorAll(".quick-amt-pill").forEach((pill) => {
       pill.addEventListener("click", () => {
         const amt = pill.getAttribute("data-qamt");
+        selectedTier = "custom";
         document.querySelectorAll(".quick-amt-pill").forEach((q) => q.classList.remove("is-active"));
         document.querySelectorAll(".roastery-tier-card").forEach((c) => c.classList.remove("is-selected"));
         pill.classList.add("is-active");
@@ -2338,6 +2339,9 @@
       const val = parseFloat(e.target.value);
       if (!isNaN(val) && val >= 1) {
         selectedAmount = String(val);
+        selectedTier = "custom";
+        document.querySelectorAll(".roastery-tier-card").forEach((c) => c.classList.remove("is-selected"));
+        document.querySelectorAll(".quick-amt-pill").forEach((q) => q.classList.remove("is-active"));
         document.getElementById("payAmountDisplay").textContent = "$" + selectedAmount + " USDT";
       }
     });

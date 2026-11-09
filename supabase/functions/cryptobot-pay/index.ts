@@ -17,8 +17,8 @@ function generateSiCraftKey(seed: string): string {
     let s = "";
     let v = n >>> 0;
     for (let i = 0; i < 4; i++) {
-      s += alphabet[v % alphabet.length];
-      v = Math.floor(v / alphabet.length) ^ ((v << 3) >>> 0);
+      s += alphabet[Math.abs(v) % alphabet.length];
+      v = (Math.floor(Math.abs(v) / alphabet.length) ^ (v << 3)) >>> 0;
     }
     return s;
   };
@@ -28,7 +28,7 @@ function generateSiCraftKey(seed: string): string {
   const combined = b1 + b2 + b3;
   let chk = 0;
   for (let i = 0; i < combined.length; i++) chk = (chk + combined.charCodeAt(i) * (i + 1)) % 9999;
-  return `SICRAFT-${b1}-${b2}-${b3}-${String(chk).padStart(4, "0")}`;
+  return `ACPRO-${b1}-${b2}-${b3}-${String(chk).padStart(4, "0")}`;
 }
 
 serve(async (req) => {
@@ -70,7 +70,7 @@ serve(async (req) => {
           amount: validAmount,
           accepted_assets: "USDT,TON,USDC,SOL,BNB,ETH,BTC,TRX",
           description: customDesc,
-          hidden_message: `🎉 Спасибо за поддержку! Ваш криптографический ключ Pro: ${generatedKey} (Вставьте его в Шаге 2 в настройках плагина)`,
+          hidden_message: `🎉 Спасибо за поддержку! Ваш персональный Pro-ключ: ${generatedKey} (Скопируйте и вставьте в настройки плагина Alchemy Craft в Obsidian)`,
           paid_btn_name: "callback",
           paid_btn_url: "https://t.me/StratAlchemy",
           payload: generatedKey,
@@ -93,6 +93,10 @@ serve(async (req) => {
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
+      return new Response(JSON.stringify({ ok: false, error: data.error || "CryptoBot API error" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (body.action === "check_invoice" && body.invoice_id) {
