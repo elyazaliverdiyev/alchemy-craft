@@ -2339,20 +2339,49 @@
     });
 
     // Live @CryptoBot Invoice Creator on Website
-    document.getElementById("btnLiveCryptoBotInvoice").addEventListener("click", async () => {
-      const btn = document.getElementById("btnLiveCryptoBotInvoice");
-      btn.textContent = "⏳ Creating Invoice...";
-      try {
-        const res = await fetch(SITE_CONFIG.supabaseFunctionUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "create_invoice",
-            amount: selectedAmount,
-            tier: selectedTier,
-            description: "Alchemy Craft Pro — Cappuccino Roastery Pass ($" + selectedAmount + ")"
-          })
-        });
+    const btnLiveCryptoBot = document.getElementById("btnLiveCryptoBotInvoice");
+    if (btnLiveCryptoBot) {
+      btnLiveCryptoBot.addEventListener("click", async () => {
+        const origText = btnLiveCryptoBot.textContent;
+        btnLiveCryptoBot.textContent = "⏳ Creating Invoice...";
+        try {
+          const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
+          const res = await fetch(SITE_CONFIG.supabaseFunctionUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": sbKey,
+              "Authorization": "Bearer " + sbKey,
+            },
+            body: JSON.stringify({
+              action: "create_invoice",
+              amount: selectedAmount,
+              tier: selectedTier,
+              description: "Alchemy Craft Pro — Cappuccino Roastery Pass ($" + selectedAmount + ")"
+            })
+          });
+          const d = await res.json();
+          const payUrl = d?.pay_url || d?.result?.bot_invoice_url || d?.result?.pay_url;
+          if (d && d.ok && payUrl) {
+            if (d.invoice_id) {
+              const txIn = document.getElementById("txVerifyInput");
+              if (txIn) txIn.value = String(d.invoice_id);
+            }
+            window.open(payUrl, "_blank");
+            showToast("Invoice created! Opening @CryptoBot...");
+          } else {
+            showToast("Failed to create invoice. Opening @CryptoBot fallback...");
+            window.open("https://t.me/CryptoBot?start=alchemycraft", "_blank");
+          }
+        } catch (e) {
+          console.error(e);
+          showToast("Network error. Opening @CryptoBot fallback...");
+          window.open("https://t.me/CryptoBot?start=alchemycraft", "_blank");
+        } finally {
+          btnLiveCryptoBot.textContent = origText;
+        }
+      });
+    }
 
     // Deterministic ACPRO Key Generator (Matches Plugin Verification Algorithm!)
     function generateLicenseKey(seedStr) {

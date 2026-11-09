@@ -8948,12 +8948,17 @@ class AlchemyCraftProModal extends Modal {
                 const cleanAmount = (parseFloat(curAmount) || 4.99).toFixed(2);
                 const tierName = activeTierObj ? activeTierObj.name : "Pro";
                 const customDesc = `Alchemy Craft — ${tierName} (${cleanAmount})`;
+                const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
                 const supabaseEndpoint = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
                 const res = await obsidianApi.requestUrl({
                   url: supabaseEndpoint,
                   method: "POST",
                   contentType: "application/json",
-                  headers: { "Content-Type": "application/json" },
+                  headers: {
+                    "Content-Type": "application/json",
+                    "apikey": sbKey,
+                    "Authorization": `Bearer ${sbKey}`,
+                  },
                   body: JSON.stringify({
                     action: "create_invoice",
                     amount: cleanAmount,
@@ -8963,23 +8968,25 @@ class AlchemyCraftProModal extends Modal {
                   throw: false,
                 });
                 const d = res && res.json ? res.json : null;
-                if (d && d.ok && d.result) {
-                  const inv = d.result;
-                  const payUrl = inv.bot_invoice_url || inv.pay_url || inv.mini_app_invoice_url;
-                  if (inv.invoice_id) {
+                const payUrl = d?.pay_url || d?.result?.bot_invoice_url || d?.result?.pay_url || d?.result?.mini_app_invoice_url;
+                const invId = d?.invoice_id || d?.result?.invoice_id;
+                if (d && d.ok && payUrl) {
+                  if (invId) {
                     const txField = this.contentEl.querySelector(".verify-tx-input");
-                    if (txField) txField.value = String(inv.invoice_id);
+                    if (txField) txField.value = String(invId);
                   }
                   new Notice(
                     isRu
-                      ? `Счёт #${inv.invoice_id} на $${cleanAmount} создан! Переходим в @CryptoBot...`
-                      : `Invoice #${inv.invoice_id} for $${cleanAmount} created! Opening @CryptoBot...`,
+                      ? `Счёт #${invId || ""} на $${cleanAmount} создан! Переходим в @CryptoBot...`
+                      : `Invoice #${invId || ""} for $${cleanAmount} created! Opening @CryptoBot...`,
                     5000
                   );
                   openExternalUrl(payUrl);
                   return;
                 }
-                const errDetail = d && d.error ? (d.error.name || JSON.stringify(d.error)) : "Network Error";
+                const errDetail = d && (d.error?.name || d.error || d.message)
+                  ? (typeof d.error === "object" ? JSON.stringify(d.error) : (d.error || d.message))
+                  : (res?.status ? `HTTP ${res.status}` : "Network Error");
                 new Notice(
                   isRu
                     ? `Ошибка @CryptoBot: ${errDetail}. Попробуйте ещё раз или свяжитесь с поддержкой.`
@@ -9149,12 +9156,17 @@ class AlchemyCraftProModal extends Modal {
       const cleanId = rawCode.replace(/[^0-9]/g, "");
       if (cleanId.length >= 5) {
         const obsidianApi = require("obsidian");
+        const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
         const supabaseEndpoint = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
         const cbRes = await obsidianApi.requestUrl({
           url: supabaseEndpoint,
           method: "POST",
           contentType: "application/json",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": sbKey,
+            "Authorization": `Bearer ${sbKey}`,
+          },
           body: JSON.stringify({
             action: "check_invoice",
             invoice_id: cleanId,
@@ -9162,10 +9174,19 @@ class AlchemyCraftProModal extends Modal {
           throw: false,
         });
         const d = cbRes && cbRes.json ? cbRes.json : null;
+        const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+        if (d && d.ok && d.paid) {
+          new Notice(
+            isRu
+              ? `🎉 Счёт @CryptoBot #${cleanId} оплачен ($${d.amount || ""})! Alchemy Craft Pro успешно активирован!`
+              : `🎉 @CryptoBot Invoice #${cleanId} paid ($${d.amount || ""})! Alchemy Craft Pro activated!`,
+            10000
+          );
+          return true;
+        }
         const items = d?.result?.items || [];
         const paidInv = items.find((inv) => inv.status === "paid");
         if (paidInv) {
-          const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
           new Notice(
             isRu
               ? `🎉 Счёт @CryptoBot #${cleanId} оплачен ($${paidInv.amount})! Alchemy Craft Pro успешно активирован!`
@@ -9173,13 +9194,13 @@ class AlchemyCraftProModal extends Modal {
             10000
           );
           return true;
-        } else if (items.length > 0) {
-          const inv = items[0];
-          const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+        } else if (items.length > 0 || (d && d.ok && d.paid === false)) {
+          const invStatus = items[0]?.status || "pending";
+          const invAmt = items[0]?.amount || d?.amount || "";
           new Notice(
             isRu
-              ? `Счёт @CryptoBot #${cleanId} найден (статус: ${inv.status}, сумма: $${inv.amount}). Оплатите его в Telegram и нажмите проверку ещё раз.`
-              : `Invoice #${cleanId} found (status: ${inv.status}, amount: $${inv.amount}). Please complete payment in Telegram and verify again.`,
+              ? `Счёт @CryptoBot #${cleanId} ещё не оплачен${invAmt ? ` ($${invAmt})` : ""}. Оплатите его в Telegram и нажмите проверку ещё раз.`
+              : `Invoice #${cleanId} is pending payment${invAmt ? ` ($${invAmt})` : ""}. Please complete payment in Telegram and verify again.`,
             8000
           );
           return false;
