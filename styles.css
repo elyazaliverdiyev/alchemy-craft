@@ -6295,3 +6295,1397 @@ html body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-conten
   letter-spacing: 0.05em;
   margin-bottom: 4px;
 }
+
+
+* ==========================================================================
+   ALCHEMY CRAFT v4.8.0 — NOTION / AFFiNE / HARVEE EDITORIAL READABILITY,
+   WINDOWS 11 NIGHT LIGHT COMPENSATION, OFFICIAL GRAPH/CANVAS CSS VARIABLES,
+   AND LIFE RPG SHA-256 BLOCKCHAIN + BIO-FLOW + SKETCHPAD STUDIO
+   ========================================================================== */
+
+/* 1. NOTION / AFFiNE / HARVEE EDITORIAL CLEAN READABILITY
+   Removes harsh neo-brutalist black borders while giving every paragraph,
+   step, heading, and callout tactile, eye-friendly separation so the eye
+   never faces a monotonous grey wall of text. */
+body.artcraft-theme-active.artcraft-editorial-clean {
+  --artcraft-bg-canvas: #F7F6F2;
+  --artcraft-bg-card: #FFFFFF;
+  --artcraft-bg-hover: #F1EFEA;
+  --artcraft-bg-sidebar: #F0EEE8;
+  --artcraft-ink-primary: #18181B;
+  --artcraft-ink-secondary: #3F3F46;
+  --artcraft-ink-muted: #71717A;
+  --artcraft-border-hairline: #E4E2DD;
+  --artcraft-border-strong: #CBD5E1;
+  --line-width: 50rem;
+}
+
+/* 2. WINDOWS 11 "NIGHT LIGHT" (НОЧНОЙ СВЕТ) COMPENSATION MODE
+   Counter-balances the OS warm amber/orange display filter with a crisp,
+   cool-balanced Alabaster canvas (#F6F8FB / #FFFFFF) and deep Slate Ink (#0F172A)
+   so long reading sessions remain razor-sharp without yellow muddiness or eye strain. */
+body.artcraft-theme-active.artcraft-nightlight-comp:not(.artcraft-dark-craft) {
+  --artcraft-bg-canvas: #F5F7FA;
+  --artcraft-bg-card: #FFFFFF;
+  --artcraft-bg-hover: #EDF2F7;
+  --artcraft-bg-sidebar: #EEF2F6;
+  --artcraft-ink-primary: #0F172A;
+  --artcraft-ink-secondary: #1E293B;
+  --artcraft-ink-muted: #475569;
+  --artcraft-border-hairline: #CBD5E1;
+  --artcraft-border-strong: #94A3B8;
+  --background-primary: #F5F7FA;
+  --background-primary-alt: #FFFFFF;
+  --background-secondary: #EEF2F6;
+  --text-normal: #0F172A;
+  --text-muted: #475569;
+}
+
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"],
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .view-content,
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: #E8EEF5;
+}
+
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  background-color: #FFFFFF;
+  border-color: #CBD5E1;
+  box-shadow:
+    5px 2px 0 -1px #F8FAFC,
+    5px 2px 0 0 #CBD5E1,
+    10px 5px 0 -1px #F1F5F9,
+    10px 5px 0 0 #94A3B8,
+    15px 8px 0 -1px #E2E8F0,
+    15px 8px 0 0 #94A3B8,
+    22px 14px 36px rgba(15, 23, 42, 0.08);
+}
+
+/* Soft Editorial Inline Title (No harsh black 4px neo-brutalist shadow) */
+body.artcraft-theme-active.artcraft-editorial-clean .inline-title {
+  background-color: var(--artcraft-bg-card);
+  border: 1px solid var(--artcraft-border-hairline);
+  border-left: 5px solid #2563EB;
+  border-radius: 12px;
+  padding: 18px 24px;
+  box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.05);
+  color: var(--artcraft-ink-primary);
+  font-weight: 800;
+  letter-spacing: -0.028em;
+}
+
+/* Tactile Block Separation (Fixes the "Wall of Grey Text" problem while looking clean like Notion / AFFiNE) */
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view p,
+body.artcraft-theme-active.artcraft-editorial-clean .cm-s-obsidian .cm-line:not(.HyperMD-header):not(.HyperMD-codeblock):not(.HyperMD-frontmatter) {
+  line-height: 1.74;
+  letter-spacing: -0.006em;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view > p,
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p {
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(203, 213, 225, 0.45);
+  transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view > p:hover,
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p:hover {
+  background: #FFFFFF;
+  border-color: #94A3B8;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+/* Editorial Section Headings (H1, H2, H3, H4) — Clean AFFiNE / Notion Anchor Cards */
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h1,
+body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-1 {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.07) 0%, rgba(37, 99, 235, 0.01) 100%);
+  border: 1px solid rgba(37, 99, 235, 0.22);
+  border-left: 4px solid #2563EB;
+  border-radius: 10px;
+  padding: 10px 16px;
+  box-shadow: none;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h2,
+body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-2 {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.07) 0%, rgba(16, 185, 129, 0.01) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  border-left: 4px solid #10B981;
+  border-radius: 10px;
+  padding: 9px 15px;
+  box-shadow: none;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h3,
+body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-3 {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.01) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  border-left: 4px solid #F59E0B;
+  border-radius: 9px;
+  padding: 7px 14px;
+  box-shadow: none;
+}
+
+/* Soft Refined Tables (Replaces loud Excel-green neo-brutalist table borders) */
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered table {
+  border: 1px solid var(--artcraft-border-hairline);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered th {
+  background-color: #F1F5F9;
+  color: #0F172A;
+  font-weight: 700;
+  border-bottom: 1.5px solid #CBD5E1;
+}
+
+/* 3. OFFICIAL OBSIDIAN GRAPH & CANVAS CSS VARIABLES
+   (Per https://docs.obsidian.md/Reference/CSS+variables/Plugins/Graph & Canvas) */
+body.artcraft-bento-graph,
+body.artcraft-bento-graph .workspace-leaf-content[data-type="graph"],
+body.artcraft-bento-graph .workspace-leaf-content[data-type="localgraph"] {
+  --graph-controls-width: 240px;
+  --graph-text: #0F172A;
+  --graph-line: rgba(100, 116, 139, 0.32);
+  --graph-node: #2563EB;
+  --graph-node-unresolved: #94A3B8;
+  --graph-node-focused: #10B981;
+  --graph-node-tag: #F59E0B;
+  --graph-node-attachment: #8B5CF6;
+}
+
+body.artcraft-bento-graph.artcraft-dark-craft,
+body.artcraft-bento-graph.theme-dark,
+body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type="graph"],
+body.artcraft-bento-graph.theme-dark .workspace-leaf-content[data-type="graph"] {
+  --graph-controls-width: 240px;
+  --graph-text: #F8FAFC;
+  --graph-line: rgba(148, 163, 184, 0.28);
+  --graph-node: #60A5FA;
+  --graph-node-unresolved: #64748B;
+  --graph-node-focused: #34D399;
+  --graph-node-tag: #FBBF24;
+  --graph-node-attachment: #A78BFA;
+}
+
+body.artcraft-theme-active,
+body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
+  --canvas-background: var(--artcraft-bg-canvas, #F5F7FA);
+  --canvas-card-label-color: var(--artcraft-ink-muted, #475569);
+  --canvas-dot-pattern: rgba(148, 163, 184, 0.35);
+  --canvas-color-1: 239, 68, 68;
+  --canvas-color-2: 245, 158, 11;
+  --canvas-color-3: 234, 179, 8;
+  --canvas-color-4: 16, 185, 129;
+  --canvas-color-5: 6, 182, 212;
+  --canvas-color-6: 139, 92, 246;
+}
+
+/* 4. NEW MODULES STYLING: LIFE RPG SHA-256 QUEST CHAIN, BIO-FLOW & SKETCHPAD */
+.artcraft-craft-mini-btn.is-quest-chain-btn {
+  border-color: rgba(37, 99, 235, 0.35);
+  background: rgba(37, 99, 235, 0.06);
+  color: #1D4ED8;
+}
+
+.artcraft-craft-mini-btn.is-bio-flow-btn {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.06);
+  color: #047857;
+}
+
+.artcraft-craft-mini-btn.is-sketch-btn {
+  border-color: rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.06);
+  color: #6D28D9;
+}
+
+.artcraft-rpg-hero,
+.artcraft-bio-hero,
+.artcraft-sketch-head {
+  background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
+  border: 1px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+}
+
+.artcraft-rpg-hero-top,
+.artcraft-bio-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.artcraft-rpg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #2563EB;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.artcraft-rpg-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+.artcraft-rpg-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.artcraft-rpg-level-card,
+.artcraft-bio-ring-card {
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 10px 16px;
+  text-align: right;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.rpg-lvl-num,
+.bio-readiness-val {
+  font-family: var(--font-monospace);
+  font-size: 20px;
+  font-weight: 900;
+  color: #0F172A;
+}
+
+.rpg-lvl-xp,
+.bio-readiness-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.rpg-lvl-bar {
+  height: 6px;
+  background: #E2E8F0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.rpg-lvl-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #2563EB, #10B981);
+}
+
+.artcraft-rpg-hash-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #CBD5E1;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  color: #334155;
+}
+
+.artcraft-rpg-hash-strip code {
+  color: #047857;
+  background: #ECFDF5;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.artcraft-rpg-verify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 7px;
+  border: 1px solid #10B981;
+  background: #ECFDF5;
+  color: #047857;
+  cursor: pointer;
+}
+
+.artcraft-rpg-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.artcraft-rpg-tab {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #CBD5E1;
+  background: #F8FAFC;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.artcraft-rpg-tab.is-active {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+}
+
+.artcraft-rpg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.artcraft-rpg-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-left: 4px solid #2563EB;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.artcraft-rpg-card.is-antivision { border-left-color: #EF4444; }
+.artcraft-rpg-card.is-vision { border-left-color: #10B981; }
+.artcraft-rpg-card.is-mission { border-left-color: #2563EB; }
+.artcraft-rpg-card.is-boss { border-left-color: #F59E0B; }
+
+.rpg-card-kicker {
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.rpg-input-area {
+  width: 100%;
+  border: 1px solid #E2E8F0;
+  border-radius: 7px;
+  padding: 6px 8px;
+  font-size: 12px;
+  background: #F8FAFC;
+  color: #0F172A;
+  resize: vertical;
+}
+
+.artcraft-rpg-levers-box {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.rpg-levers-sub {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  color: #64748B;
+}
+
+.rpg-levers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.rpg-lever-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+}
+
+.rpg-lever-row.is-done {
+  background: #F0FDF4;
+  border-color: #86EFAC;
+}
+
+.rpg-lever-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid #94A3B8;
+  background: #FFFFFF;
+  font-weight: 900;
+  color: #FFFFFF;
+  cursor: pointer;
+  padding: 0;
+}
+
+.rpg-lever-row.is-done .rpg-lever-check {
+  background: #10B981;
+  border-color: #059669;
+}
+
+.rpg-lever-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.rpg-lever-xp {
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  color: #2563EB;
+  background: #EFF6FF;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.rpg-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.rpg-new-quest-input,
+.sketch-caption-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+}
+
+.artcraft-ledger-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.artcraft-ledger-block {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-left: 4px solid #10B981;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.ledger-block-head {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.ledger-block-quest {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 6px;
+}
+
+.ledger-block-hashes {
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  color: #64748B;
+}
+
+.ledger-block-hashes .is-cur-hash {
+  color: #047857;
+  font-weight: 700;
+}
+
+/* Bio-Rhythm & Flow Studio */
+.artcraft-bio-phases {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.artcraft-bio-phase-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 11px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.artcraft-bio-phase-card.is-active {
+  border-color: #10B981;
+  background: #F0FDF4;
+}
+
+.artcraft-bio-sliders,
+.artcraft-hormozi-box {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.bio-slider-row {
+  margin-bottom: 10px;
+}
+
+.bio-slider-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.bio-slider-row input[type="range"],
+.hormozi-sliders-grid input[type="range"] {
+  width: 100%;
+}
+
+.artcraft-bio-diagnosis {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-left: 5px solid #10B981;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+}
+
+.bio-diag-zone {
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.bio-diag-advice {
+  font-size: 13px;
+  color: #1E293B;
+}
+
+.hormozi-sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.hormozi-sliders-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hormozi-score-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #F0FDF4;
+  border: 1px solid #86EFAC;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.hm-score-val {
+  font-family: var(--font-monospace);
+  font-size: 26px;
+  font-weight: 900;
+  color: #047857;
+}
+
+/* Creative Margin Sketchpad */
+.artcraft-sketch-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.sketch-colors,
+.sketch-sizes,
+.sketch-bgs,
+.sketch-acts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sketch-color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #CBD5E1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sketch-color-dot.is-active {
+  transform: scale(1.18);
+  border-color: #0F172A;
+}
+
+.sketch-tool-btn {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 7px;
+  border: 1px solid #CBD5E1;
+  background: #F8FAFC;
+  color: #1E293B;
+  cursor: pointer;
+}
+
+.sketch-tool-btn.is-active {
+  background: #0F172A;
+  color: #FFFFFF;
+}
+
+.artcraft-sketch-canvas-wrap {
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: #F8FAFC;
+}
+
+.artcraft-sketch-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.artcraft-rpg-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+
+* ==========================================================================
+   ALCHEMY CRAFT v4.8.0 — NOTION / AFFiNE / HARVEE EDITORIAL READABILITY,
+   WINDOWS 11 NIGHT LIGHT COMPENSATION, OFFICIAL GRAPH/CANVAS CSS VARIABLES,
+   AND LIFE RPG SHA-256 BLOCKCHAIN + BIO-FLOW + SKETCHPAD STUDIO
+   ========================================================================== */
+
+/* 1. NOTION / AFFiNE / HARVEE EDITORIAL CLEAN READABILITY
+   Removes harsh neo-brutalist black borders while giving every paragraph,
+   step, heading, and callout tactile, eye-friendly separation so the eye
+   never faces a monotonous grey wall of text. */
+body.artcraft-theme-active.artcraft-editorial-clean {
+  --artcraft-bg-canvas: #F7F6F2;
+  --artcraft-bg-card: #FFFFFF;
+  --artcraft-bg-hover: #F1EFEA;
+  --artcraft-bg-sidebar: #F0EEE8;
+  --artcraft-ink-primary: #18181B;
+  --artcraft-ink-secondary: #3F3F46;
+  --artcraft-ink-muted: #71717A;
+  --artcraft-border-hairline: #E4E2DD;
+  --artcraft-border-strong: #CBD5E1;
+  --line-width: 50rem;
+}
+
+/* 2. WINDOWS 11 "NIGHT LIGHT" (НОЧНОЙ СВЕТ) COMPENSATION MODE
+   Counter-balances the OS warm amber/orange display filter with a crisp,
+   cool-balanced Alabaster canvas (#F6F8FB / #FFFFFF) and deep Slate Ink (#0F172A)
+   so long reading sessions remain razor-sharp without yellow muddiness or eye strain. */
+body.artcraft-theme-active.artcraft-nightlight-comp:not(.artcraft-dark-craft) {
+  --artcraft-bg-canvas: #F5F7FA;
+  --artcraft-bg-card: #FFFFFF;
+  --artcraft-bg-hover: #EDF2F7;
+  --artcraft-bg-sidebar: #EEF2F6;
+  --artcraft-ink-primary: #0F172A;
+  --artcraft-ink-secondary: #1E293B;
+  --artcraft-ink-muted: #475569;
+  --artcraft-border-hairline: #CBD5E1;
+  --artcraft-border-strong: #94A3B8;
+  --background-primary: #F5F7FA;
+  --background-primary-alt: #FFFFFF;
+  --background-secondary: #EEF2F6;
+  --text-normal: #0F172A;
+  --text-muted: #475569;
+}
+
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"],
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .view-content,
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: #E8EEF5;
+}
+
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  background-color: #FFFFFF;
+  border-color: #CBD5E1;
+  box-shadow:
+    5px 2px 0 -1px #F8FAFC,
+    5px 2px 0 0 #CBD5E1,
+    10px 5px 0 -1px #F1F5F9,
+    10px 5px 0 0 #94A3B8,
+    15px 8px 0 -1px #E2E8F0,
+    15px 8px 0 0 #94A3B8,
+    22px 14px 36px rgba(15, 23, 42, 0.08);
+}
+
+/* Soft Editorial Inline Title (No harsh black 4px neo-brutalist shadow) */
+body.artcraft-theme-active.artcraft-editorial-clean .inline-title {
+  background-color: var(--artcraft-bg-card);
+  border: 1px solid var(--artcraft-border-hairline);
+  border-left: 5px solid #2563EB;
+  border-radius: 12px;
+  padding: 18px 24px;
+  box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.05);
+  color: var(--artcraft-ink-primary);
+  font-weight: 800;
+  letter-spacing: -0.028em;
+}
+
+/* Tactile Block Separation (Fixes the "Wall of Grey Text" problem while looking clean like Notion / AFFiNE) */
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view p,
+body.artcraft-theme-active.artcraft-editorial-clean .cm-s-obsidian .cm-line:not(.HyperMD-header):not(.HyperMD-codeblock):not(.HyperMD-frontmatter) {
+  line-height: 1.74;
+  letter-spacing: -0.006em;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view > p,
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p {
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(203, 213, 225, 0.45);
+  transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view > p:hover,
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p:hover {
+  background: #FFFFFF;
+  border-color: #94A3B8;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+/* Editorial Section Headings (H1, H2, H3, H4) — Clean AFFiNE / Notion Anchor Cards */
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h1,
+body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-1 {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.07) 0%, rgba(37, 99, 235, 0.01) 100%);
+  border: 1px solid rgba(37, 99, 235, 0.22);
+  border-left: 4px solid #2563EB;
+  border-radius: 10px;
+  padding: 10px 16px;
+  box-shadow: none;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h2,
+body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-2 {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.07) 0%, rgba(16, 185, 129, 0.01) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  border-left: 4px solid #10B981;
+  border-radius: 10px;
+  padding: 9px 15px;
+  box-shadow: none;
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h3,
+body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-3 {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.01) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  border-left: 4px solid #F59E0B;
+  border-radius: 9px;
+  padding: 7px 14px;
+  box-shadow: none;
+}
+
+/* Soft Refined Tables (Replaces loud Excel-green neo-brutalist table borders) */
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered table {
+  border: 1px solid var(--artcraft-border-hairline);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered th {
+  background-color: #F1F5F9;
+  color: #0F172A;
+  font-weight: 700;
+  border-bottom: 1.5px solid #CBD5E1;
+}
+
+/* 3. OFFICIAL OBSIDIAN GRAPH & CANVAS CSS VARIABLES
+   (Per https://docs.obsidian.md/Reference/CSS+variables/Plugins/Graph & Canvas) */
+body.artcraft-bento-graph,
+body.artcraft-bento-graph .workspace-leaf-content[data-type="graph"],
+body.artcraft-bento-graph .workspace-leaf-content[data-type="localgraph"] {
+  --graph-controls-width: 240px;
+  --graph-text: #0F172A;
+  --graph-line: rgba(100, 116, 139, 0.32);
+  --graph-node: #2563EB;
+  --graph-node-unresolved: #94A3B8;
+  --graph-node-focused: #10B981;
+  --graph-node-tag: #F59E0B;
+  --graph-node-attachment: #8B5CF6;
+}
+
+body.artcraft-bento-graph.artcraft-dark-craft,
+body.artcraft-bento-graph.theme-dark,
+body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type="graph"],
+body.artcraft-bento-graph.theme-dark .workspace-leaf-content[data-type="graph"] {
+  --graph-controls-width: 240px;
+  --graph-text: #F8FAFC;
+  --graph-line: rgba(148, 163, 184, 0.28);
+  --graph-node: #60A5FA;
+  --graph-node-unresolved: #64748B;
+  --graph-node-focused: #34D399;
+  --graph-node-tag: #FBBF24;
+  --graph-node-attachment: #A78BFA;
+}
+
+body.artcraft-theme-active,
+body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
+  --canvas-background: var(--artcraft-bg-canvas, #F5F7FA);
+  --canvas-card-label-color: var(--artcraft-ink-muted, #475569);
+  --canvas-dot-pattern: rgba(148, 163, 184, 0.35);
+  --canvas-color-1: 239, 68, 68;
+  --canvas-color-2: 245, 158, 11;
+  --canvas-color-3: 234, 179, 8;
+  --canvas-color-4: 16, 185, 129;
+  --canvas-color-5: 6, 182, 212;
+  --canvas-color-6: 139, 92, 246;
+}
+
+/* 4. NEW MODULES STYLING: LIFE RPG SHA-256 QUEST CHAIN, BIO-FLOW & SKETCHPAD */
+.artcraft-craft-mini-btn.is-quest-chain-btn {
+  border-color: rgba(37, 99, 235, 0.35);
+  background: rgba(37, 99, 235, 0.06);
+  color: #1D4ED8;
+}
+
+.artcraft-craft-mini-btn.is-bio-flow-btn {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.06);
+  color: #047857;
+}
+
+.artcraft-craft-mini-btn.is-sketch-btn {
+  border-color: rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.06);
+  color: #6D28D9;
+}
+
+.artcraft-rpg-hero,
+.artcraft-bio-hero,
+.artcraft-sketch-head {
+  background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
+  border: 1px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+}
+
+.artcraft-rpg-hero-top,
+.artcraft-bio-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.artcraft-rpg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #2563EB;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.artcraft-rpg-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+.artcraft-rpg-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.artcraft-rpg-level-card,
+.artcraft-bio-ring-card {
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 10px 16px;
+  text-align: right;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.rpg-lvl-num,
+.bio-readiness-val {
+  font-family: var(--font-monospace);
+  font-size: 20px;
+  font-weight: 900;
+  color: #0F172A;
+}
+
+.rpg-lvl-xp,
+.bio-readiness-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.rpg-lvl-bar {
+  height: 6px;
+  background: #E2E8F0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.rpg-lvl-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #2563EB, #10B981);
+}
+
+.artcraft-rpg-hash-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #CBD5E1;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  color: #334155;
+}
+
+.artcraft-rpg-hash-strip code {
+  color: #047857;
+  background: #ECFDF5;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.artcraft-rpg-verify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 7px;
+  border: 1px solid #10B981;
+  background: #ECFDF5;
+  color: #047857;
+  cursor: pointer;
+}
+
+.artcraft-rpg-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.artcraft-rpg-tab {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #CBD5E1;
+  background: #F8FAFC;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.artcraft-rpg-tab.is-active {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+}
+
+.artcraft-rpg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.artcraft-rpg-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-left: 4px solid #2563EB;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.artcraft-rpg-card.is-antivision { border-left-color: #EF4444; }
+.artcraft-rpg-card.is-vision { border-left-color: #10B981; }
+.artcraft-rpg-card.is-mission { border-left-color: #2563EB; }
+.artcraft-rpg-card.is-boss { border-left-color: #F59E0B; }
+
+.rpg-card-kicker {
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.rpg-input-area {
+  width: 100%;
+  border: 1px solid #E2E8F0;
+  border-radius: 7px;
+  padding: 6px 8px;
+  font-size: 12px;
+  background: #F8FAFC;
+  color: #0F172A;
+  resize: vertical;
+}
+
+.artcraft-rpg-levers-box {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.rpg-levers-sub {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  color: #64748B;
+}
+
+.rpg-levers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.rpg-lever-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+}
+
+.rpg-lever-row.is-done {
+  background: #F0FDF4;
+  border-color: #86EFAC;
+}
+
+.rpg-lever-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid #94A3B8;
+  background: #FFFFFF;
+  font-weight: 900;
+  color: #FFFFFF;
+  cursor: pointer;
+  padding: 0;
+}
+
+.rpg-lever-row.is-done .rpg-lever-check {
+  background: #10B981;
+  border-color: #059669;
+}
+
+.rpg-lever-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.rpg-lever-xp {
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  color: #2563EB;
+  background: #EFF6FF;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.rpg-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.rpg-new-quest-input,
+.sketch-caption-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+}
+
+.artcraft-ledger-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.artcraft-ledger-block {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-left: 4px solid #10B981;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.ledger-block-head {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.ledger-block-quest {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 6px;
+}
+
+.ledger-block-hashes {
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  color: #64748B;
+}
+
+.ledger-block-hashes .is-cur-hash {
+  color: #047857;
+  font-weight: 700;
+}
+
+/* Bio-Rhythm & Flow Studio */
+.artcraft-bio-phases {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.artcraft-bio-phase-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 11px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.artcraft-bio-phase-card.is-active {
+  border-color: #10B981;
+  background: #F0FDF4;
+}
+
+.artcraft-bio-sliders,
+.artcraft-hormozi-box {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.bio-slider-row {
+  margin-bottom: 10px;
+}
+
+.bio-slider-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.bio-slider-row input[type="range"],
+.hormozi-sliders-grid input[type="range"] {
+  width: 100%;
+}
+
+.artcraft-bio-diagnosis {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-left: 5px solid #10B981;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+}
+
+.bio-diag-zone {
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.bio-diag-advice {
+  font-size: 13px;
+  color: #1E293B;
+}
+
+.hormozi-sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.hormozi-sliders-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hormozi-score-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #F0FDF4;
+  border: 1px solid #86EFAC;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.hm-score-val {
+  font-family: var(--font-monospace);
+  font-size: 26px;
+  font-weight: 900;
+  color: #047857;
+}
+
+/* Creative Margin Sketchpad */
+.artcraft-sketch-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.sketch-colors,
+.sketch-sizes,
+.sketch-bgs,
+.sketch-acts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sketch-color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #CBD5E1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sketch-color-dot.is-active {
+  transform: scale(1.18);
+  border-color: #0F172A;
+}
+
+.sketch-tool-btn {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 7px;
+  border: 1px solid #CBD5E1;
+  background: #F8FAFC;
+  color: #1E293B;
+  cursor: pointer;
+}
+
+.sketch-tool-btn.is-active {
+  background: #0F172A;
+  color: #FFFFFF;
+}
+
+.artcraft-sketch-canvas-wrap {
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: #F8FAFC;
+}
+
+.artcraft-sketch-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.artcraft-rpg-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
