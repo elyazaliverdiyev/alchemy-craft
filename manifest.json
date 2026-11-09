@@ -6,5 +6,9 @@
   "description": "Tactile 4-Layer Book Folio & Focus Studio: Multi-Sheet Book Pages, Classics Bookshelf, Wax Seal Time-Lock, 6-Mode WASAPI Equalizer, 16 Stereo Soundscapes, and Smart Lamp.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
-  "isDesktopOnly": false
+  "isDesktopOnly": false,
+  "fundingUrl": {
+    "☕ Fuel the Craft — Cappuccino Roastery & Instant Pro ($4.99)": "https://elyazaliverdiyev.github.io/alchemy-craft/#panel-checkout",
+    "💬 Direct Founder Line — Telegram (@StratAlchemy)": "https://t.me/StratAlchemy"
+  }
 }

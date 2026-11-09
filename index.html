@@ -1309,7 +1309,7 @@
     // =========================================================================
     const SITE_CONFIG = {
       releaseTag: "4.6.7",
-      cryptoBotToken: "CRYPTOBOT_TOKEN_REDACTED",
+      supabaseFunctionUrl: "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay",
       telegramSupportUrl: "https://t.me/StratAlchemy"
     };
     document.querySelectorAll(".js-release-label").forEach((el) => {
@@ -2343,36 +2343,16 @@
       const btn = document.getElementById("btnLiveCryptoBotInvoice");
       btn.textContent = "⏳ Creating Invoice...";
       try {
-        const res = await fetch("https://pay.crypt.bot/api/createInvoice", {
+        const res = await fetch(SITE_CONFIG.supabaseFunctionUrl, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Crypto-Pay-API-Token": SITE_CONFIG.cryptoBotToken
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            currency_type: "fiat",
-            fiat: "USD",
-            accepted_assets: "USDT,TON,BTC,ETH,USDC,BNB,SOL",
-            amount: String(selectedAmount || "9.99"),
-            description: "Alchemy Craft Pro — Cappuccino Roastery Pass ($" + selectedAmount + ")",
-            paid_btn_name: "callback",
-            paid_btn_url: SITE_CONFIG.telegramSupportUrl
+            action: "create_invoice",
+            amount: selectedAmount,
+            tier: selectedTier,
+            description: "Alchemy Craft Pro — Cappuccino Roastery Pass ($" + selectedAmount + ")"
           })
         });
-        const data = await res.json();
-        if (data && data.ok && data.result && data.result.bot_invoice_url) {
-          window.open(data.result.bot_invoice_url, "_blank");
-          document.getElementById("txVerifyInput").value = "CB-" + data.result.invoice_id;
-          showToast("✈️ @CryptoBot invoice opened! Invoice ID filled in Step 2.");
-        } else {
-          window.open(SITE_CONFIG.telegramSupportUrl, "_blank");
-        }
-      } catch (err) {
-        window.open(SITE_CONFIG.telegramSupportUrl, "_blank");
-      } finally {
-        btn.textContent = "⚡ Open @CryptoBot Invoice";
-      }
-    });
 
     // Deterministic ACPRO Key Generator (Matches Plugin Verification Algorithm!)
     function generateLicenseKey(seedStr) {

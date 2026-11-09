@@ -8945,31 +8945,20 @@ class AlchemyCraftProModal extends Modal {
               btnApiCb.textContent = isRu ? "Создаём счёт в @CryptoBot..." : "Creating @CryptoBot invoice...";
               try {
                 const obsidianApi = require("obsidian");
-                const cbToken = "CRYPTOBOT_TOKEN_REDACTED";
                 const cleanAmount = (parseFloat(curAmount) || 4.99).toFixed(2);
                 const tierName = activeTierObj ? activeTierObj.name : "Pro";
-                const customDesc = `Alchemy Craft — ${tierName} ($${cleanAmount})`;
-
-                // Call Crypto Pay API directly without intermediary server
+                const customDesc = `Alchemy Craft — ${tierName} (${cleanAmount})`;
+                const supabaseEndpoint = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
                 const res = await obsidianApi.requestUrl({
-                  url: "https://pay.crypt.bot/api/createInvoice",
+                  url: supabaseEndpoint,
                   method: "POST",
                   contentType: "application/json",
-                  headers: {
-                    "Crypto-Pay-API-Token": cbToken,
-                    "Content-Type": "application/json",
-                  },
+                  headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    currency_type: "fiat",
-                    fiat: "USD",
+                    action: "create_invoice",
                     amount: cleanAmount,
-                    accepted_assets: "USDT,TON,SOL,TRX,BTC,ETH,DOGE,LTC,BNB,USDC",
+                    tier: activeTierObj ? activeTierObj.id : "silver",
                     description: customDesc,
-                    paid_btn_name: "callback",
-                    paid_btn_url: "https://t.me/StratAlchemy",
-                    allow_comments: true,
-                    allow_anonymous: true,
-                    expires_in: 3600,
                   }),
                   throw: false,
                 });
@@ -9160,10 +9149,16 @@ class AlchemyCraftProModal extends Modal {
       const cleanId = rawCode.replace(/[^0-9]/g, "");
       if (cleanId.length >= 5) {
         const obsidianApi = require("obsidian");
-        const cbToken = "CRYPTOBOT_TOKEN_REDACTED";
+        const supabaseEndpoint = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
         const cbRes = await obsidianApi.requestUrl({
-          url: `https://pay.crypt.bot/api/getInvoices?invoice_ids=${encodeURIComponent(cleanId)}`,
-          headers: { "Crypto-Pay-API-Token": cbToken },
+          url: supabaseEndpoint,
+          method: "POST",
+          contentType: "application/json",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "check_invoice",
+            invoice_id: cleanId,
+          }),
           throw: false,
         });
         const d = cbRes && cbRes.json ? cbRes.json : null;

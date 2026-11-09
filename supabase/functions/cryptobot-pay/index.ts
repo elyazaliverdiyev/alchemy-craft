@@ -37,7 +37,13 @@ serve(async (req) => {
   }
 
   try {
-    const token = Deno.env.get("CRYPTO_PAY_API_TOKEN") || "CRYPTOBOT_TOKEN_REDACTED";
+    const token = Deno.env.get("CRYPTO_PAY_API_TOKEN");
+    if (!token) {
+      return new Response(JSON.stringify({ ok: false, error: "CRYPTO_PAY_API_TOKEN not configured in Supabase secrets" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const body = await req.json();
 
     if (body.action === "create_invoice") {
