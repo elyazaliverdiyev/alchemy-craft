@@ -21,7 +21,22 @@
 
 ---
 
-## 2. Как задеплоить контракт за 2 минуты и $0.00 через браузер (Remix IDE)
+## 2. Официально развёрнутый смарт-контракт на Base Sepolia ($0.00)
+
+Смарт-контракт **AlchemyProofOfWorkRegistry** уже официально развёрнут и верифицирован в сети:
+
+- **Адрес контракта (Contract Address):** `0xe55230492ec0e029481fd72f5DAbf5d3B4127e03`
+- **Сеть:** `Base Sepolia Testnet (Chain ID: 84532)`
+- **Владелец (Owner):** `0x7bac3F898c94031Bd910cF0eA80512A038753468`
+- **Обозреватели блоков:**
+  - [Blockscout Explorer](https://base-sepolia.blockscout.com/address/0xe55230492ec0e029481fd72f5DAbf5d3B4127e03?tab=contract)
+  - [BaseScan Explorer](https://sepolia.basescan.org/address/0xe55230492ec0e029481fd72f5DAbf5d3B4127e03)
+
+Этот адрес уже предустановлен по умолчанию в файле конфигурации `data.json` плагина Alchemy Craft v4.9.0.
+
+---
+
+## 3. Как задеплоить свой собственный контракт (если хотите отдельный реестр)
 
 Вам не нужно устанавливать тяжелые фреймворки:
 
