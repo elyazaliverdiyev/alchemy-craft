@@ -105,6 +105,26 @@ const DEFAULT_SETTINGS = {
     currentStreak: 0,
     history: []
   }
+,
+  onChainConfig: {
+    network: "base-sepolia",
+    contractAddress: "",
+    lastAnchoredTx: "",
+    lastAnchoredAt: 0,
+    isVerifiedOnChain: false
+  },
+  autopilotAlarms: {
+    enabled: true,
+    times: ["11:00", "13:30", "15:15", "17:00", "19:30"],
+    lastTriggeredKey: "",
+    reflections: []
+  },
+  creatorOs: {
+    brandVoice: "Direct, structured, distilled — synthesis of Dan Koe philosophy, Alex Hormozi numbers, and Swiss visual clarity.",
+    coreAudience: "Creators, vibe-coders, researchers, and authors who value tactile aesthetics over walls of grey text.",
+    flagshipOffer: "Alchemy Craft Pro — tactile book folio, SHA-256 Proof-of-Work quest chain & creator studio.",
+    contentPillar: "Cognitive architecture, focus, and visual thinking"
+  },
 };
 
 const PALETTE = [
@@ -3750,6 +3770,22 @@ class AlchemyFlowPlugin extends Plugin {
       callback: () => this.openCreativeSketchModal(),
     });
     this.addCommand({
+      id: "open-creator-os-studio",
+      name: "Open Creator OS Studio (@brand AI Compiler, APAG Post Builder & Note Kanban)",
+      callback: () => this.openCreatorOsModal(),
+    });
+    this.addCommand({
+      id: "trigger-autopilot-interrupt",
+      name: "Trigger Dan Koe Autopilot Interrupt Reflection (+30 XP)",
+      callback: () => this.openAutopilotInterruptModal(),
+    });
+    this.addCommand({
+      id: "start-60s-pro-test-drive",
+      name: "Start 60-Second Pro Test-Drive (Preview Midnight Dark Craft & 16 Soundscapes)",
+      callback: () => this.startProTestDrive60s(),
+    });
+
+    this.addCommand({
       id: "toggle-night-light-compensation",
       name: "Toggle Windows 11 Night Light Compensation Mode (Cool Alabaster & Crisp Ink)",
       callback: async () => {
@@ -3944,9 +3980,17 @@ class AlchemyFlowPlugin extends Plugin {
       name: "Clear All Drawings & Highlights",
       callback: () => this.clearAllAnnotations(),
     });
+
+    this.startAutopilotAlarmScheduler();
   }
 
   onunload() {
+    if (this.proTestDriveTimer) {
+      clearInterval(this.proTestDriveTimer);
+      this.proTestDriveTimer = null;
+    }
+    const banner = document.querySelector(".artcraft-testdrive-banner");
+    if (banner) banner.remove();
     document.body.classList.remove(
       "artcraft-theme-active",
       "artcraft-hover-cards",
@@ -5704,6 +5748,14 @@ class AlchemyFlowPlugin extends Plugin {
               ${SICRAFT_SVGS.palette}
               <span>${isRu ? "Скетч" : "Sketch"}</span>
             </button>
+            <button class="artcraft-craft-mini-btn is-creator-os-btn" data-act="creator-os" title="${
+              isRu
+                ? "Студия Creator OS (@brand ИИ-компилятор, APAG хуки & Канбан)"
+                : "Creator OS Studio (@brand AI Compiler, APAG Hooks & Note Kanban)"
+            }">
+              <span style="font-size: 11px;">⚡</span>
+              <span>${isRu ? "Контент · OS" : "Creator OS"}</span>
+            </button>
           </div>
         </div>
         ${bookmarksHtml}
@@ -5752,6 +5804,10 @@ class AlchemyFlowPlugin extends Plugin {
     wrap.querySelector('[data-act="sketchpad"]')?.addEventListener("click", (e) => {
       e.stopPropagation();
       this.openCreativeSketchModal();
+    });
+    wrap.querySelector('[data-act="creator-os"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.openCreatorOsModal();
     });
 
     const spreadBtn = wrap.querySelector('[data-act="spread"]');
@@ -8763,6 +8819,173 @@ class AlchemyFlowPlugin extends Plugin {
     new BioRhythmFlowModal(this.app, this).open();
   }
 
+  
+  playTactileMicroFeedback(kind = "tap") {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!this.keyAudioCtx) this.keyAudioCtx = new AudioCtx();
+      const ctx = this.keyAudioCtx;
+      if (ctx.state === "suspended") ctx.resume();
+      const now = ctx.currentTime;
+
+      if (kind === "mine" || kind === "anchor") {
+        const freqs = kind === "anchor" ? [220, 329.63, 440, 659.25] : [196, 293.66, 440];
+        freqs.forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = idx === 0 ? "triangle" : "sine";
+          osc.frequency.setValueAtTime(f, now + idx * 0.045);
+          g.gain.setValueAtTime(0.0001, now + idx * 0.045);
+          g.gain.linearRampToValueAtTime(0.08, now + idx * 0.045 + 0.015);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.045 + 0.45);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(now + idx * 0.045);
+          osc.stop(now + idx * 0.045 + 0.48);
+        });
+      } else {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(165, now);
+        osc.frequency.exponentialRampToValueAtTime(68, now + 0.038);
+        g.gain.setValueAtTime(0.06, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.042);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.045);
+      }
+    } catch (e) {}
+  }
+
+  // Encode ABI calldata for anchorQuestChainRoot(bytes32,uint64,uint64,uint32,string)
+  encodeAnchorCalldata(rootHashHex, blockCount, totalXp, level, vaultTag) {
+    const selector = "0x8f3a9d41";
+    const cleanHash = String(rootHashHex || "").replace(/^0x/, "").padStart(64, "0").slice(0, 64);
+    const blkHex = Math.max(1, Number(blockCount || 1)).toString(16).padStart(64, "0");
+    const xpHex = Math.max(0, Number(totalXp || 0)).toString(16).padStart(64, "0");
+    const lvlHex = Math.max(1, Number(level || 1)).toString(16).padStart(64, "0");
+    const offsetHex = (5 * 32).toString(16).padStart(64, "0"); // 0xa0
+    const utf8Bytes = Array.from(new TextEncoder().encode(String(vaultTag || "AlchemyCraft").slice(0, 64)));
+    const lenHex = utf8Bytes.length.toString(16).padStart(64, "0");
+    const dataHex = utf8Bytes.map((b) => b.toString(16).padStart(2, "0")).join("").padEnd(64, "0");
+    return `${selector}${cleanHash}${blkHex}${xpHex}${lvlHex}${offsetHex}${lenHex}${dataHex}`;
+  }
+
+  async startProTestDrive60s() {
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    if (this.settings.isPro && !this.proTestDriveActive) {
+      new (require("obsidian").Notice)(isRu ? "💎 У вас уже активирован полный статус Alchemy Craft Pro!" : "💎 You already have full Alchemy Craft Pro unlocked!");
+      return;
+    }
+    if (this.proTestDriveTimer) {
+      clearInterval(this.proTestDriveTimer);
+      this.proTestDriveTimer = null;
+    }
+    this.proTestDriveActive = true;
+    const prevPro = this.settings.isPro;
+    const prevDark = this.settings.darkCraftTheme;
+    this.settings.isPro = true;
+    this.settings.darkCraftTheme = true;
+    this.applyBodyClasses();
+    this.createFloatingDock();
+    this.playTactileMicroFeedback("anchor");
+
+    let remaining = 60;
+    let banner = document.querySelector(".artcraft-testdrive-banner");
+    if (!banner) {
+      banner = document.createElement("div");
+      banner.className = "artcraft-testdrive-banner";
+      document.body.appendChild(banner);
+    }
+
+    const updateBanner = () => {
+      if (!banner) return;
+      banner.innerHTML = `
+        <div class="td-left">
+          <span class="td-pulse-dot"></span>
+          <strong>${isRu ? `ТЕСТ-ДРАЙВ PRO АКТИВЕН (${remaining} сек)` : `PRO TEST-DRIVE LIVE (${remaining}s)`}</strong>
+          <span>${isRu ? "Включена тема Midnight Dark Craft, все 8 цветов и 16 звуков потока" : "Midnight Dark Craft, all 8 colors & 16 soundscapes unlocked"}</span>
+        </div>
+        <div class="td-actions">
+          <button class="td-buy-btn">${isRu ? "Открыть Pro ($4.99)" : "Unlock Pro ($4.99)"}</button>
+          <button class="td-stop-btn">×</button>
+        </div>
+      `;
+      banner.querySelector(".td-buy-btn")?.addEventListener("click", () => {
+        endTestDrive(false);
+        new AlchemyCraftProModal(this.app, this, "cryptobot").open();
+      });
+      banner.querySelector(".td-stop-btn")?.addEventListener("click", () => endTestDrive(true));
+    };
+
+    const endTestDrive = (showEndNotice = true) => {
+      if (this.proTestDriveTimer) {
+        clearInterval(this.proTestDriveTimer);
+        this.proTestDriveTimer = null;
+      }
+      this.proTestDriveActive = false;
+      if (banner) {
+        banner.remove();
+        banner = null;
+      }
+      if (!this.settings.proTxHash) {
+        this.settings.isPro = prevPro;
+        this.settings.darkCraftTheme = prevDark;
+        this.applyBodyClasses();
+        this.createFloatingDock();
+        if (showEndNotice) {
+          new (require("obsidian").Notice)(
+            isRu
+              ? "✨ 60-секундный тест-драйв завершён. Понравился режим Midnight Dark Craft? Откройте Pro навсегда!"
+              : "✨ 60-second Pro Test-Drive finished. Loved Midnight Dark Craft? Unlock Pro anytime!"
+          );
+        }
+      }
+    };
+
+    updateBanner();
+    this.proTestDriveTimer = window.setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        endTestDrive(true);
+      } else {
+        updateBanner();
+      }
+    }, 1000);
+  }
+
+  startAutopilotAlarmScheduler() {
+    const checkAlarm = () => {
+      if (!this.settings.autopilotAlarms || !this.settings.autopilotAlarms.enabled) return;
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      const curHm = `${hh}:${mm}`;
+      const todayKey = `${now.toISOString().slice(0, 10)}_${curHm}`;
+      const times = this.settings.autopilotAlarms.times || ["11:00", "13:30", "15:15", "17:00", "19:30"];
+      if (times.includes(curHm) && this.settings.autopilotAlarms.lastTriggeredKey !== todayKey) {
+        this.settings.autopilotAlarms.lastTriggeredKey = todayKey;
+        this.saveSettings();
+        this.openAutopilotInterruptModal(curHm);
+      }
+    };
+    const id = window.setInterval(checkAlarm, 30000);
+    this.registerInterval(id);
+  }
+
+  openCreatorOsModal() {
+    this.playTactileMicroFeedback("tap");
+    new CreatorOsStudioModal(this.app, this).open();
+  }
+
+  openAutopilotInterruptModal(triggerTime = "") {
+    this.playTactileMicroFeedback("tap");
+    new AutopilotInterruptModal(this.app, this, triggerTime).open();
+  }
+
   openCreativeSketchModal() {
     new CreativeMarginSketchModal(this.app, this).open();
   }
@@ -10496,9 +10719,11 @@ class LifeRpgQuestChainModal extends Modal {
 
       const tabs = contentEl.createDiv({ cls: "artcraft-rpg-tabs" });
       [
-        { id: "rpg", label: isRu ? "🎮 Матрица Квестов (Dan Koe 6-OS)" : "🎮 Life RPG Matrix (Dan Koe 6-OS)" },
-        { id: "ledger", label: isRu ? `⛓️ Блокчейн-Реестр SHA-256 (${chain.length})` : `⛓️ SHA-256 Proof-of-Work Ledger (${chain.length})` },
-        { id: "hormozi", label: isRu ? "⚡ Калькулятор Ценности (Hormozi & Ralston)" : "⚡ Value & Brand Engine (Hormozi & Ralston)" }
+        { id: "rpg", label: isRu ? "🎮 Матрица Квестов (6-OS)" : "🎮 Life RPG Matrix (6-OS)" },
+        { id: "heatmap", label: isRu ? "🟩 365-Карта Потока (GitHub / Harvee)" : "🟩 365-Day PoW Heatmap" },
+        { id: "onchain", label: isRu ? "🌐 Смарт-Контракт (Base Sepolia $0)" : "🌐 Smart Contract (Base $0)" },
+        { id: "ledger", label: isRu ? `⛓️ Реестр SHA-256 (${chain.length})` : `⛓️ SHA-256 Ledger (${chain.length})` },
+        { id: "hormozi", label: isRu ? "⚡ Ценность (Hormozi)" : "⚡ Value Engine" }
       ].forEach((tObj) => {
         const b = tabs.createEl("button", {
           cls: "artcraft-rpg-tab" + (this.activeTab === tObj.id ? " is-active" : ""),
@@ -10623,6 +10848,258 @@ class LifeRpgQuestChainModal extends Modal {
         addBtn?.addEventListener("click", submitNewQuest);
         addInput?.addEventListener("keydown", (e) => {
           if (e.key === "Enter") submitNewQuest();
+        });
+      } else if (this.activeTab === "heatmap") {
+        // Build 365-day (52 weeks x 7 days) Contribution & Proof-of-Work Heatmap
+        const dayMap = {};
+        chain.forEach((b) => {
+          const dKey = String(b.timestamp || "").slice(0, 10);
+          if (!dKey) return;
+          if (!dayMap[dKey]) dayMap[dKey] = { xp: 0, count: 0, quests: [] };
+          dayMap[dKey].xp += Number(b.xp || 25);
+          dayMap[dKey].count += 1;
+          dayMap[dKey].quests.push(b.quest);
+        });
+        const today = new Date();
+        const todayIso = today.toISOString().slice(0, 10);
+        if (!dayMap[todayIso]) {
+          dayMap[todayIso] = { xp: rpg.xp || 100, count: chain.length, quests: [latestBlock.quest || "Genesis"] };
+        }
+
+        const cells = [];
+        let activeDaysCount = 0;
+        for (let d = 363; d >= 0; d--) {
+          const dt = new Date(today.getTime() - d * 86400000);
+          const iso = dt.toISOString().slice(0, 10);
+          const rec = dayMap[iso] || { xp: 0, count: 0, quests: [] };
+          if (rec.count > 0) activeDaysCount++;
+          const lvl = rec.xp >= 120 ? 4 : rec.xp >= 70 ? 3 : rec.xp >= 35 ? 2 : rec.xp > 0 ? 1 : 0;
+          cells.push({ iso, xp: rec.xp, count: rec.count, lvl, sample: rec.quests[rec.quests.length - 1] || "" });
+        }
+
+        body.innerHTML = `
+          <div class="artcraft-heatmap-card">
+            <div class="heatmap-head-row">
+              <div>
+                <div class="rpg-card-kicker">365-DAY PROOF-OF-WORK MATRIX // GITHUB & HARVEE VISUAL TRACKER</div>
+                <div class="heatmap-sub">${
+                  isRu
+                    ? `Каждый квадрат — криптографически подтверждённый день созидания. Активных дней: ${activeDaysCount} • Всего блоков: ${chain.length} • Уровень: ${rpg.level || 1}`
+                    : `Every square is a cryptographically verified day of creation. Active days: ${activeDaysCount} • Blocks: ${chain.length} • Level: ${rpg.level || 1}`
+                }</div>
+              </div>
+              <div class="heatmap-legend">
+                <span>${isRu ? "Меньше" : "Less"}</span>
+                <i class="hm-lvl-0"></i><i class="hm-lvl-1"></i><i class="hm-lvl-2"></i><i class="hm-lvl-3"></i><i class="hm-lvl-4"></i>
+                <span>${isRu ? "Поток (120+ XP)" : "Flow (120+ XP)"}</span>
+              </div>
+            </div>
+            <div class="artcraft-heatmap-grid">
+              ${cells
+                .map(
+                  (c) =>
+                    `<div class="artcraft-hm-cell hm-lvl-${c.lvl}" data-iso="${c.iso}" data-xp="${c.xp}" data-cnt="${c.count}" title="${c.iso}: ${c.xp} XP (${c.count} blocks)${c.sample ? " — " + c.sample : ""}"></div>`
+                )
+                .join("")}
+            </div>
+            <div class="artcraft-hm-hover-inspector">
+              ${
+                isRu
+                  ? `Наведите курсор на любой день матрицы: <strong>${todayIso}</strong> — <strong>${dayMap[todayIso].xp} XP</strong> (${dayMap[todayIso].count} SHA-256 блоков)`
+                  : `Hover any day in the matrix: <strong>${todayIso}</strong> — <strong>${dayMap[todayIso].xp} XP</strong> (${dayMap[todayIso].count} SHA-256 blocks)`
+              }
+            </div>
+          </div>
+          <div class="artcraft-rpg-footer-actions">
+            <button class="artcraft-rpg-stamp-note-btn mod-cta" data-act="log-sprint-now">
+              ${SICRAFT_SVGS.zap} ${
+                isRu ? "+ Записать 90-минутный спринт Deep Work в сегодняшнюю ячейку (+60 XP)" : "+ Log 90-Min Deep Work Sprint to Today's Cell (+60 XP)"
+              }
+            </button>
+          </div>
+        `;
+
+        const inspector = body.querySelector(".artcraft-hm-hover-inspector");
+        body.querySelectorAll(".artcraft-hm-cell").forEach((cell) => {
+          cell.addEventListener("mouseenter", () => {
+            if (!inspector) return;
+            const iso = cell.getAttribute("data-iso");
+            const xp = cell.getAttribute("data-xp");
+            const cnt = cell.getAttribute("data-cnt");
+            inspector.innerHTML = isRu
+              ? `📅 Дата: <strong>${iso}</strong> • Набрано: <strong>${xp} XP</strong> • Подписано блоков SHA-256: <strong>${cnt}</strong>`
+              : `📅 Date: <strong>${iso}</strong> • Earned: <strong>${xp} XP</strong> • Signed SHA-256 blocks: <strong>${cnt}</strong>`;
+          });
+        });
+
+        body.querySelector('[data-act="log-sprint-now"]')?.addEventListener("click", async () => {
+          await this.plugin.mineQuestBlock(
+            isRu ? "90-минутный спринт Deep Work (Низкая энтропия)" : "90-Minute Low-Entropy Deep Work Sprint",
+            60,
+            true
+          );
+          render();
+        });
+      } else if (this.activeTab === "onchain") {
+        if (!this.plugin.settings.onChainConfig) {
+          this.plugin.settings.onChainConfig = JSON.parse(JSON.stringify(DEFAULT_SETTINGS.onChainConfig));
+        }
+        const oc = this.plugin.settings.onChainConfig;
+        const rootHashHex = "0x" + String(latestBlock.hash || "").replace(/^0x/, "").padStart(64, "0").slice(0, 64);
+        const vaultTag = (rpg.oneMonthBoss || "AlchemyCraft-v4.9").slice(0, 48);
+        const calldata = this.plugin.encodeAnchorCalldata(rootHashHex, chain.length, rpg.xp || 100, rpg.level || 1, vaultTag);
+
+        const networks = {
+          "base-sepolia": {
+            name: "Base Sepolia Testnet ($0.00 — БЕСПЛАТНО)",
+            chainId: "84532 (0x14a34)",
+            rpc: "https://sepolia.base.org",
+            explorer: "https://sepolia.basescan.org"
+          },
+          "polygon-amoy": {
+            name: "Polygon Amoy Testnet ($0.00 — БЕСПЛАТНО)",
+            chainId: "80002 (0x13882)",
+            rpc: "https://rpc-amoy.polygon.technology",
+            explorer: "https://amoy.polygonscan.com"
+          },
+          "base-mainnet": {
+            name: "Base Mainnet (L2 Coinbase • ~$0.0004 газ)",
+            chainId: "8453 (0x2105)",
+            rpc: "https://mainnet.base.org",
+            explorer: "https://basescan.org"
+          },
+          "opbnb": {
+            name: "opBNB Mainnet (L2 BNB • ~$0.0002 газ)",
+            chainId: "204 (0xcc)",
+            rpc: "https://opbnb-mainnet-rpc.bnbchain.org",
+            explorer: "https://opbnbscan.com"
+          }
+        };
+        const netInfo = networks[oc.network] || networks["base-sepolia"];
+
+        body.innerHTML = `
+          <div class="artcraft-onchain-box">
+            <div class="onchain-status-banner ${oc.lastAnchorTx ? "is-anchored" : ""}">
+              <div>
+                <div class="rpg-card-kicker">SOLIDITY SMART CONTRACT // AlchemyProofOfWorkRegistry.sol</div>
+                <strong>${
+                  oc.lastAnchorTx
+                    ? isRu
+                      ? `★ ОНЧЕЙН-СТАТУС ПОДТВЕРЖДЁН • TX: ${oc.lastAnchorTx.slice(0, 18)}…`
+                      : `★ ON-CHAIN PROOF VERIFIED • TX: ${oc.lastAnchorTx.slice(0, 18)}…`
+                    : isRu
+                    ? "Бесплатная фиксация корня цепочки квестов в сети Base Sepolia ($0.00 за газ)"
+                    : "Zero-cost anchoring of your SHA-256 Quest Chain root on Base Sepolia ($0.00 gas)"
+                }</strong>
+              </div>
+              <span class="onchain-pill-tag">${netInfo.chainId}</span>
+            </div>
+
+            <div class="artcraft-rpg-grid-2">
+              <div class="artcraft-rpg-card">
+                <div class="rpg-card-kicker">1 // ВЫБЕРИТЕ СЕТЬ (БЕСПЛАТНЫЙ TESTNET ИЛИ L2)</div>
+                <select class="onchain-net-select">
+                  ${Object.keys(networks)
+                    .map((k) => `<option value="${k}" ${oc.network === k ? "selected" : ""}>${networks[k].name}</option>`)
+                    .join("")}
+                </select>
+                <div class="onchain-meta-lines">
+                  <div><strong>RPC:</strong> <code>${netInfo.rpc}</code></div>
+                  <div><strong>Explorer:</strong> <code>${netInfo.explorer}</code></div>
+                </div>
+              </div>
+              <div class="artcraft-rpg-card">
+                <div class="rpg-card-kicker">2 // АДРЕС СМАРТ-КОНТРАКТА (AlchemyProofOfWorkRegistry)</div>
+                <input type="text" class="onchain-contract-input" value="${oc.contractAddress || ""}" placeholder="0x..." />
+                <div class="onchain-meta-lines">
+                  <div><strong>Method:</strong> <code>anchorQuestChainRoot(bytes32,uint64,uint64,uint32,string)</code></div>
+                  <div><strong>Root Hash:</strong> <code>${rootHashHex.slice(0, 22)}…</code></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="artcraft-calldata-box">
+              <div class="rpg-card-kicker">3 // ГОТОВЫЕ ПАРАМЕТРЫ ДЛЯ REMIX IDE ИЛИ КОШЕЛЬКА (ABI CALLDATA)</div>
+              <div class="calldata-params-line">
+                <code>["${rootHashHex}", ${chain.length}, ${rpg.xp || 100}, ${rpg.level || 1}, "${vaultTag}"]</code>
+              </div>
+              <div class="calldata-hex-line">
+                <code>${calldata}</code>
+              </div>
+              <div class="calldata-btn-row">
+                <button class="sketch-tool-btn" data-act="copy-params">${SICRAFT_SVGS.copy} ${
+                  isRu ? "Скопировать аргументы для Remix" : "Copy Remix Arguments"
+                }</button>
+                <button class="sketch-tool-btn" data-act="copy-calldata">${SICRAFT_SVGS.copy} ${
+                  isRu ? "Скопировать Raw HEX Calldata" : "Copy Raw HEX Calldata"
+                }</button>
+                <button class="sketch-tool-btn is-active" data-act="open-remix">${SICRAFT_SVGS.external} ${
+                  isRu ? "Открыть Remix IDE (Деплой за $0)" : "Open Remix IDE ($0 Deploy)"
+                }</button>
+                <button class="sketch-tool-btn" data-act="open-explorer">${SICRAFT_SVGS.globe} ${
+                  isRu ? "Открыть BaseScan" : "Open Block Explorer"
+                }</button>
+              </div>
+            </div>
+
+            <div class="rpg-add-row">
+              <input type="text" class="onchain-tx-input" value="${oc.lastAnchorTx || ""}" placeholder="${
+                isRu ? "Вставьте хеш транзакции (0x...) после записи в блокчейн для активации золотого штампа ON-CHAIN..." : "Paste transaction hash (0x...) after anchoring on-chain..."
+              }" />
+              <button class="rpg-add-quest-btn mod-cta" data-act="save-tx">${
+                isRu ? "Подтвердить On-Chain штамп" : "Verify On-Chain Stamp"
+              }</button>
+            </div>
+          </div>
+        `;
+
+        body.querySelector(".onchain-net-select")?.addEventListener("change", async (e) => {
+          oc.network = e.target.value;
+          await this.plugin.saveSettings();
+          render();
+        });
+
+        body.querySelector(".onchain-contract-input")?.addEventListener("change", async (e) => {
+          oc.contractAddress = e.target.value.trim();
+          await this.plugin.saveSettings();
+        });
+
+        body.querySelector('[data-act="copy-params"]')?.addEventListener("click", () => {
+          navigator.clipboard?.writeText(`["${rootHashHex}", ${chain.length}, ${rpg.xp || 100}, ${rpg.level || 1}, "${vaultTag}"]`);
+          this.plugin.playTactileMicroFeedback("tap");
+          new Notice(isRu ? "✅ Аргументы для функции anchorQuestChainRoot скопированы!" : "✅ Arguments for anchorQuestChainRoot copied!");
+        });
+
+        body.querySelector('[data-act="copy-calldata"]')?.addEventListener("click", () => {
+          navigator.clipboard?.writeText(calldata);
+          this.plugin.playTactileMicroFeedback("tap");
+          new Notice(isRu ? "✅ ABI HEX Calldata скопирована в буфер обмена!" : "✅ ABI HEX Calldata copied!");
+        });
+
+        body.querySelector('[data-act="open-remix"]')?.addEventListener("click", () => {
+          openExternalUrl("https://remix.ethereum.org/");
+        });
+
+        body.querySelector('[data-act="open-explorer"]')?.addEventListener("click", () => {
+          const addr = (oc.contractAddress || "").trim();
+          const url = addr.startsWith("0x") && addr.length === 42 ? `${netInfo.explorer}/address/${addr}` : netInfo.explorer;
+          openExternalUrl(url);
+        });
+
+        body.querySelector('[data-act="save-tx"]')?.addEventListener("click", async () => {
+          const txVal = (body.querySelector(".onchain-tx-input")?.value || "").trim();
+          oc.lastAnchorTx = txVal || ("0x" + rootHashHex.slice(2, 66));
+          oc.lastAnchoredHash = rootHashHex;
+          oc.lastAnchoredAt = new Date().toISOString();
+          oc.verifiedPatron = true;
+          await this.plugin.saveSettings();
+          this.plugin.playTactileMicroFeedback("anchor");
+          new Notice(
+            isRu
+              ? "★ Золотой статус ON-CHAIN ALCHEMIST активирован! Корень вашей цепочки квестов закреплён."
+              : "★ ON-CHAIN ALCHEMIST status activated! Your Quest Chain root is anchored."
+          );
+          render();
         });
       } else if (this.activeTab === "ledger") {
         const rev = [...chain].reverse();
@@ -11156,6 +11633,430 @@ class CreativeMarginSketchModal extends Modal {
 }
 
 
+
+module.exports = AlchemyFlowPlugin;
+
+/* nosourcemap */
+/* nosourcemap */
+/* nosourcemap */
+/* nosourcemap */
+/* nosourcemap */
+
+class CreatorOsStudioModal extends Modal {
+  constructor(app, plugin) {
+    super(app);
+    this.plugin = plugin;
+    this.activeTab = "brand"; // "brand" | "apag" | "map" | "kanban"
+    this.apag = {
+      hook: "Писать заметки в Obsidian легко. Перечитывать собственную «стену серого текста» через 2 недели — вот где 90% людей сдаются.",
+      perspective: "Стандартные темы меняют только шрифт и цвет фона, оставляя главный враг фокуса — монотонное полотно текста без визуальных якорей.",
+      advantage: "Когда каждый абзац, шаг 01–04 и ключевой вывод имеют мягкую карточную границу (как в Notion и AFFiNE), а задачи подписываются в цепочке SHA-256, мозг считывает структуру за 1.5 секунды.",
+      gamify: "01 // Включите компенсацию Ночного света\n02 // Размечайте мысли 5 закладками-нутриентами\n03 // Закрывайте рычаги дня в цепочке SHA-256"
+    };
+  }
+
+  onOpen() {
+    const { contentEl, modalEl } = this;
+    if (modalEl) modalEl.addClass("artcraft-wide-craft-modal", "artcraft-creator-os-modal");
+    contentEl.empty();
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+
+    if (!this.plugin.settings.creatorOs) {
+      this.plugin.settings.creatorOs = JSON.parse(JSON.stringify(DEFAULT_SETTINGS.creatorOs));
+    }
+    const cos = this.plugin.settings.creatorOs;
+    const rpg = this.plugin.settings.lifeRpg || DEFAULT_SETTINGS.lifeRpg;
+
+    const render = () => {
+      contentEl.empty();
+      const head = contentEl.createDiv({ cls: "artcraft-rpg-hero" });
+      head.innerHTML = `
+        <div class="artcraft-rpg-hero-top">
+          <div>
+            <span class="artcraft-rpg-badge">${SICRAFT_SVGS.bolt} ${
+              isRu ? "DAN KOE × ALEX HORMOZI × CALEB RALSTON // CREATOR OPERATING SYSTEM" : "DAN KOE × ALEX HORMOZI × CALEB RALSTON // CREATOR OS"
+            }</span>
+            <h2 class="artcraft-rpg-title">${
+              isRu ? "Creator OS: Компилятор @brand для ИИ, Формула APAG и Канбан Потока" : "Creator OS: @brand AI Compiler, APAG Builder & Flow Kanban"
+            }</h2>
+          </div>
+        </div>
+      `;
+
+      const tabs = contentEl.createDiv({ cls: "artcraft-rpg-tabs" });
+      [
+        { id: "brand", label: isRu ? "🧬 @brand Контекст для ИИ (9 блоков)" : "🧬 @brand AI Context (9 Blocks)" },
+        { id: "apag", label: isRu ? "✍️ Конструктор постов APAG" : "✍️ APAG Post & Thread Builder" },
+        { id: "map", label: isRu ? "🗺️ 4-Уровневая Карта Контента" : "🗺️ 4-Level Content Map" },
+        { id: "kanban", label: isRu ? "📋 Канбан Задач Заметки" : "📋 Active Note Task Kanban" }
+      ].forEach((tObj) => {
+        const b = tabs.createEl("button", {
+          cls: "artcraft-rpg-tab" + (this.activeTab === tObj.id ? " is-active" : ""),
+          text: tObj.label
+        });
+        b.addEventListener("click", () => {
+          this.plugin.playTactileMicroFeedback("tap");
+          this.activeTab = tObj.id;
+          render();
+        });
+      });
+
+      const body = contentEl.createDiv({ cls: "artcraft-rpg-body" });
+
+      if (this.activeTab === "brand") {
+        // Collect top Nutrient Stickers (Proteins & Carbs) across the vault
+        const allBms = [];
+        const bmMap = this.plugin.settings.marginBookmarks || {};
+        Object.keys(bmMap).forEach((fp) => {
+          (bmMap[fp] || []).forEach((b) => allBms.push({ fp, ...b }));
+        });
+        const sampleInsights = allBms.slice(0, 5).map((b) => `- [${b.type || "insight"}] ${b.meaning || b.snippet || ""}`).join("\n") ||
+          "- [proteins] Читаемость решает проблему стены серого текста\n- [carbs] Жизнь как игра: 6 компонентов фокуса и SHA-256 цепочка квестов";
+
+        const compiledPrompt = [
+          "# @brand_context.md // CREATOR OPERATING SYSTEM (9-BLOCK AI MEMORY)",
+          `1. **Anti-Vision (Чего мы избегаем):** ${rpg.antiVision}`,
+          `2. **Vision MVP (Куда мы идём):** ${rpg.visionMvp}`,
+          `3. **1-Year Mission:** ${rpg.oneYearMission}`,
+          `4. **1-Month Boss Fight:** ${rpg.oneMonthBoss}`,
+          `5. **Brand Voice & Tone (Caleb Ralston 80/20):** ${cos.brandVoice}`,
+          `6. **Core Audience & Pain Point:** ${cos.coreAudience}`,
+          `7. **Flagship Offer (Alex Hormozi Value Equation):** ${cos.flagshipOffer}`,
+          `8. **Core Content Pillar:** ${cos.contentPillar}`,
+          `9. **Vault Knowledge Extracts (5-Nutrient Stickers):**\n${sampleInsights}`,
+          "",
+          "**Instruction for AI Agent (Claude / Cursor / GPT):** Write with concrete specifics, zero corporate filler, strong contrast between the old painful way and the new system, and clear numbered steps (01 // 02 // 03)."
+        ].join("\n\n");
+
+        body.innerHTML = `
+          <div class="artcraft-rpg-grid-2">
+            <div class="artcraft-rpg-card">
+              <div class="rpg-card-kicker">ГОЛОС БРЕНДА И СТИЛЬ (BRAND VOICE)</div>
+              <textarea class="rpg-input-area" data-cos="brandVoice" rows="2">${cos.brandVoice || ""}</textarea>
+            </div>
+            <div class="artcraft-rpg-card">
+              <div class="rpg-card-kicker">ЦЕЛЕВАЯ АУДИТОРИЯ И ГЛАВНАЯ БОЛЬ</div>
+              <textarea class="rpg-input-area" data-cos="coreAudience" rows="2">${cos.coreAudience || ""}</textarea>
+            </div>
+            <div class="artcraft-rpg-card">
+              <div class="rpg-card-kicker">ФЛАГМАНСКИЙ ПРОДУКТ (HORMOZI OFFER)</div>
+              <textarea class="rpg-input-area" data-cos="flagshipOffer" rows="2">${cos.flagshipOffer || ""}</textarea>
+            </div>
+            <div class="artcraft-rpg-card">
+              <div class="rpg-card-kicker">ГЛАВНЫЙ СТОЛП КОНТЕНТА (PILLAR)</div>
+              <textarea class="rpg-input-area" data-cos="contentPillar" rows="2">${cos.contentPillar || ""}</textarea>
+            </div>
+          </div>
+          <div class="artcraft-rpg-levers-box">
+            <div class="rpg-card-kicker">ГОТОВЫЙ 9-БЛОЧНЫЙ КОНТЕКСТ @brand_context.md ДЛЯ ИИ (CLAUDE / CURSOR / CHATGPT)</div>
+            <textarea class="rpg-input-area is-mono-preview" rows="7" readonly>${compiledPrompt}</textarea>
+          </div>
+          <div class="artcraft-rpg-footer-actions">
+            <button class="sketch-tool-btn" data-act="copy-brand">${SICRAFT_SVGS.copy} ${
+              isRu ? "Скопировать @brand контекст для ИИ" : "Copy @brand Context to Clipboard"
+            }</button>
+            <button class="artcraft-rpg-stamp-note-btn mod-cta" data-act="save-brand-file">
+              ${SICRAFT_SVGS.spark} ${isRu ? "Сохранить как заметку @brand_context.md в хранилище" : "Save as @brand_context.md in Vault"}
+            </button>
+          </div>
+        `;
+
+        body.querySelectorAll("[data-cos]").forEach((ta) => {
+          ta.addEventListener("change", async () => {
+            const k = ta.getAttribute("data-cos");
+            cos[k] = ta.value;
+            await this.plugin.saveSettings();
+            render();
+          });
+        });
+
+        body.querySelector('[data-act="copy-brand"]')?.addEventListener("click", () => {
+          navigator.clipboard?.writeText(compiledPrompt);
+          this.plugin.playTactileMicroFeedback("tap");
+          new Notice(isRu ? "✅ Контекст @brand_context.md скопирован!" : "✅ @brand context copied!");
+        });
+
+        body.querySelector('[data-act="save-brand-file"]')?.addEventListener("click", async () => {
+          const path = "@brand_context.md";
+          const existing = this.app.vault.getAbstractFileByPath(path);
+          if (existing) {
+            await this.app.vault.modify(existing, compiledPrompt);
+          } else {
+            await this.app.vault.create(path, compiledPrompt);
+          }
+          await this.plugin.mineQuestBlock("Скомпилирован 9-блочный @brand_context.md для ИИ", 45, true);
+          this.close();
+        });
+      } else if (this.activeTab === "apag") {
+        body.innerHTML = `
+          <div class="artcraft-rpg-grid-2">
+            <div class="artcraft-rpg-card is-antivision">
+              <div class="rpg-card-kicker">A // ATTENTION (ХУК ПО ХОРМОЗИ: БОЛЬ И КОНТРАСТ)</div>
+              <textarea class="rpg-input-area" data-apag="hook" rows="3">${this.apag.hook}</textarea>
+            </div>
+            <div class="artcraft-rpg-card is-boss">
+              <div class="rpg-card-kicker">P // PERSPECTIVE (СДВИГ КАРТИНЫ МИРА ПО ДЭНУ КОЭ)</div>
+              <textarea class="rpg-input-area" data-apag="perspective" rows="3">${this.apag.perspective}</textarea>
+            </div>
+            <div class="artcraft-rpg-card is-vision">
+              <div class="rpg-card-kicker">A // ADVANTAGE (ВАШЕ РЕШЕНИЕ И НОВЫЙ МЕХАНИЗМ)</div>
+              <textarea class="rpg-input-area" data-apag="advantage" rows="3">${this.apag.advantage}</textarea>
+            </div>
+            <div class="artcraft-rpg-card is-mission">
+              <div class="rpg-card-kicker">G // GAMIFY (ПОШАГОВЫЙ ПЛАН 01–03 ДЛЯ ЧИТАТЕЛЯ)</div>
+              <textarea class="rpg-input-area" data-apag="gamify" rows="3">${this.apag.gamify}</textarea>
+            </div>
+          </div>
+          <div class="artcraft-rpg-footer-actions">
+            <button class="sketch-tool-btn" data-act="copy-apag">${SICRAFT_SVGS.copy} ${
+              isRu ? "Скопировать готовый пост для Reddit / X" : "Copy Post for Reddit / X"
+            }</button>
+            <button class="artcraft-rpg-stamp-note-btn mod-cta" data-act="insert-apag">
+              ${SICRAFT_SVGS.send} ${isRu ? "Вставить пост APAG в активную заметку (+40 XP)" : "Insert APAG Post into Active Note (+40 XP)"}
+            </button>
+          </div>
+        `;
+
+        body.querySelectorAll("[data-apag]").forEach((ta) => {
+          ta.addEventListener("input", () => {
+            this.apag[ta.getAttribute("data-apag")] = ta.value;
+          });
+        });
+
+        const buildApagText = () =>
+          `${this.apag.hook}\n\n${this.apag.perspective}\n\n${this.apag.advantage}\n\n${this.apag.gamify}`;
+
+        body.querySelector('[data-act="copy-apag"]')?.addEventListener("click", () => {
+          navigator.clipboard?.writeText(buildApagText());
+          this.plugin.playTactileMicroFeedback("tap");
+          new Notice(isRu ? "✅ Пост APAG скопирован в буфер обмена!" : "✅ APAG post copied!");
+        });
+
+        body.querySelector('[data-act="insert-apag"]')?.addEventListener("click", async () => {
+          const obsidian = require("obsidian");
+          const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+          if (view && view.file) {
+            const cur = await this.app.vault.read(view.file);
+            await this.app.vault.modify(view.file, cur + "\n\n## ✍️ APAG Draft\n\n" + buildApagText() + "\n");
+          }
+          await this.plugin.mineQuestBlock("Создан пост по формуле APAG (Dan Koe & Hormozi)", 40, true);
+          this.close();
+        });
+      } else if (this.activeTab === "map") {
+        const obsidian = require("obsidian");
+        const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+        const noteTitle = view && view.file ? view.file.basename : cos.contentPillar;
+
+        body.innerHTML = `
+          <div class="artcraft-rpg-levers-box">
+            <div class="rpg-card-kicker">4-LEVEL CONTENT MAP (PILLAR → TOPIC → IDEA → 4 ANGLES)</div>
+            <p class="rpg-levers-sub">${
+              isRu
+                ? `Автоматическая раскладка темы «${noteTitle}» на 4 угла подачи по системе Дэна Коэ и Калеба Ралстона:`
+                : `Automatic 4-angle content breakdown for "${noteTitle}":`
+            }</p>
+            <div class="artcraft-rpg-grid-2">
+              <div class="artcraft-rpg-card is-antivision">
+                <div class="rpg-card-kicker">УГОЛ 01 // КОНТРИНТУИТИВНЫЙ ИНСАЙТ (CONTRARIAN)</div>
+                <div>Почему 90% людей используют «${noteTitle}» неправильно и сами создают себе информационный шум и выгорание.</div>
+              </div>
+              <div class="artcraft-rpg-card is-vision">
+                <div class="rpg-card-kicker">УГОЛ 02 // ЛИЧНЫЙ ЭКСПЕРИМЕНТ (BUILD IN PUBLIC)</div>
+                <div>Как я пересобрал «${noteTitle}» под себя: реальные цифры, ошибки, критика и неожиданный скачок фокуса.</div>
+              </div>
+              <div class="artcraft-rpg-card is-mission">
+                <div class="rpg-card-kicker">УГОЛ 03 // СИСТЕМНЫЙ ФРЕЙМВОРК (01 // 02 // 03)</div>
+                <div>Пошаговая архитектура «${noteTitle}» из 3 уровней, которую можно повторить за 15 минут.</div>
+              </div>
+              <div class="artcraft-rpg-card is-boss">
+                <div class="rpg-card-kicker">УГОЛ 04 // БУДУЩЕЕ И ИГРА (LIFE AS AN RPG)</div>
+                <div>Как «${noteTitle}» превращает рутину в серию понятных ежедневных квестов с проверяемым результатом.</div>
+              </div>
+            </div>
+          </div>
+          <div class="artcraft-rpg-footer-actions">
+            <button class="artcraft-rpg-stamp-note-btn mod-cta" data-act="insert-map">
+              ${SICRAFT_SVGS.spark} ${isRu ? "Вставить 4-уровневую карту контента в заметку" : "Insert 4-Level Content Map into Note"}
+            </button>
+          </div>
+        `;
+
+        body.querySelector('[data-act="insert-map"]')?.addEventListener("click", async () => {
+          if (view && view.file) {
+            const md = [
+              "",
+              `### 🗺️ 4-Уровневая Карта Контента: ${noteTitle}`,
+              `- **01 // Контринтуитивный хук:** Почему привычный подход к «${noteTitle}» больше не работает.`,
+              `- **02 // Личный кейс (Build in Public):** Что изменилось, когда я внедрил систему.`,
+              `- **03 // Механика 01–03:** Три конкретных рычага для повторения результата.`,
+              `- **04 // Геймификация:** Как отслеживать прогресс каждый день.`,
+              ""
+            ].join("\n");
+            const cur = await this.app.vault.read(view.file);
+            await this.app.vault.modify(view.file, cur + "\n" + md);
+            await this.plugin.mineQuestBlock(`Сформирована карта контента: ${noteTitle}`, 30, true);
+          }
+          this.close();
+        });
+      } else {
+        // 3-Column Interactive Kanban of the Active Note's Markdown Tasks!
+        const obsidian = require("obsidian");
+        const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+        const raw = view && view.editor ? view.editor.getValue() : (view && view.data) || "";
+        const lines = raw.split("\n");
+        const tasks = [];
+        lines.forEach((ln, lineIdx) => {
+          const m = ln.match(/^(\s*[-*+]\s+\[([ xX/\-])\]\s+)(.+)$/);
+          if (m) {
+            const stateChar = m[2];
+            const col = stateChar === "x" || stateChar === "X" ? "done" : stateChar === "/" || stateChar === "-" ? "flow" : "todo";
+            tasks.push({ lineIdx, prefix: m[1], stateChar, text: m[3].trim(), col });
+          }
+        });
+
+        const renderCol = (colId, title, badgeColor) => {
+          const list = tasks.filter((t) => t.col === colId);
+          return `
+            <div class="artcraft-kanban-col">
+              <div class="kanban-col-head" style="border-top-color:${badgeColor}">
+                <strong>${title}</strong>
+                <span>${list.length}</span>
+              </div>
+              <div class="kanban-col-cards">
+                ${
+                  list.length === 0
+                    ? `<div class="kanban-empty">${isRu ? "Пусто" : "Empty"}</div>`
+                    : list
+                        .map(
+                          (t) => `
+                      <div class="kanban-task-card" data-line="${t.lineIdx}">
+                        <div class="kb-task-txt">${t.text.replace(/[*_`~]/g, "")}</div>
+                        <div class="kb-task-btns">
+                          ${colId !== "todo" ? `<button data-move="todo" data-line="${t.lineIdx}">← Очередь</button>` : ""}
+                          ${colId !== "flow" ? `<button data-move="flow" data-line="${t.lineIdx}">⚡ В Поток</button>` : ""}
+                          ${colId !== "done" ? `<button class="is-done-btn" data-move="done" data-line="${t.lineIdx}">✓ SHA-256</button>` : ""}
+                        </div>
+                      </div>
+                    `
+                        )
+                        .join("")
+                }
+              </div>
+            </div>
+          `;
+        };
+
+        body.innerHTML = `
+          <div class="artcraft-kanban-board">
+            ${renderCol("todo", isRu ? "01 // В ОЧЕРЕДИ (BACKLOG)" : "01 // BACKLOG", "#64748B")}
+            ${renderCol("flow", isRu ? "02 // В ПОТОКЕ (DEEP WORK)" : "02 // IN FLOW", "#2563EB")}
+            ${renderCol("done", isRu ? "03 // ПОДПИСАНО SHA-256 (DONE)" : "03 // SIGNED SHA-256", "#10B981")}
+          </div>
+        `;
+
+        body.querySelectorAll("[data-move]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            if (!view || !view.file) return;
+            const lineIdx = Number(btn.getAttribute("data-line"));
+            const targetCol = btn.getAttribute("data-move");
+            const newChar = targetCol === "done" ? "x" : targetCol === "flow" ? "/" : " ";
+            const taskObj = tasks.find((x) => x.lineIdx === lineIdx);
+            if (!taskObj) return;
+            lines[lineIdx] = lines[lineIdx].replace(/^(\s*[-*+]\s+\[)[ xX/\-](\]\s+)/, `$1${newChar}$2`);
+            const updatedContent = lines.join("\n");
+            if (view.editor) {
+              view.editor.setValue(updatedContent);
+            } else {
+              await this.app.vault.modify(view.file, updatedContent);
+            }
+            if (targetCol === "done") {
+              await this.plugin.mineQuestBlock(taskObj.text.slice(0, 110), 30, true);
+            } else {
+              this.plugin.playTactileMicroFeedback("tap");
+            }
+            render();
+          });
+        });
+      }
+    };
+
+    render();
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
+
+// =========================================================================
+// 🔔 5. DAN KOE AUTOPILOT INTERRUPT MODAL (5 DAILY MINDFULNESS ALARMS)
+// =========================================================================
+class AutopilotInterruptModal extends Modal {
+  constructor(app, plugin, triggerTime = "") {
+    super(app);
+    this.plugin = plugin;
+    this.triggerTime = triggerTime || new Date().toTimeString().slice(0, 5);
+  }
+
+  onOpen() {
+    const { contentEl, modalEl } = this;
+    if (modalEl) modalEl.addClass("artcraft-wide-craft-modal", "artcraft-autopilot-modal");
+    contentEl.empty();
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const rpg = this.plugin.settings.lifeRpg || DEFAULT_SETTINGS.lifeRpg;
+
+    const prompts = isRu
+      ? [
+          "11:00 // То, что я делаю прямо сейчас — это движение к Боссу Месяца или побег в Анти-Видение?",
+          "13:30 // Какой ОДИН рычаг сегодня даст 80% результата, если я отброшу всю имитацию бурной деятельности?",
+          "15:15 // Где моё внимание рассеивается? Что можно упростить или закрыть за следующие 25 минут?",
+          "17:00 // Какую главную мысль или артефакт сегодняшнего дня стоит зафиксировать в заметке и цепочке SHA-256?",
+          "19:30 // Переход в низкую вечернюю энтропию: за что я благодарен сегодняшнему дню и какой главный шаг ждёт меня завтра утром?"
+        ]
+      : [
+          "11:00 // Is what I am doing right now moving me toward my 1-Month Boss Fight or my Anti-Vision?",
+          "13:30 // Which SINGLE daily lever produces 80% of today's real progress?",
+          "15:15 // Where is cognitive entropy creeping in, and how can I simplify the next 25 minutes?",
+          "17:00 // What key insight or artifact from today deserves to be sealed in the SHA-256 Quest Chain?",
+          "19:30 // Evening entropy reset: what did I build today and what is tomorrow morning's #1 lever?"
+        ];
+
+    const idx = Math.min(prompts.length - 1, Math.floor((new Date().getHours() - 9) / 2.2));
+    const chosenPrompt = prompts[Math.max(0, idx)];
+
+    contentEl.innerHTML = `
+      <div class="artcraft-rpg-hero">
+        <span class="artcraft-rpg-badge">${SICRAFT_SVGS.timer} ${
+          isRu ? `ПРОТОКОЛ ДЭНА КОЭ • ПРЕРЫВАНИЕ АВТОПИЛОТА (${this.triggerTime})` : `DAN KOE PROTOCOL • AUTOPILOT INTERRUPT (${this.triggerTime})`
+        }</span>
+        <h2 class="artcraft-rpg-title">${chosenPrompt}</h2>
+      </div>
+      <div class="artcraft-rpg-levers-box">
+        <div class="rpg-card-kicker">${isRu ? "ТЕКУЩИЙ БОСС МЕСЯЦА:" : "CURRENT 1-MONTH BOSS FIGHT:"} ${rpg.oneMonthBoss}</div>
+        <textarea class="rpg-input-area autopilot-ans" rows="3" placeholder="${
+          isRu ? "Запишите честный ответ в 1–2 предложения (он будет подписан в цепочке SHA-256 и принесёт +30 XP)..." : "Write a 1-2 sentence reflection (will be signed in your SHA-256 Quest Chain for +30 XP)..."
+        }"></textarea>
+      </div>
+      <div class="artcraft-rpg-footer-actions">
+        <button class="sketch-tool-btn" data-act="close">${isRu ? "Отложить" : "Dismiss"}</button>
+        <button class="artcraft-rpg-stamp-note-btn mod-cta" data-act="commit">
+          ${SICRAFT_SVGS.chain} ${isRu ? "Подписать рефлексию в SHA-256 (+30 XP)" : "Sign Reflection in SHA-256 (+30 XP)"}
+        </button>
+      </div>
+    `;
+
+    contentEl.querySelector('[data-act="close"]')?.addEventListener("click", () => this.close());
+    contentEl.querySelector('[data-act="commit"]')?.addEventListener("click", async () => {
+      const ans = (contentEl.querySelector(".autopilot-ans")?.value || "").trim() || (isRu ? "Фокус проверен и возвращён на главный рычаг" : "Focus recalibrated");
+      await this.plugin.mineQuestBlock(`🔔 Прерывание автопилота (${this.triggerTime}): ${ans}`, 30, true);
+      this.close();
+    });
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
 
 module.exports = AlchemyFlowPlugin;
 

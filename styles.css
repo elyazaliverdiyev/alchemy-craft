@@ -7689,3 +7689,348 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
   gap: 10px;
   justify-content: flex-end;
 }
+
+
+
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v4.9.0 — 365-DAY GITHUB HEATMAP, ON-CHAIN SMART CONTRACT STUDIO,
+   CREATOR OS KANBAN, 60S PRO TEST-DRIVE & SPRING MICRO-INTERACTIONS
+   ========================================================================== */
+
+/* 1. Smooth Spring Physics & Tactile Micro-Interactions */
+.artcraft-craft-mini-btn,
+.artcraft-dock-btn,
+.artcraft-rpg-tab,
+.artcraft-rpg-card,
+.artcraft-bio-phase-card,
+.kanban-task-card,
+.artcraft-hm-cell {
+  transition:
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.artcraft-craft-mini-btn:hover,
+.artcraft-rpg-card:hover,
+.kanban-task-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08);
+}
+
+.artcraft-craft-mini-btn:active,
+.artcraft-rpg-tab:active {
+  transform: translateY(0px) scale(0.97);
+}
+
+.artcraft-craft-mini-btn.is-creator-os-btn {
+  border-color: rgba(245, 158, 11, 0.42);
+  background: rgba(245, 158, 11, 0.08);
+  color: #B45309;
+}
+
+/* 2. 365-Day GitHub / Harvee / Flo Proof-of-Work Heatmap */
+.artcraft-heatmap-card {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.heatmap-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.heatmap-sub {
+  font-size: 12px;
+  color: #475569;
+}
+
+.heatmap-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  color: #64748B;
+}
+
+.heatmap-legend i {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+}
+
+.artcraft-heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  grid-auto-flow: column;
+  grid-auto-columns: 12px;
+  gap: 3px;
+  overflow-x: auto;
+  padding: 6px 2px 10px 2px;
+}
+
+.artcraft-hm-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.artcraft-hm-cell:hover {
+  transform: scale(1.38);
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+}
+
+.hm-lvl-0 { background: #E2E8F0; }
+.hm-lvl-1 { background: #A7F3D0; }
+.hm-lvl-2 { background: #34D399; }
+.hm-lvl-3 { background: #10B981; }
+.hm-lvl-4 { background: #047857; box-shadow: 0 0 6px rgba(16, 185, 129, 0.45); }
+
+.artcraft-hm-hover-inspector {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #F8FAFC;
+  border: 1px dashed #CBD5E1;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #1E293B;
+}
+
+/* 3. On-Chain Smart Contract Studio (Base Sepolia $0 Bridge) */
+.artcraft-onchain-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.onchain-status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #F8FAFC;
+  border: 1.5px solid #CBD5E1;
+  border-left: 5px solid #2563EB;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.onchain-status-banner.is-anchored {
+  background: #FEFCE8;
+  border-color: #FDE047;
+  border-left-color: #D97706;
+}
+
+.onchain-pill-tag {
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  background: #EFF6FF;
+  color: #1D4ED8;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.onchain-net-select,
+.onchain-contract-input,
+.onchain-tx-input {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.onchain-meta-lines {
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.artcraft-calldata-box {
+  background: #0F172A;
+  color: #E2E8F0;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.artcraft-calldata-box .rpg-card-kicker {
+  color: #38BDF8;
+}
+
+.calldata-params-line code,
+.calldata-hex-line code {
+  display: block;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #A7F3D0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 8px;
+}
+
+.calldata-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* 4. Creator OS 3-Column Note Kanban Board */
+.artcraft-kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.artcraft-kanban-col {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.kanban-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 3px solid #2563EB;
+  padding-top: 6px;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.kanban-task-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 9px;
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.kb-task-txt {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0F172A;
+  line-height: 1.35;
+}
+
+.kb-task-btns {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.kb-task-btns button {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #CBD5E1;
+  background: #F8FAFC;
+  color: #334155;
+  cursor: pointer;
+  height: auto;
+}
+
+.kb-task-btns button.is-done-btn {
+  background: #ECFDF5;
+  border-color: #6EE7B7;
+  color: #047857;
+}
+
+/* 5. 60-Second Free Pro Test-Drive Floating Banner */
+.artcraft-testdrive-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  color: #F8FAFC;
+  border: 1.5px solid #38BDF8;
+  border-radius: 999px;
+  padding: 8px 18px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.45);
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+}
+
+.artcraft-testdrive-banner .td-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.artcraft-testdrive-banner .td-pulse-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #34D399;
+  box-shadow: 0 0 10px #34D399;
+}
+
+.artcraft-testdrive-banner .td-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.artcraft-testdrive-banner .td-buy-btn {
+  background: linear-gradient(90deg, #10B981, #059669);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.artcraft-testdrive-banner .td-stop-btn {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.artcraft-ko-tab.is-testdrive-tab {
+  border-color: #38BDF8;
+  color: #0284C7;
+}

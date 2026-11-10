@@ -1,9 +1,9 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "4.8.2",
+  "version": "4.9.0",
   "minAppVersion": "1.0.0",
-  "description": "Tactile 4-Layer Book Folio & Focus Studio: Swiss Editorial Cards, Windows 11 Night Light Calibration, WASAPI Equalizer, SHA-256 Quest Ledger, Bio-Flow & Sketchpad.",
+  "description": "Tactile Book Folio & Focus Studio: Swiss Editorial Cards, Win11 Night Light Calibration, 365-day PoW Heatmap, Base Sepolia Smart Contract Bridge, Creator OS, Bio-Flow & Sketchpad.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
   "isDesktopOnly": false,

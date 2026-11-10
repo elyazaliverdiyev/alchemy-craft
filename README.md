@@ -1,3 +1,15 @@
+## What's New in v4.9.0 (365-Day Proof-of-Work Heatmap, Base Sepolia Smart Contract Bridge, Creator OS & 60s Pro Test-Drive)
+
+- **365-Day Proof-of-Work Heatmap (🟩 365-Карта Потока)**: Full 52-week × 7-day interactive matrix inside the Quest Studio showing daily XP, SHA-256 blocks mined, and deep work streaks.
+- **Zero-Cost On-Chain Smart Contract Bridge (AlchemyProofOfWorkRegistry.sol)**: Anchors your Obsidian SHA-256 Quest Chain root hash on Base Sepolia Testnet (Chain ID: 84532, $0.00 gas) or L2 mainnets (Base, opBNB, Polygon, Arbitrum) with auto-generated ABI calldata and ★ ON-CHAIN ALCHEMIST verification.
+- **Creator OS Studio (⚡ Creator OS)**:
+  - **9-Block @brand_context.md Compiler for AI**: Synthesizes your Vision, Anti-Vision, Brand Voice, and 5-Nutrient stickers into a ready-to-paste context file for Claude, Cursor, and ChatGPT.
+  - **APAG Post & Thread Builder**: Structured Attention → Perspective → Advantage → Gamify editor with Alex Hormozi hook templates.
+  - **4-Level Content Map**: Turns any note into 4 content angles (Contrarian, Build-in-Public, 01–03 Framework, Life RPG).
+  - **Interactive 3-Column Note Kanban**: Turns `- [ ]` tasks in the active note into a live Backlog → In Flow → Signed SHA-256 board.
+  - **Dan Koe's 5 Autopilot Interrupt Alarms (11:00, 13:30, 15:15, 17:00, 19:30)**: Mindful check-ins that sign reflections into the SHA-256 Quest Chain.
+- **60-Second Free Pro Test-Drive & Spring Physics (`cubic-bezier(0.22, 1, 0.36, 1)`)**: 1-click live preview of Midnight Dark Craft and all Pro features with multi-harmonic WebAudio tactile feedback.
+
 ## What's New in v4.8.2 (Notion/AFFiNE Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
 
 - **Swiss Editorial Cards Editorial Block Isolation (`editorialCleanMode`)**: Replaces heavy neo-brutalist black borders with airy, tactile block cards (`1px` subtle borders, soft elevation, clear visual anchors) so every paragraph and step stands out cleanly without turning into a monotonous wall of grey text.
