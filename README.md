@@ -1,4 +1,4 @@
-## What's New in v4.8.1 (Notion/AFFiNE Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
+## What's New in v4.8.2 (Notion/AFFiNE Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
 
 - **Swiss Editorial Cards Editorial Block Isolation (`editorialCleanMode`)**: Replaces heavy neo-brutalist black borders with airy, tactile block cards (`1px` subtle borders, soft elevation, clear visual anchors) so every paragraph and step stands out cleanly without turning into a monotonous wall of grey text.
 - **Windows 11 Night Light Compensation (`nightLightCompensation`)**: Dedicated color-calibration mode (Cool Alabaster `#F5F7FA` / `#FFFFFF` + Crisp Slate Ink `#0F172A`) that neutralizes the yellow/orange cast of Windows 11 Night Light so text stays razor-sharp without eye strain.
