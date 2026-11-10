@@ -77,7 +77,7 @@ const DEFAULT_SETTINGS = {
     dailyLevers: [
       { id: "lever-1", title: "90 минут утреннего Deep Work (низкая энтропия до соцсетей)", xp: 50, done: false },
       { id: "lever-2", title: "Довести 1 ключевой модуль / улучшение до продакшена", xp: 40, done: false },
-      { id: "lever-3", title: "Дистрибуция по методу Hormozi / Ralston (пост, демо или разбор кейса)", xp: 35, done: false }
+      { id: "lever-3", title: "Высокоэффективная дистрибуция ценности (пост, демо или разбор кейса)", xp: 35, done: false }
     ],
     constraints: "Никаких правок без проверки читаемости; не открывать ленты до завершения первого рычага.",
     xp: 340,
@@ -119,7 +119,7 @@ const DEFAULT_SETTINGS = {
     reflections: []
   },
   creatorOs: {
-    brandVoice: "Прямой, структурный, без воды — синтез философии Дэна Коэ, цифр Алекса Хормози и визуальной чистоты Калеба Ралстона.",
+    brandVoice: "Прямой, структурный, без воды — синтез архитектуры глубокой работы, математики высокой ценности и швейцарской визуальной чистоты.",
     coreAudience: "Создатели ИИ-продуктов, вайбкодеры, исследователи и авторы в Obsidian, которые устали от стены серого текста.",
     flagshipOffer: "Alchemy Craft Pro — превращение Obsidian в живую книгу, систему квестов с SHA-256 блокчейном и студию контента.",
     contentPillar: "Когнитивная архитектура, фокус и визуальное мышление"
@@ -3792,7 +3792,7 @@ class AlchemyFlowPlugin extends Plugin {
     });
     this.addCommand({
       id: "trigger-autopilot-interrupt",
-      name: "Trigger Dan Koe Autopilot Interrupt Reflection (+30 XP)",
+      name: "Trigger Mindful Focus Calibration Reflection (+30 XP)",
       callback: () => this.openAutopilotInterruptModal(),
     });
     this.addCommand({
@@ -3802,12 +3802,12 @@ class AlchemyFlowPlugin extends Plugin {
     });
     this.addCommand({
       id: "open-life-rpg-quest-blockchain",
-      name: "Open Life RPG & SHA-256 Blockchain Quest Chain (Dan Koe / Hormozi Studio)",
+      name: "Open Life RPG & SHA-256 Blockchain Quest Chain (Deep Work & Value Studio)",
       callback: () => this.openQuestChainModal(),
     });
     this.addCommand({
       id: "open-bio-flow-readiness",
-      name: "Open Bio-Rhythm & Cognitive Flow Tracker (Flo / Harvee Studio)",
+      name: "Open Bio-Rhythm & Cognitive Flow Tracker (Circadian & Flow Studio)",
       callback: () => this.openBioFlowModal(),
     });
     this.addCommand({
@@ -7098,7 +7098,7 @@ class AlchemyFlowPlugin extends Plugin {
             ${sicraftIcon('chain')} <span>${i18n({ en: "Life RPG & SHA-256 Quest Blockchain", ru: "Life RPG и Блокчейн-Цепочка Квестов (SHA-256)", zh: "Life RPG 与区块链任务链", ja: "Life RPG & SHA-256 クエストチェーン", es: "Life RPG y Cadena de Misiones SHA-256", de: "Life RPG & SHA-256 Quest-Blockchain" }, this)}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="bio-flow">
-            ${sicraftIcon('pulse')} <span>${i18n({ en: "Bio-Rhythm & Cognitive Flow Readiness", ru: "Био-Ритм и Энергия Потока (Flo / Harvee)", zh: "生物节律与心流准备度", ja: "バイオリズム＆フロー準備度", es: "Bio-Ritmo y Estado de Flujo", de: "Bio-Rhythmus & Flow-Bereitschaft" }, this)}</span>
+            ${sicraftIcon('pulse')} <span>${i18n({ en: "Bio-Rhythm & Cognitive Flow Readiness", ru: "Био-Ритм и Энергия Потока", zh: "生物节律与心流准备度", ja: "バイオリズム＆フロー準備度", es: "Bio-Ritmo y Estado de Flujo", de: "Bio-Rhythmus & Flow-Bereitschaft" }, this)}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="sketchpad">
             ${sicraftIcon('palette')} <span>${i18n({ en: "Creative Margin Sketchpad (Draw in Note)", ru: "Творческий Скетчбук (Рисование в заметке)", zh: "创意手绘草图板", ja: "クリエイティブ・スケッチパッド", es: "Cuaderno de Bocetos en Nota", de: "Kreatives Skizzenbuch in Notiz" }, this)}</span>
@@ -7107,7 +7107,7 @@ class AlchemyFlowPlugin extends Plugin {
             ${sicraftIcon('bolt')} <span>${i18n({ en: "Creator OS: @brand AI Compiler, APAG & Kanban", ru: "Creator OS: @brand для ИИ, APAG и Канбан задач", zh: "Creator OS：AI品牌上下文与APAG引擎", ja: "Creator OS：@brand AIコンパイラ＆APAG", es: "Creator OS: @brand IA, APAG y Kanban", de: "Creator OS: @brand KI, APAG & Kanban" }, this)}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="autopilot-bell">
-            ${sicraftIcon('timer')} <span>${i18n({ en: "Dan Koe Autopilot Interrupt Check-In (+30 XP)", ru: "Прерывание автопилота Дэна Коэ (+30 XP)", zh: "Dan Koe 自动驾驶打断反思 (+30 XP)", ja: "オートパイロット中断チェックイン (+30 XP)", es: "Interrupción de Piloto Automático (+30 XP)", de: "Autopilot-Unterbrechung (+30 XP)" }, this)}</span>
+            ${sicraftIcon('timer')} <span>${i18n({ en: "Mindful Focus Calibration Check-In (+30 XP)", ru: "Осознанная калибровка фокуса (+30 XP)", zh: "专注力校准与反思 (+30 XP)", ja: "マインドフル・フォーカス確認 (+30 XP)", es: "Calibración Consciente de Enfoque (+30 XP)", de: "Achtsame Fokus-Kalibrierung (+30 XP)" }, this)}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="pro-test-drive">
             ${sicraftIcon('diamond')} <span>${i18n({ en: "✨ 60-Second Free Pro Test-Drive (Dark Craft & Audio)", ru: "✨ 60-сек Тест-Драйв Pro (Dark Craft и все звуки)", zh: "✨ 60秒免费体验 Pro 全部功能", ja: "✨ 60秒間 Pro モード無料テストドライブ", es: "✨ Prueba Pro de 60 segundos gratis", de: "✨ 60-Sekunden Pro-Testfahrt starten" }, this)}</span>
@@ -8687,7 +8687,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
 
-  // --- ⛓️ NEW MODULE 1: LIFE RPG & SHA-256 BLOCKCHAIN QUEST CHAIN (DAN KOE / HORMOZI / RALSTON) ---
+  // --- ⛓️ NEW MODULE 1: LIFE RPG & SHA-256 BLOCKCHAIN QUEST CHAIN (DEEP WORK & VALUE EQUATION) ---
   async computeSha256Hex(message) {
     try {
       if (window.crypto && window.crypto.subtle) {
@@ -8942,7 +8942,7 @@ class AlchemyFlowPlugin extends Plugin {
     }, 1000);
   }
 
-  // Dan Koe's 5 Autopilot Interrupt Alarms Scheduler
+  // 5 Mindful Focus Calibration Alarms Scheduler
   startAutopilotAlarmScheduler() {
     const checkAlarm = () => {
       if (!this.settings.autopilotAlarms || !this.settings.autopilotAlarms.enabled) return;
@@ -10723,7 +10723,7 @@ class LifeRpgQuestChainModal extends Modal {
         { id: "heatmap", icon: "eqMatrix", label: i18n({ en: "365 Heatmap", ru: "365-Карта", zh: "365热力图", ja: "365日マップ", es: "Mapa 365", de: "365-Heatmap" }, this.plugin) },
         { id: "onchain", icon: "globe", label: i18n({ en: "Smart Contract ($0)", ru: "Смарт-Контракт ($0)", zh: "智能合约 ($0)", ja: "コントラクト ($0)", es: "Contrato ($0)", de: "Smart Contract ($0)" }, this.plugin) },
         { id: "ledger", icon: "chain", label: `${i18n({ en: "SHA-256 Blocks", ru: "Блоки SHA-256", zh: "SHA-256 区块", ja: "SHA-256 ブロック", es: "Bloques SHA-256", de: "SHA-256 Blöcke" }, this.plugin)} (${chain.length})` },
-        { id: "hormozi", icon: "zap", label: i18n({ en: "Value Formula", ru: "Формула ценности", zh: "价值公式", ja: "価値方程式", es: "Fórmula de Valor", de: "Wertformel" }, this.plugin) }
+        { id: "value-formula", icon: "zap", label: i18n({ en: "Value Formula", ru: "Формула ценности", zh: "价值公式", ja: "価値方程式", es: "Fórmula de Valor", de: "Wertformel" }, this.plugin) }
       ].forEach((tObj) => {
         const b = tabs.createEl("button", {
           cls: "artcraft-rpg-tab" + (this.activeTab === tObj.id ? " is-active" : "")
@@ -11084,15 +11084,15 @@ class LifeRpgQuestChainModal extends Modal {
         `;
       } else {
         body.innerHTML = `
-          <div class="artcraft-hormozi-box">
-            <div class="rpg-card-kicker">ALEX HORMOZI VALUE EQUATION // (DREAM × LIKELIHOOD) ÷ (DELAY × EFFORT)</div>
-            <div class="hormozi-sliders-grid">
+          <div class="artcraft-value-eq-box">
+            <div class="rpg-card-kicker">HIGH-LEVERAGE VALUE EQUATION // (DREAM × LIKELIHOOD) ÷ (DELAY × EFFORT)</div>
+            <div class="value-eq-sliders-grid">
               <label><span>01 · ${i18n({ en: "Dream Outcome (1–10)", ru: "Сила результата (1–10)", zh: "理想结果 (1–10)", ja: "理想の成果 (1–10)", es: "Resultado soñado (1–10)", de: "Traumergebnis (1–10)" }, this.plugin)}</span><input type="range" min="1" max="10" value="9" data-hm="dream" /></label>
               <label><span>02 · ${i18n({ en: "Perceived Likelihood (1–10)", ru: "Доказанность и вера (1–10)", zh: "实现概率 (1–10)", ja: "実現可能性 (1–10)", es: "Probabilidad (1–10)", de: "Wahrscheinlichkeit (1–10)" }, this.plugin)}</span><input type="range" min="1" max="10" value="8" data-hm="like" /></label>
               <label><span>03 · ${i18n({ en: "Time Delay (1=Instant, 10=Slow)", ru: "Ожидание результата (1=мгновенно)", zh: "时间延迟 (1=即刻)", ja: "時間遅延 (1=即時)", es: "Demora (1=Inmediato)", de: "Zeitverzögerung (1=Sofort)" }, this.plugin)}</span><input type="range" min="1" max="10" value="2" data-hm="delay" /></label>
               <label><span>04 · ${i18n({ en: "Effort & Friction (1=Easy)", ru: "Сложность для клиента (1=в 1 клик)", zh: "阻力与门槛 (1=极简)", ja: "労力と摩擦 (1=簡単)", es: "Esfuerzo (1=Fácil)", de: "Aufwand (1=Einfach)" }, this.plugin)}</span><input type="range" min="1" max="10" value="2" data-hm="effort" /></label>
             </div>
-            <div class="hormozi-score-banner">
+            <div class="value-eq-score-banner">
               <div class="hm-score-val">18.0x</div>
               <div class="hm-score-txt">${i18n({
                 en: "Value Multiplier (Target > 10x: instant visual result in 1 click)",
@@ -12016,7 +12016,7 @@ class CreatorOsStudioModal extends Modal {
 }
 
 // =========================================================================
-// 5. DAN KOE AUTOPILOT INTERRUPT MODAL (6 LANGUAGES)
+// 5. MINDFUL FOCUS CALIBRATION MODAL (6 LANGUAGES)
 // =========================================================================
 class AutopilotInterruptModal extends Modal {
   constructor(app, plugin, triggerTime = "") {

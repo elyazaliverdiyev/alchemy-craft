@@ -6839,7 +6839,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 .artcraft-bio-sliders,
-.artcraft-hormozi-box {
+.artcraft-value-eq-box {
   background: #FFFFFF;
   border: 1px solid #CBD5E1;
   border-radius: 12px;
@@ -6860,7 +6860,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 .bio-slider-row input[type="range"],
-.hormozi-sliders-grid input[type="range"] {
+.value-eq-sliders-grid input[type="range"] {
   width: 100%;
 }
 
@@ -6885,14 +6885,14 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
   color: #1E293B;
 }
 
-.hormozi-sliders-grid {
+.value-eq-sliders-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin: 12px 0;
 }
 
-.hormozi-sliders-grid label {
+.value-eq-sliders-grid label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -6900,7 +6900,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
   font-weight: 600;
 }
 
-.hormozi-score-banner {
+.value-eq-score-banner {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -7536,7 +7536,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 .artcraft-bio-sliders,
-.artcraft-hormozi-box {
+.artcraft-value-eq-box {
   background: #FFFFFF;
   border: 1px solid #CBD5E1;
   border-radius: 12px;
@@ -7557,7 +7557,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 .bio-slider-row input[type="range"],
-.hormozi-sliders-grid input[type="range"] {
+.value-eq-sliders-grid input[type="range"] {
   width: 100%;
 }
 
@@ -7582,14 +7582,14 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
   color: #1E293B;
 }
 
-.hormozi-sliders-grid {
+.value-eq-sliders-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin: 12px 0;
 }
 
-.hormozi-sliders-grid label {
+.value-eq-sliders-grid label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -7597,7 +7597,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
   font-weight: 600;
 }
 
-.hormozi-score-banner {
+.value-eq-score-banner {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -7732,7 +7732,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
   color: #B45309;
 }
 
-/* 2. 365-Day GitHub / Harvee / Flo Proof-of-Work Heatmap */
+/* 2. 365-Day Cryptographic Proof-of-Work Heatmap */
 .artcraft-heatmap-card {
   background: #FFFFFF;
   border: 1px solid #CBD5E1;

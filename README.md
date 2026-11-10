@@ -1,4 +1,4 @@
-## What's New in v5.0.2 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
+## What's New in v5.0.3 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
 
 - **Direct 1-Click Page Surface Selector**: Replaced confusing 3-cycle checkbox with 3 explicit segmented chips ([Pure White] [Warm Book] [Archival Grain]). Select any canvas instantly with 1 single click!
 - **APAG Builder Full English & Russian Localization**: Textareas now load polished English copywriting templates when English UI is selected, and Russian templates when Russian is selected.
@@ -28,10 +28,10 @@
 - **Zero-Cost On-Chain Smart Contract Bridge (AlchemyProofOfWorkRegistry.sol)**: Anchors your Obsidian SHA-256 Quest Chain root hash on Base Sepolia Testnet (Chain ID: 84532, $0.00 gas) or L2 mainnets (Base, opBNB, Polygon, Arbitrum) with auto-generated ABI calldata and ★ ON-CHAIN ALCHEMIST verification.
 - **Creator OS Studio (⚡ Creator OS)**:
   - **9-Block @brand_context.md Compiler for AI**: Synthesizes your Vision, Anti-Vision, Brand Voice, and 5-Nutrient stickers into a ready-to-paste context file for Claude, Cursor, and ChatGPT.
-  - **APAG Post & Thread Builder**: Structured Attention → Perspective → Advantage → Gamify editor with Alex Hormozi hook templates.
+  - **APAG Post & Thread Builder**: Structured Attention → Perspective → Advantage → Gamify editor with high-leverage copywriting hook templates.
   - **4-Level Content Map**: Turns any note into 4 content angles (Contrarian, Build-in-Public, 01–03 Framework, Life RPG).
   - **Interactive 3-Column Note Kanban**: Turns `- [ ]` tasks in the active note into a live Backlog → In Flow → Signed SHA-256 board.
-  - **Dan Koe's 5 Autopilot Interrupt Alarms (11:00, 13:30, 15:15, 17:00, 19:30)**: Mindful check-ins that sign reflections into the SHA-256 Quest Chain.
+  - **5 Mindful Focus Calibration Alarms (11:00, 13:30, 15:15, 17:00, 19:30)**: Mindful check-ins that sign reflections into the SHA-256 Quest Chain.
 - **60-Second Free Pro Test-Drive & Spring Physics (`cubic-bezier(0.22, 1, 0.36, 1)`)**: 1-click live preview of Midnight Dark Craft and all Pro features with multi-harmonic WebAudio tactile feedback.
 
 ## What's New in v4.8.2 (Swiss Editorial Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
@@ -40,8 +40,8 @@
 - **Windows 11 Night Light Compensation (`nightLightCompensation`)**: Dedicated color-calibration mode (Cool Alabaster `#F5F7FA` / `#FFFFFF` + Crisp Slate Ink `#0F172A`) that neutralizes the yellow/orange cast of Windows 11 Night Light so text stays razor-sharp without eye strain.
 - **Fixed PC System Audio Loopback (`WASAPI + getDisplayMedia`)**: Preserves the multi-endpoint Windows CoreAudio WASAPI Loopback bridge across fallbacks and adds Chromium `getDisplayMedia` audio loopback so the 6-mode equalizer reacts to YouTube, Spotify, and desktop audio out of the box.
 - **Official Obsidian Graph & Canvas Studio**: Uses official `--graph-*` and `--canvas-*` CSS variables and exact PixiJS/WebGL world-to-screen coordinate projection.
-- **Life RPG & SHA-256 Proof-of-Work Quest Chain (`Квесты · L4`)**: Built on Dan Koe's 6-component Life RPG (*Anti-Vision, Vision MVP, 1-Year Mission, 1-Month Boss Fight, Daily Levers*) and Alex Hormozi's Value Equation. Every completed task mines a verifiable **SHA-256 block** linked to `prevHash` and exports signed Proof-of-Work certificates into your notes.
-- **Bio-Rhythm & Cognitive Flow Readiness (`Поток · 82%`)**: Inspired by Flo and Harvee, tracks Low/Mid/High cognitive entropy waves and diagnoses your Csikszentmihalyi Flow Channel (*Challenge vs. Skill*).
+- **Life RPG & SHA-256 Proof-of-Work Quest Chain (`Квесты · L4`)**: Built on a 6-component Deep Work Life RPG (*Anti-Vision, Vision MVP, 1-Year Mission, 1-Month Boss Fight, Daily Levers*) and High-Leverage Value Equation. Every completed task mines a verifiable **SHA-256 block** linked to `prevHash` and exports signed Proof-of-Work certificates into your notes.
+- **Bio-Rhythm & Cognitive Flow Readiness (`Поток · 82%`)**: Tracks Low/Mid/High cognitive entropy waves and diagnoses your Csikszentmihalyi Flow Channel (*Challenge vs. Skill*).
 - **Creative Margin Sketchpad (`Скетч`)**: Pressure-smooth Bezier canvas with Dot Grid, Archival Paper, and Blueprint modes that embeds drawings directly into the active note.
 
 
