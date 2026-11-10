@@ -11713,24 +11713,24 @@ class CreatorOsStudioModal extends Modal {
           <div class="artcraft-rpg-grid-2">
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">01 · ${i18n({ en: "VOICE & STYLE", ru: "СТИЛЬ И ПОДАЧА", zh: "品牌语调", ja: "トーン＆スタイル", es: "ESTILO Y VOZ", de: "STIL & TONFALL" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="brandVoice" rows="2">${cos.brandVoice || ""}</textarea>
+              <textarea class="rpg-input-area" data-cos="brandVoice" rows="4">${cos.brandVoice || ""}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">02 · ${i18n({ en: "AUDIENCE & PAIN", ru: "АУДИТОРИЯ И ЗАПРОС", zh: "受众与痛点", ja: "対象読者と悩み", es: "AUDIENCIA", de: "ZIELGRUPPE" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="coreAudience" rows="2">${cos.coreAudience || ""}</textarea>
+              <textarea class="rpg-input-area" data-cos="coreAudience" rows="4">${cos.coreAudience || ""}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">03 · ${i18n({ en: "CORE PRODUCT / OFFER", ru: "КЛЮЧЕВОЙ ПРОДУКТ", zh: "核心产品", ja: "主力プロダクト", es: "PRODUCTO CLAVE", de: "KERNPRODUKT" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="flagshipOffer" rows="2">${cos.flagshipOffer || ""}</textarea>
+              <textarea class="rpg-input-area" data-cos="flagshipOffer" rows="4">${cos.flagshipOffer || ""}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">04 · ${i18n({ en: "MAIN TOPIC PILLAR", ru: "ГЛАВНАЯ ТЕМА БЛОГА", zh: "内容支柱", ja: "メインテーマ", es: "PILAR DE CONTENIDO", de: "HAUPTTHEMA" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="contentPillar" rows="2">${cos.contentPillar || ""}</textarea>
+              <textarea class="rpg-input-area" data-cos="contentPillar" rows="4">${cos.contentPillar || ""}</textarea>
             </div>
           </div>
           <div class="artcraft-rpg-levers-box">
             <div class="rpg-card-kicker">${i18n({ en: "COMPILED @brand_context.md FOR AI", ru: "СВОДНЫЙ КОНТЕКСТ @brand_context.md ДЛЯ ИИ", zh: "生成的 AI 品牌上下文", ja: "AI用 @brand_context.md プレビュー", es: "CONTEXTO @brand_context.md", de: "KOMPILIERTER KI-KONTEXT" }, this.plugin)}</div>
-            <textarea class="rpg-input-area is-mono-preview" rows="5" readonly>${compiledPrompt}</textarea>
+            <textarea class="rpg-input-area is-mono-preview" rows="8" readonly>${compiledPrompt}</textarea>
           </div>
           <div class="artcraft-rpg-footer-actions">
             <button class="sketch-tool-btn" data-act="copy-brand">${sicraftIcon('copy')} <span>${i18n({ en: "Copy Context", ru: "Скопировать", zh: "复制", ja: "コピー", es: "Copiar", de: "Kopieren" }, this.plugin)}</span></button>
@@ -11765,19 +11765,19 @@ class CreatorOsStudioModal extends Modal {
           <div class="artcraft-rpg-grid-2">
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">01 · ATTENTION (${i18n({ en: "HOOK & CONTRAST", ru: "ХУК И КОНТРАСТ", zh: "吸引注意", ja: "フック", es: "GANCHO", de: "HOOK" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="hook" rows="3">${this.apag.hook}</textarea>
+              <textarea class="rpg-input-area" data-apag="hook" rows="4">${this.apag.hook}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">02 · PERSPECTIVE (${i18n({ en: "ROOT CAUSE", ru: "СУТЬ ПРОБЛЕМЫ", zh: "视角转换", ja: "視点の転換", es: "PERSPECTIVA", de: "PERSPEKTIVE" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="perspective" rows="3">${this.apag.perspective}</textarea>
+              <textarea class="rpg-input-area" data-apag="perspective" rows="4">${this.apag.perspective}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">03 · ADVANTAGE (${i18n({ en: "YOUR MECHANISM", ru: "НОВОЕ РЕШЕНИЕ", zh: "核心优势", ja: "解決メカニズム", es: "SOLUCIÓN", de: "LÖSUNG" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="advantage" rows="3">${this.apag.advantage}</textarea>
+              <textarea class="rpg-input-area" data-apag="advantage" rows="4">${this.apag.advantage}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">04 · GAMIFY (${i18n({ en: "ACTION STEPS 01–03", ru: "ШАГИ 01–03", zh: "行动步骤", ja: "実践ステップ", es: "PASOS 01–03", de: "SCHRITTE 01–03" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="gamify" rows="3">${this.apag.gamify}</textarea>
+              <textarea class="rpg-input-area" data-apag="gamify" rows="4">${this.apag.gamify}</textarea>
             </div>
           </div>
           <div class="artcraft-rpg-footer-actions">
@@ -11968,6 +11968,17 @@ class CreatorOsStudioModal extends Modal {
           });
         });
       }
+
+      // Auto-fit textarea height so user never has to drag corners
+      body.querySelectorAll("textarea.rpg-input-area").forEach((ta) => {
+        const fitHeight = () => {
+          ta.style.height = "auto";
+          const minH = ta.classList.contains("is-mono-preview") ? 180 : 84;
+          ta.style.height = Math.max(minH, ta.scrollHeight + 4) + "px";
+        };
+        ta.addEventListener("input", fitHeight);
+        setTimeout(fitHeight, 20);
+      });
     };
 
     render();

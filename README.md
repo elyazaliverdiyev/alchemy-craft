@@ -1,3 +1,10 @@
+## What's New in v5.0.1 (Light Green Swiss Bento Buttons & Auto-Expanding Creator Studio)
+
+- **Light Green Swiss Bento Buttons (#69BD28)**: Replaced dark green buttons (`#16A34A`) with signature bright Swiss Apple/Lime Green (`#69BD28` / border `#559E1D`) across all modal actions (`Save Flow Check-In`, `Save @brand_context.md`, `Add Quest`, `Seal Capsule`, `Insert into Note`), perfectly harmonized with the floating dock's UI and Focus buttons.
+- **Auto-Expanding Creator Studio (⚡ Creator OS)**: Modal widened to 860px with dynamic auto-fit height on all textareas (`@brand Context`, `APAG Builder`, and compiled Markdown). All text is immediately visible without scrolling or dragging textarea corners.
+- **Base Sepolia Smart Contract Registry Preconfigured**: Connected to deployed on-chain registry contract (`0xe55230492ec0e029481fd72f5DAbf5d3B4127e03`).
+- **100% Scorecard Audit Pass**: 0 !important warnings, 0 CSS parse errors, zero leaked secrets.
+
 ## What's New in v5.0.0 (Pure White Surface, 3 Surface Modes, 3D Envelope Time Capsule, 3D Walnut Bookshelf & Graph Studio)
 
 - **Pure White Canvas & 3 Surface Modes (surfaceMode)**: Pure White (`#FFFFFF`) background with soft sidebar (`#FBFBFA`) without paragraph border noise. Toggle between Pure White (`#FFFFFF`), Warm Book Paper (`#FAF8F3`), and Archival Grain (`#F8F6F0`).

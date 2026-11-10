@@ -8235,8 +8235,8 @@ body.artcraft-theme-active {
   --checkbox-radius: 5px;
   --checkbox-size: 17px;
   --checkbox-marker-color: #FFFFFF;
-  --checkbox-color: #16A34A;
-  --checkbox-color-hover: #15803D;
+  --checkbox-color: #69BD28;
+  --checkbox-color-hover: #559E1D;
   --checkbox-border-color: #D1D5DB;
   --checkbox-border-color-hover: #9CA3AF;
   --checklist-done-decoration: none;
@@ -8269,12 +8269,13 @@ button.mod-cta *,
 .rpg-add-quest-btn.mod-cta,
 .capsule-seal.mod-cta,
 .wax-env-btn.is-break {
-  background: #16A34A;
-  border: 1px solid #15803D;
+  background: #69BD28;
+  border: 1px solid #559E1D;
   border-radius: 9px;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.22);
+  box-shadow: 0 2px 8px rgba(105, 189, 40, 0.28);
   font-weight: 700;
   padding: 8px 14px;
+  color: #FFFFFF;
 }
 
 .artcraft-pay-action-btn.is-green:hover,
@@ -8282,8 +8283,19 @@ button.mod-cta *,
 .rpg-add-quest-btn.mod-cta:hover,
 .capsule-seal.mod-cta:hover,
 .wax-env-btn.is-break:hover {
-  background: #15803D;
+  background: #5BAA20;
+  border-color: #4C8E19;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(105, 189, 40, 0.36);
+}
+
+.artcraft-pay-action-btn.is-green:active,
+.artcraft-rpg-stamp-note-btn.mod-cta:active,
+.rpg-add-quest-btn.mod-cta:active,
+.capsule-seal.mod-cta:active,
+.wax-env-btn.is-break:active {
+  background: #4F961A;
+  transform: translateY(0);
 }
 
 body .workspace-leaf-content[data-type="graph"] .view-content,
@@ -8733,4 +8745,87 @@ body.theme-dark .artcraft-graph-hud {
 .artcraft-airy-modal .airy-topic-header strong {
   font-size: 14px;
   color: #1F2328;
+}
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v5.0.1 — LIGHT GREEN BUTTONS & EXPANDED CREATOR STUDIO
+   ========================================================================== */
+
+.modal.artcraft-wide-craft-modal.artcraft-creator-os-modal {
+  width: 860px;
+  max-width: 95vw;
+  max-height: 90vh;
+  padding: 24px 28px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.artcraft-creator-os-modal .artcraft-rpg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.artcraft-creator-os-modal .artcraft-rpg-card {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.artcraft-creator-os-modal .rpg-card-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #64748B;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.artcraft-creator-os-modal .rpg-input-area {
+  width: 100%;
+  min-height: 84px;
+  line-height: 1.5;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: var(--font-text);
+  color: #1E293B;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.artcraft-creator-os-modal .rpg-input-area:focus {
+  background: #FFFFFF;
+  border-color: #69BD28;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(105, 189, 40, 0.18);
+}
+
+.artcraft-creator-os-modal .rpg-input-area.is-mono-preview {
+  min-height: 180px;
+  max-height: 380px;
+  overflow-y: auto;
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  line-height: 1.55;
+  background: #F8FAFC;
+  color: #0F172A;
+  resize: vertical;
+}
+
+.artcraft-creator-os-modal .artcraft-rpg-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
 }
