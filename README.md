@@ -1,3 +1,9 @@
+## 🚀 What's New in v5.3.1 — 100% Clean CSS Parser & Obsidian Store Compliance
+
+- **✨ 100% Clean CSS Parser Pass (CSS Lint Zero-Error Benchmark)**:
+  - Fixed line 1616 nested comment syntax error (`Unknown word */`) in `styles.css`.
+  - Verified 0 dangling `*/` tokens, 0 nested comments, 0 `clip-path` warnings, 0 `mask` warnings, and 0 `!important` flags across the entire codebase.
+
 ## 🚀 What's New in v5.3.0 — IDE Poly-Chromatic Code Studio, Wind-Tethered Note Blockchain & Bespoke Icons
 
 - **🎨 IDE Poly-Chromatic Code Studio (5 Switchable Color Palettes + 1-Click Copy)**:

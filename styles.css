@@ -1613,7 +1613,7 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 /* Midnight Dark Craft Mode */
 /* Disabled dark mode body vars */
 body.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] {
-  /* /* background-color: #121212; */ */
+  /* background-color disabled */
 }
 
 /* ==========================================================================

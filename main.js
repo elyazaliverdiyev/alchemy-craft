@@ -13560,7 +13560,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
       <div class="dc-studio-shell">
         <div class="dc-studio-header">
           <div>
-            <div class="dc-eyebrow">ALCHEMY CRAFT v5.3.0 // HUMAN × AI DUAL-COGNITION ENGINE</div>
+            <div class="dc-eyebrow">ALCHEMY CRAFT v5.3.1 // HUMAN × AI DUAL-COGNITION ENGINE</div>
             <h2 class="dc-title">${
               isRu
                 ? "🧠 Двухрежимное Чтение: Человек × ИИ-Агент"
