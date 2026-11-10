@@ -1,9 +1,9 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "4.8.0",
+  "version": "4.8.1",
   "minAppVersion": "1.0.0",
-  "description": "Notion/AFFiNE book folio, Windows 11 Night Light calibration, PC WASAPI audio equalizer, Graph/Canvas Studio, SHA-256 Quest Chain, Bio-Flow & Sketchpad.",
+  "description": "Tactile 4-Layer Book Folio & Focus Studio: Swiss Editorial Cards, Windows 11 Night Light Calibration, WASAPI Equalizer, SHA-256 Quest Ledger, Bio-Flow & Sketchpad.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
   "isDesktopOnly": false,

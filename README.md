@@ -1,6 +1,6 @@
-## What's New in v4.8.0 (Notion/AFFiNE Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
+## What's New in v4.8.1 (Notion/AFFiNE Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
 
-- **Notion / AFFiNE / Harvee Editorial Block Isolation (`editorialCleanMode`)**: Replaces heavy neo-brutalist black borders with airy, tactile block cards (`1px` subtle borders, soft elevation, clear visual anchors) so every paragraph and step stands out cleanly without turning into a monotonous wall of grey text.
+- **Swiss Editorial Cards Editorial Block Isolation (`editorialCleanMode`)**: Replaces heavy neo-brutalist black borders with airy, tactile block cards (`1px` subtle borders, soft elevation, clear visual anchors) so every paragraph and step stands out cleanly without turning into a monotonous wall of grey text.
 - **Windows 11 Night Light Compensation (`nightLightCompensation`)**: Dedicated color-calibration mode (Cool Alabaster `#F5F7FA` / `#FFFFFF` + Crisp Slate Ink `#0F172A`) that neutralizes the yellow/orange cast of Windows 11 Night Light so text stays razor-sharp without eye strain.
 - **Fixed PC System Audio Loopback (`WASAPI + getDisplayMedia`)**: Preserves the multi-endpoint Windows CoreAudio WASAPI Loopback bridge across fallbacks and adds Chromium `getDisplayMedia` audio loopback so the 6-mode equalizer reacts to YouTube, Spotify, and desktop audio out of the box.
 - **Official Obsidian Graph & Canvas Studio**: Uses official `--graph-*` and `--canvas-*` CSS variables and exact PixiJS/WebGL world-to-screen coordinate projection.

@@ -6297,13 +6297,13 @@ html body.artcraft-chrono-ink[data-chrono-age="archival"] .workspace-leaf-conten
 }
 
 
-* ==========================================================================
-   ALCHEMY CRAFT v4.8.0 — NOTION / AFFiNE / HARVEE EDITORIAL READABILITY,
+/* ==========================================================================
+   ALCHEMY CRAFT v4.8.0 — SWISS EDITORIAL CARDS & EDITORIAL READABILITY,
    WINDOWS 11 NIGHT LIGHT COMPENSATION, OFFICIAL GRAPH/CANVAS CSS VARIABLES,
    AND LIFE RPG SHA-256 BLOCKCHAIN + BIO-FLOW + SKETCHPAD STUDIO
    ========================================================================== */
 
-/* 1. NOTION / AFFiNE / HARVEE EDITORIAL CLEAN READABILITY
+/* 1. SWISS EDITORIAL CARDS & EDITORIAL CLEAN READABILITY
    Removes harsh neo-brutalist black borders while giving every paragraph,
    step, heading, and callout tactile, eye-friendly separation so the eye
    never faces a monotonous grey wall of text. */
@@ -6375,7 +6375,7 @@ body.artcraft-theme-active.artcraft-editorial-clean .inline-title {
   letter-spacing: -0.028em;
 }
 
-/* Tactile Block Separation (Fixes the "Wall of Grey Text" problem while looking clean like Notion / AFFiNE) */
+/* Tactile Block Separation (Fixes the "Wall of Grey Text" problem while looking clean like Swiss Editorial) */
 body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view p,
 body.artcraft-theme-active.artcraft-editorial-clean .cm-s-obsidian .cm-line:not(.HyperMD-header):not(.HyperMD-codeblock):not(.HyperMD-frontmatter) {
   line-height: 1.74;
@@ -6994,13 +6994,13 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 
-* ==========================================================================
-   ALCHEMY CRAFT v4.8.0 — NOTION / AFFiNE / HARVEE EDITORIAL READABILITY,
+/* ==========================================================================
+   ALCHEMY CRAFT v4.8.0 — SWISS EDITORIAL CARDS & EDITORIAL READABILITY,
    WINDOWS 11 NIGHT LIGHT COMPENSATION, OFFICIAL GRAPH/CANVAS CSS VARIABLES,
    AND LIFE RPG SHA-256 BLOCKCHAIN + BIO-FLOW + SKETCHPAD STUDIO
    ========================================================================== */
 
-/* 1. NOTION / AFFiNE / HARVEE EDITORIAL CLEAN READABILITY
+/* 1. SWISS EDITORIAL CARDS & EDITORIAL CLEAN READABILITY
    Removes harsh neo-brutalist black borders while giving every paragraph,
    step, heading, and callout tactile, eye-friendly separation so the eye
    never faces a monotonous grey wall of text. */
@@ -7072,7 +7072,7 @@ body.artcraft-theme-active.artcraft-editorial-clean .inline-title {
   letter-spacing: -0.028em;
 }
 
-/* Tactile Block Separation (Fixes the "Wall of Grey Text" problem while looking clean like Notion / AFFiNE) */
+/* Tactile Block Separation (Fixes the "Wall of Grey Text" problem while looking clean like Swiss Editorial) */
 body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view p,
 body.artcraft-theme-active.artcraft-editorial-clean .cm-s-obsidian .cm-line:not(.HyperMD-header):not(.HyperMD-codeblock):not(.HyperMD-frontmatter) {
   line-height: 1.74;
