@@ -1,9 +1,9 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "minAppVersion": "1.5.0",
-  "description": "Airy book folio (#FFFFFF / Book / Grain), 3 Page Widths (760px/1080px/Full), Bionic Focus, WASM 144 FPS Core, 3D Envelope Capsule & Base Sepolia Quest Chain.",
+  "description": "Swiss Bento human reading & AI Dual-Cognition studio: pure white/book surfaces, WASM 144 FPS physics & SimHash semantic radar, llms.txt/MCP compiler, and SHA-256 quest chain.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
   "isDesktopOnly": false,

@@ -70,6 +70,8 @@ const DEFAULT_SETTINGS = {
   pageWidthMode: "book", // "book" (760px Classic Book) | "wide" (1080px Studio Wide) | "full" (94% Full Canvas)
   bionicAnchors: false, // Saccadic Bionic Word-Root Fixation Anchors for fast wall-of-text scanning
   wasmAcceleration: true, // Embedded WebAssembly (WASM) 144 FPS Spring & Graph Physics Core
+  dualCognitionBrief: true, // v5.2.0 Human x AI Dual-Cognition Executive Brief & llms.txt Compiler
+  wasmSemanticRadar: true, // v5.2.0 WASM 64-Bit SimHash Offline Semantic Connection Radar
   paperGrain: 28, // 0..100% micro-grain intensity // Calibrated Cool Alabaster & Crisp Slate Ink for Windows 11 Night Light users
   editorialCleanMode: true, // Swiss Bento tactile block isolation without harsh neo-brutalist black borders
   lifeRpg: {
@@ -3999,6 +4001,24 @@ class AlchemyFlowPlugin extends Plugin {
     });
 
     this.addCommand({
+      id: "open-dual-cognition-studio",
+      name: "🧠 Human × AI Dual-Cognition Studio: Executive Brief, llms.txt & WASM Semantic Radar",
+      callback: () => this.openDualCognitionModal(),
+    });
+
+    this.addCommand({
+      id: "compile-vault-llms-txt",
+      name: "🤖 Compile & Save Vault llms.txt Index for AI Agents (Cursor / Claude / MCP)",
+      callback: () => this.compileVaultLlmsTxtFile(),
+    });
+
+    this.addCommand({
+      id: "insert-executive-brief-callout",
+      name: "📑 Insert Human × AI Executive Brief Callout at Top of Active Note",
+      callback: () => this.insertExecutiveBriefIntoActiveNote(),
+    });
+
+    this.addCommand({
       id: "clear-drawings",
       name: "Clear All Drawings & Highlights",
       callback: () => this.clearAllAnnotations(),
@@ -5811,6 +5831,19 @@ class AlchemyFlowPlugin extends Plugin {
               ${sicraftIcon('pulse')}
               <span>${i18n({ en: "Flow", ru: "Поток", zh: "心流", ja: "フロー", es: "Flujo", de: "Flow" }, this)} · ${(this.settings.bioFlow && this.settings.bioFlow.energy) || 82}%</span>
             </button>
+            <button class="artcraft-craft-mini-btn is-neural-brief-btn" data-act="neural-brief" title="${
+              i18n({
+                en: "Human × AI Dual-Cognition Studio: Instant Executive TL;DR, AI Agent Capsule (llms.txt / MCP XML) & WASM Semantic Radar",
+                ru: "Нейро-Бриф (Человек × ИИ): Мгновенная выжимка заметки, экспорт llms.txt / MCP для ИИ-агентов и WASM-радар связей",
+                zh: "人机双认知工坊：速读摘要、AI 代理胶囊 (llms.txt / MCP) 与 WASM 语义雷达",
+                ja: "人間×AI デュアル認知スタジオ：要約ブリーフ、llms.txt / MCP 出力、WASM 意味レーダー",
+                es: "Estudio Cognitivo Humano × IA: Resumen Ejecutivo, Cápsula llms.txt / MCP y Radar WASM",
+                de: "Mensch × KI Dual-Kognitions-Studio: Executive Brief, llms.txt / MCP & WASM Semantik-Radar"
+              }, this)
+            }">
+              ${sicraftIcon('sparkle')}
+              <span>${i18n({ en: "AI·Brief", ru: "AI·Бриф", zh: "AI·摘要", ja: "AI·要約", es: "IA·Brief", de: "KI·Brief" }, this)}</span>
+            </button>
             <button class="artcraft-craft-mini-btn is-creator-os-btn" data-act="creator-os" title="${
               i18n({
                 en: "Creator Studio: @brand AI Context, APAG Post Builder, Kanban & Sketchpad",
@@ -5875,6 +5908,11 @@ class AlchemyFlowPlugin extends Plugin {
     wrap.querySelector('[data-act="sketchpad"]')?.addEventListener("click", (e) => {
       e.stopPropagation();
       this.openCreativeSketchModal();
+    });
+
+    wrap.querySelector('[data-act="neural-brief"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.openDualCognitionModal();
     });
 
     wrap.querySelector('[data-act="creator-os"]')?.addEventListener("click", (e) => {
@@ -7478,6 +7516,476 @@ class AlchemyFlowPlugin extends Plugin {
       this.applyBionicToElement(rootEl);
     }
   }
+
+  // =========================================================================
+  // 🧠 v5.2.0: HUMAN × AI DUAL-COGNITION ENGINE, llms.txt COMPILER & WASM SIMHASH RADAR
+  // =========================================================================
+  openDualCognitionModal(initialTab = "human") {
+    new DualCognitionNeuralStudioModal(this.app, this, initialTab).open();
+  }
+
+  analyzeNoteDualCognition(rawMarkdown = "", noteTitle = "Untitled", filePath = "") {
+    const raw = String(rawMarkdown || "");
+    const body = raw.replace(/^---[\s\S]*?---\n?/, "").trim();
+    const lines = body.split(/\r?\n/);
+
+    const headings = [];
+    const tasks = [];
+    const steps = [];
+    const callouts = [];
+    const paragraphs = [];
+
+    lines.forEach((line, idx) => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+
+      const hMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+      if (hMatch) {
+        headings.push({
+          level: hMatch[1].length,
+          text: hMatch[2].replace(/[*_`~\[\]]/g, "").trim(),
+          line: idx + 1,
+        });
+        return;
+      }
+
+      const taskMatch = trimmed.match(/^[-*+]\s+\[([ xX/\->])\]\s+(.+)$/);
+      if (taskMatch) {
+        tasks.push({
+          done: taskMatch[1].toLowerCase() === "x",
+          text: taskMatch[2].replace(/[*_`~]/g, "").trim(),
+          line: idx + 1,
+        });
+        return;
+      }
+
+      const stepMatch = trimmed.match(/^(?:(\d{1,2})\s*\/\/\s*|(\d{1,2})\.\s+)(.+)$/);
+      if (stepMatch) {
+        steps.push({
+          num: stepMatch[1] || stepMatch[2],
+          text: stepMatch[3].replace(/[*_`~]/g, "").trim(),
+          line: idx + 1,
+        });
+        return;
+      }
+
+      const calloutMatch = trimmed.match(/^>\s*\[!([a-zA-Z0-9_-]+)\][+-]?\s*(.*)$/);
+      if (calloutMatch) {
+        callouts.push({
+          type: calloutMatch[1].toLowerCase(),
+          title: (calloutMatch[2] || calloutMatch[1]).replace(/[*_`~]/g, "").trim(),
+          line: idx + 1,
+        });
+        return;
+      }
+
+      if (!trimmed.startsWith(">") && !trimmed.startsWith("```") && !trimmed.startsWith("|") && trimmed.length > 25) {
+        paragraphs.push(trimmed);
+      }
+    });
+
+    // Extract quantitative metrics, currencies, percentages, multipliers, dates & KPIs
+    const metricRegex = /(?:\$\d+(?:[.,]\d+)?\s*[kKmMbB]?|\b\d+(?:[.,]\d+)?\s*(?:%|x|X|×|мс|ms|fps|FPS|px|дн|дней|days|hrs|ч|мин|min|k|K|M|B)\b|\b202[4-9][-/.]\d{2}[-/.]\d{2}\b)/g;
+    const metricsSet = new Set();
+    const metricsList = [];
+    const cleanBodyForMetrics = body.replace(/```[\s\S]*?```/g, "");
+    let mMatch;
+    while ((mMatch = metricRegex.exec(cleanBodyForMetrics)) !== null) {
+      const val = mMatch[0].trim();
+      if (metricsSet.has(val) || metricsList.length >= 16) continue;
+      metricsSet.add(val);
+      const startCtx = Math.max(0, mMatch.index - 36);
+      const endCtx = Math.min(cleanBodyForMetrics.length, mMatch.index + val.length + 44);
+      const ctx = cleanBodyForMetrics
+        .slice(startCtx, endCtx)
+        .replace(/\s+/g, " ")
+        .replace(/[#*_`>\[\]]/g, "")
+        .trim();
+      metricsList.push({ value: val, context: ctx });
+    }
+
+    // Extract core thesis sentences (highest density of formatting, numbers, or top position)
+    const allSentences = [];
+    paragraphs.forEach((p, pIdx) => {
+      const sents = p.split(/(?<=[.!?…])\s+/);
+      sents.forEach((s) => {
+        const cleanS = s.replace(/\[\[([^\]|]+\|)?([^\]]+)\]\]/g, "$2").replace(/[*_`~]/g, "").trim();
+        if (cleanS.length < 32 || cleanS.length > 260) return;
+        let score = pIdx === 0 ? 4 : pIdx < 3 ? 2 : 1;
+        if (/\*\*[^*]+\*\*/.test(s)) score += 3;
+        if (/\d+/.test(cleanS)) score += 2;
+        if (/(?:главн|ключев|итог|цель|принцип|core|key|thesis|goal|must|important|result|system)/i.test(cleanS)) score += 3;
+        allSentences.push({ text: cleanS, score });
+      });
+    });
+    allSentences.sort((a, b) => b.score - a.score);
+    const thesisList = allSentences.slice(0, 5).map((item) => item.text);
+    if (thesisList.length === 0 && headings.length > 0) {
+      headings.slice(0, 3).forEach((h) => thesisList.push(h.text));
+    }
+
+    // Extract [[wikilinks]] and #tags
+    const wikilinks = [];
+    const wlRegex = /\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]/g;
+    let wl;
+    while ((wl = wlRegex.exec(body)) !== null) {
+      const target = wl[1].trim();
+      if (target && !wikilinks.includes(target)) wikilinks.push(target);
+    }
+
+    const tags = [];
+    const tagRegex = /(?:^|\s)#([a-zA-Zа-яА-ЯёЁ0-9_/-]+)/g;
+    let tg;
+    while ((tg = tagRegex.exec(body)) !== null) {
+      const t = tg[1].trim();
+      if (t && !tags.includes(t)) tags.push(t);
+    }
+
+    const words = body ? body.split(/\s+/).filter(Boolean) : [];
+    const wordCount = words.length;
+    const rawTokens = Math.max(1, Math.ceil(raw.length / 3.8));
+
+    // Calculate Human Structural Readability Index (0..100)
+    let structureScore = 58;
+    if (headings.length >= 2) structureScore += 12;
+    if (headings.length >= 5) structureScore += 6;
+    if (steps.length > 0 || tasks.length > 0) structureScore += 10;
+    if (callouts.length > 0 || metricsList.length > 0) structureScore += 8;
+    if (wikilinks.length > 0) structureScore += 6;
+    structureScore = Math.min(99, Math.max(35, structureScore));
+
+    const hashHex = this.wasmFastHashHex(body || noteTitle);
+
+    return {
+      title: noteTitle,
+      filePath,
+      wordCount,
+      readMinutes: Math.max(1, Math.ceil(wordCount / 200)),
+      rawTokens,
+      structureScore,
+      hashHex,
+      headings,
+      tasks,
+      steps,
+      callouts,
+      metricsList,
+      thesisList,
+      wikilinks,
+      tags,
+    };
+  }
+
+  buildAiSemanticCapsule(analysis, format = "mcp") {
+    const a = analysis;
+    const nowIso = new Date().toISOString().slice(0, 10);
+
+    if (format === "llms") {
+      const lines = [
+        `# ${a.title}`,
+        `> Alchemy Craft Dual-Cognition Capsule | SHA-256/FNV: 0x${a.hashHex} | Readability: ${a.structureScore}% | Words: ${a.wordCount}`,
+        ``,
+        `## Core Thesis & Executive Summary`,
+        ...(a.thesisList.length > 0 ? a.thesisList.map((t, i) => `${i + 1}. ${t}`) : [`1. Primary knowledge node: ${a.title}`]),
+        ``,
+        `## Key Metrics & Quantitative Anchors`,
+        ...(a.metricsList.length > 0
+          ? a.metricsList.slice(0, 10).map((m) => `- **${m.value}**: ${m.context}`)
+          : [`- No explicit numeric KPIs detected in note body.`]),
+        ``,
+        `## Structural Architecture (Chapters & Sections)`,
+        ...(a.headings.length > 0
+          ? a.headings.slice(0, 14).map((h) => `${"  ".repeat(Math.max(0, h.level - 1))}- [L${h.line}] ${h.text}`)
+          : [`- Flat atomic note structure`]),
+        ``,
+        `## Actionable Levers & Tasks (${a.tasks.filter((t) => t.done).length}/${a.tasks.length} completed)`,
+        ...(a.steps.slice(0, 8).map((s) => `- [Step ${s.num.padStart(2, "0")}] ${s.text}`)),
+        ...(a.tasks.slice(0, 10).map((t) => `- [${t.done ? "x" : " "}] ${t.text}`)),
+        ``,
+        `## Semantic Graph Links`,
+        `- Outgoing Links: ${a.wikilinks.length > 0 ? a.wikilinks.map((w) => `[[${w}]]`).join(", ") : "None"}`,
+        `- Tags: ${a.tags.length > 0 ? a.tags.map((t) => `#${t}`).join(" ") : "None"}`,
+      ];
+      return lines.join("\n");
+    }
+
+    if (format === "jsonld") {
+      const payload = {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        name: a.title,
+        identifier: a.filePath || a.title,
+        dateModified: nowIso,
+        version: "5.2.0",
+        integrityHash: `0x${a.hashHex}`,
+        humanReadabilityScore: a.structureScore,
+        wordCount: a.wordCount,
+        abstract: a.thesisList.join(" "),
+        keywords: a.tags,
+        mentions: a.wikilinks,
+        quantitativeMetrics: a.metricsList.slice(0, 12),
+        articleSection: a.headings.map((h) => ({ level: h.level, title: h.text, line: h.line })),
+        potentialAction: [
+          ...a.steps.slice(0, 8).map((s) => ({ "@type": "HowToStep", position: s.num, text: s.text })),
+          ...a.tasks.slice(0, 10).map((t) => ({ "@type": "Action", actionStatus: t.done ? "CompletedActionStatus" : "PotentialActionStatus", name: t.text })),
+        ],
+      };
+      return JSON.stringify(payload, null, 2);
+    }
+
+    // Default: "mcp" — Model Context Protocol / Claude XML Knowledge Capsule
+    const xmlLines = [
+      `<knowledge_capsule title="${a.title.replace(/"/g, "&quot;")}" path="${(a.filePath || "").replace(/"/g, "&quot;")}" hash="0x${a.hashHex}" readability="${a.structureScore}%" words="${a.wordCount}">`,
+      `  <executive_thesis>`,
+      ...(a.thesisList.length > 0
+        ? a.thesisList.map((t, i) => `    <point index="${i + 1}">${t}</point>`)
+        : [`    <point index="1">${a.title}</point>`]),
+      `  </executive_thesis>`,
+      `  <quantitative_anchors count="${a.metricsList.length}">`,
+      ...a.metricsList.slice(0, 10).map((m) => `    <metric value="${m.value.replace(/"/g, "&quot;")}">${m.context}</metric>`),
+      `  </quantitative_anchors>`,
+      `  <section_outline count="${a.headings.length}">`,
+      ...a.headings.slice(0, 14).map((h) => `    <section level="H${h.level}" line="${h.line}">${h.text}</section>`),
+      `  </section_outline>`,
+      `  <action_vectors tasks_done="${a.tasks.filter((t) => t.done).length}" tasks_total="${a.tasks.length}">`,
+      ...a.steps.slice(0, 8).map((s) => `    <step num="${s.num}">${s.text}</step>`),
+      ...a.tasks.slice(0, 10).map((t) => `    <task status="${t.done ? "done" : "todo"}">${t.text}</task>`),
+      `  </action_vectors>`,
+      `  <knowledge_graph_edges>`,
+      `    <wikilinks>${a.wikilinks.join(", ")}</wikilinks>`,
+      `    <tags>${a.tags.map((t) => "#" + t).join(" ")}</tags>`,
+      `  </knowledge_graph_edges>`,
+      `</knowledge_capsule>`,
+    ];
+    return xmlLines.join("\n");
+  }
+
+  computeWasmSimHash64(text = "") {
+    const clean = String(text || "")
+      .toLowerCase()
+      .replace(/^---[\s\S]*?---\n?/, "")
+      .replace(/[^a-zа-яё0-9\s]/gi, " ");
+    const tokens = clean.split(/\s+/).filter((w) => w.length >= 4);
+    const bitWeights = new Int32Array(64);
+    const useWasm = this.wasmReady && this.wasmExports && this.settings.wasmAcceleration !== false;
+
+    const hashToken = (str, seed) => {
+      let h = seed >>> 0;
+      for (let i = 0; i < str.length; i++) {
+        const c = str.charCodeAt(i) & 0xff;
+        if (useWasm) {
+          h = this.wasmExports.fnv1a_step(h, c) >>> 0;
+        } else {
+          h = Math.imul(h ^ c, 16777619) >>> 0;
+        }
+      }
+      return h >>> 0;
+    };
+
+    const limit = Math.min(tokens.length, 450);
+    for (let i = 0; i < limit; i++) {
+      const tok = tokens[i];
+      const h1 = hashToken(tok, 2166136261);
+      const h2 = hashToken(tok + (tokens[i + 1] || ""), 2654435761);
+      for (let b = 0; b < 32; b++) {
+        bitWeights[b] += (h1 & (1 << b)) !== 0 ? 1 : -1;
+        bitWeights[b + 32] += (h2 & (1 << b)) !== 0 ? 1 : -1;
+      }
+    }
+
+    let hi = 0;
+    let lo = 0;
+    for (let b = 0; b < 32; b++) {
+      if (bitWeights[b] > 0) lo |= 1 << b;
+      if (bitWeights[b + 32] > 0) hi |= 1 << b;
+    }
+    return [hi >>> 0, lo >>> 0, new Set(tokens.slice(0, 120))];
+  }
+
+  async scanVaultWasmSemanticRadar(activeFile, activeRawText) {
+    const t0 = performance.now();
+    const [targetHi, targetLo, targetTokens] = this.computeWasmSimHash64(activeRawText);
+    const files = this.app.vault.getMarkdownFiles().filter((f) => !activeFile || f.path !== activeFile.path);
+    const scanned = files.slice(0, 120);
+
+    const popcount32 = (x) => {
+      x = x - ((x >>> 1) & 0x55555555);
+      x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
+      return (((x + (x >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+    };
+
+    const existingLinks = new Set();
+    const wlRegex = /\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]/g;
+    let m;
+    while ((m = wlRegex.exec(activeRawText)) !== null) {
+      existingLinks.add(m[1].trim().toLowerCase());
+    }
+
+    const results = [];
+    for (const file of scanned) {
+      try {
+        const content = await this.app.vault.cachedRead(file);
+        const [hi, lo, fileTokens] = this.computeWasmSimHash64(content);
+        const hamming = popcount32(targetHi ^ hi) + popcount32(targetLo ^ lo);
+        const simHashScore = Math.max(0, Math.round(((64 - hamming) / 64) * 100));
+
+        // Shared keyword overlap boost
+        const sharedKeywords = [];
+        for (const tk of targetTokens) {
+          if (fileTokens.has(tk) && sharedKeywords.length < 5) {
+            sharedKeywords.push(tk);
+          }
+        }
+        const overlapBoost = Math.min(24, sharedKeywords.length * 5);
+        const similarity = Math.min(99, Math.round(simHashScore * 0.78 + overlapBoost));
+        const isAlreadyLinked =
+          existingLinks.has(file.basename.toLowerCase()) ||
+          existingLinks.has(file.path.replace(/\.md$/i, "").toLowerCase());
+
+        results.push({
+          file,
+          title: file.basename,
+          path: file.path,
+          similarity,
+          sharedKeywords,
+          isAlreadyLinked,
+          sigHex: ((hi >>> 0).toString(16).padStart(8, "0") + (lo >>> 0).toString(16).padStart(8, "0")).toUpperCase(),
+        });
+      } catch (e) {}
+    }
+
+    results.sort((a, b) => b.similarity - a.similarity);
+    const elapsedMs = Math.max(0.4, +(performance.now() - t0).toFixed(2));
+    return {
+      elapsedMs,
+      scannedCount: scanned.length,
+      wasmActive: !!(this.wasmReady && this.wasmExports),
+      matches: results.slice(0, 8),
+    };
+  }
+
+  async insertExecutiveBriefIntoActiveNote(passedAnalysis = null) {
+    const obsidian = require("obsidian");
+    const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (!activeView || !activeView.file) {
+      new obsidian.Notice(
+        i18n({
+          en: "Open a Markdown note first to insert an Executive Brief.",
+          ru: "Сначала откройте заметку Markdown для вставки Нейро-Брифа.",
+        }, this)
+      );
+      return false;
+    }
+
+    const raw = await this.app.vault.read(activeView.file);
+    const a = passedAnalysis || this.analyzeNoteDualCognition(raw, activeView.file.basename, activeView.file.path);
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+
+    const thesisBullets =
+      a.thesisList.length > 0
+        ? a.thesisList.slice(0, 3).map((t, idx) => `> **0${idx + 1} //** ${t}`).join("\n")
+        : `> **01 //** ${a.title}`;
+
+    const metricsLine =
+      a.metricsList.length > 0
+        ? `> - **${isRu ? "Ключевые цифры и метрики" : "Key Metrics & Numbers"}:** ${a.metricsList
+            .slice(0, 6)
+            .map((m) => "`" + m.value + "`")
+            .join(" · ")}\n`
+        : "";
+
+    const calloutBlock = [
+      `> [!abstract]+ 🧠 ${isRu ? "НЕЙРО-БРИФ // ВЫЖИМКА ДЛЯ ЧЕЛОВЕКА И ИИ" : "EXECUTIVE BRIEF // HUMAN × AI SUMMARY"} (\`${a.structureScore}% Clarity\` · \`0x${a.hashHex}\`)`,
+      thesisBullets,
+      metricsLine ? metricsLine.trimEnd() : `> - **${isRu ? "Объём" : "Scope"}:** ~${a.readMinutes} ${isRu ? "мин чтения" : "min read"} (${a.wordCount} ${isRu ? "слов" : "words"})`,
+      ``,
+    ].join("\n");
+
+    let updated = raw;
+    const fmMatch = raw.match(/^---[\s\S]*?---\r?\n/);
+    if (fmMatch) {
+      const prefix = fmMatch[0];
+      const rest = raw.slice(prefix.length);
+      updated = `${prefix}\n${calloutBlock}\n${rest}`;
+    } else {
+      updated = `${calloutBlock}\n${raw}`;
+    }
+
+    await this.app.vault.modify(activeView.file, updated);
+    new obsidian.Notice(
+      i18n({
+        en: "🧠 Executive Brief callout inserted at the top of your note!",
+        ru: "🧠 Нейро-Бриф (Callout) вставлен в начало вашей заметки!",
+      }, this)
+    );
+    return true;
+  }
+
+  async compileVaultLlmsTxtFile() {
+    const obsidian = require("obsidian");
+    const files = this.app.vault
+      .getMarkdownFiles()
+      .filter((f) => !f.path.startsWith(".") && f.name !== "llms.txt")
+      .sort((a, b) => (b.stat?.mtime || 0) - (a.stat?.mtime || 0))
+      .slice(0, 40);
+
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const header = [
+      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.2.0)`,
+      `> Dual-Cognition Knowledge Index for Human Readers & AI Agents (Cursor, Claude Code, MCP, Windsurf).`,
+      `> Generated: ${new Date().toISOString()} | Indexed Notes: ${files.length}`,
+      ``,
+      `## Vault Architecture & High-Signal Note Capsules`,
+      ``,
+    ];
+
+    let totalRawTokens = 0;
+    let totalCompressedTokens = 0;
+
+    for (const file of files) {
+      try {
+        const raw = await this.app.vault.cachedRead(file);
+        const a = this.analyzeNoteDualCognition(raw, file.basename, file.path);
+        totalRawTokens += a.rawTokens;
+        const thesis = a.thesisList[0] || file.basename;
+        const metrics = a.metricsList.slice(0, 4).map((m) => m.value).join(", ");
+        const secList = a.headings.slice(0, 5).map((h) => h.text).join(" → ");
+        const block = [
+          `### [${file.basename}](${file.path})`,
+          `- **Hash**: \`0x${a.hashHex}\` | **Clarity**: ${a.structureScore}% | **Words**: ${a.wordCount}`,
+          `- **Core Thesis**: ${thesis}`,
+          ...(metrics ? [`- **Metrics**: ${metrics}`] : []),
+          ...(secList ? [`- **Sections**: ${secList}`] : []),
+          ``,
+        ].join("\n");
+        totalCompressedTokens += Math.max(1, Math.ceil(block.length / 3.8));
+        header.push(block);
+      } catch (e) {}
+    }
+
+    const savedPct = totalRawTokens > 0 ? Math.max(15, Math.min(92, Math.round((1 - totalCompressedTokens / totalRawTokens) * 100))) : 64;
+    header.splice(
+      3,
+      0,
+      `> Token Optimization: ${totalCompressedTokens} capsule tokens vs ${totalRawTokens} raw tokens (~${savedPct}% context window saved).`
+    );
+
+    const finalContent = header.join("\n");
+    const targetPath = "llms.txt";
+    const existing = this.app.vault.getAbstractFileByPath(targetPath);
+    if (existing) {
+      await this.app.vault.modify(existing, finalContent);
+    } else {
+      await this.app.vault.create(targetPath, finalContent);
+    }
+
+    new obsidian.Notice(
+      isRu
+        ? `🤖 Файл llms.txt собран в корне хранилища (${files.length} заметок, экономия ~${savedPct}% токенов для ИИ)!`
+        : `🤖 Vault llms.txt compiled in vault root (${files.length} notes, ~${savedPct}% AI tokens saved)!`
+    );
+    return { count: files.length, savedPct, path: targetPath };
+  }
+
 
   enhanceSingleBlock(block, isLivePreview = false) {
     block.dataset.artcraftProcessed = "true";
@@ -12296,6 +12804,443 @@ class AutopilotInterruptModal extends Modal {
       await this.plugin.mineQuestBlock(`Check-in (${this.triggerTime}): ${ans}`, 30, true);
       this.close();
     });
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
+
+
+// ============================================================================
+// 🧠 v5.2.0 MODAL: HUMAN × AI DUAL-COGNITION STUDIO, llms.txt & WASM RADAR
+// ============================================================================
+class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
+  constructor(app, plugin, initialTab = "human") {
+    super(app);
+    this.plugin = plugin;
+    this.activeTab = initialTab;
+    this.aiFormat = "mcp";
+    this.radarData = null;
+  }
+
+  async onOpen() {
+    const obsidian = require("obsidian");
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.addClass("artcraft-dual-cognition-modal");
+
+    const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    this.activeFile = activeView && activeView.file ? activeView.file : this.app.workspace.getActiveFile();
+    this.rawText = "";
+    if (this.activeFile) {
+      try {
+        this.rawText = await this.app.vault.read(this.activeFile);
+      } catch (e) {}
+    }
+    const title = this.activeFile ? this.activeFile.basename : "Vault Synthesis";
+    const path = this.activeFile ? this.activeFile.path : "";
+    this.analysis = this.plugin.analyzeNoteDualCognition(this.rawText, title, path);
+
+    await this.renderStudio();
+  }
+
+  async renderStudio() {
+    const obsidian = require("obsidian");
+    const { contentEl } = this;
+    contentEl.empty();
+
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const a = this.analysis;
+    const capsuleText = this.plugin.buildAiSemanticCapsule(a, this.aiFormat);
+    const capsuleTokens = Math.max(1, Math.ceil(capsuleText.length / 3.8));
+    const savedPct = a.rawTokens > capsuleTokens ? Math.min(88, Math.max(18, Math.round((1 - capsuleTokens / a.rawTokens) * 100))) : 58;
+
+    const stampedCount = Object.keys(this.plugin.settings.stampedNotes || {}).length;
+    const questBlocks = (this.plugin.settings.questChain && Array.isArray(this.plugin.settings.questChain.blocks))
+      ? this.plugin.settings.questChain.blocks.length
+      : 0;
+
+    contentEl.innerHTML = `
+      <div class="dc-studio-shell">
+        <div class="dc-studio-header">
+          <div>
+            <div class="dc-eyebrow">ALCHEMY CRAFT v5.2.0 // HUMAN × AI DUAL-COGNITION ENGINE</div>
+            <h2 class="dc-title">${
+              isRu
+                ? "🧠 Двухрежимное Чтение: Человек × ИИ-Агент"
+                : "🧠 Human × AI Dual-Cognition Knowledge Studio"
+            }</h2>
+            <p class="dc-subtitle">${
+              isRu
+                ? `Активная заметка: <strong>${a.title}</strong> · Кристальная структура без «стены текста» для глаз человека и сжатая семантическая капсула для ИИ-агентов.`
+                : `Active note: <strong>${a.title}</strong> · High-anchor visual architecture for human eyes and token-compressed semantic capsules for AI agents.`
+            }</p>
+          </div>
+          <div class="dc-kpi-strip">
+            <div class="dc-kpi-pill is-emerald">
+              <span class="dc-kpi-lbl">${isRu ? "ЯСНОСТЬ ЧТЕНИЯ" : "HUMAN CLARITY"}</span>
+              <strong class="dc-kpi-val">${a.structureScore}%</strong>
+            </div>
+            <div class="dc-kpi-pill is-indigo">
+              <span class="dc-kpi-lbl">${isRu ? "ЭКОНОМИЯ ТОКЕНОВ ИИ" : "AI TOKEN SAVINGS"}</span>
+              <strong class="dc-kpi-val">-${savedPct}%</strong>
+            </div>
+            <div class="dc-kpi-pill is-amber">
+              <span class="dc-kpi-lbl">WASM HASH</span>
+              <strong class="dc-kpi-val">0x${a.hashHex}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="dc-tab-bar">
+          <button class="dc-tab-btn ${this.activeTab === "human" ? "is-active" : ""}" data-tab="human">
+            <span>👁️ ${isRu ? "1. Выжимка для Человека (TL;DR)" : "1. Human Executive Brief"}</span>
+          </button>
+          <button class="dc-tab-btn ${this.activeTab === "ai" ? "is-active" : ""}" data-tab="ai">
+            <span>🤖 ${isRu ? "2. Капсула для ИИ (llms.txt / MCP)" : "2. AI Agent Capsule (llms.txt / MCP)"}</span>
+          </button>
+          <button class="dc-tab-btn ${this.activeTab === "radar" ? "is-active" : ""}" data-tab="radar">
+            <span>⚡ ${isRu ? "3. WASM-Радар Смысловых Связей" : "3. WASM SimHash Semantic Radar"}</span>
+          </button>
+          <button class="dc-tab-btn ${this.activeTab === "seals" ? "is-active" : ""}" data-tab="seals">
+            <span>🏛️ ${isRu ? "4. Векторные 3D-Печати Мастерства" : "4. Vector SVG Ex-Libris Seals"}</span>
+          </button>
+        </div>
+
+        <div class="dc-tab-body" id="dcTabBody"></div>
+      </div>
+    `;
+
+    contentEl.querySelectorAll(".dc-tab-btn").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        this.activeTab = btn.dataset.tab;
+        await this.renderStudio();
+      });
+    });
+
+    const bodyEl = contentEl.querySelector("#dcTabBody");
+    if (!bodyEl) return;
+
+    if (this.activeTab === "human") {
+      bodyEl.innerHTML = `
+        <div class="dc-bento-grid">
+          <div class="dc-card dc-card-wide">
+            <div class="dc-card-head">
+              <span class="dc-badge is-blue">01 // CORE THESIS</span>
+              <h3>${isRu ? "Ключевые смысловые опоры заметки (без воды)" : "High-Signal Executive Thesis Anchors"}</h3>
+            </div>
+            <ul class="dc-thesis-list">
+              ${
+                a.thesisList.length > 0
+                  ? a.thesisList
+                      .map(
+                        (t, idx) =>
+                          `<li><span class="dc-step-chip">0${idx + 1}</span><span>${t}</span></li>`
+                      )
+                      .join("")
+                  : `<li class="dc-empty">${
+                      isRu
+                        ? "Добавьте абзацы с ключевыми выводами или жирным выделением — движок автоматически соберёт выжимку."
+                        : "Add paragraphs with bold takeaways or metrics — the engine will extract them automatically."
+                    }</li>`
+              }
+            </ul>
+            <div class="dc-action-row">
+              <button class="dc-primary-btn" data-act="insert-brief">
+                ✨ ${
+                  isRu
+                    ? "Вставить этот Нейро-Бриф (Callout) в шапку заметки"
+                    : "Insert Executive Brief Callout at Top of Note"
+                }
+              </button>
+              <button class="dc-secondary-btn" data-act="toggle-bionic">
+                ⚡ ${
+                  isRu
+                    ? `Бионический фокус корней слов: ${this.plugin.settings.bionicAnchors ? "ВКЛ" : "ВЫКЛ"}`
+                    : `Bionic Word-Root Anchors: ${this.plugin.settings.bionicAnchors ? "ON" : "OFF"}`
+                }
+              </button>
+            </div>
+          </div>
+
+          <div class="dc-card">
+            <div class="dc-card-head">
+              <span class="dc-badge is-emerald">02 // METRICS & NUMBERS</span>
+              <h3>${isRu ? "Матрица цифр, дат и метрик" : "Extracted Numbers, Dates & KPIs"}</h3>
+            </div>
+            <div class="dc-metrics-pills">
+              ${
+                a.metricsList.length > 0
+                  ? a.metricsList
+                      .map(
+                        (m) => `
+                        <div class="dc-metric-chip" title="${m.context.replace(/"/g, "&quot;")}">
+                          <strong>${m.value}</strong>
+                          <span>${m.context.slice(0, 48)}${m.context.length > 48 ? "…" : ""}</span>
+                        </div>`
+                      )
+                      .join("")
+                  : `<div class="dc-empty">${
+                      isRu ? "В тексте пока нет числовых метрик (%, $, дат, множителей)." : "No numeric metrics (%, $, dates, multipliers) detected yet."
+                    }</div>`
+              }
+            </div>
+          </div>
+
+          <div class="dc-card">
+            <div class="dc-card-head">
+              <span class="dc-badge is-amber">03 // ARCHITECTURE & ACTIONS</span>
+              <h3>${isRu ? `Карта глав (${a.headings.length}) и шагов (${a.tasks.length + a.steps.length})` : `Section Map (${a.headings.length}) & Action Levers (${a.tasks.length + a.steps.length})`}</h3>
+            </div>
+            <div class="dc-outline-list">
+              ${
+                a.headings.slice(0, 8).map(
+                  (h) => `
+                  <div class="dc-outline-row" style="padding-left:${Math.max(0, h.level - 1) * 10}px">
+                    <span class="dc-h-tag">H${h.level}</span>
+                    <span class="dc-h-txt">${h.text}</span>
+                    <span class="dc-h-line">L${h.line}</span>
+                  </div>`
+                ).join("") || `<div class="dc-empty">${isRu ? "Заголовки H1–H4 не найдены" : "No H1–H4 headings yet"}</div>`
+              }
+            </div>
+          </div>
+        </div>
+      `;
+
+      bodyEl.querySelector('[data-act="insert-brief"]')?.addEventListener("click", async () => {
+        await this.plugin.insertExecutiveBriefIntoActiveNote(a);
+        this.close();
+      });
+
+      bodyEl.querySelector('[data-act="toggle-bionic"]')?.addEventListener("click", async () => {
+        this.plugin.settings.bionicAnchors = !this.plugin.settings.bionicAnchors;
+        await this.plugin.saveSettings();
+        this.plugin.applyBodyClasses();
+        this.plugin.refreshBionicAnchorsInDOM();
+        await this.renderStudio();
+      });
+    } else if (this.activeTab === "ai") {
+      bodyEl.innerHTML = `
+        <div class="dc-ai-panel">
+          <div class="dc-ai-toolbar">
+            <div class="dc-format-group">
+              <button class="dc-fmt-btn ${this.aiFormat === "mcp" ? "is-active" : ""}" data-fmt="mcp">MCP / Claude XML (&lt;knowledge_capsule&gt;)</button>
+              <button class="dc-fmt-btn ${this.aiFormat === "llms" ? "is-active" : ""}" data-fmt="llms">llms.txt Standard</button>
+              <button class="dc-fmt-btn ${this.aiFormat === "jsonld" ? "is-active" : ""}" data-fmt="jsonld">JSON-LD Graph Node</button>
+            </div>
+            <div class="dc-token-badge">
+              <span>${isRu ? "Сжатие:" : "Compression:"} <strong>${a.rawTokens} → ${capsuleTokens} tokens (-${savedPct}%)</strong></span>
+            </div>
+          </div>
+
+          <pre class="dc-code-preview"><code>${capsuleText.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
+
+          <div class="dc-action-row">
+            <button class="dc-primary-btn" data-act="copy-capsule">
+              📋 ${isRu ? "Скопировать капсулу для ИИ (Claude / ChatGPT / Cursor)" : "Copy AI Semantic Capsule to Clipboard"}
+            </button>
+            <button class="dc-secondary-btn" data-act="compile-llms-txt">
+              🗂️ ${isRu ? "Собрать и сохранить llms.txt в корне хранилища Obsidian" : "Compile & Save Master llms.txt in Vault Root"}
+            </button>
+          </div>
+        </div>
+      `;
+
+      bodyEl.querySelectorAll(".dc-fmt-btn").forEach((b) => {
+        b.addEventListener("click", async () => {
+          this.aiFormat = b.dataset.fmt;
+          await this.renderStudio();
+        });
+      });
+
+      bodyEl.querySelector('[data-act="copy-capsule"]')?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(capsuleText);
+          new obsidian.Notice(
+            isRu
+              ? `🤖 Семантическая капсула скопирована (${capsuleTokens} токенов, экономия -${savedPct}%)!`
+              : `🤖 AI Semantic Capsule copied (${capsuleTokens} tokens, -${savedPct}% saved)!`
+          );
+        } catch (e) {}
+      });
+
+      bodyEl.querySelector('[data-act="compile-llms-txt"]')?.addEventListener("click", async () => {
+        await this.plugin.compileVaultLlmsTxtFile();
+      });
+    } else if (this.activeTab === "radar") {
+      bodyEl.innerHTML = `<div class="dc-loading">${
+        isRu ? "⚡ Вычисление 64-битных SimHash отпечатков через WebAssembly ядро..." : "⚡ Computing 64-bit SimHash fingerprints via WebAssembly kernel..."
+      }</div>`;
+      if (!this.radarData) {
+        this.radarData = await this.plugin.scanVaultWasmSemanticRadar(this.activeFile, this.rawText);
+      }
+      const r = this.radarData;
+      bodyEl.innerHTML = `
+        <div class="dc-radar-wrap">
+          <div class="dc-radar-banner">
+            <div>
+              <strong>${
+                isRu
+                  ? `⚡ Локальный WASM SimHash Радар (100% оффлайн без API)`
+                  : `⚡ Local WASM SimHash Semantic Radar (100% Offline, Zero API)`
+              }</strong>
+              <p>${
+                isRu
+                  ? `Просканировано ${r.scannedCount} заметок за ${r.elapsedMs} мс (${r.wasmActive ? "WASM FNV-1a ускорение активно" : "JS Fallback"}). Найдены скрытые смысловые пересечения:`
+                  : `Scanned ${r.scannedCount} notes in ${r.elapsedMs} ms (${r.wasmActive ? "WASM FNV-1a kernel active" : "JS Fallback"}). Discovered semantic resonances:`
+              }</p>
+            </div>
+          </div>
+          <div class="dc-radar-list">
+            ${
+              r.matches.length > 0
+                ? r.matches
+                    .map(
+                      (m) => `
+                      <div class="dc-radar-row">
+                        <div class="dc-radar-main">
+                          <div class="dc-radar-title-line">
+                            <span class="dc-sim-badge ${m.similarity >= 70 ? "is-high" : ""}">${m.similarity}% match</span>
+                            <strong>${m.title}</strong>
+                            <span class="dc-sig-code">0x${m.sigHex.slice(0, 8)}</span>
+                            ${
+                              m.isAlreadyLinked
+                                ? `<span class="dc-linked-pill">${isRu ? "Уже связана [[...]]" : "Linked [[...]]"}</span>`
+                                : `<span class="dc-unlinked-pill">${isRu ? "Скрытая связь!" : "Unlinked Discovery"}</span>`
+                            }
+                          </div>
+                          <div class="dc-radar-sub">
+                            ${
+                              m.sharedKeywords.length > 0
+                                ? `${isRu ? "Общие концепты:" : "Shared concepts:"} <code>${m.sharedKeywords.join("</code> · <code>")}</code>`
+                                : `SimHash Hamming resonance (${m.path})`
+                            }
+                          </div>
+                        </div>
+                        <div class="dc-radar-actions">
+                          <button class="dc-mini-link-btn" data-link-note="${m.title.replace(/"/g, "&quot;")}">
+                            + [[${ isRu ? "Связать" : "Link" }]]
+                          </button>
+                          <button class="dc-mini-open-btn" data-open-path="${m.path.replace(/"/g, "&quot;")}">
+                            ↗
+                          </button>
+                        </div>
+                      </div>`
+                    )
+                    .join("")
+                : `<div class="dc-empty">${
+                    isRu ? "В хранилище пока недостаточно других заметок для построения матрицы связей." : "Not enough other Markdown notes in vault yet to compute semantic links."
+                  }</div>`
+            }
+          </div>
+        </div>
+      `;
+
+      bodyEl.querySelectorAll("[data-link-note]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const targetTitle = btn.getAttribute("data-link-note");
+          if (!this.activeFile || !targetTitle) return;
+          const cur = await this.app.vault.read(this.activeFile);
+          const appendBlock = `\n- 🔗 **Semantic Link (WASM Radar):** [[${targetTitle}]]`;
+          await this.app.vault.modify(this.activeFile, cur + appendBlock);
+          this.rawText = cur + appendBlock;
+          this.radarData = null;
+          new obsidian.Notice(
+            isRu ? `🔗 Ссылка [[${targetTitle}]] добавлена в заметку!` : `🔗 Linked [[${targetTitle}]] into active note!`
+          );
+          await this.renderStudio();
+        });
+      });
+
+      bodyEl.querySelectorAll("[data-open-path]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const p = btn.getAttribute("data-open-path");
+          const f = this.app.vault.getAbstractFileByPath(p);
+          if (f) {
+            await this.app.workspace.getLeaf(false).openFile(f);
+            this.close();
+          }
+        });
+      });
+    } else if (this.activeTab === "seals") {
+      const seals = [
+        {
+          id: "initiate",
+          title: isRu ? "01 // Архивный Инициат" : "01 // Archival Initiate",
+          desc: isRu ? "Первая изученная заметка и старт цепочки SHA-256" : "First stamped note & SHA-256 chain genesis",
+          unlocked: true,
+          color: "#D97706",
+          bg: "#FEF3C7",
+        },
+        {
+          id: "bento",
+          title: isRu ? "02 // Архитектор Ясности" : "02 // Swiss Bento Architect",
+          desc: isRu ? "Индекс структурной читаемости заметки выше 75%" : "Note structural readability score above 75%",
+          unlocked: a.structureScore >= 75 || stampedCount >= 1,
+          color: "#059669",
+          bg: "#D1FAE5",
+        },
+        {
+          id: "neural",
+          title: isRu ? "03 // Нейро-Алхимик (Human × AI)" : "03 // Dual-Cognition Alchemist",
+          desc: isRu ? "Синтез человеческого чтения и капсул ИИ (llms.txt / MCP)" : "Mastery of Human × AI Semantic Capsules",
+          unlocked: true,
+          color: "#2563EB",
+          bg: "#DBEAFE",
+        },
+        {
+          id: "sovereign",
+          title: isRu ? "04 // Грандмастер Потока (On-Chain)" : "04 // Sovereign Proof-of-Work Monolith",
+          desc: isRu ? `Блоков в цепи: ${questBlocks} · Изучено книг: ${stampedCount}` : `Chain blocks: ${questBlocks} · Stamped notes: ${stampedCount}`,
+          unlocked: questBlocks >= 3 || stampedCount >= 2,
+          color: "#7C3AED",
+          bg: "#EDE9FE",
+        },
+      ];
+
+      bodyEl.innerHTML = `
+        <div class="dc-seals-grid">
+          ${seals
+            .map(
+              (s) => `
+              <div class="dc-seal-card ${s.unlocked ? "is-unlocked" : "is-locked"}" style="--seal-accent:${s.color};--seal-bg:${s.bg}">
+                <div class="dc-seal-svg-wrap">
+                  <svg viewBox="0 0 80 80" width="64" height="64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="36" fill="${s.bg}" stroke="${s.color}" stroke-width="2.5"/>
+                    <circle cx="40" cy="40" r="29" stroke="${s.color}" stroke-width="1.2" stroke-dasharray="3 3"/>
+                    <polygon points="40,14 47,29 63,31 51,42 54,58 40,50 26,58 29,42 17,31 33,29" fill="${s.color}" fill-opacity="0.18" stroke="${s.color}" stroke-width="1.8"/>
+                    <circle cx="40" cy="40" r="6" fill="${s.color}"/>
+                  </svg>
+                </div>
+                <div class="dc-seal-info">
+                  <h4>${s.title}</h4>
+                  <p>${s.desc}</p>
+                  <button class="dc-mini-link-btn" data-stamp-seal="${s.title.replace(/"/g, "&quot;")}">
+                    ${isRu ? "Вставить печать Ex-Libris в заметку" : "Stamp Ex-Libris Badge into Note"}
+                  </button>
+                </div>
+              </div>`
+            )
+            .join("")}
+        </div>
+      `;
+
+      bodyEl.querySelectorAll("[data-stamp-seal]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const sealName = btn.getAttribute("data-stamp-seal");
+          if (!this.activeFile) return;
+          const cur = await this.app.vault.read(this.activeFile);
+          const badgeMd = `\n> [!success] 🏛️ **EX-LIBRIS SEAL // ${sealName}** — Verified \`0x${a.hashHex}\` (${new Date().toLocaleDateString()})\n`;
+          await this.app.vault.modify(this.activeFile, cur + badgeMd);
+          new obsidian.Notice(
+            isRu ? `🏛️ Печать «${sealName}» поставлена в заметку!` : `🏛️ Seal "${sealName}" stamped into note!`
+          );
+          this.close();
+        });
+      });
+    }
   }
 
   onClose() {
