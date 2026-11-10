@@ -3854,7 +3854,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.addCommand({
       id: "toggle-dark-craft-theme",
-      name: "Toggle Midnight Dark Craft Mode (Pro)",
+      name: "Toggle Midnight Dark Craft Mode (Pro) [Disabled]",
       callback: async () => {
         if (!this.settings.isPro) {
           new AlchemyCraftProModal(this.app, this).open();
@@ -4627,7 +4627,7 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-hover-cards", this.settings.hoverCards);
     document.body.classList.toggle("artcraft-sentence-focus", this.settings.sentenceFocus);
     document.body.classList.toggle("artcraft-zen-mode", !!this.zenMode);
-    document.body.classList.toggle("artcraft-dark-craft", !!this.settings.darkCraftTheme && !!this.settings.isPro);
+    document.body.classList.remove("artcraft-dark-craft"); // Disabled until full dark adaptation
     document.body.classList.toggle("artcraft-bento-graph", this.settings.enableBentoGraph !== false);
     document.body.classList.toggle("artcraft-spotlight-mode", !!this.settings.spotlightFocus);
     document.body.classList.toggle("artcraft-magic-lamp", !!this.settings.magicLamp);
@@ -7110,7 +7110,7 @@ class AlchemyFlowPlugin extends Plugin {
             ${sicraftIcon('timer')} <span>${i18n({ en: "Mindful Focus Calibration Check-In (+30 XP)", ru: "Осознанная калибровка фокуса (+30 XP)", zh: "专注力校准与反思 (+30 XP)", ja: "マインドフル・フォーカス確認 (+30 XP)", es: "Calibración Consciente de Enfoque (+30 XP)", de: "Achtsame Fokus-Kalibrierung (+30 XP)" }, this)}</span>
           </button>
           <button class="focus-pop-act-btn" data-pop-act="pro-test-drive">
-            ${sicraftIcon('diamond')} <span>${i18n({ en: "✨ 60-Second Free Pro Test-Drive (Dark Craft & Audio)", ru: "✨ 60-сек Тест-Драйв Pro (Dark Craft и все звуки)", zh: "✨ 60秒免费体验 Pro 全部功能", ja: "✨ 60秒間 Pro モード無料テストドライブ", es: "✨ Prueba Pro de 60 segundos gratis", de: "✨ 60-Sekunden Pro-Testfahrt starten" }, this)}</span>
+            ${sicraftIcon('diamond')} <span>${i18n({ en: "✨ 60-Second Free Pro Test-Drive (All Colors & 16 Soundscapes)", ru: "✨ 60-сек Тест-Драйв Pro (Все 8 цветов и 16 саундскейпов)", zh: "✨ 60秒免费体验 Pro 全部功能", ja: "✨ 60秒間 Pro モード無料テストドライブ", es: "✨ Prueba Pro de 60 segundos gratis", de: "✨ 60-Sekunden Pro-Testfahrt starten" }, this)}</span>
           </button>
         </div>
       `;
@@ -8873,7 +8873,7 @@ class AlchemyFlowPlugin extends Plugin {
     const prevPro = this.settings.isPro;
     const prevDark = this.settings.darkCraftTheme;
     this.settings.isPro = true;
-    this.settings.darkCraftTheme = true;
+    // this.settings.darkCraftTheme = false; (dark mode removed from test drive)
     this.applyBodyClasses();
     this.createFloatingDock();
     this.playTactileMicroFeedback("anchor");
@@ -8892,7 +8892,7 @@ class AlchemyFlowPlugin extends Plugin {
         <div class="td-left">
           <span class="td-pulse-dot"></span>
           <strong>${isRu ? `ТЕСТ-ДРАЙВ PRO АКТИВЕН (${remaining} сек)` : `PRO TEST-DRIVE LIVE (${remaining}s)`}</strong>
-          <span>${isRu ? "Включена тема Midnight Dark Craft, все 8 цветов и 16 звуков потока" : "Midnight Dark Craft, all 8 colors & 16 soundscapes unlocked"}</span>
+          <span>${isRu ? "Разблокированы все 8 цветов палитры Bento, 16 саундскейпов и Pro-инструменты" : "All 8 Bento Palette Colors, 16 Soundscapes & Pro Studio unlocked"}</span>
         </div>
         <div class="td-actions">
           <button class="td-buy-btn">${isRu ? "Открыть Pro навсегда ($9.99)" : "Unlock Pro Forever ($9.99)"}</button>
@@ -8924,8 +8924,8 @@ class AlchemyFlowPlugin extends Plugin {
         if (showEndNotice) {
           new Notice(
             isRu
-              ? "✨ 60-секундный тест-драйв завершён. Понравился режим Midnight Dark Craft? Откройте Pro навсегда!"
-              : "✨ 60-second Pro Test-Drive finished. Loved Midnight Dark Craft? Unlock Pro anytime!"
+              ? "✨ 60-секундный тест-драйв завершён. Понравились звуки и расширенная палитра? Откройте Pro навсегда!"
+              : "✨ 60-second Pro Test-Drive finished. Loved the soundscapes & palette? Unlock Pro anytime!"
           );
         }
       }

@@ -1616,14 +1616,10 @@ html body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 /* Midnight Dark Craft Mode */
-html body.artcraft-dark-craft {
-  --background-primary: #121212;
-  --background-secondary: #1A1A1A;
-  --text-normal: #E5E7EB;
-  --text-muted: #9CA3AF;
-}
+/* Disabled dark mode body vars */
+/* Disabled dark workspace background */
 html body.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] {
-  background-color: #121212;
+  /* background-color: #121212; */
 }
 
 /* ==========================================================================
@@ -2135,24 +2131,7 @@ html body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-
    12. COMPLETE MIDNIGHT DARK CRAFT MODE (PRO EXCLUSIVE)
    Fixes white backgrounds on titles, tables, callouts, sidebar & dock in dark mode
    ========================================================================== */
-html body.artcraft-dark-craft {
-  --artcraft-bg-canvas: #111214;
-  --artcraft-bg-card: #1A1C20;
-  --artcraft-bg-hover: #22252A;
-  --artcraft-bg-sidebar: #16181C;
-  --artcraft-ink-primary: #F3F4F6;
-  --artcraft-ink-secondary: #D1D5DB;
-  --artcraft-ink-muted: #9CA3AF;
-  --artcraft-border-hairline: #2E323B;
-  --artcraft-border-strong: #374151;
-
-  --background-primary: #111214;
-  --background-primary-alt: #1A1C20;
-  --background-secondary: #16181C;
-  --background-secondary-alt: #16181C;
-  --text-normal: #F3F4F6;
-  --text-muted: #9CA3AF;
-}
+/* Disabled artcraft-dark-craft background variables */
 
 html body.artcraft-dark-craft .inline-title {
   background-color: #1A1C20;
