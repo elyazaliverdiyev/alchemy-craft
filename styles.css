@@ -3,7 +3,7 @@
    Full Live Preview (CM6) + Reading Mode Support:
    - Giant Squared Colored Number Badges (01 Blue, 02 Orange, 03 Green, 04 Purple)
    - Hero Editorial Banner Title & Styled Frontmatter Properties
-   - AFFiNE / Notion / Craft Left File Explorer Sidebar Redesign
+   - Swiss Minimal Craft Left File Explorer Sidebar Redesign
    - Excel Green Table Headers (#69BD28) & Crisp Orange Code Capsules
    ========================================================================== */
 
@@ -6399,7 +6399,7 @@ body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p:hover
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
 }
 
-/* Editorial Section Headings (H1, H2, H3, H4) — Clean AFFiNE / Notion Anchor Cards */
+/* Editorial Section Headings (H1, H2, H3, H4) — Clean Swiss Bento Anchor Cards */
 body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h1,
 body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-1 {
   background: linear-gradient(90deg, rgba(37, 99, 235, 0.07) 0%, rgba(37, 99, 235, 0.01) 100%);
@@ -7096,7 +7096,7 @@ body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p:hover
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
 }
 
-/* Editorial Section Headings (H1, H2, H3, H4) — Clean AFFiNE / Notion Anchor Cards */
+/* Editorial Section Headings (H1, H2, H3, H4) — Clean Swiss Bento Anchor Cards */
 body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h1,
 body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-1 {
   background: linear-gradient(90deg, rgba(37, 99, 235, 0.07) 0%, rgba(37, 99, 235, 0.01) 100%);
@@ -8037,7 +8037,7 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 
 
 /* ==========================================================================
-   ALCHEMY CRAFT v5.0.0 — NOTION / AFFiNE PURE WHITE READABILITY,
+   ALCHEMY CRAFT v5.0.0 — SWISS BENTO PURE WHITE READABILITY,
    3 SURFACE MODES (WHITE / BOOK / GRAIN), OFFICIAL OBSIDIAN CHECKBOX & GRAPH VARS,
    3D ENVELOPE TIME CAPSULE, 3D WALNUT BOOKSHELF & AIRY MODAL SYSTEM
    ========================================================================== */
@@ -9127,4 +9127,76 @@ html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-eq-btn:
 html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-eq-btn:not(.is-active) * {
   color: #4B5563;
   fill: #4B5563;
+}
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT v5.0.2 — DIRECT 3-CHIP SURFACE PICKER (PURE WHITE / WARM BOOK / GRAIN)
+   ========================================================================== */
+
+.artcraft-surface-picker-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.surface-mat-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  height: auto;
+  border-radius: 8px;
+  border: 1.5px solid #E2DDD2;
+  background: #FFFFFF;
+  color: #374151;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.14s ease;
+}
+
+.surface-mat-chip:hover {
+  border-color: #69BD28;
+}
+
+.surface-mat-chip.is-active {
+  background: #18181B;
+  color: #FFFFFF;
+  border-color: #18181B;
+}
+
+.surface-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Dark Craft adaptations for surface-mat-chip */
+html body.artcraft-dark-craft .surface-mat-chip {
+  background: #252830;
+  border-color: #374151;
+  color: #E5E7EB;
+}
+
+html body.artcraft-dark-craft .surface-mat-chip:hover {
+  background: #2E333E;
+  border-color: #4B5563;
+}
+
+html body.artcraft-dark-craft .surface-mat-chip.is-active {
+  background: #69BD28;
+  border-color: #559E1D;
+  color: #FFFFFF;
+}
+
+html body:not(.artcraft-dark-craft) .surface-mat-chip:not(.is-active),
+html body:not(.artcraft-dark-craft) .surface-mat-chip:not(.is-active) *,
+html body.theme-dark:not(.artcraft-dark-craft) .surface-mat-chip:not(.is-active),
+html body.theme-dark:not(.artcraft-dark-craft) .surface-mat-chip:not(.is-active) * {
+  color: #374151;
 }

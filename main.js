@@ -66,14 +66,14 @@ const DEFAULT_SETTINGS = {
     history: []
   },
   nightLightCompensation: false,
-  surfaceMode: "white", // "white" (Notion/AFFiNE Pure White #FFFFFF) | "book" (Warm Book #FAF8F3) | "grain" (Archival Grain Paper)
+  surfaceMode: "white", // "white" (SWISS EDITORIAL Pure White #FFFFFF) | "book" (Warm Book #FAF8F3) | "grain" (Archival Grain Paper)
   paperGrain: 28, // 0..100% micro-grain intensity // Calibrated Cool Alabaster & Crisp Slate Ink for Windows 11 Night Light users
-  editorialCleanMode: true, // Notion / AFFiNE / Harvee tactile block isolation without harsh neo-brutalist black borders
+  editorialCleanMode: true, // Swiss Bento tactile block isolation without harsh neo-brutalist black borders
   lifeRpg: {
     antiVision: "Бесцельный скроллинг, расфокус, стена серого текста и откладывание ключевого проекта.",
     visionMvp: "Состояние глубокого потока: 4 часа чистого созидания утром, сильный продукт и полная ясность ума.",
     oneYearMission: "Превратить экосистему продуктов (Alchemy Craft & ИИ-инструменты) в узнаваемый стандарт для тысяч создателей.",
-    oneMonthBoss: "Релиз Alchemy Craft v4.8 с безупречной читаемостью Notion/AFFiNE, системным звуком, Graph Studio и цепочкой квестов.",
+    oneMonthBoss: "Релиз Alchemy Craft v4.8 с безупречной читаемостью SWISS EDITORIAL, системным звуком, Graph Studio и цепочкой квестов.",
     dailyLevers: [
       { id: "lever-1", title: "90 минут утреннего Deep Work (низкая энтропия до соцсетей)", xp: 50, done: false },
       { id: "lever-2", title: "Довести 1 ключевой модуль / улучшение до продакшена", xp: 40, done: false },
@@ -6744,9 +6744,11 @@ class AlchemyFlowPlugin extends Plugin {
 
   async openTrueTwoPageBookSpread() {
     const obsidian = require("obsidian");
-    const activeLeaf = this.app.workspace.activeLeaf;
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-    if (!activeLeaf || !view || !view.file) return;
+    if (!view || !view.file) {
+      new Notice("Please open a note first to launch 2-Page Side-by-Side spread.");
+      return;
+    }
     const isRu = (this.settings.uiLanguage || "en") === "ru";
 
     this.settings.bookSpreadMode = true;
@@ -6754,7 +6756,13 @@ class AlchemyFlowPlugin extends Plugin {
     this.applyBodyClasses();
 
     try {
-      const rightLeaf = await this.app.workspace.duplicateLeaf(activeLeaf, "vertical");
+      let rightLeaf;
+      if (typeof this.app.workspace.duplicateLeaf === "function" && this.app.workspace.activeLeaf) {
+        rightLeaf = await this.app.workspace.duplicateLeaf(this.app.workspace.activeLeaf, "vertical");
+      } else {
+        rightLeaf = this.app.workspace.getLeaf("split", "vertical");
+        await rightLeaf.openFile(view.file);
+      }
       setTimeout(() => {
         if (rightLeaf && rightLeaf.view && rightLeaf.view.editor) {
           const totalLines = rightLeaf.view.editor.lineCount();
@@ -6762,13 +6770,14 @@ class AlchemyFlowPlugin extends Plugin {
           rightLeaf.view.editor.scrollIntoView({ from: { line: targetLine, ch: 0 }, to: { line: Math.min(totalLines - 1, targetLine + 15), ch: 0 } }, true);
         }
         this.updateTaskProgressBar();
-      }, 220);
+      }, 180);
       new Notice(
         isRu
           ? "Открыт настоящий 2-страничный книжный разворот (левая и правая страницы книги)!"
           : "Opened True 2-Page Side-by-Side Book Spread!"
       );
     } catch (e) {
+      console.warn("2-Page spread split fallback:", e);
       new Notice(isRu ? "Включён книжный режим страницы" : "Book Folio Mode Enabled");
     }
   }
@@ -6795,37 +6804,16 @@ class AlchemyFlowPlugin extends Plugin {
 
       const items = [
         {
-          id: "surface-cycle",
-          checked: (this.settings.surfaceMode || "white") === "white",
-          icon: sicraftIcon('sun'),
-          title: i18n({
-            en: `Page Surface: ${(this.settings.surfaceMode || "white") === "white" ? "Pure White (Notion / AFFiNE)" : (this.settings.surfaceMode === "grain" ? "Archival Grain Paper" : "Warm Book Paper")}`,
-            ru: `Фон страницы: ${(this.settings.surfaceMode || "white") === "white" ? "Чистый Белый (Notion / AFFiNE)" : (this.settings.surfaceMode === "grain" ? "Пергамент с зернистостью" : "Тёплая Книжная Бумага")}`,
-            zh: `页面底色：${(this.settings.surfaceMode || "white") === "white" ? "纯净白 (Notion / AFFiNE)" : (this.settings.surfaceMode === "grain" ? "微纹理羊皮纸" : "温暖书页纸")}`,
-            ja: `ページ背景：${(this.settings.surfaceMode || "white") === "white" ? "ピュアホワイト (Notion / AFFiNE)" : (this.settings.surfaceMode === "grain" ? "粒子テクスチャ紙" : "ウォームブック紙")}`,
-            es: `Superficie: ${(this.settings.surfaceMode || "white") === "white" ? "Blanco Puro (Notion / AFFiNE)" : (this.settings.surfaceMode === "grain" ? "Papel con Grano" : "Papel de Libro Cálido")}`,
-            de: `Seitenhintergrund: ${(this.settings.surfaceMode || "white") === "white" ? "Reinweiß (Notion / AFFiNE)" : (this.settings.surfaceMode === "grain" ? "Papier mit Körnung" : "Warmes Buchpapier")}`,
-          }, this),
-          sub: i18n({
-            en: "Click to switch: Pure White (#FFFFFF) → Warm Book (#FAF8F3) → Grain Paper",
-            ru: "Нажмите для смены: Чистый Белый (#FFFFFF) → Книжный (#FAF8F3) → С зернистостью",
-            zh: "点击切换：纯净白 (#FFFFFF) → 温暖书页 → 纹理纸",
-            ja: "クリックで切替：純白 (#FFFFFF) → 書籍紙 → 粒子テクスチャ",
-            es: "Clic para cambiar: Blanco Puro → Libro Cálido → Papel con Grano",
-            de: "Klicken zum Wechseln: Reinweiß → Buchpapier → Körnung"
-          }, this),
-        },
-        {
           id: "editorial",
           checked: this.settings.editorialCleanMode !== false,
           icon: SICRAFT_SVGS.card,
           title: i18n({
-            en: "Notion / AFFiNE Editorial Block Isolation",
-            ru: "Мягкое разделение блоков в стиле Notion / AFFiNE",
-            zh: "Notion / AFFiNE 柔和段落卡片分隔",
-            ja: "Notion / AFFiNE スタイルのブロック 분리",
-            es: "Separación editorial de bloques estilo Notion / AFFiNE",
-            de: "Notion / AFFiNE Editoriale Block-Isolierung",
+            en: "Swiss Editorial Block Isolation",
+            ru: "Швейцарское модульное разделение блоков",
+            zh: "瑞士柔和段落卡片分隔",
+            ja: "スイススタイルのブロック分離",
+            es: "Separación editorial de bloques estilo Suizo",
+            de: "Schweizer Editoriale Block-Isolierung",
           }, this),
           sub: i18n({
             en: "Every paragraph & section stands out cleanly without harsh black borders",
@@ -6994,6 +6982,7 @@ class AlchemyFlowPlugin extends Plugin {
         },
       ];
 
+      const curSurface = this.settings.surfaceMode || "white";
       pop.innerHTML = `
         <div class="focus-pop-head">
           <span class="focus-pop-badge">${sicraftIcon('focus')} <span>${
@@ -7008,6 +6997,35 @@ class AlchemyFlowPlugin extends Plugin {
       }</span></span>
           <button class="focus-pop-close" title="Close">×</button>
         </div>
+
+        <div class="focus-pop-divider" style="margin-top:2px;">${i18n({
+          en: "PAGE SURFACE & READING CANVAS",
+          ru: "ФОН СТРАНИЦЫ И МАТЕРИАЛ ХОЛСТА",
+          zh: "页面底色与阅读画布",
+          ja: "ページ背景＆読書キャンバス",
+          es: "SUPERFICIE DE PÁGINA Y LIENZO",
+          de: "SEITENHINTERGRUND & LEINWAND",
+        }, this)}</div>
+        <div class="artcraft-surface-picker-row">
+          <button class="surface-mat-chip ${curSurface === "white" ? "is-active" : ""}" data-surface="white">
+            <span class="surface-swatch" style="background:#FFFFFF;border:1px solid #CBD5E1"></span><span>${i18n({ en: "Pure White", ru: "Чистый Белый", zh: "纯净白", ja: "純白", es: "Blanco Puro", de: "Reinweiß" }, this)}</span>
+          </button>
+          <button class="surface-mat-chip ${curSurface === "book" ? "is-active" : ""}" data-surface="book">
+            <span class="surface-swatch" style="background:#FAF8F3;border:1px solid #DFD9CA"></span><span>${i18n({ en: "Warm Book", ru: "Книжный", zh: "温暖书页", ja: "書籍紙", es: "Libro Cálido", de: "Buchpapier" }, this)}</span>
+          </button>
+          <button class="surface-mat-chip ${curSurface === "grain" ? "is-active" : ""}" data-surface="grain">
+            <span class="surface-swatch" style="background:#F5F2EB;border:1px solid #D5CEBE"></span><span>${i18n({ en: "Archival Grain", ru: "Зернистый", zh: "微纹理纸", ja: "粒子紙", es: "Papel Grano", de: "Körnung" }, this)}</span>
+          </button>
+        </div>
+
+        <div class="focus-pop-divider">${i18n({
+          en: "TACTILE EDITORIAL & FOCUS LAYERS",
+          ru: "СЛОИ ФОКУСА И ШВЕЙЦАРСКОЙ ВЁРСТКИ",
+          zh: "触觉版面与专注图层",
+          ja: "フォーカス＆タイポグラフィレイヤー",
+          es: "CAPAS DE FOCO Y DISEÑO EDITORIAL",
+          de: "FOKUS- & LAYOUT-EBENEN",
+        }, this)}</div>
         <div class="focus-pop-list">
           ${items
             .map(
@@ -7096,6 +7114,16 @@ class AlchemyFlowPlugin extends Plugin {
           </button>
         </div>
       `;
+
+      pop.querySelectorAll(".surface-mat-chip").forEach((chip) => {
+        chip.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          this.settings.surfaceMode = chip.getAttribute("data-surface") || "white";
+          await this.saveSettings();
+          this.applyBodyClasses();
+          renderPopoverContent();
+        });
+      });
 
       pop.querySelectorAll(".spine-mat-chip").forEach((chip) => {
         chip.addEventListener("click", async (ev) => {
@@ -7191,18 +7219,7 @@ class AlchemyFlowPlugin extends Plugin {
           } else if (act === "pro-test-drive") {
             this.startProTestDrive60s();
           } else if (act === "two-page") {
-            this.settings.bookSpreadMode = true;
-            this.saveSettings();
-            this.applyBodyClasses();
-            this.createFloatingDock();
-            new Notice(i18n({
-              en: "3D Book Folio mode activated!",
-              ru: "Режим 3D Книжного фолианта включён!",
-              zh: "3D书籍手册模式已启用！",
-              ja: "3Dブックフォリオモードが有効になりました！",
-              es: "¡Modo folio 3D activado!",
-              de: "3D-Buchfolio-Modus aktiviert!",
-            }, this));
+            this.openTrueTwoPageBookSpread();
           }
         });
       });
@@ -10634,7 +10651,7 @@ class TimeCapsuleSealModal extends Modal {
 
 
 // =========================================================================
-// 1. LIFE RPG & SHA-256 BLOCKCHAIN QUEST CHAIN MODAL (CLEAN NOTION/LINEAR DESIGN, 6 LANGUAGES)
+// 1. LIFE RPG & SHA-256 BLOCKCHAIN QUEST CHAIN MODAL (CLEAN SWISS BENTO DESIGN, 6 LANGUAGES)
 // =========================================================================
 class LifeRpgQuestChainModal extends Modal {
   constructor(app, plugin) {
@@ -11612,18 +11629,27 @@ class CreativeMarginSketchModal extends Modal {
 }
 
 // =========================================================================
-// 4. CREATOR OS STUDIO MODAL (AIRY NOTION/AFFiNE TYPOGRAPHY, ZERO CLIPPED TABS, 6 LANGUAGES)
+// 4. CREATOR OS STUDIO MODAL (AIRY SWISS EDITORIAL TYPOGRAPHY, ZERO CLIPPED TABS, 6 LANGUAGES)
 // =========================================================================
 class CreatorOsStudioModal extends Modal {
   constructor(app, plugin) {
     super(app);
     this.plugin = plugin;
     this.activeTab = "brand";
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
     this.apag = {
-      hook: "Писать заметки в Obsidian легко. Перечитывать их через 2 недели — вот где большинство бросает.",
-      perspective: "Причина не в дисциплине, а в том, что сырой текст сливается в монотонное серое полотно без визуальных точек опоры.",
-      advantage: "Когда заголовки, шаги 01–03 и выводы разделены воздухом и контрастом (как в Notion и AFFiNE), глаза считывают суть страницы за секунду.",
-      gamify: "01 // Выберите чистый белый или книжный фон\n02 // Отмечайте главные мысли закладками-нутриентами\n03 // Закрывайте задачи с подписью в SHA-256"
+      hook: isRu
+        ? "Писать заметки в Obsidian легко. Перечитывать их через 2 недели — вот где большинство бросает."
+        : "Taking notes in Obsidian is easy. Re-reading them 2 weeks later is where most people quit.",
+      perspective: isRu
+        ? "Причина не в дисциплине, а в том, что сырой текст сливается в монотонное серое полотно без визуальных точек опоры."
+        : "The root cause isn't discipline — it's raw text turning into a monotone grey wall with no visual anchors.",
+      advantage: isRu
+        ? "Когда заголовки, шаги 01–03 и выводы разделены воздухом и швейцарским контрастом, глаза считывают суть страницы за секунду."
+        : "When headings, 01–03 action steps, and key takeaways are isolated with air and Swiss contrast, the eye scans the core message in seconds.",
+      gamify: isRu
+        ? "01 // Выберите чистый белый или книжный фон\n02 // Отмечайте главные мысли закладками-нутриентами\n03 // Закрывайте задачи с подписью в SHA-256"
+        : "01 // Choose Pure White or Warm Book surface\n02 // Anchor key insights with Nutrient Bookmarks\n03 // Complete daily levers signed with verifiable SHA-256"
     };
   }
 

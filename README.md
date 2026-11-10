@@ -1,3 +1,11 @@
+## What's New in v5.0.2 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
+
+- **Direct 1-Click Page Surface Selector**: Replaced confusing 3-cycle checkbox with 3 explicit segmented chips ([Pure White] [Warm Book] [Archival Grain]). Select any canvas instantly with 1 single click!
+- **APAG Builder Full English & Russian Localization**: Textareas now load polished English copywriting templates when English UI is selected, and Russian templates when Russian is selected.
+- **Universal 2-Page Side-by-Side Spread**: Fixed `openTrueTwoPageBookSpread` with universal `app.workspace.getLeaf("split", "vertical")` fallback across all Obsidian versions.
+- **Removed Competitor Trademarks**: Completely removed all references to Notion and AFFiNE, replaced with authentic Swiss Bento Editorial design standards.
+- **Midnight Dark Craft Contrast Suite**: 100% visible buttons and callouts in dark mode. 0 !important warnings.
+
 ## What's New in v5.0.1 (Light Green Swiss Bento Buttons & Auto-Expanding Creator Studio)
 
 - **Light Green Swiss Bento Buttons (#69BD28)**: Replaced dark green buttons (`#16A34A`) with signature bright Swiss Apple/Lime Green (`#69BD28` / border `#559E1D`) across all modal actions (`Save Flow Check-In`, `Save @brand_context.md`, `Add Quest`, `Seal Capsule`, `Insert into Note`), perfectly harmonized with the floating dock's UI and Focus buttons.
@@ -26,7 +34,7 @@
   - **Dan Koe's 5 Autopilot Interrupt Alarms (11:00, 13:30, 15:15, 17:00, 19:30)**: Mindful check-ins that sign reflections into the SHA-256 Quest Chain.
 - **60-Second Free Pro Test-Drive & Spring Physics (`cubic-bezier(0.22, 1, 0.36, 1)`)**: 1-click live preview of Midnight Dark Craft and all Pro features with multi-harmonic WebAudio tactile feedback.
 
-## What's New in v4.8.2 (Notion/AFFiNE Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
+## What's New in v4.8.2 (Swiss Editorial Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
 
 - **Swiss Editorial Cards Editorial Block Isolation (`editorialCleanMode`)**: Replaces heavy neo-brutalist black borders with airy, tactile block cards (`1px` subtle borders, soft elevation, clear visual anchors) so every paragraph and step stands out cleanly without turning into a monotonous wall of grey text.
 - **Windows 11 Night Light Compensation (`nightLightCompensation`)**: Dedicated color-calibration mode (Cool Alabaster `#F5F7FA` / `#FFFFFF` + Crisp Slate Ink `#0F172A`) that neutralizes the yellow/orange cast of Windows 11 Night Light so text stays razor-sharp without eye strain.
