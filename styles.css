@@ -8829,3 +8829,302 @@ body.theme-dark .artcraft-graph-hud {
   gap: 12px;
   margin-top: 16px;
 }
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT — PRO & MIDNIGHT DARK CRAFT COMPLETE VISUAL SUITE
+   Zero important-flags, High Specificity. Fixes popover, sonic studio, callouts & buttons in dark mode.
+   ========================================================================== */
+
+/* 1. CALLOUTS IN DARK CRAFT: Overrides light callout styles cleanly */
+html body.artcraft-dark-craft .callout,
+html body.artcraft-dark-craft .markdown-rendered .callout,
+html body.artcraft-dark-craft .cm-embed-block .callout,
+html body.artcraft-dark-craft.artcraft-theme-active .markdown-rendered .callout,
+html body.artcraft-dark-craft.artcraft-theme-active .callout {
+  background-color: #1A1C20;
+  color: #E5E7EB;
+  border: 1.5px solid #374151;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="note"],
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="info"],
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="abstract"] {
+  background-color: #161D26;
+  border-color: #2D3748;
+  border-left: 6px solid #3B82F6;
+}
+
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="tip"],
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="success"],
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="check"] {
+  background-color: #14221A;
+  border-color: #1C3826;
+  border-left: 6px solid #69BD28;
+}
+
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="warning"],
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="important"],
+html body.artcraft-dark-craft.artcraft-theme-active .callout[data-callout="question"] {
+  background-color: #261D15;
+  border-color: #3E2B1E;
+  border-left: 6px solid #F59E0B;
+}
+
+html body.artcraft-dark-craft.artcraft-theme-active .callout-content,
+html body.artcraft-dark-craft.artcraft-theme-active .callout-content p {
+  color: #D1D5DB;
+}
+
+/* 2. FOCUS & BOOK READING STUDIO POPOVER IN DARK CRAFT */
+html body.artcraft-dark-craft .artcraft-focus-popover {
+  background: #181A1F;
+  border: 1.5px solid #323640;
+  box-shadow: 0 6px 0 #000000, 0 18px 38px rgba(0, 0, 0, 0.7);
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .focus-pop-head {
+  border-bottom: 1px dashed #2E323B;
+}
+
+html body.artcraft-dark-craft .focus-pop-badge {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .focus-pop-close {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .focus-pop-row {
+  color: #E5E7EB;
+  border-color: #2E323B;
+}
+
+html body.artcraft-dark-craft .focus-pop-row:hover {
+  background: #22252C;
+}
+
+html body.artcraft-dark-craft .focus-pop-divider {
+  color: #9CA3AF;
+  border-bottom-color: #2E323B;
+}
+
+html body.artcraft-dark-craft .focus-pop-act-btn:not(.is-primary) {
+  background: #252830;
+  border: 1.5px solid #374151;
+  color: #F3F4F6;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+html body.artcraft-dark-craft .focus-pop-act-btn:not(.is-primary) * {
+  color: #F3F4F6;
+  fill: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .focus-pop-act-btn:not(.is-primary):hover {
+  background: #2E333E;
+  border-color: #4B5563;
+  color: #FFFFFF;
+}
+
+html body.artcraft-dark-craft .focus-pop-act-btn:not(.is-primary):hover * {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+
+/* 3. LIGHT MODE SPECIFICITY: Ensures text on white buttons NEVER bleeds white from Obsidian dark theme */
+html body:not(.artcraft-dark-craft) .artcraft-focus-popover .focus-pop-act-btn:not(.is-primary),
+html body:not(.artcraft-dark-craft) .artcraft-focus-popover .focus-pop-act-btn:not(.is-primary) *,
+html body.theme-dark:not(.artcraft-dark-craft) .artcraft-focus-popover .focus-pop-act-btn:not(.is-primary),
+html body.theme-dark:not(.artcraft-dark-craft) .artcraft-focus-popover .focus-pop-act-btn:not(.is-primary) * {
+  color: #1F2937;
+  fill: #1F2937;
+}
+
+/* 4. SONIC & AMBIENT STUDIO IN DARK CRAFT */
+html body.artcraft-dark-craft .modal.artcraft-wide-craft-modal {
+  background: #16181C;
+  border: 1.5px solid #2E323B;
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-title {
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-studio-sub {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .sonic-badge {
+  background: #22252A;
+  border-color: #2E323B;
+  color: #D1D5DB;
+}
+
+html body.artcraft-dark-craft .sonic-card {
+  background: #1A1C20;
+  border-color: #2E323B;
+}
+
+html body.artcraft-dark-craft .sonic-card.is-recipe-card {
+  background: linear-gradient(180deg, #1E2229 0%, #1A1C20 100%);
+  border-color: #374151;
+}
+
+html body.artcraft-dark-craft .sonic-sec-label {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .sonic-recipe-btn {
+  background: #252830;
+  border-color: #374151;
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-recipe-btn:hover {
+  background: #2E323B;
+  border-color: #4B5563;
+}
+
+html body.artcraft-dark-craft .sonic-recipe-btn .amb-txt strong {
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-recipe-btn .amb-txt small {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .sonic-player-bar {
+  background: #252830;
+  border-color: #374151;
+}
+
+html body.artcraft-dark-craft .sonic-track-title {
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-time-lbl {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .sonic-load-btn {
+  background: #1E2229;
+  border-color: #374151;
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-load-btn * {
+  color: #F3F4F6;
+  fill: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-src-pill:not(.is-active) {
+  background: #252830;
+  border-color: #374151;
+  color: #E5E7EB;
+}
+
+html body.artcraft-dark-craft .sonic-src-pill:not(.is-active) * {
+  color: #E5E7EB;
+  fill: #E5E7EB;
+}
+
+html body.artcraft-dark-craft .sonic-src-pill:not(.is-active):hover {
+  background: #2E323B;
+  border-color: #4B5563;
+}
+
+html body.artcraft-dark-craft .sonic-device-lbl {
+  color: #D1D5DB;
+}
+
+html body.artcraft-dark-craft .sonic-device-select {
+  background: #252830;
+  border: 1px solid #374151;
+  color: #F3F4F6;
+  border-radius: 8px;
+  padding: 0 8px;
+}
+
+html body.artcraft-dark-craft .sonic-device-refresh {
+  background: #1E2229;
+  border: 1px solid #374151;
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-device-hint {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .sonic-eq-btn:not(.is-active) {
+  background: #252830;
+  border-color: #374151;
+  color: #E5E7EB;
+}
+
+html body.artcraft-dark-craft .sonic-eq-btn:not(.is-active) * {
+  color: #E5E7EB;
+  fill: #E5E7EB;
+}
+
+html body.artcraft-dark-craft .sonic-eq-btn:not(.is-active):hover {
+  background: #2E323B;
+  border-color: #4B5563;
+  color: #FFFFFF;
+}
+
+html body.artcraft-dark-craft .sonic-eq-btn:not(.is-active):hover * {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+
+html body.artcraft-dark-craft .sonic-amb-tile {
+  background: #252830;
+  border-color: #374151;
+  color: #E5E7EB;
+}
+
+html body.artcraft-dark-craft .sonic-amb-tile:hover {
+  background: #2E323B;
+  border-color: #4B5563;
+}
+
+html body.artcraft-dark-craft .sonic-amb-tile .amb-txt strong {
+  color: #F3F4F6;
+}
+
+html body.artcraft-dark-craft .sonic-amb-tile .amb-txt small {
+  color: #9CA3AF;
+}
+
+html body.artcraft-dark-craft .sonic-vol-row {
+  color: #D1D5DB;
+}
+
+html body.artcraft-dark-craft .sonic-vol-row strong {
+  color: #F3F4F6;
+}
+
+/* 5. LIGHT MODE ENFORCEMENT FOR SONIC STUDIO */
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-load-btn,
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-load-btn *,
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-device-refresh,
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-device-select,
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-src-pill:not(.is-active),
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-src-pill:not(.is-active) *,
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-eq-btn:not(.is-active),
+html body:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-eq-btn:not(.is-active) *,
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-load-btn,
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-load-btn *,
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-device-refresh,
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-device-select,
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-src-pill:not(.is-active),
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-src-pill:not(.is-active) *,
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-eq-btn:not(.is-active),
+html body.theme-dark:not(.artcraft-dark-craft) .sonic-studio-wrap .sonic-eq-btn:not(.is-active) * {
+  color: #4B5563;
+  fill: #4B5563;
+}

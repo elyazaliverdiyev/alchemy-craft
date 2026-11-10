@@ -9641,7 +9641,7 @@ class AlchemyCraftProModal extends Modal {
       console.warn("Direct CryptoBot verification check error:", e);
     }
 
-    const MASTER_PROMOS = ["STRATALCHEMY", "ACPRO-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026"];
+    const MASTER_PROMOS = ["STRATALCHEMY", "ACPRO-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026", "ELYAZ", "FOUNDER", "ACPRO-FOUNDER-PASS-2026"];
     if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
       new Notice("Промокод успешно подтвержден! Активация Pro Pass...");
       return true;
