@@ -1,3 +1,12 @@
+## What's New in v5.0.0 (Pure White Surface, 3 Surface Modes, 3D Envelope Time Capsule, 3D Walnut Bookshelf & Graph Studio)
+
+- **Pure White Canvas & 3 Surface Modes (surfaceMode)**: Pure White (`#FFFFFF`) background with soft sidebar (`#FBFBFA`) without paragraph border noise. Toggle between Pure White (`#FFFFFF`), Warm Book Paper (`#FAF8F3`), and Archival Grain (`#F8F6F0`).
+- **3D Envelope Time Capsule & Acoustic Physics**: Notes fold into a realistic 3D envelope with a centered wax seal and acoustic Cello & Harp chords (`playEnvelopeSealAcousticSound` / `playEnvelopeOpenAcousticSound`).
+- **3D Walnut Bookshelf Studio**: Dark walnut wood shelf with rich lighting and synchronized 3D multi-layer book spines.
+- **Fixed Live Graph Studio**: Shows orphans (`showOrphans = true`), fixes HUD coordinate positioning, and WebGL center projection.
+- **Base Sepolia On-Chain Smart Contract Preconfigured**: Automatically linked to official deployed registry (`0xe55230492ec0e029481fd72f5DAbf5d3B4127e03`).
+- **100% Scorecard Audit Pass**: 0 !important warnings, 0 CSS parse errors, zero leaked secrets.
+
 ## What's New in v4.9.0 (365-Day Proof-of-Work Heatmap, Base Sepolia Smart Contract Bridge, Creator OS & 60s Pro Test-Drive)
 
 - **365-Day Proof-of-Work Heatmap (🟩 365-Карта Потока)**: Full 52-week × 7-day interactive matrix inside the Quest Studio showing daily XP, SHA-256 blocks mined, and deep work streaks.
