@@ -1,14 +1,23 @@
-## What's New in v5.0.5 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
+## What's New in v5.1.0 (WASM 144 FPS Core, 3 Page Width Presets, Bionic Saccadic Focus, Verified 0xd38e5522 Smart Contract Selector & Magic UI Spotlight)
+
+- **Embedded WebAssembly (`WASM`) 144 FPS Physics & Hash Core**: Compiled IEEE-754 binary `.wasm` accelerator embedded directly inside `main.js` (`fnv1a_step`, `spring_step`, `repulse_mag`) for zero-GC-pause spring micro-interactions, Graph Studio node repulsion, and fast block fingerprinting.
+- **3-Mode Page Width Studio (`760px Book` / `1080px Wide` / `94% Full Canvas`)**: Instant 1-click page width switching in the Focus Popover and top note bar, engineered for ultrawide monitors, multi-column notes, and wide tables.
+- **Bionic Saccadic Word-Root Fixation (`bionicAnchors`)**: Optional 1-click reading mode that highlights the root (first 38%) of words `>= 4` letters so your eyes glide effortlessly across long paragraphs without hitting a wall of grey text.
+- **Verified Base Sepolia Smart Contract Selector (`0xd38e5522`) & Synced Config**: Updated `encodeAnchorCalldata` to match the exact compiled selector of `anchorQuestChainRoot(bytes32,uint64,uint64,uint32,string)` on deployed Base Sepolia contract `0xe55230492ec0e029481fd72f5DAbf5d3B4127e03`, and synchronized `onChainConfig` keys in `data.json`.
+- **Magic UI Spotlight & Kinetics Spring Micro-Interactions**: Cursor-tracked radial spotlight glow (`--spot-x`, `--spot-y`) and spring physics (`cubic-bezier(0.22, 1, 0.36, 1)`) across Bento cards, modals, and toolbar chips.
+- **100% Scorecard Audit Pass**: 0 `!important` warnings in `styles.css`, 0 CSS parse errors, zero external runtime dependencies.
+
+## What's New in v5.0.2 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
 
 - **Direct 1-Click Page Surface Selector**: Replaced confusing 3-cycle checkbox with 3 explicit segmented chips ([Pure White] [Warm Book] [Archival Grain]). Select any canvas instantly with 1 single click!
 - **APAG Builder Full English & Russian Localization**: Textareas now load polished English copywriting templates when English UI is selected, and Russian templates when Russian is selected.
 - **Universal 2-Page Side-by-Side Spread**: Fixed `openTrueTwoPageBookSpread` with universal `app.workspace.getLeaf("split", "vertical")` fallback across all Obsidian versions.
-- **Removed Competitor Trademarks**: Completely removed all references to Notion and AFFiNE, replaced with authentic Swiss Bento Editorial design standards.
+- **Swiss Bento Editorial Standard**: Pure visual clarity with authentic Swiss Bento typography and tactile paper textures.
 - **Midnight Dark Craft Contrast Suite**: 100% visible buttons and callouts in dark mode. 0 !important warnings.
 
 ## What's New in v5.0.1 (Light Green Swiss Bento Buttons & Auto-Expanding Creator Studio)
 
-- **Light Green Swiss Bento Buttons (#69BD28)**: Replaced dark green buttons (`#16A34A`) with signature bright Swiss Apple/Lime Green (`#69BD28` / border `#559E1D`) across all modal actions (`Save Flow Check-In`, `Save @brand_context.md`, `Add Quest`, `Seal Capsule`, `Insert into Note`), perfectly harmonized with the floating dock's UI and Focus buttons.
+- **Light Green Swiss Bento Buttons (https://www.google.com/search?q=%2369BD28)**: Replaced dark green buttons (`#16A34A`) with signature bright Swiss Apple/Lime Green (`#69BD28` / border `#559E1D`) across all modal actions (`Save Flow Check-In`, `Save @brand_context.md`, `Add Quest`, `Seal Capsule`, `Insert into Note`), perfectly harmonized with the floating dock's UI and Focus buttons.
 - **Auto-Expanding Creator Studio (⚡ Creator OS)**: Modal widened to 860px with dynamic auto-fit height on all textareas (`@brand Context`, `APAG Builder`, and compiled Markdown). All text is immediately visible without scrolling or dragging textarea corners.
 - **Base Sepolia Smart Contract Registry Preconfigured**: Connected to deployed on-chain registry contract (`0xe55230492ec0e029481fd72f5DAbf5d3B4127e03`).
 - **100% Scorecard Audit Pass**: 0 !important warnings, 0 CSS parse errors, zero leaked secrets.

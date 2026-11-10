@@ -1,9 +1,9 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "5.0.5",
+  "version": "5.1.0",
   "minAppVersion": "1.5.0",
-  "description": "Airy book folio (#FFFFFF / Book / Grain), 3D Envelope Time Capsule, 3D Walnut Bookshelf, Live Graph Studio, SHA-256 Quest Chain & Creator Studio.",
+  "description": "Airy book folio (#FFFFFF / Book / Grain), 3 Page Widths (760px/1080px/Full), Bionic Focus, WASM 144 FPS Core, 3D Envelope Capsule & Base Sepolia Quest Chain.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
   "isDesktopOnly": false,
