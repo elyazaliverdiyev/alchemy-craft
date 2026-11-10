@@ -72,7 +72,13 @@ const DEFAULT_SETTINGS = {
   wasmAcceleration: true, // Embedded WebAssembly (WASM) 144 FPS Spring & Graph Physics Core
   dualCognitionBrief: true, // v5.2.0 Human x AI Dual-Cognition Executive Brief & llms.txt Compiler
   wasmSemanticRadar: true, // v5.2.0 WASM 64-Bit SimHash Offline Semantic Connection Radar
-  paperGrain: 28, // 0..100% micro-grain intensity // Calibrated Cool Alabaster & Crisp Slate Ink for Windows 11 Night Light users
+  ideCodeStudio: true, // v5.3.0 IDE Poly-Chromatic Code Blocks with 5 Palettes & Line Numbers
+  codeThemePalette: "vscode-dark", // "vscode-dark" | "tokyo-night" | "monokai-pro" | "catppuccin" | "alabaster-light"
+  windChainFooter: true, // v5.3.0 Floating Wind-Physics Blurred Backlinks & Immutable Note Chain
+  bespokeSidebarIcons: true, // v5.3.0 Custom Duotone Squircle Folder & Note Icons + Counts
+  customFolderIcons: {}, // Custom user-assigned icon keys per folder/file path
+  noteBlockchain: [], // Immutable chain of linked notes [{ path, title, prevHash, hash, ts }]
+  paperGrain: 42, // 0..100% micro-grain intensity // Calibrated Cool Alabaster & Crisp Slate Ink for Windows 11 Night Light users
   editorialCleanMode: true, // Swiss Bento tactile block isolation without harsh neo-brutalist black borders
   lifeRpg: {
     antiVision: "Бесцельный скроллинг, расфокус, стена серого текста и откладывание ключевого проекта.",
@@ -5844,6 +5850,32 @@ class AlchemyFlowPlugin extends Plugin {
               ${sicraftIcon('sparkle')}
               <span>${i18n({ en: "AI·Brief", ru: "AI·Бриф", zh: "AI·摘要", ja: "AI·要約", es: "IA·Brief", de: "KI·Brief" }, this)}</span>
             </button>
+            <button class="artcraft-craft-mini-btn is-kanban-quick-btn" data-act="kanban-board" title="${
+              i18n({
+                en: "Open Clipy-Style 4-Column Kanban & Flow Board (Drag & Drop + Note Task Sync)",
+                ru: "Открыть 4-колоночный Канбан и Поток Задач (Drag & Drop + синхронизация с заметкой)",
+                zh: "打开四列任务看板与心流漏斗（拖拽与笔记同步）",
+                ja: "4列カンバン＆フローボードを開く（ドラッグ＆ドロップ対応）",
+                es: "Abrir Tablero Kanban de 4 Columnas y Flujo",
+                de: "4-Spalten Kanban- & Flow-Board öffnen"
+              }, this)
+            }">
+              ${sicraftIcon('columns')}
+              <span>${i18n({ en: "Kanban", ru: "Канбан", zh: "看板", ja: "カンバン", es: "Kanban", de: "Kanban" }, this)}</span>
+            </button>
+            <button class="artcraft-craft-mini-btn ${(this.settings.paperGrain || 0) > 0 ? "is-active" : ""}" data-act="grain-cycle" title="${
+              i18n({
+                en: "Archival Paper Grain & Tactile Shimmer: click to cycle Off → 35% Soft → 65% Book → 100% Craft",
+                ru: "Шуршавость и зернистость книжной бумаги: клик для переключения Выкл → 35% Мягкая → 65% Книжная → 100% Крафт",
+                zh: "纸张颗粒质感：点击切换 0% → 35% → 65% → 100%",
+                ja: "紙の粒子テクスチャ：0% → 35% → 65% → 100% 切り替え",
+                es: "Textura de grano de papel: alternar 0% → 35% → 65% → 100%",
+                de: "Papierkorn-Textur: umschalten 0% → 35% → 65% → 100%"
+              }, this)
+            }">
+              ${sicraftIcon('sparkle')}
+              <span>${i18n({ en: "Grain", ru: "Зерно", zh: "纸纹", ja: "紙粒", es: "Grano", de: "Korn" }, this)} ${this.settings.paperGrain || 0}%</span>
+            </button>
             <button class="artcraft-craft-mini-btn is-creator-os-btn" data-act="creator-os" title="${
               i18n({
                 en: "Creator Studio: @brand AI Context, APAG Post Builder, Kanban & Sketchpad",
@@ -5915,10 +5947,40 @@ class AlchemyFlowPlugin extends Plugin {
       this.openDualCognitionModal();
     });
 
+    wrap.querySelector('[data-act="kanban-board"]')?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.openCreatorOsModal("kanban");
+    });
+
+    wrap.querySelector('[data-act="grain-cycle"]')?.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const curG = Number(this.settings.paperGrain || 0);
+      const nextG = curG === 0 ? 35 : curG <= 35 ? 65 : curG <= 65 ? 100 : 0;
+      this.settings.paperGrain = nextG;
+      if (nextG > 0 && this.settings.pageSurface === "white") {
+        this.settings.pageSurface = "grain";
+      }
+      await this.saveSettings();
+      this.applyBodyClasses();
+      this.ensureTactilePaperGrainOverlay(activeView);
+      this.updateTaskProgressBar();
+      new obsidian.Notice(
+        isRu
+          ? `🌾 Архивная зернистость и шуршавость листа: ${nextG}%`
+          : `🌾 Archival Paper Grain texture: ${nextG}%`
+      );
+    });
+
     wrap.querySelector('[data-act="creator-os"]')?.addEventListener("click", (e) => {
       e.stopPropagation();
       this.openCreatorOsModal();
     });
+
+    // v5.3.0: Mount tactile paper grain overlay, IDE code studio, sidebar bespoke icons & wind-tethered note chain footer
+    this.ensureTactilePaperGrainOverlay(activeView);
+    this.decorateSidebarFileExplorer();
+    this.enhanceCodeBlocksInView(activeView.containerEl);
+    this.renderWindTetheredNoteChainFooter(activeView);
 
     wrap.querySelector('[data-act="width-cycle"]')?.addEventListener("click", async (e) => {
       e.stopPropagation();
@@ -7456,7 +7518,7 @@ class AlchemyFlowPlugin extends Plugin {
           const modStr = String(mod);
           if (el.getAttribute("data-artcraft-mod") !== modStr) {
             el.setAttribute("data-artcraft-mod", modStr);
-            el.style.setProperty("background-color", colors[mod - 1], "important");
+            el.style.backgroundColor = colors[mod - 1];
           }
         }
       }
@@ -7514,6 +7576,9 @@ class AlchemyFlowPlugin extends Plugin {
     });
     if (this.settings.bionicAnchors) {
       this.applyBionicToElement(rootEl);
+    }
+    if (this.settings.ideCodeStudio !== false) {
+      this.enhanceCodeBlocksInView(rootEl);
     }
   }
 
@@ -7984,6 +8049,490 @@ class AlchemyFlowPlugin extends Plugin {
         : `🤖 Vault llms.txt compiled in vault root (${files.length} notes, ~${savedPct}% AI tokens saved)!`
     );
     return { count: files.length, savedPct, path: targetPath };
+  }
+
+
+  // =========================================================================
+  // 🌾 v5.3.0: VISIBLE TACTILE ARCHIVAL PAPER FIBER & GRAIN OVERLAY
+  // =========================================================================
+  ensureTactilePaperGrainOverlay(activeView) {
+    try {
+      if (!activeView || !activeView.containerEl) return;
+      const grainPct = Math.max(0, Math.min(100, Number(this.settings.paperGrain !== undefined ? this.settings.paperGrain : 42)));
+      const sizers = activeView.containerEl.querySelectorAll(".cm-sizer, .markdown-preview-sizer");
+      sizers.forEach((sizer) => {
+        let layer = sizer.querySelector(":scope > .artcraft-paper-grain-layer");
+        if (grainPct <= 0) {
+          if (layer) layer.remove();
+          return;
+        }
+        if (!layer) {
+          layer = document.createElement("div");
+          layer.className = "artcraft-paper-grain-layer";
+          sizer.insertBefore(layer, sizer.firstChild);
+        }
+        const alpha = (0.04 + (grainPct / 100) * 0.14).toFixed(3);
+        layer.style.opacity = alpha;
+      });
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // 🎨 v5.3.0: IDE POLY-CHROMATIC CODE STUDIO (5 PALETTES + TOKENIZER + COPY)
+  // =========================================================================
+  tokenizeCodeToColorfulHtml(rawCode = "", lang = "js") {
+    const lines = String(rawCode || "").replace(/\r\n/g, "\n").split("\n");
+    if (lines.length > 1 && lines[lines.length - 1] === "") lines.pop();
+
+    const esc = (s) =>
+      s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    const tokenizeLine = (line) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith("//") || trimmed.startsWith("#") || trimmed.startsWith("--")) {
+        return `<span class="ide-tok-comment">${esc(line)}</span>`;
+      }
+
+      // Single-pass regex tokenizer over raw line so we never corrupt HTML entities
+      const tokenRegex = /("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|`[^`\\]*(?:\\.[^`\\]*)*`)|(\/\/.*$)|(\b(?:const|let|var|function|return|async|await|import|from|export|default|class|extends|new|if|else|for|while|switch|case|break|continue|try|catch|finally|throw|typeof|instanceof|in|of|def|elif|except|lambda|yield|with|as|pass|pragma|solidity|contract|mapping|struct|event|emit|public|private|internal|external|view|pure|payable|memory|storage|returns|interface|type|enum|impl|fn|pub|mut|use|mod|match)\b)|(\b(?:true|false|null|undefined|None|True|False|self|this|super|window|document|console|Math|JSON|Promise|Array|Object|String|Number|Boolean|Map|Set|uint256|address|bytes32|bool|string)\b)|(\b(?:0x[0-9a-fA-F]+|\d+(?:\.\d+)?(?:px|rem|em|ms|s|%)?)\b)|(\b[a-zA-Z_$][a-zA-Z0-9_$]*(?=\s*\())|(\.[a-zA-Z_$][a-zA-Z0-9_$]*)|([{}()\[\]])/g;
+
+      let out = "";
+      let lastIdx = 0;
+      let m;
+      while ((m = tokenRegex.exec(line)) !== null) {
+        if (m.index > lastIdx) {
+          out += esc(line.slice(lastIdx, m.index));
+        }
+        const [full, strTok, comTok, kwTok, builtinTok, numTok, fnTok, propTok, brkTok] = m;
+        if (strTok) out += `<span class="ide-tok-string">${esc(full)}</span>`;
+        else if (comTok) out += `<span class="ide-tok-comment">${esc(full)}</span>`;
+        else if (kwTok) out += `<span class="ide-tok-keyword">${esc(full)}</span>`;
+        else if (builtinTok) out += `<span class="ide-tok-type">${esc(full)}</span>`;
+        else if (numTok) out += `<span class="ide-tok-number">${esc(full)}</span>`;
+        else if (fnTok) out += `<span class="ide-tok-fn">${esc(full)}</span>`;
+        else if (propTok) out += `<span class="ide-tok-prop">${esc(full)}</span>`;
+        else if (brkTok) out += `<span class="ide-tok-bracket">${esc(full)}</span>`;
+        else out += esc(full);
+        lastIdx = m.index + full.length;
+      }
+      if (lastIdx < line.length) {
+        out += esc(line.slice(lastIdx));
+      }
+      return out || " ";
+    };
+
+    return lines
+      .map(
+        (ln, i) =>
+          `<div class="ide-code-line"><span class="ide-line-num">${i + 1}</span><span class="ide-line-code">${tokenizeLine(ln)}</span></div>`
+      )
+      .join("");
+  }
+
+  enhanceCodeBlocksInView(rootEl) {
+    if (!rootEl || this.settings.ideCodeStudio === false) return;
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const palettes = [
+      { id: "vscode-dark", label: "VS Code Dark+" },
+      { id: "tokyo-night", label: "Tokyo Night" },
+      { id: "monokai-pro", label: "Monokai Pro" },
+      { id: "catppuccin", label: "Catppuccin" },
+      { id: "alabaster-light", label: "Alabaster Light" },
+    ];
+    const currentPalette = this.settings.codeThemePalette || "vscode-dark";
+
+    const preBlocks = rootEl.querySelectorAll("pre:not(.dc-code-preview)");
+    preBlocks.forEach((pre) => {
+      pre.setAttribute("data-ide-palette", currentPalette);
+      if (pre.dataset.artcraftIdeEnhanced === "true") return;
+      const codeEl = pre.querySelector("code");
+      if (!codeEl) return;
+
+      pre.dataset.artcraftIdeEnhanced = "true";
+      pre.classList.add("artcraft-ide-code-window");
+
+      const rawCode = codeEl.innerText || codeEl.textContent || "";
+      const langCls = Array.from(codeEl.classList).find((c) => c.startsWith("language-")) || "";
+      const lang = (langCls.replace("language-", "") || "code").toUpperCase();
+      const lineCount = Math.max(1, rawCode.replace(/\r\n/g, "\n").trimEnd().split("\n").length);
+
+      // Build colorful tokenized lines inside codeEl
+      codeEl.innerHTML = this.tokenizeCodeToColorfulHtml(rawCode, lang);
+
+      // Build IDE Window Header Bar
+      const header = document.createElement("div");
+      header.className = "artcraft-ide-header";
+      header.innerHTML = `
+        <div class="ide-win-left">
+          <span class="ide-dot is-red"></span>
+          <span class="ide-dot is-yellow"></span>
+          <span class="ide-dot is-green"></span>
+          <span class="ide-lang-pill">${lang}</span>
+          <span class="ide-lines-meta">${lineCount} ${isRu ? "стр." : "lines"}</span>
+        </div>
+        <div class="ide-win-right">
+          <select class="ide-palette-select" title="${isRu ? "Выбрать цветовую палитру кода" : "Choose IDE Color Palette"}">
+            ${palettes
+              .map(
+                (p) =>
+                  `<option value="${p.id}" ${p.id === currentPalette ? "selected" : ""}>🎨 ${p.label}</option>`
+              )
+              .join("")}
+          </select>
+          <button type="button" class="ide-copy-btn">
+            <span>📋 ${isRu ? "Копировать" : "Copy"}</span>
+          </button>
+        </div>
+      `;
+
+      pre.insertBefore(header, pre.firstChild);
+
+      const selectEl = header.querySelector(".ide-palette-select");
+      selectEl?.addEventListener("change", async (e) => {
+        e.stopPropagation();
+        const chosen = selectEl.value;
+        this.settings.codeThemePalette = chosen;
+        await this.saveSettings();
+        document.querySelectorAll("pre.artcraft-ide-code-window").forEach((b) => {
+          b.setAttribute("data-ide-palette", chosen);
+        });
+        document.querySelectorAll(".ide-palette-select").forEach((s) => {
+          s.value = chosen;
+        });
+        this.playTactileMicroFeedback("tap");
+      });
+
+      const copyBtn = header.querySelector(".ide-copy-btn");
+      copyBtn?.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        try {
+          await navigator.clipboard.writeText(rawCode);
+          this.playTactileMicroFeedback("tap");
+          copyBtn.innerHTML = `<span>✓ ${isRu ? "Скопировано!" : "Copied!"}</span>`;
+          copyBtn.classList.add("is-copied");
+          setTimeout(() => {
+            copyBtn.innerHTML = `<span>📋 ${isRu ? "Копировать" : "Copy"}</span>`;
+            copyBtn.classList.remove("is-copied");
+          }, 1600);
+        } catch (err) {}
+      });
+    });
+  }
+
+  // =========================================================================
+  // 🗂️ v5.3.0: BESPOKE DUOTONE SQUIRCLE FOLDER & NOTE ICON PACK (FULCRUM STYLE)
+  // =========================================================================
+  getBespokeSidebarIconSvg(name = "", isFolder = true) {
+    const lower = String(name || "").toLowerCase();
+    let palette = { bg: "#EFF6FF", border: "#93C5FD", fg: "#2563EB", glyph: "folder" };
+
+    if (/00|inbox|входящ|capture/.test(lower)) {
+      palette = { bg: "#EFF6FF", border: "#93C5FD", fg: "#2563EB", glyph: "inbox" };
+    } else if (/01|fleeting|быстр|мысл|инвест|трейд|soros|сорос|market|рынк/.test(lower)) {
+      palette = { bg: "#FEF3C7", border: "#FCD34D", fg: "#D97706", glyph: "bolt" };
+    } else if (/02|lit|книг|библиот|титан|бизнес|рокфеллер|баффет|далио/.test(lower)) {
+      palette = { bg: "#ECFDF5", border: "#6EE7B7", fg: "#059669", glyph: "book" };
+    } else if (/03|kaizen|кайдзен|project|проект|строй|код|dev/.test(lower)) {
+      palette = { bg: "#F5F3FF", border: "#C4B5FD", fg: "#7C3AED", glyph: "rocket" };
+    } else if (/04|moc|карт|граф|навигатор|index|индекс|систем/.test(lower)) {
+      palette = { bg: "#ECFEFF", border: "#67E8F9", fg: "#0891B2", glyph: "compass" };
+    } else if (/05|психолог|мозг|нейро|фокус|ум|мышлен/.test(lower)) {
+      palette = { bg: "#FDF2F8", border: "#F9A8D4", fg: "#DB2777", glyph: "brain" };
+    } else if (/06|медиа|блог|бренд|контент|автор/.test(lower)) {
+      palette = { bg: "#FFF7ED", border: "#FDBA74", fg: "#EA580C", glyph: "flame" };
+    } else if (/07|био|тело|медитац|здоров|энерг|сон/.test(lower)) {
+      palette = { bg: "#F0FDF4", border: "#86EFAC", fg: "#16A34A", glyph: "heart" };
+    } else if (/08|духовн|философ|жизн|квест|алхим|tour|тур/.test(lower)) {
+      palette = { bg: "#FEFCE8", border: "#FDE047", fg: "#CA8A04", glyph: "star" };
+    } else if (!isFolder) {
+      palette = { bg: "#F4F8EC", border: "#BAE67E", fg: "#58A618", glyph: "doc" };
+    }
+
+    const glyphs = {
+      inbox: `<path d="M3 9l2-5h6l2 5v4H3V9z" stroke="${palette.fg}" stroke-width="1.5" fill="${palette.fg}" fill-opacity="0.18"/><path d="M3 9h3l1 1.5h2L10 9h3" stroke="${palette.fg}" stroke-width="1.4"/>`,
+      bolt: `<polygon points="8.8,2.2 3.8,8.8 7.5,8.8 6.8,13.8 12.2,7.2 8.5,7.2" fill="${palette.fg}" fill-opacity="0.25" stroke="${palette.fg}" stroke-width="1.4" stroke-linejoin="round"/>`,
+      book: `<path d="M3.5 3.5h4a1.5 1.5 0 0 1 1.5 1.5v7.5a1.2 1.2 0 0 0-1.2-1.2H3.5V3.5zM12.5 3.5h-4A1.5 1.5 0 0 0 7 5v7.5a1.2 1.2 0 0 1 1.2-1.2h4.3V3.5z" fill="${palette.fg}" fill-opacity="0.18" stroke="${palette.fg}" stroke-width="1.35"/>`,
+      rocket: `<path d="M8 2.5c2.5 0 4.5 2 4.5 5.5 0 2-1 3.5-2 4.5L8 11 5.5 12.5c-1-1-2-2.5-2-4.5 0-3.5 2-5.5 4.5-5.5z" fill="${palette.fg}" fill-opacity="0.22" stroke="${palette.fg}" stroke-width="1.4"/><circle cx="8" cy="7" r="1.3" fill="${palette.fg}"/>`,
+      compass: `<circle cx="8" cy="8" r="5.2" stroke="${palette.fg}" stroke-width="1.4" fill="${palette.fg}" fill-opacity="0.14"/><polygon points="9.8,6.2 8.7,8.7 6.2,9.8 7.3,7.3" fill="${palette.fg}"/>`,
+      brain: `<circle cx="6.2" cy="7.5" r="2.8" fill="${palette.fg}" fill-opacity="0.2" stroke="${palette.fg}" stroke-width="1.35"/><circle cx="9.8" cy="7.5" r="2.8" fill="${palette.fg}" fill-opacity="0.2" stroke="${palette.fg}" stroke-width="1.35"/><path d="M8 4.8v6.5" stroke="${palette.fg}" stroke-width="1.35"/>`,
+      flame: `<path d="M8 2.4c1.8 2.2 3.6 3.9 3.6 6.4A3.6 3.6 0 0 1 4.4 8.8C4.4 6.3 6.2 4.6 8 2.4z" fill="${palette.fg}" fill-opacity="0.24" stroke="${palette.fg}" stroke-width="1.4"/>`,
+      heart: `<path d="M8 12.6s-4.5-2.7-4.5-5.8a2.5 2.5 0 0 1 4.5-1.5 2.5 2.5 0 0 1 4.5 1.5c0 3.1-4.5 5.8-4.5 5.8z" fill="${palette.fg}" fill-opacity="0.24" stroke="${palette.fg}" stroke-width="1.4"/>`,
+      star: `<polygon points="8,2.3 9.6,5.8 13.4,6.2 10.6,8.8 11.4,12.6 8,10.7 4.6,12.6 5.4,8.8 2.6,6.2 6.4,5.8" fill="${palette.fg}" fill-opacity="0.25" stroke="${palette.fg}" stroke-width="1.35"/>`,
+      doc: `<rect x="4" y="2.8" width="8" height="10.4" rx="1.8" fill="${palette.fg}" fill-opacity="0.16" stroke="${palette.fg}" stroke-width="1.35"/><line x1="6" y1="6" x2="10" y2="6" stroke="${palette.fg}" stroke-width="1.3"/><line x1="6" y1="8.5" x2="9" y2="8.5" stroke="${palette.fg}" stroke-width="1.3"/>`,
+      folder: `<path d="M2.8 4.8a1.2 1.2 0 0 1 1.2-1.2h2.6l1.3 1.4h4.1a1.2 1.2 0 0 1 1.2 1.2v5a1.2 1.2 0 0 1-1.2 1.2H4a1.2 1.2 0 0 1-1.2-1.2V4.8z" fill="${palette.fg}" fill-opacity="0.22" stroke="${palette.fg}" stroke-width="1.35"/>`,
+    };
+
+    return `<span class="artcraft-bespoke-squircle" style="background:${palette.bg};border-color:${palette.border};color:${palette.fg}"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" xmlns="http://www.w3.org/2000/svg">${glyphs[palette.glyph] || glyphs.folder}</svg></span>`;
+  }
+
+  decorateSidebarFileExplorer() {
+    if (this.settings.bespokeSidebarIcons === false) return;
+    try {
+      const folderTitles = document.querySelectorAll(".nav-files-container .nav-folder-title");
+      folderTitles.forEach((ft) => {
+        const contentEl = ft.querySelector(".nav-folder-title-content");
+        if (!contentEl) return;
+        const name = (contentEl.textContent || "").trim();
+        if (!name || name === "/") return;
+
+        if (!ft.querySelector(".artcraft-bespoke-squircle")) {
+          const iconWrap = document.createElement("span");
+          iconWrap.className = "artcraft-sidebar-icon-slot";
+          iconWrap.innerHTML = this.getBespokeSidebarIconSvg(name, true);
+          ft.insertBefore(iconWrap, contentEl);
+        }
+
+        // Count children items like Fulcrum / Fintrack sidebar
+        const folderEl = ft.parentElement;
+        const childrenWrap = folderEl ? folderEl.querySelector(":scope > .nav-folder-children") : null;
+        if (childrenWrap) {
+          const count = childrenWrap.querySelectorAll(":scope > .nav-file, :scope > .nav-folder").length;
+          let countBadge = ft.querySelector(".artcraft-folder-count-pill");
+          if (count > 0) {
+            if (!countBadge) {
+              countBadge = document.createElement("span");
+              countBadge.className = "artcraft-folder-count-pill";
+              ft.appendChild(countBadge);
+            }
+            countBadge.textContent = String(count);
+          }
+        }
+      });
+
+      const fileTitles = document.querySelectorAll(".nav-files-container .nav-file-title");
+      fileTitles.forEach((flt) => {
+        const contentEl = flt.querySelector(".nav-file-title-content");
+        if (!contentEl) return;
+        const name = (contentEl.textContent || "").trim();
+        if (!flt.querySelector(".artcraft-bespoke-squircle")) {
+          const iconWrap = document.createElement("span");
+          iconWrap.className = "artcraft-sidebar-icon-slot";
+          iconWrap.innerHTML = this.getBespokeSidebarIconSvg(name, false);
+          flt.insertBefore(iconWrap, contentEl);
+        }
+      });
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // 🍃 v5.3.0: WIND-TETHERED BLURRED BACKLINKS & IMMUTABLE NOTE BLOCKCHAIN
+  // =========================================================================
+  async renderWindTetheredNoteChainFooter(activeView) {
+    try {
+      if (this.settings.windChainFooter === false || !activeView || !activeView.file) return;
+      const file = activeView.file;
+      const isRu = (this.settings.uiLanguage || "en") === "ru";
+      const rawText = activeView.editor ? activeView.editor.getValue() : (activeView.data || await this.app.vault.cachedRead(file));
+      const curHash = this.wasmFastHashHex(rawText || file.basename);
+
+      // Gather linked + semantically related notes
+      const radar = await this.scanVaultWasmSemanticRadar(file, rawText);
+      const related = radar.matches.slice(0, 4);
+
+      if (!Array.isArray(this.settings.noteBlockchain)) {
+        this.settings.noteBlockchain = [];
+      }
+      const chain = this.settings.noteBlockchain;
+      const myChainIdx = chain.findIndex((b) => b.path === file.path);
+      const isChained = myChainIdx !== -1;
+
+      // Read short preview snippet for each related note
+      const cardsData = [];
+      for (let i = 0; i < related.length; i++) {
+        const item = related[i];
+        let snippet = "";
+        try {
+          const txt = await this.app.vault.cachedRead(item.file);
+          snippet = txt
+            .replace(/^---[\s\S]*?---\n?/, "")
+            .replace(/[#*_`>\[\]]/g, "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 170);
+        } catch (e) {}
+        cardsData.push({
+          ...item,
+          snippet: snippet || (isRu ? "Связанный конспект в вашей базе знаний Obsidian..." : "Connected knowledge note in your Obsidian vault..."),
+          phaseDelay: (i * 0.85).toFixed(2),
+        });
+      }
+
+      // Mount footer inside both Reading View (.markdown-preview-sizer) and Live Preview (.view-content)
+      const viewContent = activeView.containerEl.querySelector(".view-content");
+      if (!viewContent) return;
+
+      let footer = viewContent.querySelector(":scope > .artcraft-wind-chain-footer");
+      if (!footer) {
+        footer = document.createElement("div");
+        footer.className = "artcraft-wind-chain-footer";
+        viewContent.appendChild(footer);
+      }
+
+      const chainTrailHtml =
+        chain.length > 0
+          ? `<div class="wind-blockchain-ribbon">
+              ${chain
+                .slice(-5)
+                .map(
+                  (node, idx) => `
+                  <div class="chain-node-pill ${node.path === file.path ? "is-current" : ""}" data-open-chain-path="${node.path.replace(/"/g, "&quot;")}" title="Prev: 0x${node.prevHash} → Hash: 0x${node.hash}">
+                    <span class="chain-idx">#0${idx + 1}</span>
+                    <strong>${node.title.slice(0, 22)}${node.title.length > 22 ? "…" : ""}</strong>
+                    <code>0x${node.hash.slice(0, 6)}</code>
+                  </div>
+                  ${idx < Math.min(chain.length, 5) - 1 ? `<span class="chain-arrow-sep">⛓️→</span>` : ""}`
+                )
+                .join("")}
+            </div>`
+          : "";
+
+      footer.innerHTML = `
+        <div class="wind-chain-inner">
+          <div class="wind-chain-top-bar">
+            <div class="wind-chain-title-group">
+              <span class="wind-chain-badge">⛓️ ${isRu ? "НЕРАЗРЫВНАЯ ЦЕПЬ И ВЕТРОВОЙ ЭФИР СВЯЗЕЙ" : "IMMUTABLE NOTE CHAIN & WIND TETHER"}</span>
+              <span class="wind-chain-hash">Block 0x${curHash}</span>
+            </div>
+            <div class="wind-chain-actions">
+              <button type="button" class="artcraft-pay-action-btn is-green wind-lock-chain-btn" data-act="lock-note-chain">
+                <span>⛓️ ${
+                  isChained
+                    ? isRu
+                      ? `В цепи (#0${myChainIdx + 1}) · Обновить блок`
+                      : `Chained (#0${myChainIdx + 1}) · Refresh Block`
+                    : isRu
+                    ? "Приковать заметку в неразрывную цепь"
+                    : "Seal Note into Unbreakable Chain"
+                }</span>
+              </button>
+            </div>
+          </div>
+
+          ${chainTrailHtml}
+
+          <div class="wind-bezier-canopy">
+            <svg viewBox="0 0 800 58" preserveAspectRatio="none" class="wind-bezier-svg">
+              <defs>
+                <linearGradient id="windArrowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#65B71E" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#2563EB" stop-opacity="0.75"/>
+                </linearGradient>
+                <marker id="windArrowHead" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+                  <polygon points="0,0 7,3.5 0,7" fill="#2563EB"/>
+                </marker>
+              </defs>
+              <path d="M400,2 C400,28 110,24 110,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
+              <path d="M400,2 C400,28 300,24 300,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
+              <path d="M400,2 C400,28 500,24 500,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
+              <path d="M400,2 C400,28 690,24 690,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
+              <circle cx="400" cy="4" r="4.5" fill="#65B71E"/>
+            </svg>
+          </div>
+
+          <div class="wind-leaves-grid">
+            ${
+              cardsData.length > 0
+                ? cardsData
+                    .map(
+                      (c, idx) => `
+                      <div class="wind-leaf-card" style="--wind-delay:${c.phaseDelay}s" data-leaf-path="${c.path.replace(/"/g, "&quot;")}" data-leaf-title="${c.title.replace(/"/g, "&quot;")}">
+                        <div class="wind-leaf-header">
+                          <span class="wind-leaf-idx">0${idx + 1} // ${c.similarity}%</span>
+                          <span class="wind-leaf-type">${c.isAlreadyLinked ? "🔗 Linked" : "✨ SimHash"}</span>
+                        </div>
+                        <h4 class="wind-leaf-title">${c.title}</h4>
+                        <div class="wind-leaf-blurred-body">
+                          <p>${c.snippet}</p>
+                        </div>
+                        <div class="wind-leaf-footer">
+                          <span class="wind-leaf-hint">${
+                            isRu ? "🍃 Нажмите, чтобы развеять туман" : "🍃 Click to lift the mist"
+                          }</span>
+                          <button type="button" class="wind-leaf-open-btn" data-open-now="${c.path.replace(/"/g, "&quot;")}">
+                            ${isRu ? "Открыть ↗" : "Open ↗"}
+                          </button>
+                        </div>
+                      </div>`
+                    )
+                    .join("")
+                : `<div class="wind-empty-note">${
+                    isRu
+                      ? "Создайте ещё несколько заметок в хранилище — здесь появятся парящие на ветру связанные листы со стрелками."
+                      : "Create more notes in your vault to see wind-floating connected note leaves here."
+                  }</div>`
+            }
+          </div>
+        </div>
+      `;
+
+      // Lock active note into the immutable note blockchain
+      footer.querySelector('[data-act="lock-note-chain"]')?.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const prevBlock = chain.length > 0 ? chain[chain.length - 1] : null;
+        const prevHash = prevBlock ? prevBlock.hash : "00000000";
+        const combinedHash = this.wasmFastHashHex(`${prevHash}:${file.path}:${curHash}`);
+
+        if (myChainIdx !== -1) {
+          chain[myChainIdx].hash = combinedHash;
+          chain[myChainIdx].ts = new Date().toISOString();
+        } else {
+          chain.push({
+            path: file.path,
+            title: file.basename,
+            prevHash,
+            hash: combinedHash,
+            ts: new Date().toISOString(),
+          });
+        }
+        await this.saveSettings();
+        this.playChapterCompletionChord();
+        new (require("obsidian").Notice)(
+          isRu
+            ? `⛓️ Заметка «${file.basename}» прикована в неразрывную блокчейн-цепь (0x${combinedHash})!`
+            : `⛓️ Note "${file.basename}" sealed into Immutable Note Chain (0x${combinedHash})!`
+        );
+        this.renderWindTetheredNoteChainFooter(activeView);
+      });
+
+      // Open note from blockchain ribbon
+      footer.querySelectorAll("[data-open-chain-path]").forEach((pill) => {
+        pill.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const p = pill.getAttribute("data-open-chain-path");
+          const target = this.app.vault.getAbstractFileByPath(p);
+          if (target) await this.app.workspace.getLeaf(false).openFile(target);
+        });
+      });
+
+      // 2-stage interaction on floating blurred leaf cards:
+      // Click 1 -> Cinematic unblur & 3D unfold (.is-unveiled)
+      // Click 2 (or click "Open ↗") -> Smoothly open the note
+      footer.querySelectorAll(".wind-leaf-card").forEach((card) => {
+        card.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const path = card.getAttribute("data-leaf-path");
+          if (e.target && e.target.closest("[data-open-now]")) {
+            const f = this.app.vault.getAbstractFileByPath(path);
+            if (f) await this.app.workspace.getLeaf(false).openFile(f);
+            return;
+          }
+          if (!card.classList.contains("is-unveiled")) {
+            card.classList.add("is-unveiled");
+            this.playTactileMicroFeedback("tap");
+            const hint = card.querySelector(".wind-leaf-hint");
+            if (hint) {
+              hint.textContent = isRu ? "✨ Туман рассеян · Нажмите ещё раз для перехода" : "✨ Unveiled · Click again to open";
+            }
+          } else {
+            const f = this.app.vault.getAbstractFileByPath(path);
+            if (f) await this.app.workspace.getLeaf(false).openFile(f);
+          }
+        });
+      });
+    } catch (e) {}
   }
 
 
@@ -12648,76 +13197,219 @@ class CreatorOsStudioModal extends Modal {
       } else {
         const obsidian = require("obsidian");
         const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-        const raw = view && view.editor ? view.editor.getValue() : (view && view.data) || "";
-        const lines = raw.split("\n");
+        const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+        let rawContent = "";
+        let lines = [];
         const tasks = [];
-        lines.forEach((ln, lineIdx) => {
-          const m = ln.match(/^(\s*[-*+]\s+\[([ xX/\-])\]\s+)(.+)$/);
-          if (m) {
-            const stateChar = m[2];
-            const col = stateChar === "x" || stateChar === "X" ? "done" : stateChar === "/" || stateChar === "-" ? "flow" : "todo";
-            tasks.push({ lineIdx, prefix: m[1], stateChar, text: m[3].trim(), col });
-          }
-        });
+        if (view && view.file) {
+          rawContent = view.editor ? view.editor.getValue() : (view.data || "");
+          lines = rawContent.split("\n");
+          lines.forEach((ln, idx) => {
+            const m = ln.match(/^\s*[-*+]\s+\[([ xX/\->])\]\s+(.+)$/);
+            if (m) {
+              const ch = m[1];
+              const col = (ch === "x" || ch === "X") ? "done" : ch === "/" ? "flow" : ch === "-" || ch === ">" ? "review" : "todo";
+              const rawTxt = m[2].trim();
+              const prioMatch = rawTxt.match(/#(high|med|low|срочно|важно)/i);
+              const prio = prioMatch ? prioMatch[1].toLowerCase() : (idx % 3 === 0 ? "high" : idx % 3 === 1 ? "med" : "low");
+              tasks.push({ lineIdx: idx, col, text: rawTxt, prio });
+            }
+          });
+        }
 
-        const renderCol = (colId, title, badgeColor) => {
-          const list = tasks.filter((t) => t.col === colId);
-          return `
-            <div class="artcraft-kanban-col">
-              <div class="kanban-col-head" style="border-top-color:${badgeColor}">
-                <strong>${title}</strong>
-                <span>${list.length}</span>
+        const todoList = tasks.filter((t) => t.col === "todo");
+        const flowList = tasks.filter((t) => t.col === "flow");
+        const revList  = tasks.filter((t) => t.col === "review");
+        const doneList = tasks.filter((t) => t.col === "done");
+        const totalCnt = tasks.length || 1;
+        const pctTodo = Math.round((todoList.length / totalCnt) * 100);
+        const pctFlow = Math.round((flowList.length / totalCnt) * 100);
+        const pctRev  = Math.round((revList.length  / totalCnt) * 100);
+        const pctDone = Math.round((doneList.length / totalCnt) * 100);
+
+        const updateTaskState = async (lineIdx, targetCol) => {
+          if (!view || !view.file) return;
+          const charMap = { todo: " ", flow: "/", review: "-", done: "x" };
+          const newChar = charMap[targetCol] || " ";
+          const taskObj = tasks.find((x) => x.lineIdx === lineIdx);
+          if (!taskObj) return;
+          lines[lineIdx] = lines[lineIdx].replace(/^(\s*[-*+]\s+\[)[ xX/\->](\]\s+)/, `$1${newChar}$2`);
+          const updatedContent = lines.join("\n");
+          if (view.editor) view.editor.setValue(updatedContent);
+          else await this.app.vault.modify(view.file, updatedContent);
+          if (targetCol === "done") {
+            await this.plugin.mineQuestBlock(taskObj.text.slice(0, 110), 30, true);
+          } else {
+            this.plugin.playTactileMicroFeedback("tap");
+          }
+          render();
+        };
+
+        const renderColCards = (items, colId) => {
+          if (!items.length) {
+            return `<div class="artcraft-kanban-empty">${isRu ? "Перетащите карточку сюда или создайте выше" : "Drop a card here or add one above"}</div>`;
+          }
+          const order = ["todo", "flow", "review", "done"];
+          const cIdx = order.indexOf(colId);
+          const prevCol = cIdx > 0 ? order[cIdx - 1] : null;
+          const nextCol = cIdx < order.length - 1 ? order[cIdx + 1] : null;
+
+          return items.map((t) => {
+            const prioLabel = t.prio === "high" || t.prio === "срочно"
+              ? (isRu ? "🔥 Высокий" : "🔥 High")
+              : t.prio === "med" || t.prio === "важно"
+              ? (isRu ? "⚡ Средний" : "⚡ Med")
+              : (isRu ? "🌱 Обычный" : "🌱 Normal");
+            const prioCls = (t.prio === "high" || t.prio === "срочно") ? "is-high" : (t.prio === "med" || t.prio === "важно") ? "is-med" : "is-low";
+            const shortHash = this.plugin.wasmFastHashHex(t.text).slice(0, 6);
+            return `
+              <div class="artcraft-kanban-card is-pro-card" draggable="true" data-kline="${t.lineIdx}">
+                <div class="kcard-top-meta">
+                  <span class="kcard-prio-pill ${prioCls}">${prioLabel}</span>
+                  <span class="kcard-hash-tag">0x${shortHash}</span>
+                </div>
+                <div class="artcraft-kanban-card-txt">${t.text.replace(/</g, "&lt;")}</div>
+                <div class="artcraft-kanban-card-acts">
+                  ${prevCol ? `<button class="k-move-btn" data-kline="${t.lineIdx}" data-kto="${prevCol}" title="${isRu ? "Шаг назад" : "Move left"}">←</button>` : `<span></span>`}
+                  <span class="kcard-line-badge">L${t.lineIdx + 1}</span>
+                  ${nextCol ? `<button class="k-move-btn is-forward" data-kline="${t.lineIdx}" data-kto="${nextCol}" title="${isRu ? "Дальше по потоку" : "Advance"}">${nextCol === "done" ? "✓ Done +30 XP" : "→"}</button>` : `<span class="k-done-chip">⛓️ SHA-256</span>`}
+                </div>
               </div>
-              <div class="kanban-col-cards">
-                ${
-                  list.length === 0
-                    ? `<div class="kanban-empty">${i18n({ en: "No tasks", ru: "Нет задач", zh: "暂无任务", ja: "タスクなし", es: "Sin tareas", de: "Keine Aufgaben" }, this.plugin)}</div>`
-                    : list
-                        .map(
-                          (t) => `
-                      <div class="kanban-task-card" data-line="${t.lineIdx}">
-                        <div class="kb-task-txt">${t.text.replace(/[*_`~]/g, "")}</div>
-                        <div class="kb-task-btns">
-                          ${colId !== "todo" ? `<button data-move="todo" data-line="${t.lineIdx}">← ${i18n({ en: "Queue", ru: "В очередь", zh: "待办", ja: "待機", es: "Cola", de: "Warteschlange" }, this.plugin)}</button>` : ""}
-                          ${colId !== "flow" ? `<button data-move="flow" data-line="${t.lineIdx}">${i18n({ en: "In Flow", ru: "В поток", zh: "进行中", ja: "進行中", es: "En flujo", de: "Im Flow" }, this.plugin)}</button>` : ""}
-                          ${colId !== "done" ? `<button class="is-done-btn" data-move="done" data-line="${t.lineIdx}">✓ SHA-256</button>` : ""}
-                        </div>
-                      </div>
-                    `
-                        )
-                        .join("")
-                }
-              </div>
-            </div>
-          `;
+            `;
+          }).join("");
         };
 
         body.innerHTML = `
-          <div class="artcraft-kanban-board">
-            ${renderCol("todo", i18n({ en: "01 · QUEUE", ru: "01 · ОЧЕРЕДЬ", zh: "01 · 待办队列", ja: "01 · 待機", es: "01 · COLA", de: "01 · WARTESCHLANGE" }, this.plugin), "#94A3B8")}
-            ${renderCol("flow", i18n({ en: "02 · IN FLOW", ru: "02 · В ПОТОКЕ", zh: "02 · 心流进行中", ja: "02 · 進行中", es: "02 · EN FLUJO", de: "02 · IM FLOW" }, this.plugin), "#2563EB")}
-            ${renderCol("done", i18n({ en: "03 · SIGNED SHA-256", ru: "03 · ГОТОВО (SHA-256)", zh: "03 · 已签名完成", ja: "03 · 完了 (SHA-256)", es: "03 · COMPLETADO", de: "03 · ERLEDIGT" }, this.plugin), "#16A34A")}
+          <div class="clipy-kanban-dashboard">
+            <div class="clipy-kpi-strip">
+              <div class="clipy-kpi-card is-amber">
+                <span class="clipy-kpi-lbl">${isRu ? "📥 ИДЕИ / БЭКЛОГ" : "📥 BACKLOG"}</span>
+                <div class="clipy-kpi-row"><strong>${todoList.length}</strong><span class="clipy-delta">${pctTodo}%</span></div>
+              </div>
+              <div class="clipy-kpi-card is-blue">
+                <span class="clipy-kpi-lbl">${isRu ? "⚡ В РАБОТЕ (WIP)" : "⚡ IN PROGRESS"}</span>
+                <div class="clipy-kpi-row"><strong>${flowList.length}</strong><span class="clipy-delta">${pctFlow}%</span></div>
+              </div>
+              <div class="clipy-kpi-card is-purple">
+                <span class="clipy-kpi-lbl">${isRu ? "🔍 ПРОВЕРКА / РЕВЬЮ" : "🔍 IN REVIEW"}</span>
+                <div class="clipy-kpi-row"><strong>${revList.length}</strong><span class="clipy-delta">${pctRev}%</span></div>
+              </div>
+              <div class="clipy-kpi-card is-lime">
+                <span class="clipy-kpi-lbl">${isRu ? "✅ ГОТОВО (ON-CHAIN)" : "✅ SHIPPED"}</span>
+                <div class="clipy-kpi-row"><strong>${doneList.length}</strong><span class="clipy-delta is-positive">+${pctDone}%</span></div>
+              </div>
+            </div>
+
+            <div class="clipy-sankey-bar-wrap">
+              <div class="clipy-sankey-head">
+                <span>${isRu ? "Поток выполнения заметки (Conversion Funnel)" : "Note Execution Flow Funnel"}</span>
+                <span>${doneList.length}/${tasks.length} ${isRu ? "завершено" : "completed"} (${pctDone}%)</span>
+              </div>
+              <div class="clipy-sankey-track">
+                <div class="sankey-seg is-todo" style="width:${Math.max(4, pctTodo)}%"></div>
+                <div class="sankey-seg is-flow" style="width:${Math.max(4, pctFlow)}%"></div>
+                <div class="sankey-seg is-rev" style="width:${Math.max(4, pctRev)}%"></div>
+                <div class="sankey-seg is-done" style="width:${Math.max(4, pctDone)}%"></div>
+              </div>
+            </div>
+
+            <div class="clipy-quick-add-row">
+              <input type="text" class="clipy-new-task-input" placeholder="${
+                isRu ? "Введите новую задачу и нажмите Enter (добавится в активную заметку как - [ ])..." : "Type a new task and press Enter (appends - [ ] to active note)..."
+              }" />
+              <button class="artcraft-pay-action-btn is-green clipy-add-btn">
+                <span>+ ${isRu ? "Добавить задачу" : "Add Task"}</span>
+              </button>
+            </div>
+
+            <div class="artcraft-kanban-board is-four-cols">
+              <div class="artcraft-kanban-col" data-kcol="todo">
+                <div class="artcraft-kanban-col-head is-todo">
+                  <span>01 // ${isRu ? "Идеи" : "Backlog"}</span>
+                  <strong>${todoList.length}</strong>
+                </div>
+                <div class="artcraft-kanban-col-list">${renderColCards(todoList, "todo")}</div>
+              </div>
+              <div class="artcraft-kanban-col" data-kcol="flow">
+                <div class="artcraft-kanban-col-head is-flow">
+                  <span>02 // ${isRu ? "В Работе" : "In Progress"}</span>
+                  <strong>${flowList.length}</strong>
+                </div>
+                <div class="artcraft-kanban-col-list">${renderColCards(flowList, "flow")}</div>
+              </div>
+              <div class="artcraft-kanban-col" data-kcol="review">
+                <div class="artcraft-kanban-col-head is-rev">
+                  <span>03 // ${isRu ? "Проверка" : "Review"}</span>
+                  <strong>${revList.length}</strong>
+                </div>
+                <div class="artcraft-kanban-col-list">${renderColCards(revList, "review")}</div>
+              </div>
+              <div class="artcraft-kanban-col" data-kcol="done">
+                <div class="artcraft-kanban-col-head is-done">
+                  <span>04 // ${isRu ? "Готово" : "Shipped"}</span>
+                  <strong>${doneList.length}</strong>
+                </div>
+                <div class="artcraft-kanban-col-list">${renderColCards(doneList, "done")}</div>
+              </div>
+            </div>
           </div>
         `;
 
-        body.querySelectorAll("[data-move]").forEach((btn) => {
+        // Quick Add Task handler
+        const addNewTask = async () => {
+          const inp = body.querySelector(".clipy-new-task-input");
+          const val = (inp && inp.value || "").trim();
+          if (!val || !view || !view.file) return;
+          const updated = rawContent.trimEnd() + `\n- [ ] ${val}\n`;
+          if (view.editor) view.editor.setValue(updated);
+          else await this.app.vault.modify(view.file, updated);
+          this.plugin.playTactileMicroFeedback("tap");
+          render();
+        };
+
+        body.querySelector(".clipy-add-btn")?.addEventListener("click", addNewTask);
+        body.querySelector(".clipy-new-task-input")?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") addNewTask();
+        });
+
+        // Button move handlers
+        body.querySelectorAll(".k-move-btn").forEach((btn) => {
           btn.addEventListener("click", async () => {
-            if (!view || !view.file) return;
-            const lineIdx = Number(btn.getAttribute("data-line"));
-            const targetCol = btn.getAttribute("data-move");
-            const newChar = targetCol === "done" ? "x" : targetCol === "flow" ? "/" : " ";
-            const taskObj = tasks.find((x) => x.lineIdx === lineIdx);
-            if (!taskObj) return;
-            lines[lineIdx] = lines[lineIdx].replace(/^(\s*[-*+]\s+\[)[ xX/\-](\]\s+)/, `$1${newChar}$2`);
-            const updatedContent = lines.join("\n");
-            if (view.editor) view.editor.setValue(updatedContent);
-            else await this.app.vault.modify(view.file, updatedContent);
-            if (targetCol === "done") {
-              await this.plugin.mineQuestBlock(taskObj.text.slice(0, 110), 30, true);
-            } else {
-              this.plugin.playTactileMicroFeedback("tap");
+            const lineIdx = parseInt(btn.getAttribute("data-kline"), 10);
+            const targetCol = btn.getAttribute("data-kto");
+            await updateTaskState(lineIdx, targetCol);
+          });
+        });
+
+        // HTML5 Drag & Drop handlers
+        let draggedLineIdx = null;
+        body.querySelectorAll(".artcraft-kanban-card[draggable='true']").forEach((card) => {
+          card.addEventListener("dragstart", (e) => {
+            draggedLineIdx = parseInt(card.getAttribute("data-kline"), 10);
+            card.classList.add("is-dragging");
+            if (e.dataTransfer) e.dataTransfer.setData("text/plain", String(draggedLineIdx));
+          });
+          card.addEventListener("dragend", () => {
+            card.classList.remove("is-dragging");
+          });
+        });
+
+        body.querySelectorAll(".artcraft-kanban-col").forEach((colEl) => {
+          colEl.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            colEl.classList.add("is-drag-over");
+          });
+          colEl.addEventListener("dragleave", () => {
+            colEl.classList.remove("is-drag-over");
+          });
+          colEl.addEventListener("drop", async (e) => {
+            e.preventDefault();
+            colEl.classList.remove("is-drag-over");
+            const targetCol = colEl.getAttribute("data-kcol");
+            const lineIdx = draggedLineIdx !== null ? draggedLineIdx : parseInt(e.dataTransfer?.getData("text/plain") || "-1", 10);
+            if (lineIdx >= 0 && targetCol) {
+              await updateTaskState(lineIdx, targetCol);
             }
-            render();
           });
         });
       }
@@ -12826,7 +13518,10 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
   async onOpen() {
     const obsidian = require("obsidian");
-    const { contentEl } = this;
+    const { contentEl, modalEl } = this;
+    if (modalEl) {
+      modalEl.addClass("artcraft-wide-craft-modal", "artcraft-dual-cognition-shell");
+    }
     contentEl.empty();
     contentEl.addClass("artcraft-dual-cognition-modal");
 
@@ -12865,7 +13560,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
       <div class="dc-studio-shell">
         <div class="dc-studio-header">
           <div>
-            <div class="dc-eyebrow">ALCHEMY CRAFT v5.2.0 // HUMAN × AI DUAL-COGNITION ENGINE</div>
+            <div class="dc-eyebrow">ALCHEMY CRAFT v5.3.0 // HUMAN × AI DUAL-COGNITION ENGINE</div>
             <h2 class="dc-title">${
               isRu
                 ? "🧠 Двухрежимное Чтение: Человек × ИИ-Агент"

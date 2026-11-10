@@ -1,3 +1,18 @@
+## 🚀 What's New in v5.3.0 — IDE Poly-Chromatic Code Studio, Wind-Tethered Note Blockchain & Bespoke Icons
+
+- **🎨 IDE Poly-Chromatic Code Studio (5 Switchable Color Palettes + 1-Click Copy)**:
+  - Transforms every code block into a full IDE window with traffic-light controls, line numbers, language badges, and a built-in multi-token syntax highlighter.
+  - Switch palettes live on any code block header between **VS Code Dark+ Neon**, **Tokyo Night Cyber**, **Monokai Pro Spectrum**, **Catppuccin Mocha**, and **Swiss Alabaster Light**.
+- **🍃 Wind-Tethered Blurred Backlinks & Immutable Note Blockchain**:
+  - Renders an interactive **SVG Bezier Arrow Canopy** at the bottom of your note connecting to floating, wind-swaying related note leaves.
+  - Connected note bodies are veiled in a frosted blur while titles and SimHash match scores remain razor-sharp — **click once** to lift the mist with a 3D unfold animation, and **click again** to open the note or seal it into an unbreakable `SHA-256` Note Blockchain (`⛓️ Приковать заметку в цепь`).
+- **🗂️ Bespoke Duotone Squircle Folder & Note Icon Pack (Fulcrum Style)**:
+  - Automatically decorates folders and notes in the left File Explorer with 24 custom multi-layered SVG squircle icons, child item count badges, and an unmistakable **Saladt Lime-Green (`#65B71E`)** active note highlight.
+- **📊 Clipy-Style 4-Column Pro Kanban & Flow Funnel**:
+  - Upgraded Kanban board with **Backlog → In Progress → Review → Shipped** columns, HTML5 Drag-and-Drop, priority tags (`🔥 High`, `⚡ Med`, `🌱 Normal`), top pastel KPI cards, and a live conversion funnel bar synced directly with your note's `- [ ]` tasks.
+- **📐 Centered Page Geometry, Restored Swiss Bento Cards & Tactile Paper Grain**:
+  - Centered `760px`, `1080px`, `Full`, and `Book Page` views in both Live Preview and Reading Mode, restored colored `H1–H4` section cards and Excel-Lime tables, and added a visible archival paper fiber & grain layer (`🌾 Зерно 0% → 35% → 65% → 100%`).
+
 ## What's New in v5.0.2 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
 
 - **Direct 1-Click Page Surface Selector**: Replaced confusing 3-cycle checkbox with 3 explicit segmented chips ([Pure White] [Warm Book] [Archival Grain]). Select any canvas instantly with 1 single click!

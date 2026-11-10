@@ -5104,10 +5104,10 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
 
 /* 2. Top Header Bar Aligns with Book Folio Width (Snug to Left Sidebar) */
 body.artcraft-book-spread .artcraft-task-progress-wrap {
-  width: calc(100% - 68px);
-  max-width: calc(100% - 68px);
-  margin-left: 20px;
-  margin-right: 48px;
+  width: 100%;
+  max-width: var(--file-line-width, 760px);
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 4px;
   margin-bottom: 8px;
   padding: 0 4px;
@@ -5119,10 +5119,10 @@ body.artcraft-book-spread .artcraft-task-progress-wrap {
 /* 3. The 3D Book Folio Physical Page (Snug to Left Sidebar, Deckled Sheets on Right) */
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  width: calc(100% - 68px);
-  max-width: calc(100% - 68px);
-  margin-left: 20px;
-  margin-right: 48px;
+  width: 100%;
+  max-width: var(--file-line-width, 760px);
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 8px;
   margin-bottom: 56px;
   background: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 3.2%, #FCFBF7 96.5%, #F4F0E5 100%);
@@ -7290,127 +7290,8 @@ body.artcraft-theme-active.artcraft-surface-white.artcraft-book-spread:not(.artc
   box-shadow: 0 2px 14px rgba(0, 0, 0, 0.03);
 }
 
-body.artcraft-theme-active .markdown-preview-view > p,
-body.artcraft-theme-active .markdown-rendered > p,
-body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view > p,
-body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p {
-  padding: 2px 0;
-  margin-bottom: 0.95em;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  line-height: 1.74;
-  color: var(--text-normal, #262626);
-}
+/* (v5.3.0: Restored Swiss Bento Section Cards, Inline Title & Tactile Paragraphs) */
 
-body.artcraft-theme-active .markdown-preview-view > p:hover,
-body.artcraft-theme-active .markdown-rendered > p:hover,
-body.artcraft-theme-active.artcraft-editorial-clean .markdown-preview-view > p:hover,
-body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered > p:hover {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-}
-
-body.artcraft-theme-active .inline-title,
-body.artcraft-theme-active.artcraft-editorial-clean .inline-title {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--artcraft-border-hairline, #EBEBEA);
-  border-radius: 0;
-  padding: 8px 0 14px 0;
-  margin-top: 6px;
-  margin-bottom: 16px;
-  box-shadow: none;
-  font-size: 2.1rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--artcraft-ink-primary, #1F2328);
-}
-
-body.artcraft-theme-active .inline-title::before {
-  background: transparent;
-  color: #9CA3AF;
-  padding: 0;
-  margin-bottom: 6px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-body.artcraft-theme-active .metadata-container {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--artcraft-border-hairline, #EBEBEA);
-  border-radius: 0;
-  padding: 4px 0 14px 0;
-  margin-bottom: 22px;
-  box-shadow: none;
-}
-
-body.artcraft-theme-active .metadata-properties-heading,
-body.artcraft-theme-active .metadata-property-key,
-body.artcraft-theme-active .metadata-add-button {
-  color: #A1A1AA;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-body.artcraft-theme-active .metadata-property-value {
-  color: #71717A;
-  font-size: 12.5px;
-}
-
-body.artcraft-theme-active .markdown-rendered h1,
-body.artcraft-theme-active .HyperMD-header-1,
-body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h1,
-body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-1 {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--artcraft-border-hairline, #EBEBEA);
-  border-radius: 0;
-  padding: 12px 0 8px 0;
-  margin-top: 1.4em;
-  margin-bottom: 0.55em;
-  font-size: 1.55rem;
-  font-weight: 750;
-  letter-spacing: -0.022em;
-  color: var(--artcraft-ink-primary, #1F2328);
-  box-shadow: none;
-}
-
-body.artcraft-theme-active .markdown-rendered h2,
-body.artcraft-theme-active .HyperMD-header-2,
-body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h2,
-body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-2 {
-  background: transparent;
-  border: none;
-  border-left: 3px solid #2563EB;
-  border-radius: 0;
-  padding: 2px 0 2px 12px;
-  margin-top: 1.3em;
-  margin-bottom: 0.5em;
-  font-size: 1.28rem;
-  font-weight: 700;
-  color: var(--artcraft-ink-primary, #1F2328);
-  box-shadow: none;
-}
-
-body.artcraft-theme-active .markdown-rendered h3,
-body.artcraft-theme-active .HyperMD-header-3,
-body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered h3,
-body.artcraft-theme-active.artcraft-editorial-clean .HyperMD-header-3 {
-  background: transparent;
-  border: none;
-  padding: 2px 0;
-  margin-top: 1.1em;
-  margin-bottom: 0.4em;
-  font-size: 1.08rem;
-  font-weight: 680;
-  color: #374151;
-  box-shadow: none;
-}
 
 body.artcraft-theme-active {
   --checkbox-radius: 5px;
@@ -8548,4 +8429,1014 @@ body.theme-dark .artcraft-graph-hud {
   margin: 0 0 8px 0;
   font-size: 11.5px;
   color: #52525B;
+}
+
+
+/* =========================================================================
+   🚀 ALCHEMY CRAFT v5.3.0: COMPLETE VISUAL & LAYOUT RESTORATION +
+   SALADT LIME BUTTONS + IDE CODE STUDIO + WIND-TETHERED NOTE CHAIN +
+   BESPOKE FULCRUM SIDEBAR ICONS + CLIPY 4-COLUMN KANBAN
+   ========================================================================= */
+
+/* 1. SIGNATURE SALADT / LIME-GREEN (#65B71E / #69BD28) & TABLE VARIABLES */
+:is(html, body).artcraft-theme-active {
+  --artcraft-saladt-green: #65B71E;
+  --artcraft-saladt-green-hover: #549E15;
+  --artcraft-saladt-green-border: #43820E;
+  --artcraft-excel-green: #65B71E;
+  --artcraft-excel-green-border: #43820E;
+  --table-header-background: #65B71E;
+  --table-header-background-hover: #549E15;
+  --table-header-color: #FFFFFF;
+  --table-header-weight: 800;
+  --table-border-color: #CBD5E1;
+  --table-row-alt-background: #F4F8FF;
+  --table-row-background-hover: #FEF3C7;
+  --p-spacing: 1.05rem;
+  --heading-spacing: 1.45rem;
+}
+
+/* 2. PERFECT HORIZONTAL CENTERING FOR 760px / 1080px / FULL & BOOK PAGE */
+:is(html, body).artcraft-theme-active .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+:is(html, body).artcraft-theme-active .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
+:is(html, body).artcraft-theme-active.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+:is(html, body).artcraft-theme-active.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-width-book .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-book .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-book .artcraft-top-bar-inner,
+:is(html, body).artcraft-theme-active.artcraft-width-book .wind-chain-inner {
+  --file-line-width: 760px;
+  max-width: 760px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-width-wide .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-wide .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-wide .artcraft-top-bar-inner,
+:is(html, body).artcraft-theme-active.artcraft-width-wide .wind-chain-inner {
+  --file-line-width: 1080px;
+  max-width: 1080px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-width-full .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-full .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-full .artcraft-top-bar-inner,
+:is(html, body).artcraft-theme-active.artcraft-width-full .wind-chain-inner {
+  --file-line-width: 94%;
+  max-width: 94%;
+  width: 94%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-book-spread .artcraft-task-progress-wrap {
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 24px 0 24px;
+}
+
+/* 3. VISIBLE TACTILE ARCHIVAL PAPER GRAIN & FIBER TEXTURE LAYER */
+.artcraft-paper-grain-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: inherit;
+  mix-blend-mode: multiply;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23pg)' opacity='0.85'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(0deg, rgba(140, 88, 40, 0.018) 0px, rgba(140, 88, 40, 0.018) 1px, transparent 1px, transparent 28px);
+  background-size: 180px 180px, 100% 28px;
+}
+
+/* 4. RESTORED SWISS BENTO CHAPTER CARDS (H1-H4), INLINE TITLE, PARAGRAPHS & TABLES */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .inline-title {
+  background-color: #FFFFFF;
+  border: 1.5px solid #D6D0C4;
+  border-left: 7px solid #65B71E;
+  border-radius: 12px;
+  padding: 16px 22px;
+  margin-top: 10px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  color: #111827;
+  font-size: 2.05rem;
+  font-weight: 850;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .inline-title::before {
+  content: var(--artcraft-header-tag, "STRATALCHEMY // KNOWLEDGE BRIEF");
+  display: block;
+  background-color: #18181B;
+  color: #FFFFFF;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-family: var(--font-monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  width: fit-content;
+  margin-bottom: 8px;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .metadata-container {
+  background-color: #FAF8F3;
+  border: 1.5px solid #E2DDD2;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h1, .cm-line.HyperMD-header-1) {
+  background: linear-gradient(90deg, rgba(101, 183, 30, 0.16) 0%, rgba(255, 255, 255, 0.96) 100%);
+  border: 1.5px solid #A3E635;
+  border-left: 6px solid #65B71E;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-top: 18px;
+  margin-bottom: 10px;
+  color: #14532D;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(101, 183, 30, 0.08);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h2, .cm-line.HyperMD-header-2) {
+  background: linear-gradient(90deg, #EFF6FF 0%, #F8FAFC 100%);
+  border: 1.5px solid #BFDBFE;
+  border-left: 6px solid #2563EB;
+  border-radius: 10px;
+  padding: 9px 15px;
+  margin-top: 16px;
+  margin-bottom: 9px;
+  color: #1E3A8A;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h3, .cm-line.HyperMD-header-3) {
+  background: linear-gradient(90deg, #FFF7ED 0%, #FFFDF9 100%);
+  border: 1.5px solid #FED7AA;
+  border-left: 6px solid #F59E0B;
+  border-radius: 9px;
+  padding: 7px 14px;
+  margin-top: 14px;
+  margin-bottom: 8px;
+  color: #9A3412;
+  font-weight: 750;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h4, .cm-line.HyperMD-header-4) {
+  background: linear-gradient(90deg, #F5F3FF 0%, #FDFCFF 100%);
+  border: 1.5px solid #DDD6FE;
+  border-left: 5px solid #8B5CF6;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #5B21B6;
+  font-weight: 700;
+}
+
+/* Writing Mode (Live Preview) & Reading Mode Paragraph Separation & Active Line Highlight */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered > p {
+  padding: 9px 14px;
+  margin-bottom: 11px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #E6E1D6;
+  line-height: 1.74;
+  color: #1F2328;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered > p:hover {
+  background: #FFFFFF;
+  border-color: #65B71E;
+  box-shadow: 0 3px 12px rgba(101, 183, 30, 0.08);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .cm-s-obsidian .cm-line:not(.HyperMD-header):not(.HyperMD-codeblock):not(.HyperMD-frontmatter) {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  line-height: 1.74;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .cm-s-obsidian .cm-active.cm-line:not(.HyperMD-header):not(.HyperMD-codeblock) {
+  background-color: rgba(101, 183, 30, 0.08);
+  border-left: 3px solid #65B71E;
+  padding-left: 8px;
+  border-radius: 4px 8px 8px 4px;
+}
+
+/* Restored High-Specificity Swiss Bento Tables (Reading Mode & Live Preview Embeds) */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  border: 1.5px solid #18181B;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+  box-shadow: 0 3px 0 #18181B, 0 6px 16px rgba(15, 23, 42, 0.05);
+  margin: 16px 0;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table th {
+  background: linear-gradient(180deg, #6EC424 0%, #58A618 100%);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 11px 14px;
+  border-bottom: 2px solid #3F7A0E;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #E2E8F0;
+  border-right: 1px solid #E2E8F0;
+  color: #18181B;
+  font-size: 0.93rem;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table tbody tr:nth-child(odd) td {
+  background-color: #F4F8FF;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table tbody tr:nth-child(even) td {
+  background-color: #FFFFFF;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table tbody tr:hover td {
+  background-color: #FEF3C7;
+}
+
+/* 5. SIGNATURE SALADT / LIME-GREEN BUTTONS WITH PURE WHITE (#FFFFFF) TEXT */
+:is(html, body) :is(
+  button.mod-cta,
+  .artcraft-pay-action-btn.is-green,
+  .artcraft-rpg-stamp-note-btn,
+  .rpg-add-quest-btn,
+  .capsule-seal,
+  .nutrient-save-btn,
+  .dc-primary-btn,
+  .artcraft-dock-btn.is-active,
+  .wax-env-btn.is-break,
+  .wind-lock-chain-btn
+) {
+  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
+  border: 1.5px solid #3F7D0B;
+  color: #FFFFFF;
+  font-weight: 800;
+  border-radius: 9px;
+  box-shadow: 0 2px 0 #366B09, 0 4px 12px rgba(101, 183, 30, 0.28);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.14);
+}
+
+:is(html, body) :is(
+  button.mod-cta,
+  .artcraft-pay-action-btn.is-green,
+  .artcraft-rpg-stamp-note-btn,
+  .rpg-add-quest-btn,
+  .capsule-seal,
+  .nutrient-save-btn,
+  .dc-primary-btn,
+  .artcraft-dock-btn.is-active,
+  .wax-env-btn.is-break,
+  .wind-lock-chain-btn
+):hover {
+  background: linear-gradient(180deg, #78D12B 0%, #5EB019 100%);
+  border-color: #366B09;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+:is(html, body) :is(
+  button.mod-cta *,
+  .artcraft-pay-action-btn.is-green *,
+  .artcraft-rpg-stamp-note-btn *,
+  .rpg-add-quest-btn *,
+  .capsule-seal *,
+  .nutrient-save-btn *,
+  .dc-primary-btn *,
+  .artcraft-dock-btn.is-active *,
+  .wax-env-btn.is-break *,
+  .wind-lock-chain-btn *
+) {
+  color: #FFFFFF;
+}
+
+/* 6. FULL-WIDTH FIX FOR AI-BRIEF MODAL (.modal.artcraft-dual-cognition-shell) */
+.modal.artcraft-dual-cognition-shell {
+  width: min(920px, 94vw);
+  max-width: 94vw;
+  padding: 18px 20px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.modal.artcraft-dual-cognition-shell .modal-content.artcraft-dual-cognition-modal {
+  width: 100%;
+  max-width: 100%;
+  padding: 6px 4px;
+  border: none;
+  box-shadow: none;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.modal.artcraft-dual-cognition-shell .dc-bento-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  .modal.artcraft-dual-cognition-shell .dc-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.modal.artcraft-dual-cognition-shell .dc-card {
+  min-width: 0;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* 7. BESPOKE DUOTONE SQUIRCLE SIDEBAR ICONS & UNMISTAKABLE ACTIVE NOTE HIGHLIGHT */
+.artcraft-sidebar-icon-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.artcraft-bespoke-squircle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 6px;
+  border: 1px solid #93C5FD;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+
+.artcraft-folder-count-pill {
+  margin-left: auto;
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748B;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 999px;
+  padding: 1px 6px;
+  line-height: 1.3;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-file-title.is-active {
+  background: linear-gradient(90deg, #F0FDF4 0%, #FFFFFF 100%);
+  color: #111827;
+  font-weight: 800;
+  border: 1.5px solid #43820E;
+  border-left: 6px solid #65B71E;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(101, 183, 30, 0.18);
+}
+
+/* 8. IDE POLY-CHROMATIC CODE STUDIO (5 SWITCHABLE PALETTES) */
+pre.artcraft-ide-code-window {
+  position: relative;
+  border-radius: 12px;
+  padding: 0;
+  margin: 16px 0;
+  overflow: hidden;
+  border: 1.5px solid #27272A;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+  background: #1E1E1E;
+  color: #D4D4D4;
+}
+
+/* Palette 1: VS Code Dark+ Neon (Default) */
+pre.artcraft-ide-code-window[data-ide-palette="vscode-dark"] {
+  --ide-bg: #1E1E1E;
+  --ide-head: #252526;
+  --ide-fg: #9CDCFE;
+  --ide-kw: #569CD6;
+  --ide-str: #CE9178;
+  --ide-num: #B5CEA8;
+  --ide-fn: #DCDCAA;
+  --ide-type: #4EC9B0;
+  --ide-prop: #C586C0;
+  --ide-brk: #FFD700;
+  --ide-com: #6A9955;
+}
+
+/* Palette 2: Tokyo Night Cyber */
+pre.artcraft-ide-code-window[data-ide-palette="tokyo-night"] {
+  --ide-bg: #1A1B26;
+  --ide-head: #16161E;
+  --ide-fg: #C0CAF5;
+  --ide-kw: #BB9AF7;
+  --ide-str: #9ECE6A;
+  --ide-num: #FF9E64;
+  --ide-fn: #7AA2F7;
+  --ide-type: #2AC3DE;
+  --ide-prop: #7DCFFF;
+  --ide-brk: #E0AF68;
+  --ide-com: #565F89;
+}
+
+/* Palette 3: Monokai Pro Spectrum */
+pre.artcraft-ide-code-window[data-ide-palette="monokai-pro"] {
+  --ide-bg: #2D2A2E;
+  --ide-head: #221F22;
+  --ide-fg: #FCFCFA;
+  --ide-kw: #FF6188;
+  --ide-str: #FFD866;
+  --ide-num: #AB9DF2;
+  --ide-fn: #A9DC76;
+  --ide-type: #78DCE8;
+  --ide-prop: #FC9867;
+  --ide-brk: #FFD866;
+  --ide-com: #727072;
+}
+
+/* Palette 4: Catppuccin Mocha */
+pre.artcraft-ide-code-window[data-ide-palette="catppuccin"] {
+  --ide-bg: #1E1E2E;
+  --ide-head: #181825;
+  --ide-fg: #CDD6F4;
+  --ide-kw: #CBA6F7;
+  --ide-str: #A6E3A1;
+  --ide-num: #FAB387;
+  --ide-fn: #89B4FA;
+  --ide-type: #94E2D5;
+  --ide-prop: #F5C2E7;
+  --ide-brk: #F9E2AF;
+  --ide-com: #6C7086;
+}
+
+/* Palette 5: Alabaster Warm Paper (Light IDE) */
+pre.artcraft-ide-code-window[data-ide-palette="alabaster-light"] {
+  --ide-bg: #FAF8F3;
+  --ide-head: #EFECE4;
+  --ide-fg: #1E293B;
+  --ide-kw: #2563EB;
+  --ide-str: #047857;
+  --ide-num: #D97706;
+  --ide-fn: #7C3AED;
+  --ide-type: #0891B2;
+  --ide-prop: #BE185D;
+  --ide-brk: #B45309;
+  --ide-com: #64748B;
+  border-color: #D6D0C4;
+}
+
+pre.artcraft-ide-code-window {
+  background: var(--ide-bg, #1E1E1E);
+  color: var(--ide-fg, #9CDCFE);
+}
+
+.artcraft-ide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 13px;
+  background: var(--ide-head, #252526);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  font-family: var(--font-monospace);
+  font-size: 11px;
+}
+
+.ide-win-left,
+.ide-win-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ide-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.ide-dot.is-red { background: #FF5F56; }
+.ide-dot.is-yellow { background: #FFBD2E; }
+.ide-dot.is-green { background: #27C93F; }
+
+.ide-lang-pill {
+  background: rgba(101, 183, 30, 0.22);
+  color: #84CC16;
+  border: 1px solid rgba(132, 204, 22, 0.4);
+  padding: 1px 7px;
+  border-radius: 5px;
+  font-weight: 800;
+  font-size: 10px;
+}
+
+.ide-lines-meta {
+  opacity: 0.65;
+  font-size: 10px;
+}
+
+.ide-palette-select {
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  cursor: pointer;
+}
+
+.ide-copy-btn {
+  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
+  color: #FFFFFF;
+  border: 1px solid #3F7D0B;
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+pre.artcraft-ide-code-window > code {
+  display: block;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-family: var(--font-monospace);
+  font-size: 12.5px;
+  line-height: 1.58;
+  color: var(--ide-fg, #9CDCFE);
+  background: transparent;
+}
+
+.ide-code-line {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  white-space: pre;
+}
+
+.ide-line-num {
+  min-width: 24px;
+  text-align: right;
+  opacity: 0.38;
+  user-select: none;
+  font-size: 11px;
+}
+
+.ide-tok-keyword { color: var(--ide-kw, #569CD6); font-weight: 700; }
+.ide-tok-string  { color: var(--ide-str, #CE9178); }
+.ide-tok-number  { color: var(--ide-num, #B5CEA8); font-weight: 600; }
+.ide-tok-fn      { color: var(--ide-fn, #DCDCAA); font-weight: 600; }
+.ide-tok-type    { color: var(--ide-type, #4EC9B0); font-weight: 600; }
+.ide-tok-prop    { color: var(--ide-prop, #C586C0); }
+.ide-tok-bracket { color: var(--ide-brk, #FFD700); font-weight: 700; }
+.ide-tok-comment { color: var(--ide-com, #6A9955); font-style: italic; }
+
+/* 9. WIND-TETHERED BLURRED BACKLINKS & IMMUTABLE NOTE BLOCKCHAIN FOOTER */
+.artcraft-wind-chain-footer {
+  padding: 20px 24px 64px 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wind-chain-inner {
+  max-width: var(--file-line-width, 760px);
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(250, 248, 243, 0.94) 0%, rgba(244, 241, 232, 0.98) 100%);
+  border: 1.5px solid #D6D0C4;
+  border-radius: 18px;
+  padding: 18px 20px 22px 20px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.wind-chain-top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #D6D0C4;
+}
+
+.wind-chain-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wind-chain-badge {
+  font-family: var(--font-monospace);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background: #18181B;
+  color: #FFFFFF;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+
+.wind-chain-hash {
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #43820E;
+  background: #ECFCCB;
+  border: 1px solid #A3E635;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.wind-blockchain-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: #FFFFFF;
+  border: 1px solid #E5E0D5;
+  border-radius: 12px;
+}
+
+.chain-node-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: #FAF8F3;
+  border: 1.5px solid #D6D0C4;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+
+.chain-node-pill:hover {
+  transform: translateY(-1px);
+  border-color: #65B71E;
+}
+
+.chain-node-pill.is-current {
+  background: #F0FDF4;
+  border-color: #65B71E;
+}
+
+.chain-idx {
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  font-weight: 800;
+  color: #FFFFFF;
+  background: #65B71E;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.chain-arrow-sep {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.wind-bezier-canopy {
+  width: 100%;
+  height: 54px;
+  margin: 4px 0;
+}
+
+.wind-bezier-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@keyframes artcraftWindArrowFlow {
+  0% { stroke-dashoffset: 18; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.wind-arrow-path {
+  animation: artcraftWindArrowFlow 1.4s linear infinite;
+}
+
+@keyframes artcraftLeafOnWind {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0) rotate(-0.8deg);
+  }
+  33% {
+    transform: translate3d(4px, -5px, 0) rotate(0.9deg);
+  }
+  66% {
+    transform: translate3d(-3px, -2px, 0) rotate(-0.4deg);
+  }
+}
+
+.wind-leaves-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  perspective: 900px;
+}
+
+@media (max-width: 680px) {
+  .wind-leaves-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.wind-leaf-card {
+  position: relative;
+  background: linear-gradient(145deg, #FFFFFF 0%, #FAF8F3 100%);
+  border: 1.5px solid #D6D0C4;
+  border-left: 5px solid #65B71E;
+  border-radius: 14px;
+  padding: 13px 15px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  animation: artcraftLeafOnWind 5.8s ease-in-out infinite;
+  animation-delay: var(--wind-delay, 0s);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+}
+
+.wind-leaf-card:hover {
+  border-color: #2563EB;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.12);
+}
+
+.wind-leaf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 5px;
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.wind-leaf-idx {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border: 1px solid #BFDBFE;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.wind-leaf-type {
+  color: #43820E;
+  background: #ECFCCB;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.wind-leaf-title {
+  margin: 0 0 7px 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.wind-leaf-blurred-body {
+  filter: blur(3.6px);
+  opacity: 0.72;
+  user-select: none;
+  transition: filter 0.48s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.48s ease;
+  font-size: 12px;
+  line-height: 1.48;
+  color: #3F3F46;
+  max-height: 56px;
+  overflow: hidden;
+}
+
+.wind-leaf-blurred-body p {
+  margin: 0;
+}
+
+.wind-leaf-card.is-unveiled {
+  animation-play-state: paused;
+  transform: translateY(-3px) scale(1.01);
+  border-color: #65B71E;
+  background: #FFFFFF;
+  box-shadow: 0 16px 34px rgba(101, 183, 30, 0.16);
+}
+
+.wind-leaf-card.is-unveiled .wind-leaf-blurred-body {
+  filter: blur(0px);
+  opacity: 1;
+  user-select: text;
+  max-height: 140px;
+}
+
+.wind-leaf-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 9px;
+  padding-top: 7px;
+  border-top: 1px dashed #E5E0D5;
+  font-size: 10.5px;
+  color: #71717A;
+}
+
+.wind-leaf-open-btn {
+  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
+  color: #FFFFFF;
+  border: 1px solid #3F7D0B;
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* 10. CLIPY-STYLE 4-COLUMN PRO KANBAN & FLOW DASHBOARD */
+.clipy-kanban-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clipy-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.clipy-kpi-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E5E0D5;
+  border-radius: 12px;
+  padding: 9px 12px;
+}
+
+.clipy-kpi-card.is-amber { border-left: 4px solid #F59E0B; }
+.clipy-kpi-card.is-blue  { border-left: 4px solid #2563EB; }
+.clipy-kpi-card.is-purple{ border-left: 4px solid #8B5CF6; }
+.clipy-kpi-card.is-lime  { border-left: 4px solid #65B71E; }
+
+.clipy-kpi-lbl {
+  font-family: var(--font-monospace);
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #71717A;
+}
+
+.clipy-kpi-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 3px;
+}
+
+.clipy-kpi-row strong {
+  font-size: 18px;
+  font-weight: 850;
+  color: #18181B;
+}
+
+.clipy-delta {
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #F4F4F5;
+  color: #3F3F46;
+}
+
+.clipy-delta.is-positive {
+  background: #ECFCCB;
+  color: #3F7D0B;
+}
+
+.clipy-sankey-bar-wrap {
+  background: #FFFFFF;
+  border: 1px solid #E5E0D5;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.clipy-sankey-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: #52525B;
+  margin-bottom: 5px;
+}
+
+.clipy-sankey-track {
+  display: flex;
+  height: 9px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #F4F4F5;
+  gap: 2px;
+}
+
+.sankey-seg.is-todo { background: #F59E0B; }
+.sankey-seg.is-flow { background: #2563EB; }
+.sankey-seg.is-rev  { background: #8B5CF6; }
+.sankey-seg.is-done { background: #65B71E; }
+
+.clipy-quick-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.clipy-new-task-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 9px;
+  border: 1.5px solid #D6D0C4;
+  background: #FFFFFF;
+  font-size: 12.5px;
+}
+
+.artcraft-kanban-board.is-four-cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 780px) {
+  .artcraft-kanban-board.is-four-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.artcraft-kanban-col.is-drag-over {
+  border-color: #65B71E;
+  background: #F7FEE7;
+}
+
+.artcraft-kanban-card.is-pro-card {
+  cursor: grab;
+  border: 1.5px solid #E5E0D5;
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: #FFFFFF;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.artcraft-kanban-card.is-pro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.07);
+}
+
+.kcard-top-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.kcard-prio-pill {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.kcard-prio-pill.is-high { background: #FEE2E2; color: #991B1B; }
+.kcard-prio-pill.is-med  { background: #FEF3C7; color: #92400E; }
+.kcard-prio-pill.is-low  { background: #ECFCCB; color: #3F7D0B; }
+
+.kcard-hash-tag,
+.kcard-line-badge {
+  font-family: var(--font-monospace);
+  font-size: 9.5px;
+  color: #71717A;
+}
+
+.k-move-btn.is-forward {
+  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
+  color: #FFFFFF;
+  border-color: #3F7D0B;
 }

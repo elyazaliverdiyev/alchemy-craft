@@ -1,9 +1,9 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "minAppVersion": "1.5.0",
-  "description": "Swiss Bento human reading & AI Dual-Cognition studio: pure white/book surfaces, WASM 144 FPS physics & SimHash semantic radar, llms.txt/MCP compiler, and SHA-256 quest chain.",
+  "description": "Swiss Bento reading, IDE Code Studio, Wind-Tethered Note Blockchain, Bespoke Folder Icons, Clipy 4-Column Kanban & Human x AI Dual-Cognition Engine.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
   "isDesktopOnly": false,
