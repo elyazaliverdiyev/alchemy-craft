@@ -1,8 +1,8 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "5.0.4",
-  "minAppVersion": "1.0.0",
+  "version": "5.0.5",
+  "minAppVersion": "1.5.0",
   "description": "Airy book folio (#FFFFFF / Book / Grain), 3D Envelope Time Capsule, 3D Walnut Bookshelf, Live Graph Studio, SHA-256 Quest Chain & Creator Studio.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",

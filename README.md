@@ -1,4 +1,4 @@
-## What's New in v5.0.4 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
+## What's New in v5.0.5 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
 
 - **Direct 1-Click Page Surface Selector**: Replaced confusing 3-cycle checkbox with 3 explicit segmented chips ([Pure White] [Warm Book] [Archival Grain]). Select any canvas instantly with 1 single click!
 - **APAG Builder Full English & Russian Localization**: Textareas now load polished English copywriting templates when English UI is selected, and Russian templates when Russian is selected.
