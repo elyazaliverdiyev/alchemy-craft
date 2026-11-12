@@ -5541,13 +5541,25 @@ body.artcraft-dark-craft .artcraft-bm-pill .bm-tag-text {
   color: #8A867E;
 }
 
-/* 6. Settings rows: Russian (long) labels never get squeezed into a thin column */
+/* 6. Settings rows: responsive flex wrapping on all widths from mobile to fullscreen */
+.artcraft-calm-settings-root .setting-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .artcraft-calm-settings-root .setting-item-info {
-  min-width: 240px;
-  flex: 1 1 260px;
+  min-width: min(100%, 220px);
+  flex: 1 1 240px;
 }
 
 .artcraft-calm-settings-root .setting-item-control {
+  flex: 0 1 auto;
+  min-width: 0;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
@@ -13193,16 +13205,42 @@ body.artcraft-dark-craft .artcraft-hero-soft-btn:not(.is-primary-soft) {
   color: #F1F5F9;
 }
 
-/* 2. CLEAN SWISS SETTINGS DESIGN (FULL-SCREEN FLEX SAFE) */
-.artcraft-calm-settings-root {
+/* 2. CLEAN SWISS SETTINGS DESIGN (FULL-SCREEN FLEX SAFE, IMMUNE TO THEME/OBSIDIAN PADDING) */
+body .modal.mod-settings .vertical-tab-content-container .vertical-tab-content.artcraft-calm-settings-host,
+body .modal.mod-settings .vertical-tab-content.artcraft-calm-settings-host,
+.vertical-tab-content.artcraft-calm-settings-host {
+  display: block;
   width: 100%;
-  max-width: 860px;
-  min-width: min(100%, 560px);
+  max-width: none;
+  min-width: 0;
   flex: 1 1 auto;
   align-self: stretch;
   box-sizing: border-box;
+  margin: 0;
+  padding: 24px 32px 36px 32px;
+  padding-inline: 32px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@media (max-width: 680px) {
+  body .modal.mod-settings .vertical-tab-content-container .vertical-tab-content.artcraft-calm-settings-host,
+  body .modal.mod-settings .vertical-tab-content.artcraft-calm-settings-host,
+  .vertical-tab-content.artcraft-calm-settings-host {
+    padding: 16px 14px 28px 14px;
+    padding-inline: 14px;
+  }
+}
+
+body .modal.mod-settings .vertical-tab-content.artcraft-calm-settings-host > .artcraft-calm-settings-root,
+.artcraft-calm-settings-root {
+  display: block;
+  width: 100%;
+  max-width: 860px;
+  min-width: 0;
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 4px 0 32px 0;
+  padding: 0;
 }
 
 .artcraft-calm-settings-root .artcraft-settings-bento-hero {

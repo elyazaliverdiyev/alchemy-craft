@@ -9727,7 +9727,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     const header = [
-      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.2)`,
+      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.3)`,
       `> Dual-Cognition Knowledge Index for Human Readers & AI Agents (Cursor, Claude Code, MCP, Windsurf).`,
       `> Generated: ${new Date().toISOString()} | Indexed Notes: ${files.length}`,
       ``,
@@ -15499,7 +15499,9 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.addClass("artcraft-calm-settings-root");
+    containerEl.removeClass("artcraft-calm-settings-root");
+    containerEl.addClass("artcraft-calm-settings-host");
+    const settingsShellEl = containerEl.createDiv({ cls: "artcraft-calm-settings-root" });
     const loc = getLocale(this.plugin);
     const isRu = loc === "ru";
 
@@ -15514,7 +15516,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         resolvedSub = isRu ? iconOrSubRu : subEn;
         finalIcon = iconSvg;
       }
-      const groupWrap = containerEl.createDiv({ cls: "artcraft-settings-group-card" });
+      const groupWrap = settingsShellEl.createDiv({ cls: "artcraft-settings-group-card" });
       const groupHead = groupWrap.createDiv({ cls: "artcraft-settings-group-head" });
       groupHead.innerHTML = `
         <div class="settings-group-badge-row">
@@ -15528,7 +15530,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     };
 
     // Clean Header Card
-    const heroBanner = containerEl.createDiv({ cls: "artcraft-settings-bento-hero" });
+    const heroBanner = settingsShellEl.createDiv({ cls: "artcraft-settings-bento-hero" });
     heroBanner.innerHTML = `
       <div class="artcraft-settings-hero-left">
         <div class="artcraft-settings-flask-box">${ALCHEMY_ICON_SVG}</div>
@@ -18484,6 +18486,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
 module.exports = AlchemyFlowPlugin;
 
+/* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
