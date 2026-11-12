@@ -77,6 +77,7 @@ const DEFAULT_SETTINGS = {
   chapterChord: true, // Warm Cello & Harp harmonic chord on checklist completion
   stampedNotes: {}, // { [filePath]: "2026-11-07" }
   marginBookmarks: {}, // { [filePath]: Array<{ id, type, label, snippet, line }> }
+  showMarginBookmarks: true,
   readingRuler: false,
   supabaseFunctionUrl: "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay",
   spotlightFocus: false,
@@ -354,19 +355,53 @@ function registerSicraftMenuIcons() {
     addIcon("sicraft-spark", wrap(`<path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/>`));
   } catch (e) {}
 }
-const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path class="artcraft-flask-liquid-back" d="M6.4 16.0C8.4 17.4 10.6 14.8 12.6 16.0C14.6 17.2 16.4 15.2 17.7 16.0L17.9 20H6.1L6.4 16.0Z" fill="#22C55E" opacity="0.52" />
-  <path class="artcraft-flask-liquid" d="M6.1 16.4C8.2 14.9 10.2 17.3 12.2 16.1C14.2 14.9 16.1 17.1 17.9 16.3L17.9 20H6.1L6.1 16.4Z" fill="#69BD28" opacity="0.94" />
-  <path class="artcraft-flask-meniscus" d="M6.3 16.3C8.3 15.0 10.2 17.2 12.2 16.0C14.2 14.8 16.1 17.0 17.7 16.2" stroke="#BBF7D0" stroke-width="0.95" stroke-linecap="round" opacity="0.88" />
-  <circle class="artcraft-flask-bubble b1" cx="9.4" cy="17.8" r="1.05" fill="#FFFFFF" opacity="0.92" />
-  <circle class="artcraft-flask-bubble b2" cx="13.6" cy="17.2" r="0.8" fill="#DCFCE7" opacity="0.9" />
-  <circle class="artcraft-flask-bubble b3" cx="11.6" cy="18.5" r="0.65" fill="#FFFFFF" opacity="0.85" />
-  <circle class="artcraft-flask-bubble b4" cx="15.1" cy="18.2" r="0.55" fill="#FEF08A" opacity="0.85" />
-  <circle class="artcraft-flask-spark s1" cx="11.8" cy="7.2" r="0.9" fill="#F59E0B" />
-  <circle class="artcraft-flask-spark s2" cx="13.2" cy="5.2" r="0.6" fill="#34D399" />
-  <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-  <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
-  <path class="artcraft-flask-glass-glint" d="M7.2 14.5L5.7 17.2C5.4 17.8 5.7 18.5 6.4 18.6" stroke="#FFFFFF" stroke-width="1.0" stroke-linecap="round" opacity="0.68" />
+const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="artcraft-flask-cavity-clip">
+      <path d="M13.2 10.6L5.6 23.6C4.9 24.8 5.8 26.4 7.3 26.4H24.7C26.2 26.4 27.1 24.8 26.4 23.6L18.8 10.6V6.8H13.2V10.6Z" />
+    </clipPath>
+    <linearGradient id="artcraft-elixir-grad-front" x1="16" y1="15" x2="16" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#84CC16" stop-opacity="0.92" />
+      <stop offset="55%" stop-color="#4F8F1C" stop-opacity="0.96" />
+      <stop offset="100%" stop-color="#28590C" stop-opacity="0.98" />
+    </linearGradient>
+    <linearGradient id="artcraft-elixir-grad-back" x1="16" y1="15" x2="16" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A3E635" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#2F6B0E" stop-opacity="0.72" />
+    </linearGradient>
+    <radialGradient id="artcraft-elixir-caustic" cx="50%" cy="72%" r="55%">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.62" />
+      <stop offset="65%" stop-color="#84CC16" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#4F8F1C" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <g clip-path="url(#artcraft-flask-cavity-clip)">
+    <path class="artcraft-flask-liquid-back" d="M3 18.2 C8 16.4, 12 20.0, 16 18.2 C20 16.4, 24 19.6, 29 18.0 L29 28 L3 28 Z" fill="url(#artcraft-elixir-grad-back)" />
+    <path class="artcraft-flask-liquid" d="M3 18.6 C7.5 20.6, 12.2 16.6, 16.5 18.6 C20.8 20.4, 25 16.8, 29 18.6 L29 28 L3 28 Z" fill="url(#artcraft-elixir-grad-front)" />
+    <ellipse class="artcraft-flask-caustic" cx="16" cy="23.2" rx="7.6" ry="3.2" fill="url(#artcraft-elixir-caustic)" />
+    <path class="artcraft-flask-meniscus" d="M3.2 18.6 C7.5 20.4, 12.2 16.6, 16.5 18.6 C20.8 20.4, 25 16.8, 28.8 18.6" stroke="#DCFCE7" stroke-width="1.1" stroke-linecap="round" opacity="0.92" />
+    <circle class="artcraft-flask-mote m1" cx="12.5" cy="22.8" r="0.65" fill="#FDE68A" opacity="0.88" />
+    <circle class="artcraft-flask-mote m2" cx="19.6" cy="21.9" r="0.55" fill="#FEF08A" opacity="0.82" />
+    <circle class="artcraft-flask-mote m3" cx="15.8" cy="24.2" r="0.7" fill="#FBBF24" opacity="0.85" />
+    <circle class="artcraft-flask-bubble b1" cx="11.5" cy="23.6" r="1.1" fill="#FFFFFF" opacity="0.9" />
+    <circle class="artcraft-flask-bubble b2" cx="18.2" cy="22.8" r="0.85" fill="#ECFCCB" opacity="0.88" />
+    <circle class="artcraft-flask-bubble b3" cx="14.9" cy="24.5" r="0.7" fill="#FFFFFF" opacity="0.85" />
+    <circle class="artcraft-flask-bubble b4" cx="20.4" cy="24.0" r="0.6" fill="#FEF08A" opacity="0.86" />
+    <circle class="artcraft-flask-bubble b5" cx="13.2" cy="21.4" r="0.55" fill="#DCFCE7" opacity="0.82" />
+    <circle class="artcraft-flask-bubble b6" cx="16.7" cy="20.8" r="0.5" fill="#FFFFFF" opacity="0.78" />
+    <circle class="artcraft-flask-bubble b7" cx="9.8" cy="24.3" r="0.6" fill="#D9F99D" opacity="0.82" />
+  </g>
+  <g class="artcraft-flask-vapor">
+    <path class="artcraft-flask-vapor-curl v1" d="M15.2 4.6 C14.3 3.4, 16.5 2.4, 15.6 1.2" stroke="#84CC16" stroke-width="0.95" stroke-linecap="round" opacity="0.7" />
+    <path class="artcraft-flask-vapor-curl v2" d="M17.4 4.8 C18.2 3.7, 16.4 2.7, 17.3 1.5" stroke="#F59E0B" stroke-width="0.85" stroke-linecap="round" opacity="0.65" />
+    <circle class="artcraft-flask-spark s1" cx="14.4" cy="3.1" r="0.85" fill="#F59E0B" opacity="0.85" />
+    <circle class="artcraft-flask-spark s2" cx="17.8" cy="2.3" r="0.65" fill="#65B71E" opacity="0.82" />
+  </g>
+  <path d="M11.4 5.8H20.6" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" />
+  <path d="M12.2 7.8H19.8" stroke="#D4AF37" stroke-width="1.05" stroke-linecap="round" opacity="0.82" />
+  <path d="M12.8 5.8V10.4L5.0 23.6C4.1 25.1 5.2 27.0 7.0 27.0H25.0C26.8 27.0 27.9 25.1 27.0 23.6L19.2 10.4V5.8" stroke="currentColor" stroke-width="1.95" stroke-linejoin="round" stroke-linecap="round" />
+  <path class="artcraft-flask-glass-glint" d="M10.1 17.5L7.6 21.8C7.1 22.7 7.5 23.7 8.4 24.0" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" opacity="0.74" />
+  <path class="artcraft-flask-glass-glint-r" d="M21.8 18.6L23.5 21.6" stroke="#FFFFFF" stroke-width="0.9" stroke-linecap="round" opacity="0.45" />
 </svg>`;
 
 const TRANSLATIONS = {
@@ -395,9 +430,9 @@ const TRANSLATIONS = {
     focusBtn: "Focus",
     focusTip: "Sentence Focus Highlighting (hover over text and click to pin color)",
     laserBtn: "Laser",
-    laserTip: "Laser Pointer (glowing trail, Esc to exit)",
+    laserTip: "Laser Pointer (Middle-click, shake mouse left-right, or Esc to turn off)",
     drawBtn: "Draw",
-    drawTip: "Freehand Marker Draw on note (Esc to exit)",
+    drawTip: "Freehand Marker Draw (Middle-click, shake mouse left-right, or Esc to turn off)",
     eraserBtn: "Eraser",
     eraserTip: "Eraser — erase drawings under cursor (Esc to exit)",
     lampBtn: "Lamp",
@@ -546,9 +581,9 @@ const TRANSLATIONS = {
     focusBtn: "Фокус",
     focusTip: "Выделение предложений выбранным цветом (клик по тексту)",
     laserBtn: "Указка",
-    laserTip: "Лазерная указка (исчезающий след, Esc для выхода)",
+    laserTip: "Лазерная указка (нажмите колёсиком, потрясите мышь влево-вправо или Esc для выхода)",
     drawBtn: "Маркер",
-    drawTip: "Рисование маркером поверх заметки (Esc для выхода)",
+    drawTip: "Рисование маркером (нажмите колёсиком, потрясите мышь влево-вправо или Esc для выхода)",
     eraserBtn: "Ластик",
     eraserTip: "Ластик — стирать рисунки (Esc для выхода)",
     lampBtn: "Лампа",
@@ -3186,6 +3221,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.registerDomEvent(window, "keydown", (e) => {
       if (e.key === "Escape" && this.mode !== "none") {
         this.toggleMode("none");
+        this.closeAllDockPopovers();
         new Notice("Alchemy Craft: Pointer / Marker deactivated");
       } else if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z") && !e.shiftKey) {
         if (this.mode !== "none") {
@@ -3768,6 +3804,7 @@ class AlchemyFlowPlugin extends Plugin {
             </div>
           `).join("")}
         </div>
+        <div class="artcraft-pop-hint">${isRu ? "Быстрое выключение: СКМ (колёсико), встряхните мышь влево-вправо или Esc" : "Quick off: Middle-click, shake mouse left-right, or Esc"}</div>
       `;
 
       pop.querySelector("#laser-toggle-mode-btn")?.addEventListener("click", (ev) => {
@@ -3911,6 +3948,7 @@ class AlchemyFlowPlugin extends Plugin {
           <button class="pomo-pop-btn is-secondary" id="draw-pop-undo" style="flex:1;justify-content:center;">↩ ${isRu ? "Отменить" : "Undo"}</button>
           <button class="pomo-pop-btn is-secondary" id="draw-pop-clear" style="flex:1;justify-content:center;">✕ ${isRu ? "Очистить всё" : "Clear All"}</button>
         </div>
+        <div class="artcraft-pop-hint">${isRu ? "Быстрое выключение: СКМ (колёсико), встряхните мышь влево-вправо или Esc" : "Quick off: Middle-click, shake mouse left-right, or Esc"}</div>
       `;
 
       pop.querySelector("#draw-toggle-mode-btn")?.addEventListener("click", (ev) => {
@@ -5812,8 +5850,9 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.setAttribute("data-page-width", widthMode);
     document.body.classList.toggle("artcraft-width-book", widthMode === "book");
     document.body.classList.toggle("artcraft-width-wide", widthMode === "wide");
+    document.body.classList.toggle("artcraft-width-expanded", widthMode === "expanded");
     document.body.classList.toggle("artcraft-width-full", widthMode === "full");
-    const lineWidthCss = widthMode === "wide" ? "1080px" : widthMode === "full" ? "94%" : "760px";
+    const lineWidthCss = widthMode === "wide" ? "1080px" : widthMode === "expanded" ? "1220px" : widthMode === "full" ? "100%" : "760px";
     document.documentElement.style.setProperty("--artcraft-line-width", lineWidthCss);
     document.body.classList.toggle("artcraft-bionic-active", !!this.settings.bionicAnchors);
     document.body.classList.toggle("artcraft-key-marker", this.settings.keySentenceMarker !== false);
@@ -7140,9 +7179,10 @@ class AlchemyFlowPlugin extends Plugin {
     const showStats = this.settings.showReadingStats !== false && wordCount > 0;
     const showTasks = this.settings.showTaskProgress !== false && total > 0;
     const showStamp = this.settings.showCornerStamp !== false;
+    const showBookmarks = this.settings.showMarginBookmarks !== false;
 
     let wrap = viewContent.querySelector(":scope > .artcraft-task-progress-wrap");
-    if (!showStats && !showTasks && !showStamp && noteBookmarks.length === 0) {
+    if (!showStats && !showTasks && !showStamp && !(showBookmarks && noteBookmarks.length > 0)) {
       if (wrap) wrap.remove();
       return;
     }
@@ -7177,7 +7217,7 @@ class AlchemyFlowPlugin extends Plugin {
     };
 
     const bookmarksHtml =
-      noteBookmarks.length > 0
+      showBookmarks && noteBookmarks.length > 0
         ? `<div class="artcraft-margin-bookmarks-strip">
             <button class="artcraft-bm-digest-chip" data-act="digest" title="${
               isRu ? "Открыть книжный дайджест" : "Open Book Nutrient Digest (Proteins & Carbs)"
@@ -7290,16 +7330,16 @@ class AlchemyFlowPlugin extends Plugin {
             </button>
             <button class="artcraft-craft-mini-btn ${(this.settings.pageWidthMode && this.settings.pageWidthMode !== 'book') ? "is-active" : ""}" data-act="width-cycle" title="${
               i18n({
-                en: "Page width: 760 px → 1080 px → full",
-                ru: "Ширина страницы: 760 px → 1080 px → вся ширина",
-                zh: "页面宽度：760px → 1080px → 全宽",
-                ja: "ページ幅：760px → 1080px → 全幅",
-                es: "Ancho de página: 760 px → 1080 px → completo",
-                de: "Seitenbreite: 760 px → 1080 px → volle Breite"
+                en: "Page width: 760px → 1080px → 1220px → Full",
+                ru: "Ширина страницы: 760px → 1080px → 1220px → Полный лист",
+                zh: "页面宽度：760px → 1080px → 1220px → 全宽",
+                ja: "ページ幅：760px → 1080px → 1220px → 全幅",
+                es: "Ancho de página: 760px → 1080px → 1220px → Completo",
+                de: "Seitenbreite: 760px → 1080px → 1220px → Volle Breite"
               }, this)
             }">
               ${sicraftIcon('ruler')}
-              <span>${this.settings.pageWidthMode === "wide" ? "1080px" : this.settings.pageWidthMode === "full" ? "Full" : "760px"}</span>
+              <span>${this.settings.pageWidthMode === "wide" ? "1080px" : this.settings.pageWidthMode === "expanded" ? "1220px" : this.settings.pageWidthMode === "full" ? "Full" : "760px"}</span>
             </button>
             <button class="artcraft-craft-mini-btn" data-act="bookshelf" title="${
               i18n({
@@ -7488,7 +7528,8 @@ class AlchemyFlowPlugin extends Plugin {
     wrap.querySelector('[data-act="width-cycle"]')?.addEventListener("click", async (e) => {
       e.stopPropagation();
       const curW = this.settings.pageWidthMode || "book";
-      this.settings.pageWidthMode = curW === "book" ? "wide" : curW === "wide" ? "full" : "book";
+      this.settings.pageWidthMode =
+        curW === "book" ? "wide" : curW === "wide" ? "expanded" : curW === "expanded" ? "full" : "book";
       await this.saveSettings();
       this.applyBodyClasses();
       this.playTactileMicroFeedback("tap");
@@ -7601,6 +7642,7 @@ class AlchemyFlowPlugin extends Plugin {
     const snippet = lineText.length > 90 ? lineText.slice(0, 90) + "…" : lineText;
 
     new NutrientStickerModal(this.app, this, { snippet, line: lineNum, type: "proteins" }, async (saved) => {
+      this.settings.showMarginBookmarks = true;
       this.settings.marginBookmarks[filePath].push({
         id: "bm_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
         type: saved.type,
@@ -8660,6 +8702,13 @@ class AlchemyFlowPlugin extends Plugin {
           icon: SICRAFT_SVGS.book,
           title: isRu ? "Воздушные отступы блоков" : "Editorial Air & Spacing",
           sub: isRu ? "Просторная швейцарская типографика без сплошного текста" : "Generous typography spacing without walls of text"
+        },
+        {
+          id: "bookmarks",
+          checked: this.settings.showMarginBookmarks !== false,
+          icon: SICRAFT_SVGS.bookmark,
+          title: isRu ? "Стикеры-закладки с золотой огранкой" : "Golden-Framed Book Stickers",
+          sub: isRu ? "Показывать именные золотые стикеры-закладки на заметке" : "Show or hide gold-bordered bookmark stickers in note header"
         }
       ];
 
@@ -8759,13 +8808,16 @@ class AlchemyFlowPlugin extends Plugin {
           <div class="focus-pop-divider">${isRu ? "ШИРИНА ХОЛСТА" : "CANVAS WIDTH"}</div>
           <div class="artcraft-width-picker-row">
             <button class="width-mat-chip ${curWidth === "book" ? "is-active" : ""}" data-width-mode="book">
-              <span>760px ${isRu ? "Книга" : "Book"}</span>
+              <span>760px</span>
             </button>
             <button class="width-mat-chip ${curWidth === "wide" ? "is-active" : ""}" data-width-mode="wide">
-              <span>1080px ${isRu ? "Широкий" : "Wide"}</span>
+              <span>1080px</span>
+            </button>
+            <button class="width-mat-chip ${curWidth === "expanded" ? "is-active" : ""}" data-width-mode="expanded">
+              <span>1220px</span>
             </button>
             <button class="width-mat-chip ${curWidth === "full" ? "is-active" : ""}" data-width-mode="full">
-              <span>${isRu ? "Полный холст" : "Full Canvas"}</span>
+              <span>${isRu ? "Полный" : "Full"}</span>
             </button>
           </div>
 
@@ -8967,6 +9019,9 @@ class AlchemyFlowPlugin extends Plugin {
             this.refreshBionicAnchorsInDOM();
           } else if (opt === "stamp") {
             this.settings.showCornerStamp = this.settings.showCornerStamp === false;
+            this.updateTaskProgressBar();
+          } else if (opt === "bookmarks") {
+            this.settings.showMarginBookmarks = this.settings.showMarginBookmarks === false;
             this.updateTaskProgressBar();
           }
           await this.saveSettings();
@@ -9672,7 +9727,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     const header = [
-      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.1)`,
+      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.2)`,
       `> Dual-Cognition Knowledge Index for Human Readers & AI Agents (Cursor, Claude Code, MCP, Windsurf).`,
       `> Generated: ${new Date().toISOString()} | Indexed Notes: ${files.length}`,
       ``,
@@ -11525,6 +11580,29 @@ class AlchemyFlowPlugin extends Plugin {
         this.toggleMode("none");
       }
     });
+    this.btnLaser.addEventListener("mousedown", (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+    this.btnLaser.addEventListener("mouseup", (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.mode === "laser") {
+          this.toggleMode("none");
+          this.closeAllDockPopovers();
+          this.playTactileMicroFeedback?.("tap");
+        }
+      }
+    });
+    this.btnLaser.addEventListener("auxclick", (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
     this.btnLaser.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -11532,7 +11610,7 @@ class AlchemyFlowPlugin extends Plugin {
     });
     contentWrap.appendChild(this.btnLaser);
 
-    // 4. Draw Marker button (LMB: Toggle / Open Menu | RMB or Caret: Open Draw Studio Menu)
+    // 4. Draw Marker button (LMB: Toggle / Open Menu | MMB: Off | RMB or Caret: Open Draw Studio Menu)
     this.btnDraw = document.createElement("button");
     this.btnDraw.className = "artcraft-dock-btn";
     this.btnDraw.title = t("drawTip", this);
@@ -11551,6 +11629,29 @@ class AlchemyFlowPlugin extends Plugin {
       } else {
         this.closeAllDockPopovers();
         this.toggleMode("none");
+      }
+    });
+    this.btnDraw.addEventListener("mousedown", (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+    this.btnDraw.addEventListener("mouseup", (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.mode === "draw") {
+          this.toggleMode("none");
+          this.closeAllDockPopovers();
+          this.playTactileMicroFeedback?.("tap");
+        }
+      }
+    });
+    this.btnDraw.addEventListener("auxclick", (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
       }
     });
     this.btnDraw.addEventListener("contextmenu", (e) => {
@@ -11816,11 +11917,37 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   // =========================================================================
-  // CLEAN VECTOR FLASK FAMILIAR ENGINE (Zero-Canvas, Zero-Lag GPU CSS)
+  // PHYSICAL VECTOR ALCHEMY FLASK HYDRO ENGINE (~30 FPS when collapsed, 0% idle)
   // =========================================================================
   getFlaskDirectionConfig() {
     const isVert = !!(this.dockEl && this.dockEl.classList.contains("is-vertical"));
     return { isVert, isLeft: false, isRight: isVert, dirX: isVert ? -0.82 : 0, dirY: isVert ? -0.57 : -1.0, nozzleTiltRad: 0 };
+  }
+
+  _buildFlaskLiquidPath(baseY, tilt, phaseA, phaseB, splashAmp, closeBottom) {
+    const ampA = 0.72 + splashAmp * 1.25;
+    const ampB = 0.34 + splashAmp * 0.65;
+    const sampleY = (x) => {
+      const norm = (x - 16) / 13;
+      return (
+        baseY +
+        tilt * norm +
+        Math.sin(x * 0.44 - phaseA) * ampA +
+        Math.cos(x * 0.76 + phaseB) * ampB
+      );
+    };
+    const y0 = sampleY(3);
+    const y1 = sampleY(9.5);
+    const y2 = sampleY(16);
+    const y3 = sampleY(22.5);
+    const y4 = sampleY(29);
+    const curve =
+      `M3 ${y0.toFixed(2)} ` +
+      `C5.4 ${(y0 + (y1 - y0) * 0.42).toFixed(2)}, 7.2 ${y1.toFixed(2)}, 9.5 ${y1.toFixed(2)} ` +
+      `C11.8 ${y1.toFixed(2)}, 13.8 ${y2.toFixed(2)}, 16 ${y2.toFixed(2)} ` +
+      `C18.2 ${y2.toFixed(2)}, 20.2 ${y3.toFixed(2)}, 22.5 ${y3.toFixed(2)} ` +
+      `C24.8 ${y3.toFixed(2)}, 26.8 ${(y3 + (y4 - y3) * 0.58).toFixed(2)}, 29 ${y4.toFixed(2)}`;
+    return closeBottom ? `${curve} L29 28 L3 28 Z` : curve;
   }
 
   initArgonFlaskHydroEngine() {
@@ -11831,11 +11958,270 @@ class AlchemyFlowPlugin extends Plugin {
     if (oldCanvas) oldCanvas.remove();
     const legacyStage = flaskWrap.querySelector(".artcraft-familiar-stage");
     if (legacyStage) legacyStage.style.display = "";
+
+    const svg = flaskWrap.querySelector("svg.artcraft-svg-flask");
+    if (!svg) return;
+
+    // Assign unique defs IDs so static expanded badges never clash with live collapsed hydro SVG
+    const defsClip = svg.querySelector("clipPath");
+    const clippedGroup = svg.querySelector("g[clip-path]");
+    if (defsClip && clippedGroup) {
+      defsClip.setAttribute("id", "artcraft-flask-clip-live");
+      clippedGroup.setAttribute("clip-path", "url(#artcraft-flask-clip-live)");
+    }
+    const gFront = svg.querySelector("linearGradient#artcraft-elixir-grad-front, linearGradient#artcraft-elixir-live-front");
+    const gBack = svg.querySelector("linearGradient#artcraft-elixir-grad-back, linearGradient#artcraft-elixir-live-back");
+    const gCaustic = svg.querySelector("radialGradient#artcraft-elixir-caustic, radialGradient#artcraft-elixir-live-caustic");
+    if (gFront) gFront.setAttribute("id", "artcraft-elixir-live-front");
+    if (gBack) gBack.setAttribute("id", "artcraft-elixir-live-back");
+    if (gCaustic) gCaustic.setAttribute("id", "artcraft-elixir-live-caustic");
+
+    const liqFront = svg.querySelector(".artcraft-flask-liquid");
+    const liqBack = svg.querySelector(".artcraft-flask-liquid-back");
+    const caustic = svg.querySelector(".artcraft-flask-caustic");
+    const meniscus = svg.querySelector(".artcraft-flask-meniscus");
+    if (liqFront && gFront) liqFront.setAttribute("fill", "url(#artcraft-elixir-live-front)");
+    if (liqBack && gBack) liqBack.setAttribute("fill", "url(#artcraft-elixir-live-back)");
+    if (caustic && gCaustic) caustic.setAttribute("fill", "url(#artcraft-elixir-live-caustic)");
+
+    svg.classList.add("has-live-hydro");
+
+    const bubbleSeeds = [
+      { y: 24.4, xNorm: -0.45, vy: 4.1, r: 1.05, wFreq: 3.1, wPhase: 0.2 },
+      { y: 22.8, xNorm: 0.34, vy: 5.0, r: 0.82, wFreq: 3.8, wPhase: 1.4 },
+      { y: 24.9, xNorm: -0.10, vy: 3.6, r: 0.72, wFreq: 2.9, wPhase: 2.6 },
+      { y: 23.6, xNorm: 0.56, vy: 5.6, r: 0.62, wFreq: 4.3, wPhase: 3.9 },
+      { y: 21.6, xNorm: -0.62, vy: 4.7, r: 0.56, wFreq: 3.4, wPhase: 4.8 },
+      { y: 20.9, xNorm: 0.14, vy: 6.1, r: 0.50, wFreq: 4.7, wPhase: 5.5 },
+      { y: 24.2, xNorm: -0.74, vy: 3.9, r: 0.60, wFreq: 3.2, wPhase: 1.9 },
+    ];
+    const bubbleEls = Array.from(svg.querySelectorAll(".artcraft-flask-bubble"));
+    const bubbles = bubbleEls.map((el, idx) => ({
+      el,
+      ...(bubbleSeeds[idx % bubbleSeeds.length]),
+      burst: 0,
+    }));
+
+    const moteEls = Array.from(svg.querySelectorAll(".artcraft-flask-mote"));
+    const motes = moteEls.map((el, idx) => ({
+      el,
+      fx: 1.15 + idx * 0.42,
+      fy: 0.85 + idx * 0.35,
+      phase: idx * 2.1,
+      ampX: 3.2 + (idx % 2) * 1.6,
+      ampY: 1.4 + idx * 0.35,
+      baseY: 22.2 + (idx === 2 ? 1.5 : 0),
+    }));
+
+    this._flaskHydroState = {
+      svg,
+      liqFront,
+      liqBack,
+      meniscus,
+      caustic,
+      bubbles,
+      motes,
+      vapor1: svg.querySelector(".artcraft-flask-vapor-curl.v1"),
+      vapor2: svg.querySelector(".artcraft-flask-vapor-curl.v2"),
+      spark1: svg.querySelector(".artcraft-flask-spark.s1"),
+      spark2: svg.querySelector(".artcraft-flask-spark.s2"),
+      time: 0,
+      tilt: 0,
+      tiltVel: 0,
+      splashAmp: 0.35,
+      hoverHeat: 0,
+      lastClientX: null,
+      lastClientY: null,
+      lastScrollY: 0,
+      sparks: [
+        { y: 3.4, phase: 0.0, vy: 2.3 },
+        { y: 2.5, phase: 2.8, vy: 2.9 },
+      ],
+    };
+
+    if (!this._flaskHydroListenersWired) {
+      this._flaskHydroListenersWired = true;
+      this.registerDomEvent(window, "mousemove", (e) => {
+        const st = this._flaskHydroState;
+        if (!st || !this.settings.dockCollapsed || this._unloaded) return;
+        if (st.lastClientX !== null) {
+          const dx = Math.max(-28, Math.min(28, e.clientX - st.lastClientX));
+          if (Math.abs(dx) > 1.5) {
+            st.tiltVel = Math.max(-18, Math.min(18, st.tiltVel + dx * 0.14));
+          }
+        }
+        st.lastClientX = e.clientX;
+        st.lastClientY = e.clientY;
+        const rect = this.dockEl && this.dockEl.getBoundingClientRect ? this.dockEl.getBoundingClientRect() : null;
+        if (rect) {
+          const dist = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
+          if (dist < 110) {
+            st.hoverHeat = Math.min(1.5, st.hoverHeat + (1 - dist / 110) * 0.12);
+          }
+        }
+      });
+
+      this.registerDomEvent(window, "wheel", (e) => {
+        const st = this._flaskHydroState;
+        if (!st || !this.settings.dockCollapsed || this._unloaded) return;
+        const impulse = Math.max(-1, Math.min(1, (e.deltaY || 0) / 140));
+        st.splashAmp = Math.min(1.5, st.splashAmp + Math.abs(impulse) * 0.28);
+        st.tiltVel = Math.max(-18, Math.min(18, st.tiltVel + impulse * 3.8));
+      }, { passive: true });
+
+      this.registerDomEvent(document, "visibilitychange", () => {
+        if (document.hidden) this.stopFlaskHydroLoop();
+        else if (this.settings.dockCollapsed) this.wakeFlaskHydroLoop();
+      });
+    }
+
+    if (this.dockEl && !this.dockEl.dataset.flaskHydroHoverWired) {
+      this.dockEl.dataset.flaskHydroHoverWired = "1";
+      this.dockEl.addEventListener("mouseenter", () => {
+        if (this.settings.dockCollapsed) this.splashFlask(0.85);
+      });
+    }
+
+    if (this.settings.dockCollapsed) {
+      this.wakeFlaskHydroLoop();
+      this.splashFlask(1.0);
+    } else {
+      this.stopFlaskHydroLoop();
+    }
   }
 
-  splashFlask() {}
-  emitFlaskPlume() {}
-  wakeFlaskHydroLoop() {}
+  splashFlask(strength = 1.0) {
+    const st = this._flaskHydroState;
+    if (!st) return;
+    const s = Math.max(0.2, Math.min(2.0, Number(strength) || 1.0));
+    st.splashAmp = Math.min(1.8, Math.max(st.splashAmp, 0.55 * s));
+    const sign = Math.random() > 0.5 ? 1 : -1;
+    st.tiltVel = Math.max(-20, Math.min(20, st.tiltVel + sign * 8.5 * s));
+    st.hoverHeat = Math.min(1.6, st.hoverHeat + 0.55 * s);
+    this.wakeFlaskHydroLoop();
+  }
+
+  emitFlaskPlume() {
+    this.splashFlask(0.75);
+  }
+
+  wakeFlaskHydroLoop() {
+    if (this._flaskHydroRaf || this._unloaded || document.hidden) return;
+    if (!this.settings.dockCollapsed || !this._flaskHydroState) return;
+    let lastTs = 0;
+
+    const tick = (ts) => {
+      this._flaskHydroRaf = null;
+      if (this._unloaded || document.hidden || !this.settings.dockCollapsed) return;
+      const st = this._flaskHydroState;
+      if (!st || !st.svg || !st.svg.isConnected) return;
+
+      if (ts - lastTs >= 32) {
+        const dt = lastTs ? Math.min(0.05, (ts - lastTs) / 1000) : 0.032;
+        lastTs = ts;
+        st.time += dt;
+        const t = st.time;
+
+        // Coupled pendulum tilt dynamics + thermal micro-convection + exponential splash decay
+        const thermalWave = Math.sin(t * 1.45) * 0.9 + Math.cos(t * 2.35) * 0.45;
+        const springForce = -44 * (st.tilt - thermalWave * 0.35) - 4.4 * st.tiltVel;
+        st.tiltVel += springForce * dt;
+        st.tilt = Math.max(-4.8, Math.min(4.8, st.tilt + st.tiltVel * dt));
+        st.splashAmp *= Math.exp(-1.55 * dt);
+        st.hoverHeat *= Math.exp(-0.95 * dt);
+
+        const baseY = 18.4 + Math.sin(t * 0.9) * 0.32;
+        const phase1 = t * (2.6 + st.hoverHeat * 1.2);
+        const phase2 = t * 1.9;
+
+        if (st.liqFront) {
+          st.liqFront.setAttribute("d", this._buildFlaskLiquidPath(baseY, st.tilt, phase1, phase2, st.splashAmp, true));
+        }
+        if (st.liqBack) {
+          st.liqBack.setAttribute("d", this._buildFlaskLiquidPath(baseY - 0.52, -st.tilt * 0.58, -phase1 * 0.8 + 1.5, phase2 + 0.9, st.splashAmp * 0.72, true));
+        }
+        if (st.meniscus) {
+          st.meniscus.setAttribute("d", this._buildFlaskLiquidPath(baseY, st.tilt, phase1, phase2, st.splashAmp, false));
+          st.meniscus.setAttribute("opacity", (0.78 + Math.min(0.2, st.splashAmp * 0.14)).toFixed(2));
+        }
+        if (st.caustic) {
+          st.caustic.setAttribute("cx", (16 + st.tilt * 0.55).toFixed(2));
+          st.caustic.setAttribute("cy", (23.15 - Math.abs(st.tilt) * 0.1).toFixed(2));
+          st.caustic.setAttribute("rx", (7.3 + st.splashAmp * 0.75 + Math.sin(t * 2.1) * 0.25).toFixed(2));
+        }
+
+        // Archimedes rising bubbles inside conical flask cavity (y: 25.4 bottom -> surfaceY)
+        const boost = 1 + st.hoverHeat * 0.85 + st.splashAmp * 0.6;
+        for (let i = 0; i < st.bubbles.length; i++) {
+          const b = st.bubbles[i];
+          if (b.burst > 0) {
+            b.burst -= dt * 3.8;
+            if (b.burst <= 0) {
+              b.burst = 0;
+              b.y = 25.3 - Math.random() * 1.1;
+              b.xNorm = (Math.random() - 0.5) * 1.55;
+            }
+          } else {
+            b.y -= b.vy * boost * dt;
+          }
+          const halfW = 2.3 + ((b.y - 11.2) / 14.2) * 6.5;
+          const wobble = Math.sin(t * b.wFreq + b.wPhase) * (0.55 + st.splashAmp * 0.45);
+          const cx = Math.max(16 - halfW + b.r, Math.min(16 + halfW - b.r, 16 + b.xNorm * halfW + wobble - st.tilt * 0.22));
+          const surfY = baseY + st.tilt * ((cx - 16) / 13) - 0.15;
+          if (b.burst === 0 && b.y <= surfY) {
+            b.burst = 1.0;
+          }
+          const radiusScale = b.burst > 0 ? 1 + (1 - b.burst) * 0.35 : 0.72 + ((25.6 - b.y) / 8) * 0.35;
+          const opacity = b.burst > 0 ? Math.max(0, b.burst * 0.9) : Math.min(0.94, Math.max(0.25, (25.7 - b.y) * 0.28));
+          b.el.setAttribute("cx", cx.toFixed(2));
+          b.el.setAttribute("cy", b.y.toFixed(2));
+          b.el.setAttribute("r", (b.r * radiusScale).toFixed(2));
+          b.el.setAttribute("opacity", opacity.toFixed(2));
+        }
+
+        // Swirling golden alchemy motes (Lissajous trajectories below meniscus)
+        for (let i = 0; i < st.motes.length; i++) {
+          const m = st.motes[i];
+          const mx = 16 + Math.sin(t * m.fx + m.phase) * m.ampX + st.tilt * 0.45;
+          const my = m.baseY + Math.cos(t * m.fy + m.phase * 1.3) * m.ampY;
+          const mop = 0.52 + 0.42 * Math.sin(t * 2.4 + m.phase);
+          m.el.setAttribute("cx", mx.toFixed(2));
+          m.el.setAttribute("cy", my.toFixed(2));
+          m.el.setAttribute("opacity", mop.toFixed(2));
+        }
+
+        // Live neck vapor curls & embers
+        const sway1 = Math.sin(t * 2.1) * (0.9 + st.hoverHeat * 0.55);
+        const sway2 = Math.cos(t * 1.85 + 1.1) * (0.85 + st.hoverHeat * 0.5);
+        if (st.vapor1) {
+          st.vapor1.setAttribute("d", `M15.1 4.8 C${(14.1 + sway1 * 0.5).toFixed(2)} 3.4, ${(16.3 - sway1 * 0.5).toFixed(2)} 2.3, ${(15.4 + sway1).toFixed(2)} 1.0`);
+          st.vapor1.setAttribute("opacity", (0.55 + 0.28 * Math.sin(t * 2.1)).toFixed(2));
+        }
+        if (st.vapor2) {
+          st.vapor2.setAttribute("d", `M17.3 4.9 C${(18.2 + sway2 * 0.5).toFixed(2)} 3.6, ${(16.4 - sway2 * 0.4).toFixed(2)} 2.5, ${(17.2 + sway2).toFixed(2)} 1.2`);
+          st.vapor2.setAttribute("opacity", (0.50 + 0.28 * Math.cos(t * 1.85)).toFixed(2));
+        }
+        const spEls = [st.spark1, st.spark2];
+        for (let i = 0; i < st.sparks.length; i++) {
+          const sp = st.sparks[i];
+          const el = spEls[i];
+          if (!el) continue;
+          sp.y -= sp.vy * (1 + st.hoverHeat * 0.7) * dt;
+          if (sp.y < 0.7) sp.y = 4.6;
+          const life = Math.sin(((sp.y - 0.7) / 3.9) * Math.PI);
+          const sx = (i === 0 ? 14.5 : 17.5) + Math.sin(t * 3.4 + sp.phase) * 1.25;
+          el.setAttribute("cx", sx.toFixed(2));
+          el.setAttribute("cy", sp.y.toFixed(2));
+          el.setAttribute("opacity", Math.max(0.15, life * 0.92).toFixed(2));
+        }
+      }
+
+      this._flaskHydroRaf = requestAnimationFrame(tick);
+    };
+
+    this._flaskHydroRaf = requestAnimationFrame(tick);
+  }
+
   stopFlaskHydroLoop() {
     if (this._flaskHydroRaf) {
       cancelAnimationFrame(this._flaskHydroRaf);
@@ -11936,6 +12322,7 @@ class AlchemyFlowPlugin extends Plugin {
       this.dockEl.style.transform = "";
 
       if (!isCol) {
+        this.stopFlaskHydroLoop();
         this.triggerAlchemicalBloom();
         this.fitDockToWindow();
         if (this.dockEl.animate) {
@@ -11953,6 +12340,8 @@ class AlchemyFlowPlugin extends Plugin {
         }
       } else {
         this.triggerFlaskManifestation();
+        this.wakeFlaskHydroLoop();
+        this.splashFlask(1.35);
         if (this.dockEl.animate) {
           const baseTf = isVert ? "translateY(-50%)" : "translate3d(0, 0, 0)";
           const startTf = isVert
@@ -12016,7 +12405,25 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
+  _resetShakeState() {
+    this._shakeSamples = [];
+  }
+
+  _exitDrawOrLaserMode() {
+    if (this.mode !== "laser" && this.mode !== "draw") return false;
+    this._resetShakeState();
+    this.isDrawing = false;
+    this.currentStroke = null;
+    this.toggleMode("none");
+    this.closeAllDockPopovers();
+    if (typeof this.playTactileMicroFeedback === "function") {
+      this.playTactileMicroFeedback("tap");
+    }
+    return true;
+  }
+
   toggleMode(newMode) {
+    this._resetShakeState();
     this.mode = newMode;
     if (this.canvasEl) {
       const active = this.mode !== "none";
@@ -12232,8 +12639,50 @@ class AlchemyFlowPlugin extends Plugin {
       }
     };
 
+    const detectHorizontalShake = (e) => {
+      if (e.type !== "mousemove") return false;
+      if (this.mode !== "laser" && !(this.mode === "draw" && !isInteracting && !this.isDrawing)) return false;
+      const now = Date.now();
+      const samples = (this._shakeSamples || []).filter((s) => now - s.t <= 520);
+      samples.push({ x: e.clientX, y: e.clientY, t: now });
+      this._shakeSamples = samples;
+      if (samples.length < 6) return false;
+
+      let totalX = 0;
+      let totalY = 0;
+      let dir = 0;
+      let swing = 0;
+      let reversals = 0;
+      for (let i = 1; i < samples.length; i++) {
+        const dx = samples[i].x - samples[i - 1].x;
+        const dy = samples[i].y - samples[i - 1].y;
+        totalX += Math.abs(dx);
+        totalY += Math.abs(dy);
+        if (Math.abs(dx) < 2) continue;
+        const stepDir = dx > 0 ? 1 : -1;
+        if (dir === 0) {
+          dir = stepDir;
+          swing = Math.abs(dx);
+        } else if (stepDir === dir) {
+          swing += Math.abs(dx);
+        } else {
+          if (swing >= 38) reversals++;
+          dir = stepDir;
+          swing = Math.abs(dx);
+        }
+      }
+      if (reversals >= 3 && swing >= 36 && totalX >= 230 && totalY <= totalX * 0.72) {
+        return true;
+      }
+      return false;
+    };
+
     const onMove = (e) => {
       if (this.mode === "none") return;
+      if (detectHorizontalShake(e)) {
+        this._exitDrawOrLaserMode();
+        return;
+      }
       this.wakeOverlayCanvas();
       const pt = this.getCanvasCoords(e);
 
@@ -12302,6 +12751,30 @@ class AlchemyFlowPlugin extends Plugin {
     });
     this.registerDomEvent(window, "mousemove", onMove);
     this.registerDomEvent(window, "mouseup", onEnd);
+
+    // Middle mouse button (scroll wheel click) anywhere exits Laser/Draw cleanly and blocks Chromium autoscroll circle
+    const onGlobalMiddleDown = (e) => {
+      if (e.button !== 1) return;
+      if (e.target && e.target.closest && e.target.closest(".artcraft-dock-eq-pill")) return;
+      if (this.mode !== "laser" && this.mode !== "draw") return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+      this._mmbSuppressUntil = Date.now() + 450;
+      this._exitDrawOrLaserMode();
+    };
+    const onGlobalMiddleFollowUp = (e) => {
+      if (e.button !== 1) return;
+      if (e.target && e.target.closest && e.target.closest(".artcraft-dock-eq-pill")) return;
+      const suppressed = this._mmbSuppressUntil && Date.now() < this._mmbSuppressUntil;
+      if (!suppressed && this.mode !== "laser" && this.mode !== "draw") return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+    };
+    this.registerDomEvent(window, "mousedown", onGlobalMiddleDown, { capture: true });
+    this.registerDomEvent(window, "mouseup", onGlobalMiddleFollowUp, { capture: true });
+    this.registerDomEvent(window, "auxclick", onGlobalMiddleFollowUp, { capture: true });
 
     // Start lightweight 30 FPS loop for mini 62x20 Equalizer & Graph Studio FX only (never touches full-screen 2D canvas!)
     this.startBackgroundVisualLoops();
@@ -15173,6 +15646,35 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           this.plugin.settings.bookSpreadMode = val;
           await this.plugin.saveSettings();
           this.plugin.applyBodyClasses();
+          this.plugin.updateTaskProgressBar();
+        })
+      );
+
+    new Setting(secReadability)
+      .setName(isRu ? "Ширина книжной страницы" : "Book Page Width")
+      .setDesc(isRu ? "Выберите ширину листа: 760px, 1080px, 1220px или весь экран." : "Select sheet width: 760px, 1080px, 1220px, or Full Sheet.")
+      .addDropdown((drop) =>
+        drop
+          .addOption("book", isRu ? "760px (Классическая книга)" : "760px (Classic Book)")
+          .addOption("wide", isRu ? "1080px (Широкая студия)" : "1080px (Studio Wide)")
+          .addOption("expanded", isRu ? "1220px (Книжный стол)" : "1220px (Expanded Desk)")
+          .addOption("full", isRu ? "Full (На весь лист)" : "Full (Full Sheet)")
+          .setValue(this.plugin.settings.pageWidthMode || "book")
+          .onChange(async (val) => {
+            this.plugin.settings.pageWidthMode = val;
+            await this.plugin.saveSettings();
+            this.plugin.applyBodyClasses();
+            this.plugin.updateTaskProgressBar();
+          })
+      );
+
+    new Setting(secReadability)
+      .setName(isRu ? "Золотые стикеры-закладки на заметке" : "Golden-Framed Book Stickers")
+      .setDesc(isRu ? "Показывать или скрывать стикеры-закладки с золотой огранкой в шапке заметки." : "Show or hide bookmark stickers with a golden frame in the note header.")
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.showMarginBookmarks !== false).onChange(async (val) => {
+          this.plugin.settings.showMarginBookmarks = val;
+          await this.plugin.saveSettings();
           this.plugin.updateTaskProgressBar();
         })
       );

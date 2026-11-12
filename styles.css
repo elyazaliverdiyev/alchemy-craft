@@ -1245,9 +1245,9 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
 }
 
 .artcraft-timer-pill.is-running {
-  background: var(--artcraft-excel-green, #69BD28);
-  color: #FFFFFF;
-  border-color: #559E1D;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.34);
 }
 
 .artcraft-timer-dot {
@@ -1258,8 +1258,8 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
 }
 
 .artcraft-timer-pill.is-running .artcraft-timer-dot {
-  background: #FFFFFF;
-  box-shadow: 0 0 6px #FFFFFF;
+  background: #4F8F1C;
+  box-shadow: 0 0 6px rgba(79, 143, 28, 0.65);
 }
 
 .artcraft-timer-pill.is-break.is-running {
@@ -1302,9 +1302,9 @@ body.is-mobile.has-active-menu .artcraft-floating-dock:not(.is-collapsed) {
 }
 
 .artcraft-dock-btn.is-active {
-  background: var(--artcraft-excel-green, #69BD28);
-  color: #FFFFFF;
-  border-color: #559E1D;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.34);
 }
 
 .artcraft-color-dot {
@@ -1541,28 +1541,29 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .artcraft-open-modal-btn {
-  background: var(--artcraft-excel-green, #69BD28);
-  color: #FFFFFF;
-  border: 1.5px solid #559E1D;
-  border-radius: 6px;
-  font-weight: 800;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  border-radius: 8px;
+  font-weight: 700;
   font-size: 13px;
   padding: 8px 18px;
   cursor: pointer;
-  box-shadow: 0 2px 0 #3E7912;
+  box-shadow: none;
 }
 
 .artcraft-open-modal-btn:hover {
-  filter: brightness(1.05);
+  background: rgba(79, 143, 28, 0.22);
+  border-color: rgba(79, 143, 28, 0.50);
 }
 
 .artcraft-pro-active-box {
-  background: #F0FDF4;
-  border: 1.5px solid #16A34A;
-  border-radius: 8px;
+  background: rgba(79, 143, 28, 0.08);
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  border-radius: 10px;
   padding: 14px 18px;
   margin: 12px 0 16px 0;
-  box-shadow: 0 3px 0 #16A34A;
+  box-shadow: none;
 }
 
 .artcraft-pro-active-box .pro-head {
@@ -1570,12 +1571,13 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: #166534;
+  color: #2F6B0E;
 }
 
 .artcraft-pro-active-box .pro-tag {
-  background: #16A34A;
-  color: #FFFFFF;
+  background: rgba(79, 143, 28, 0.16);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
   font-family: "JetBrains Mono", monospace;
   font-weight: 800;
   font-size: 10px;
@@ -1590,7 +1592,8 @@ body.artcraft-zen-mode .workspace-tab-header-container:hover {
 }
 
 .artcraft-pro-active-box .pro-tx code {
-  background: #DCFCE7;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
   padding: 2px 5px;
   border-radius: 3px;
   font-size: 10px;
@@ -2241,10 +2244,10 @@ body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type=
 }
 
 .artcraft-graph-hud-btn.is-active {
-  background: #69BD28;
-  color: #FFFFFF;
-  border-color: #111111;
-  box-shadow: 0 2px 0 #111111;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.34);
+  box-shadow: none;
 }
 
 .artcraft-graph-color-btn {
@@ -2454,7 +2457,12 @@ body.artcraft-bento-graph.artcraft-dark-craft .workspace-leaf-content[data-type=
   transform: translateY(-2px);
 }
 
-.artcraft-pay-action-btn.is-green { background: #69BD28; }
+.artcraft-pay-action-btn.is-green {
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.34);
+  box-shadow: none;
+}
 .artcraft-pay-action-btn.is-blue { background: #2563EB; }
 .artcraft-pay-action-btn.is-dark { background: #1F2937; }
 
@@ -3349,7 +3357,7 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .artcraft-top-bar-inner {
-  max-width: var(--line-width, 52rem);
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
   display: flex;
@@ -3505,13 +3513,13 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .artcraft-craft-mini-btn.is-active {
-  background: #ECFDF5;
-  border-color: #10B981;
-  color: #065F46;
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
 }
 
 .artcraft-craft-mini-btn.is-active svg {
-  color: #059669;
+  color: #2F6B0E;
 }
 
 .artcraft-craft-mini-btn.is-digest-btn {
@@ -3535,23 +3543,31 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #FFFDF7 0%, #FAF4E4 100%);
+  background: linear-gradient(135deg, #FFFDF7 0%, #FAF1D6 100%);
   border: 1.5px solid #D4AF37;
   border-left: 4.5px solid var(--bm-accent, #D97706);
-  border-radius: 6px 9px 9px 6px;
+  border-radius: 7px 10px 10px 7px;
   padding: 3px 10px 3px 9px;
   font-size: 11px;
   color: #1F2937;
   cursor: pointer;
   max-width: 440px;
-  box-shadow: 0 2px 6px rgba(212, 175, 55, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.28),
+    0 2px 8px rgba(180, 138, 30, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(212, 175, 55, 0.25);
   transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
 }
 
 .artcraft-bm-pill:hover {
   transform: translateY(-1px);
-  border-color: #B48A1E;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  border-color: #C59B27;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.45),
+    0 4px 12px rgba(180, 138, 30, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(212, 175, 55, 0.35);
 }
 
 .bm-nut-dot {
@@ -3819,8 +3835,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .focus-pop-row.is-checked .focus-pop-checkbox {
-  background: #65B71E;
-  border-color: #65B71E;
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.42);
+  color: #2F6B0E;
 }
 
 .focus-pop-icon {
@@ -3882,10 +3899,10 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .focus-pop-act-btn:hover {
-  border-color: #65B71E;
-  background: #F8FCF5;
+  border-color: rgba(79, 143, 28, 0.42);
+  background: rgba(79, 143, 28, 0.10);
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(101, 183, 30, 0.1);
+  box-shadow: 0 2px 6px rgba(79, 143, 28, 0.10);
 }
 
 .focus-pop-act-btn svg {
@@ -4221,9 +4238,10 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-recipe-btn.is-active {
-  background: #ECFDF5;
-  border-color: #10B981;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12);
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
+  box-shadow: none;
 }
 
 .sonic-card-top {
@@ -4278,10 +4296,10 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   width: 36px;
   height: 36px;
   border-radius: 9px;
-  background: #69BD28;
-  color: #FFFFFF;
-  border: 1.5px solid #1F2937;
-  box-shadow: 0 2px 0 #1F2937;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  box-shadow: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4290,7 +4308,8 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-play-btn:hover {
-  background: #5AA620;
+  background: rgba(79, 143, 28, 0.22);
+  border-color: rgba(79, 143, 28, 0.50);
 }
 
 .sonic-track-meta {
@@ -4392,9 +4411,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-src-pill.is-active {
-  background: #ECFDF5;
-  border-color: #10B981;
-  color: #065F46;
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
   font-weight: 700;
 }
 
@@ -4480,9 +4499,10 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 }
 
 .sonic-amb-tile.is-active {
-  background: #ECFDF5;
-  border-color: #10B981;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12);
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
+  box-shadow: none;
 }
 
 .amb-icon {
@@ -4499,8 +4519,8 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 
 .sonic-amb-tile.is-active .amb-icon,
 .sonic-recipe-btn.is-active .amb-icon {
-  background: #D1FAE5;
-  color: #065F46;
+  background: rgba(79, 143, 28, 0.16);
+  color: #2F6B0E;
 }
 
 .amb-icon svg {
@@ -4791,8 +4811,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 .soft-pay-direct-badge {
   font-size: 10.5px;
   font-weight: 600;
-  color: #059669;
-  background: #ECFDF5;
+  color: #2F6B0E;
+  background: rgba(79, 143, 28, 0.14);
+  border: 1px solid rgba(79, 143, 28, 0.28);
   padding: 2px 8px;
   border-radius: 999px;
 }
@@ -4801,9 +4822,9 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: #ECFDF5;
-  color: #065F46;
-  border: 1px solid #A7F3D0;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
   border-radius: 7px;
   padding: 3px 9px;
   font-size: 11.5px;
@@ -5201,7 +5222,7 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
 
 /* 3. Note top strip: meta group left, actions right; never drops down into awkward gap */
 .artcraft-top-bar-inner {
-  max-width: var(--file-line-width, 840px);
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -5282,13 +5303,33 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   max-width: 440px;
   height: 26px;
   padding: 2px 10px 2px 9px;
-  border-radius: 6px 9px 9px 6px;
+  border-radius: 7px 10px 10px 7px;
   border: 1.5px solid #D4AF37;
   border-left: 4.5px solid var(--bm-accent, #D97706);
-  background: linear-gradient(135deg, #FFFDF7 0%, #FAF4E4 100%);
-  box-shadow: 0 2px 6px rgba(212, 175, 55, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, #FFFDF7 0%, #FAF1D6 100%);
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.28),
+    0 2px 8px rgba(180, 138, 30, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(212, 175, 55, 0.25);
   box-sizing: border-box;
   white-space: nowrap;
+}
+
+.theme-dark .artcraft-bm-pill,
+body.artcraft-dark-craft .artcraft-bm-pill {
+  background: linear-gradient(135deg, #272219 0%, #1F1A12 100%);
+  border-color: #EAB308;
+  color: #FEF3C7;
+  box-shadow:
+    0 0 0 1px rgba(234, 179, 8, 0.34),
+    0 3px 10px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(253, 224, 71, 0.22);
+}
+
+.theme-dark .artcraft-bm-pill .bm-tag-text,
+body.artcraft-dark-craft .artcraft-bm-pill .bm-tag-text {
+  color: #FDE68A;
 }
 
 .artcraft-bm-pill .bm-tag-text {
@@ -5516,15 +5557,15 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
 /* 7. Settings Hero Dynamic Version Pill & Website Link */
 .artcraft-hero-version-pill {
   display: inline-block;
-  background: #69BD28;
-  color: #FFFFFF;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
   font-family: "JetBrains Mono", monospace;
   font-size: 10px;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 999px;
-  border: 1px solid #111111;
-  box-shadow: 0 2px 0 #111111;
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  box-shadow: none;
   margin-left: 8px;
   vertical-align: middle;
   letter-spacing: 0.05em;
@@ -5627,10 +5668,10 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
   box-sizing: border-box;
 }
 
-/* 2. Top Header Bar Aligns with Book Folio Width (Snug to Left Sidebar) */
+/* 2. Top Header Bar stays stationary across all Page Width modes */
 body.artcraft-book-spread .artcraft-task-progress-wrap {
   width: 100%;
-  max-width: var(--file-line-width, 760px);
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 4px;
@@ -5934,9 +5975,9 @@ body .artcraft-graph-hud-btn:hover {
 
 body .artcraft-graph-hud-btn.is-active,
 body .artcraft-graph-pulse-btn.is-pulse-on {
-  background: #ECFDF5;
-  color: #065F46;
-  border-color: #10B981;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.34);
   box-shadow: none;
   font-weight: 700;
 }
@@ -5960,15 +6001,15 @@ body .artcraft-graph-hud-toggle-btn {
 
 .artcraft-settings-flask-box {
   background: #FAF7F0;
-  color: #69BD28;
+  color: #2F6B0E;
   border: 1.5px solid #DFD9CA;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .artcraft-hero-version-pill {
-  background: #ECFDF5;
-  color: #065F46;
-  border: 1px solid #A7F3D0;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
   box-shadow: none;
   font-weight: 700;
 }
@@ -6963,8 +7004,8 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 .artcraft-rpg-hash-strip code {
-  color: #047857;
-  background: #ECFDF5;
+  color: #2F6B0E;
+  background: rgba(79, 143, 28, 0.14);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -6977,9 +7018,9 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 7px;
-  border: 1px solid #10B981;
-  background: #ECFDF5;
-  color: #047857;
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
   cursor: pointer;
 }
 
@@ -7095,8 +7136,9 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 .rpg-lever-row.is-done .rpg-lever-check {
-  background: #10B981;
-  border-color: #059669;
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.42);
+  color: #2F6B0E;
 }
 
 .rpg-lever-title {
@@ -7672,13 +7714,13 @@ body.artcraft-theme-active .workspace-leaf-content[data-type="canvas"] {
 }
 
 .artcraft-testdrive-banner .td-buy-btn {
-  background: linear-gradient(90deg, #10B981, #059669);
-  color: #FFFFFF;
-  border: none;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
   border-radius: 999px;
   padding: 5px 14px;
   font-size: 11.5px;
-  font-weight: 800;
+  font-weight: 750;
   cursor: pointer;
 }
 
@@ -8227,8 +8269,8 @@ body.theme-dark .artcraft-graph-hud {
 }
 
 .artcraft-airy-modal .artcraft-bio-phase-card.is-active {
-  border-color: #16A34A;
-  background: #F0FDF4;
+  border-color: rgba(79, 143, 28, 0.34);
+  background: rgba(79, 143, 28, 0.08);
 }
 
 .artcraft-airy-modal .rpg-card-kicker {
@@ -8282,17 +8324,23 @@ body.theme-dark .artcraft-graph-hud {
   max-width: 1080px;
 }
 
+:is(body, html).artcraft-theme-active.artcraft-width-expanded .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer,
+:is(body, html).artcraft-theme-active.artcraft-width-expanded .markdown-preview-view.is-readable-line-width .markdown-preview-sizer {
+  --file-line-width: 1220px;
+  max-width: min(1220px, calc(100% - 56px));
+}
+
 :is(body, html).artcraft-theme-active.artcraft-width-full .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer,
 :is(body, html).artcraft-theme-active.artcraft-width-full .markdown-preview-view.is-readable-line-width .markdown-preview-sizer {
-  --file-line-width: 94%;
-  max-width: 94%;
+  --file-line-width: 100%;
+  max-width: calc(100% - 24px);
 }
 
 /* Segmented Page Width Picker in Focus Popover */
 .artcraft-width-picker-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
   margin: 4px 0 8px 0;
 }
 
@@ -8300,15 +8348,16 @@ body.theme-dark .artcraft-graph-hud {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 6px 8px;
+  gap: 4px;
+  padding: 6px 4px;
   border-radius: 8px;
   border: 1px solid #E2DDD0;
   background: #FAF8F3;
   color: #37352F;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -8319,10 +8368,11 @@ body.theme-dark .artcraft-graph-hud {
 }
 
 .width-mat-chip.is-active {
-  background: #69BD28;
-  color: #FFFFFF;
-  border-color: #559E1D;
-  box-shadow: 0 2px 6px rgba(105, 189, 40, 0.28);
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.36);
+  box-shadow: none;
+  font-weight: 700;
 }
 
 /* Bionic Saccadic Word-Root Fixation Anchors */
@@ -8674,16 +8724,17 @@ body.theme-dark .artcraft-graph-hud {
 .dc-primary-btn {
   padding: 9px 15px;
   border-radius: 10px;
-  border: 1.5px solid #047857;
-  background: #059669;
-  color: #FFFFFF;
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .dc-primary-btn:hover {
-  background: #047857;
+  background: rgba(79, 143, 28, 0.22);
+  border-color: rgba(79, 143, 28, 0.50);
 }
 
 .dc-secondary-btn {
@@ -8932,7 +8983,6 @@ body.theme-dark .artcraft-graph-hud {
 
 :is(html, body).artcraft-theme-active.artcraft-width-book .workspace-leaf-content[data-type="markdown"] .cm-sizer,
 :is(html, body).artcraft-theme-active.artcraft-width-book .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
-:is(html, body).artcraft-theme-active.artcraft-width-book .artcraft-top-bar-inner,
 :is(html, body).artcraft-theme-active.artcraft-width-book .wind-chain-inner {
   --file-line-width: 760px;
   max-width: 760px;
@@ -8943,7 +8993,6 @@ body.theme-dark .artcraft-graph-hud {
 
 :is(html, body).artcraft-theme-active.artcraft-width-wide .workspace-leaf-content[data-type="markdown"] .cm-sizer,
 :is(html, body).artcraft-theme-active.artcraft-width-wide .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
-:is(html, body).artcraft-theme-active.artcraft-width-wide .artcraft-top-bar-inner,
 :is(html, body).artcraft-theme-active.artcraft-width-wide .wind-chain-inner {
   --file-line-width: 1080px;
   max-width: 1080px;
@@ -8952,15 +9001,38 @@ body.theme-dark .artcraft-graph-hud {
   margin-right: auto;
 }
 
-:is(html, body).artcraft-theme-active.artcraft-width-full .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-:is(html, body).artcraft-theme-active.artcraft-width-full .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
-:is(html, body).artcraft-theme-active.artcraft-width-full .artcraft-top-bar-inner,
-:is(html, body).artcraft-theme-active.artcraft-width-full .wind-chain-inner {
-  --file-line-width: 94%;
-  max-width: 94%;
-  width: 94%;
+:is(html, body).artcraft-theme-active.artcraft-width-expanded .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-expanded .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-expanded .wind-chain-inner {
+  --file-line-width: 1220px;
+  max-width: min(1220px, calc(100% - 56px));
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-width-full .workspace-leaf-content[data-type="markdown"] .cm-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-full .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer,
+:is(html, body).artcraft-theme-active.artcraft-width-full .wind-chain-inner {
+  --file-line-width: 100%;
+  max-width: calc(100% - 24px);
+  width: calc(100% - 24px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-width-full .workspace-leaf-content[data-type="markdown"] :is(.cm-contentContainer, .cm-content, .markdown-preview-section) {
+  max-width: 100%;
+  width: 100%;
+}
+
+:is(html, body).artcraft-theme-active .artcraft-top-bar-inner {
+  max-width: 100%;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 18px;
+  box-sizing: border-box;
 }
 
 :is(html, body).artcraft-theme-active.artcraft-book-spread .artcraft-task-progress-wrap {
@@ -9162,7 +9234,7 @@ body.theme-dark .artcraft-graph-hud {
   background-color: #FEF3C7;
 }
 
-/* 5. SIGNATURE SALADT / LIME-GREEN BUTTONS WITH PURE WHITE (#FFFFFF) TEXT */
+/* 5. UNIFIED SOFT SAGE-OLIVE BUTTONS MATCHING THE DOCK PANEL PALETTE */
 :is(html, body) :is(
   button.mod-cta,
   .artcraft-pay-action-btn.is-green,
@@ -9171,17 +9243,16 @@ body.theme-dark .artcraft-graph-hud {
   .capsule-seal,
   .nutrient-save-btn,
   .dc-primary-btn,
-  .artcraft-dock-btn.is-active,
   .wax-env-btn.is-break,
   .wind-lock-chain-btn
 ) {
-  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
-  border: 1.5px solid #3F7D0B;
-  color: #FFFFFF;
-  font-weight: 800;
+  background: rgba(79, 143, 28, 0.14);
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
+  font-weight: 700;
   border-radius: 9px;
-  box-shadow: 0 2px 0 #366B09, 0 4px 12px rgba(101, 183, 30, 0.28);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 1px 2px rgba(47, 107, 14, 0.06);
+  text-shadow: none;
 }
 
 :is(html, body) :is(
@@ -9192,14 +9263,14 @@ body.theme-dark .artcraft-graph-hud {
   .capsule-seal,
   .nutrient-save-btn,
   .dc-primary-btn,
-  .artcraft-dock-btn.is-active,
   .wax-env-btn.is-break,
   .wind-lock-chain-btn
 ):hover {
-  background: linear-gradient(180deg, #78D12B 0%, #5EB019 100%);
-  border-color: #366B09;
-  color: #FFFFFF;
+  background: rgba(79, 143, 28, 0.22);
+  border-color: rgba(79, 143, 28, 0.50);
+  color: #2F6B0E;
   transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(47, 107, 14, 0.12);
 }
 
 :is(html, body) :is(
@@ -9213,7 +9284,60 @@ body.theme-dark .artcraft-graph-hud {
   .wax-env-btn.is-break *,
   .wind-lock-chain-btn *
 ) {
-  color: #FFFFFF;
+  color: #2F6B0E;
+  stroke: currentColor;
+}
+
+body.theme-dark :is(
+  button.mod-cta,
+  .artcraft-pay-action-btn.is-green,
+  .artcraft-rpg-stamp-note-btn,
+  .rpg-add-quest-btn,
+  .capsule-seal,
+  .nutrient-save-btn,
+  .dc-primary-btn,
+  .wax-env-btn.is-break,
+  .wind-lock-chain-btn
+),
+body.artcraft-dark-craft :is(
+  button.mod-cta,
+  .artcraft-pay-action-btn.is-green,
+  .artcraft-rpg-stamp-note-btn,
+  .rpg-add-quest-btn,
+  .capsule-seal,
+  .nutrient-save-btn,
+  .dc-primary-btn,
+  .wax-env-btn.is-break,
+  .wind-lock-chain-btn
+) {
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
+  color: #86EFAC;
+}
+
+body.theme-dark :is(
+  button.mod-cta *,
+  .artcraft-pay-action-btn.is-green *,
+  .artcraft-rpg-stamp-note-btn *,
+  .rpg-add-quest-btn *,
+  .capsule-seal *,
+  .nutrient-save-btn *,
+  .dc-primary-btn *,
+  .wax-env-btn.is-break *,
+  .wind-lock-chain-btn *
+),
+body.artcraft-dark-craft :is(
+  button.mod-cta *,
+  .artcraft-pay-action-btn.is-green *,
+  .artcraft-rpg-stamp-note-btn *,
+  .rpg-add-quest-btn *,
+  .capsule-seal *,
+  .nutrient-save-btn *,
+  .dc-primary-btn *,
+  .wax-env-btn.is-break *,
+  .wind-lock-chain-btn *
+) {
+  color: #86EFAC;
 }
 
 /* 6. FULL-WIDTH FIX FOR AI-BRIEF MODAL (.modal.artcraft-dual-cognition-shell) */
@@ -9447,14 +9571,14 @@ pre.artcraft-ide-code-window {
 }
 
 .ide-copy-btn {
-  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
-  color: #FFFFFF;
-  border: 1px solid #3F7D0B;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
   border-radius: 6px;
   padding: 3px 9px;
   font-family: var(--font-monospace);
   font-size: 10.5px;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -9741,13 +9865,13 @@ pre.artcraft-ide-code-window > code {
 }
 
 .wind-leaf-open-btn {
-  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
-  color: #FFFFFF;
-  border: 1px solid #3F7D0B;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
   border-radius: 6px;
   padding: 3px 9px;
   font-size: 10.5px;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -9912,9 +10036,9 @@ pre.artcraft-ide-code-window > code {
 }
 
 .k-move-btn.is-forward {
-  background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
-  color: #FFFFFF;
-  border-color: #3F7D0B;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.34);
 }
 
 /* ==========================================================================
@@ -10831,16 +10955,16 @@ body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-a
 }
 
 
-/* Robust contrast for active dock buttons (Zen, Focus, UI, Laser, Draw) */
+/* Robust contrast for active dock buttons (Zen, Focus, UI, Laser, Draw) — unified #2F6B0E */
 body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active,
 body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active * {
-  color: #15803D;
-  stroke: #15803D;
+  color: #2F6B0E;
+  stroke: #2F6B0E;
 }
 
 body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active svg {
-  color: #15803D;
-  stroke: #15803D;
+  color: #2F6B0E;
+  stroke: #2F6B0E;
 }
 
 body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active svg path {
@@ -10859,9 +10983,9 @@ body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active
 }
 
 body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active {
-  border-color: transparent;
+  border-color: rgba(79, 143, 28, 0.34);
   border-radius: 7px;
-  background: rgba(79, 143, 28, 0.13);
+  background: rgba(79, 143, 28, 0.14);
   box-shadow: none;
   color: #2F6B0E;
   font-weight: 650;
@@ -10961,7 +11085,7 @@ body .workspace-leaf-content .artcraft-task-progress-wrap:focus-within {
   opacity: 1;
 }
 
-body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn) {
+body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn):not(.is-active) {
   border-color: rgba(60, 50, 35, 0.16);
   background: transparent;
   background-image: none;
@@ -10970,10 +11094,22 @@ body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-
   font-weight: 550;
 }
 
-body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn):hover {
+body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn):not(.is-active):hover {
   border-color: rgba(60, 50, 35, 0.3);
   background: rgba(40, 36, 28, 0.04);
   color: var(--text-normal);
+}
+
+body .workspace-leaf-content .artcraft-task-progress-wrap .artcraft-craft-mini-btn.is-active {
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
+  font-weight: 700;
+}
+
+body .workspace-leaf-content .artcraft-task-progress-wrap .artcraft-craft-mini-btn.is-active:hover {
+  background: rgba(79, 143, 28, 0.22);
+  border-color: rgba(79, 143, 28, 0.50);
 }
 
 body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn) :is(span, strong) {
@@ -11264,14 +11400,16 @@ body.artcraft-dark-craft .artcraft-pomodoro-popover {
   text-transform: uppercase;
   padding: 2px 7px;
   border-radius: 999px;
-  background: #DCFCE7;
-  color: #15803D;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.28);
   font-family: var(--font-monospace);
 }
 
 .pomo-pop-status-badge.is-break {
   background: #FEF3C7;
   color: #B45309;
+  border-color: rgba(180, 83, 9, 0.24);
 }
 
 .pomo-pop-actions {
@@ -11281,9 +11419,9 @@ body.artcraft-dark-craft .artcraft-pomodoro-popover {
 }
 
 .pomo-pop-btn {
-  background: rgba(101, 183, 30, 0.16);
-  color: #14532D;
-  border: 1px solid rgba(79, 143, 28, 0.42);
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border: 1px solid rgba(79, 143, 28, 0.34);
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 11px;
@@ -11296,14 +11434,15 @@ body.artcraft-dark-craft .artcraft-pomodoro-popover {
 }
 
 .theme-dark .pomo-pop-btn {
-  background: rgba(101, 183, 30, 0.22);
-  border-color: rgba(134, 239, 172, 0.4);
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
   color: #86EFAC;
 }
 
 .pomo-pop-btn:hover {
   transform: translateY(-1px);
-  background: rgba(101, 183, 30, 0.24);
+  background: rgba(79, 143, 28, 0.22);
+  border-color: rgba(79, 143, 28, 0.50);
 }
 
 .pomo-pop-btn.is-secondary {
@@ -11364,16 +11503,16 @@ body.artcraft-dark-craft .artcraft-pomodoro-popover {
 }
 
 .pomo-pop-chip.is-active {
-  background: rgba(101, 183, 30, 0.16);
-  color: #14532D;
-  border-color: rgba(79, 143, 28, 0.42);
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
+  border-color: rgba(79, 143, 28, 0.34);
   font-weight: 700;
 }
 
 .theme-dark .pomo-pop-chip.is-active {
-  background: rgba(101, 183, 30, 0.24);
+  background: rgba(101, 183, 30, 0.20);
   color: #86EFAC;
-  border-color: rgba(134, 239, 172, 0.45);
+  border-color: rgba(134, 239, 172, 0.36);
 }
 
 .pomo-pop-custom-row {
@@ -12053,7 +12192,7 @@ body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-plain-page .c
 }
 
 /* dark page: tool row above the note */
-body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap :is(.artcraft-reading-stats-pill, .artcraft-compact-task-pill, button, .artcraft-craft-mini-btn) {
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap :is(.artcraft-reading-stats-pill, .artcraft-compact-task-pill, button:not(.is-active), .artcraft-craft-mini-btn:not(.is-active)) {
   border-color: var(--artcraft-border-hairline);
   background: transparent;
   background-image: none;
@@ -12065,10 +12204,17 @@ body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-conten
   color: inherit;
 }
 
-body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn):hover {
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn):not(.is-active):hover {
   border-color: var(--artcraft-border-strong);
   background: rgba(228, 223, 212, 0.06);
   color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap .artcraft-craft-mini-btn.is-active {
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
+  color: #86EFAC;
+  font-weight: 700;
 }
 
 body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-task-progress-bar-bg {
@@ -12430,9 +12576,22 @@ body .artcraft-floating-dock.is-vertical.is-collapsed .artcraft-dock-content,
   margin-left: auto;
 }
 
-/* Even in Full Canvas width mode, keep breathing room on the right so the stacked book pages and spine are always visible */
+/* Keep expanded 1220px book spread centered with generous desk border, while true Full spans the entire leaf cleanly */
+:is(html, body).artcraft-book-spread.artcraft-width-expanded .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  max-width: min(1220px, calc(100% - 64px));
+  width: 100%;
+}
+
 :is(html, body).artcraft-book-spread.artcraft-width-full .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
-  max-width: min(1180px, calc(100% - 64px));
+  max-width: calc(100% - 54px);
+  width: calc(100% - 54px);
+  margin-left: 14px;
+  margin-right: 40px;
+}
+
+:is(html, body).artcraft-book-spread.artcraft-width-full .workspace-leaf-content[data-type="markdown"] :is(.cm-contentContainer, .cm-content, .markdown-preview-section) {
+  max-width: 100%;
+  width: 100%;
 }
 
 :is(html, body).artcraft-book-spread:is([data-spine-material="cognac"], :not([data-spine-material])):not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer),
@@ -12571,22 +12730,22 @@ body .artcraft-floating-dock .artcraft-timer-pill .artcraft-timer-dot {
 }
 
 body .artcraft-floating-dock .artcraft-timer-pill.is-running {
-  background: #DCFCE7;
-  border-color: #86EFAC;
-  color: #14532D;
-  font-weight: 850;
-  box-shadow: 0 1px 4px rgba(20, 83, 45, 0.12);
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
+  font-weight: 800;
+  box-shadow: 0 1px 4px rgba(47, 107, 14, 0.10);
 }
 
 body .artcraft-floating-dock .artcraft-timer-pill.is-running span,
 body .artcraft-floating-dock .artcraft-timer-pill.is-running svg {
-  color: #14532D;
-  stroke: #14532D;
+  color: #2F6B0E;
+  stroke: #2F6B0E;
 }
 
 body .artcraft-floating-dock .artcraft-timer-pill.is-running .artcraft-timer-dot {
-  background: #16A34A;
-  box-shadow: 0 0 6px rgba(22, 163, 74, 0.8);
+  background: #4F8F1C;
+  box-shadow: 0 0 6px rgba(79, 143, 28, 0.65);
   animation: timerDotGlow 2s ease-in-out infinite;
 }
 
@@ -12626,8 +12785,8 @@ body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill svg {
 
 .theme-dark body .artcraft-floating-dock .artcraft-timer-pill.is-running,
 body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running {
-  background: rgba(34, 197, 94, 0.24);
-  border-color: #22C55E;
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
   color: #86EFAC;
 }
 
@@ -12641,8 +12800,8 @@ body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running
 
 .theme-dark body .artcraft-floating-dock .artcraft-timer-pill.is-running .artcraft-timer-dot,
 body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running .artcraft-timer-dot {
-  background: #4ADE80;
-  box-shadow: 0 0 6px #4ADE80;
+  background: #86EFAC;
+  box-shadow: 0 0 6px rgba(134, 239, 172, 0.72);
 }
 
 /* 5. WARM CRAFT EDITORIAL HEADINGS & TAGS (REPLACES COLD BLUE RECTANGLES) */
@@ -12712,49 +12871,61 @@ body.artcraft-theme-active .cm-hashtag {
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-flask-wrap {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   animation: alchemicalFlaskFloat 3.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-  filter: drop-shadow(0 4px 10px rgba(105, 189, 40, 0.42)) drop-shadow(0 0 4px rgba(245, 158, 11, 0.22));
+  filter: drop-shadow(0 3px 8px rgba(79, 143, 28, 0.34)) drop-shadow(0 0 4px rgba(212, 175, 55, 0.24));
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), filter 0.22s ease;
 }
 
 .artcraft-floating-dock.is-collapsed:hover .artcraft-flask-wrap {
-  transform: scale(1.16) rotate(-4deg);
-  filter: drop-shadow(0 6px 14px rgba(105, 189, 40, 0.62)) drop-shadow(0 0 8px rgba(245, 158, 11, 0.38));
+  transform: scale(1.14) rotate(-3deg);
+  filter: drop-shadow(0 6px 14px rgba(79, 143, 28, 0.48)) drop-shadow(0 0 7px rgba(212, 175, 55, 0.38));
 }
 
-.artcraft-svg-flask .artcraft-flask-liquid {
-  transform-origin: 12px 17.5px;
+/* When the ~30 FPS JS Vector Hydro Engine drives the collapsed flask, disable keyframe overrides cleanly */
+.artcraft-svg-flask.has-live-hydro .artcraft-flask-liquid,
+.artcraft-svg-flask.has-live-hydro .artcraft-flask-liquid-back,
+.artcraft-svg-flask.has-live-hydro .artcraft-flask-meniscus,
+.artcraft-svg-flask.has-live-hydro .artcraft-flask-bubble,
+.artcraft-svg-flask.has-live-hydro .artcraft-flask-mote,
+.artcraft-svg-flask.has-live-hydro .artcraft-flask-vapor-curl,
+.artcraft-svg-flask.has-live-hydro .artcraft-flask-spark {
+  animation: none;
+  transform: none;
+}
+
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-liquid {
+  transform-origin: 16px 21px;
   animation: flaskLiquidSloshFront 2.8s ease-in-out infinite;
 }
 
-.artcraft-svg-flask .artcraft-flask-liquid-back {
-  transform-origin: 12px 17.5px;
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-liquid-back {
+  transform-origin: 16px 21px;
   animation: flaskLiquidSloshBack 3.4s ease-in-out infinite;
 }
 
-.artcraft-svg-flask .artcraft-flask-meniscus {
-  transform-origin: 12px 16.2px;
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-meniscus {
+  transform-origin: 16px 18.6px;
   animation: flaskLiquidSloshFront 2.8s ease-in-out infinite;
 }
 
-.artcraft-svg-flask .artcraft-flask-bubble.b1 {
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-bubble.b1 {
   animation: flaskBubbleRiseA 2.2s ease-in infinite;
 }
-.artcraft-svg-flask .artcraft-flask-bubble.b2 {
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-bubble.b2 {
   animation: flaskBubbleRiseB 2.7s ease-in 0.55s infinite;
 }
-.artcraft-svg-flask .artcraft-flask-bubble.b3 {
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-bubble.b3 {
   animation: flaskBubbleRiseA 1.9s ease-in 1.1s infinite;
 }
-.artcraft-svg-flask .artcraft-flask-bubble.b4 {
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-bubble.b4 {
   animation: flaskBubbleRiseB 2.5s ease-in 1.5s infinite;
 }
-.artcraft-svg-flask .artcraft-flask-spark.s1 {
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-spark.s1 {
   animation: flaskSparkPulse 2.1s ease-in-out infinite;
 }
-.artcraft-svg-flask .artcraft-flask-spark.s2 {
+.artcraft-svg-flask:not(.has-live-hydro) .artcraft-flask-spark.s2 {
   animation: flaskSparkPulse 2.6s ease-in-out 0.9s infinite;
 }
 
@@ -12850,7 +13021,7 @@ body.artcraft-theme-active .cm-hashtag {
 }
 
 .artcraft-creator-os-modal .artcraft-rpg-card.is-voice {
-  border-left: 5px solid #10B981;
+  border-left: 5px solid #4F8F1C;
 }
 .artcraft-creator-os-modal .artcraft-rpg-card.is-audience {
   border-left: 5px solid #F59E0B;
@@ -12875,8 +13046,8 @@ body.artcraft-theme-active .cm-hashtag {
 }
 
 .rpg-card-kicker-pill.is-voice {
-  background: #DCFCE7;
-  color: #15803D;
+  background: rgba(79, 143, 28, 0.14);
+  color: #2F6B0E;
 }
 .rpg-card-kicker-pill.is-audience {
   background: #FEF3C7;
@@ -12902,9 +13073,9 @@ body.artcraft-theme-active .cm-hashtag {
    ========================================================================== */
 
 :root {
-  --ac-emerald: #58B126;
-  --ac-emerald-dark: #3F8A18;
-  --ac-emerald-glow: rgba(105, 189, 40, 0.34);
+  --ac-emerald: #4F8F1C;
+  --ac-emerald-dark: #2F6B0E;
+  --ac-emerald-glow: rgba(79, 143, 28, 0.28);
   --ac-gold: #D97706;
   --ac-gold-bright: #F59E0B;
   --ac-gold-glow: rgba(245, 158, 11, 0.28);
@@ -12932,16 +13103,17 @@ body.artcraft-theme-active .cm-hashtag {
 
 :is(html, body) .artcraft-pay-action-btn.is-green,
 :is(html, body) .artcraft-hero-soft-btn.is-primary-soft {
-  background: rgba(101, 183, 30, 0.16);
-  border: 1px solid rgba(79, 143, 28, 0.42);
-  color: #14532D;
-  box-shadow: 0 1px 2px rgba(20, 83, 45, 0.06);
+  background: rgba(79, 143, 28, 0.14);
+  border: 1px solid rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
+  box-shadow: none;
   font-weight: 700;
 }
 
 :is(html, body) .artcraft-pay-action-btn.is-green:hover,
 :is(html, body) .artcraft-hero-soft-btn.is-primary-soft:hover {
-  background: rgba(101, 183, 30, 0.24);
+  background: rgba(79, 143, 28, 0.22);
+  border-color: rgba(79, 143, 28, 0.50);
   border-color: rgba(79, 143, 28, 0.58);
   transform: translateY(-1px);
   box-shadow: 0 3px 8px rgba(20, 83, 45, 0.12);
@@ -13127,8 +13299,8 @@ body.artcraft-dark-craft .artcraft-pro-status-banner .pro-verified-tag {
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-flask-wrap {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -13139,8 +13311,8 @@ body.artcraft-dark-craft .artcraft-pro-status-banner .pro-verified-tag {
 .artcraft-floating-dock.is-collapsed .artcraft-svg-flask {
   position: relative;
   z-index: 3;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   transform: none;
   transition: transform 0.2s var(--ac-spring), filter 0.2s ease;
 }
@@ -13190,7 +13362,7 @@ body.artcraft-dark-craft .artcraft-sonic-popover {
 
 .sonic-pop-vol-slider {
   flex: 1;
-  accent-color: #58B126;
+  accent-color: #4F8F1C;
   cursor: pointer;
 }
 
@@ -13238,10 +13410,17 @@ body.artcraft-dark-craft .sonic-pop-mode-chip {
 }
 
 .sonic-pop-mode-chip.is-active {
-  background: rgba(101, 183, 30, 0.16);
-  border-color: rgba(79, 143, 28, 0.42);
-  color: #14532D;
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
   font-weight: 700;
+}
+
+.theme-dark .sonic-pop-mode-chip.is-active,
+body.artcraft-dark-craft .sonic-pop-mode-chip.is-active {
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
+  color: #86EFAC;
 }
 
 /* Swatch row inside Laser & Draw dock popovers */
@@ -13310,19 +13489,21 @@ body.artcraft-dark-craft .sonic-pop-track-btn {
 }
 
 .sonic-pop-track-btn:hover {
-  border-color: rgba(88, 177, 38, 0.45);
-  background: rgba(88, 177, 38, 0.08);
+  border-color: rgba(79, 143, 28, 0.42);
+  background: rgba(79, 143, 28, 0.08);
 }
 
 .sonic-pop-track-btn.is-active {
-  background: rgba(88, 177, 38, 0.16);
-  border-color: #58B126;
-  color: #15803D;
+  background: rgba(79, 143, 28, 0.14);
+  border-color: rgba(79, 143, 28, 0.34);
+  color: #2F6B0E;
   font-weight: 700;
 }
 
 .theme-dark .sonic-pop-track-btn.is-active,
 body.artcraft-dark-craft .sonic-pop-track-btn.is-active {
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
   color: #86EFAC;
 }
 
@@ -13392,4 +13573,55 @@ body.artcraft-dark-craft .workspace-leaf .markdown-reading-view .markdown-previe
 body.artcraft-dark-craft .workspace-leaf .markdown-source-view.mod-cm6 .cm-scroller {
   background-color: #151821;
   color: #e2e8f0;
+}
+
+/* v5.6.2 Popover shortcut hint (Laser/Draw MMB & mouse shake) & Dark Mode Unified Sage Palette */
+.artcraft-pop-hint {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px dashed rgba(60, 50, 35, 0.14);
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.theme-dark .artcraft-pop-hint,
+body.artcraft-dark-craft .artcraft-pop-hint {
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+:is(.theme-dark, body.artcraft-dark-craft) :is(
+  .artcraft-open-modal-btn,
+  .artcraft-pay-action-btn.is-green,
+  .artcraft-hero-soft-btn.is-primary-soft,
+  .dc-primary-btn,
+  .ide-copy-btn,
+  .wind-leaf-open-btn,
+  .k-move-btn.is-forward,
+  .artcraft-testdrive-banner .td-buy-btn,
+  .sonic-play-btn,
+  .sonic-src-pill.is-active,
+  .sonic-recipe-btn.is-active,
+  .sonic-amb-tile.is-active,
+  .artcraft-graph-hud-btn.is-active,
+  .artcraft-graph-pulse-btn.is-pulse-on,
+  .rpg-lever-row.is-done .rpg-lever-check,
+  .focus-pop-row.is-checked .focus-pop-checkbox
+) {
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
+  color: #86EFAC;
+}
+
+:is(.theme-dark, body.artcraft-dark-craft) :is(
+  .artcraft-hero-version-pill,
+  .soft-pay-direct-badge,
+  .soft-amount-copy-pill,
+  .pomo-pop-status-badge,
+  .rpg-card-kicker-pill.is-voice,
+  .artcraft-pro-active-box .pro-tag
+) {
+  background: rgba(101, 183, 30, 0.20);
+  border-color: rgba(134, 239, 172, 0.36);
+  color: #86EFAC;
 }
