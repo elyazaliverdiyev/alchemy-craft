@@ -9672,7 +9672,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     const header = [
-      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.0)`,
+      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.1)`,
       `> Dual-Cognition Knowledge Index for Human Readers & AI Agents (Cursor, Claude Code, MCP, Windsurf).`,
       `> Generated: ${new Date().toISOString()} | Indexed Notes: ${files.length}`,
       ``,
