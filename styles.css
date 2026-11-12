@@ -36,7 +36,8 @@ body.artcraft-theme-active {
   --background-modifier-border: var(--artcraft-border-hairline);
   --text-normal: var(--artcraft-ink-primary);
   --text-muted: var(--artcraft-ink-muted);
-  --font-text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* the font chosen in Obsidian settings wins; Inter is only the fallback */
+  --font-text: var(--font-text-override), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-monospace: "JetBrains Mono", "IBM Plex Mono", Consolas, monospace;
   --line-width: 52rem;
 }
@@ -674,6 +675,8 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   position: fixed;
   bottom: 22px;
   right: 24px;
+  left: auto;
+  top: auto;
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -686,10 +689,9 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   font-family: "JetBrains Mono", monospace;
   user-select: none;
   contain: layout style;
-  will-change: transform;
-  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.16s ease,
-              background-color 0.18s ease;
+  transition: opacity 0.16s ease,
+              background-color 0.18s ease,
+              box-shadow 0.18s ease;
   transform-origin: bottom right;
 }
 
@@ -697,7 +699,8 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   display: flex;
   align-items: center;
   gap: 5px;
-  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+  overflow: visible;
 }
 
 .artcraft-dock-badge {
@@ -712,7 +715,7 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   margin-right: 2px;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background 0.18s ease, box-shadow 0.18s ease;
   display: inline-flex;
   align-items: center;
 }
@@ -741,11 +744,11 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   display: inline-block;
   vertical-align: middle;
   color: inherit;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.25s ease;
 }
 
 .artcraft-dock-badge:hover .artcraft-svg-flask {
-  transform: rotate(15deg) scale(1.12);
+  transform: rotate(12deg) scale(1.1);
 }
 
 /* Поднимающиеся алхимические микро-пузырьки */
@@ -817,38 +820,24 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
 }
 
 /* ==========================================================================
-   СВЕРНУТОЕ СОСТОЯНИЕ (FLOATING ALCHEMY ORB / FAB)
+   СВЕРНУТОЕ СОСТОЯНИЕ (LIVING FLOATING ALCHEMY FLASK — NO CIRCLE, PURE CRAFT)
    ========================================================================== */
 .artcraft-floating-dock.is-collapsed {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  padding: 0;
-  border-radius: 50%;
+  width: auto;
+  height: auto;
+  min-width: unset;
+  min-height: unset;
+  padding: 2px;
+  border-radius: 0;
   cursor: pointer;
   justify-content: center;
-  background: #FFFFFF;
-  animation: alchemyOrbAura 3.6s ease-in-out infinite;
-  transform: scale(1);
-}
-
-.artcraft-floating-dock.is-collapsed .artcraft-svg-flask {
-  width: 22px;
-  height: 22px;
-  transform: rotate(360deg) scale(1.15);
-  filter: drop-shadow(0 2px 4px rgba(17, 17, 17, 0.15));
-}
-
-.artcraft-floating-dock.is-collapsed:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(17, 17, 17, 0.3), 0 0 0 2px #111111;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-dock-content {
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-  transform: scale(0.7);
   display: none;
 }
 
@@ -856,11 +845,14 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
   margin: 0;
   padding: 0;
   background: transparent;
+  border: none;
+  box-shadow: none;
   color: #111111;
-  font-size: 20px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: visible;
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-dock-badge-full {
@@ -868,15 +860,301 @@ body.artcraft-sentence-focus .artcraft-sentence:hover {
 }
 
 .artcraft-floating-dock.is-collapsed .artcraft-dock-badge-short {
-  display: inline-block;
+  display: inline-flex;
+  position: relative;
+  overflow: visible;
+}
+
+/* Alchemical Flask Wrapper with Living Physics */
+.artcraft-flask-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-flask-wrap {
+  width: 28px;
+  height: 28px;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-svg-flask {
+  width: 24px;
+  height: 24px;
+  transform: none;
+  filter: drop-shadow(0 3px 6px rgba(105, 189, 40, 0.35)) drop-shadow(0 0 4px rgba(245, 158, 11, 0.18));
+  transition: filter 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Living Liquid and Bubbles inside Flask */
+.artcraft-floating-dock.is-collapsed .artcraft-flask-liquid {
+  animation: flaskLiquidSway 3.2s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-flask-bubble.b1 {
+  animation: flaskBubbleRise 2.4s ease-in-out infinite;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-flask-bubble.b2 {
+  animation: flaskBubbleRise 2.8s ease-in-out 0.8s infinite;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-flask-spark {
+  animation: flaskSparkGlow 2s ease-in-out infinite;
+}
+
+/* Alchemical Familiar Living Stage (Paw, Smile, Ears, Vapour) */
+.artcraft-familiar-stage {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  z-index: 10;
+  overflow: visible;
+}
+
+.artcraft-familiar-paw,
+.artcraft-familiar-smile,
+.artcraft-familiar-ears,
+.artcraft-familiar-vapour {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.artcraft-familiar-paw svg {
+  width: 16px;
+  height: 16px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.18));
+}
+
+.artcraft-familiar-smile svg {
+  width: 20px;
+  height: 14px;
+  filter: drop-shadow(0 0 6px rgba(105, 189, 40, 0.7));
+}
+
+.artcraft-familiar-ears svg {
+  width: 18px;
+  height: 11px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.18));
+}
+
+/* Vapour Rings */
+.artcraft-familiar-vapour .vapour-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(105, 189, 40, 0.45);
+  box-shadow: 0 0 8px rgba(105, 189, 40, 0.3);
+  opacity: 0;
+}
+
+.artcraft-familiar-vapour .vapour-ring.r1 {
+  width: 7px;
+  height: 7px;
+  bottom: 4px;
+}
+
+.artcraft-familiar-vapour .vapour-ring.r2 {
+  width: 11px;
+  height: 11px;
+  bottom: 8px;
+}
+
+.artcraft-familiar-vapour .vapour-ring.r3 {
+  width: 15px;
+  height: 15px;
+  bottom: 12px;
+}
+
+/* Active Familiar Emotions */
+.artcraft-familiar-stage[data-familiar="paw"] .artcraft-familiar-paw,
+.artcraft-familiar-stage.is-waving .artcraft-familiar-paw {
+  opacity: 1;
+  animation: familiarPawEmerges 2.4s ease-in-out forwards;
+}
+
+.artcraft-familiar-stage[data-familiar="smile"] .artcraft-familiar-smile,
+.artcraft-familiar-stage.is-smiling .artcraft-familiar-smile {
+  opacity: 1;
+  animation: familiarSmileFloats 2.4s ease-in-out forwards;
+}
+
+.artcraft-familiar-stage[data-familiar="ears"] .artcraft-familiar-ears,
+.artcraft-familiar-stage.is-ears .artcraft-familiar-ears {
+  opacity: 1;
+  animation: familiarEarsTwitch 2.4s ease-in-out forwards;
+}
+
+.artcraft-familiar-stage[data-familiar="vapour"] .artcraft-familiar-vapour,
+.artcraft-familiar-stage.is-steaming .artcraft-familiar-vapour {
+  opacity: 1;
+}
+
+.artcraft-familiar-stage[data-familiar="vapour"] .vapour-ring.r1,
+.artcraft-familiar-stage.is-steaming .vapour-ring.r1 {
+  animation: vapourRingPuff 1.8s ease-out 0s forwards;
+}
+.artcraft-familiar-stage[data-familiar="vapour"] .vapour-ring.r2,
+.artcraft-familiar-stage.is-steaming .vapour-ring.r2 {
+  animation: vapourRingPuff 1.8s ease-out 0.35s forwards;
+}
+.artcraft-familiar-stage[data-familiar="vapour"] .vapour-ring.r3,
+.artcraft-familiar-stage.is-steaming .vapour-ring.r3 {
+  animation: vapourRingPuff 1.8s ease-out 0.7s forwards;
+}
+
+/* Expand & Collapse Bloom Effect */
+.artcraft-floating-dock.is-blooming {
+  animation: dockExpandBloom 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes dockExpandBloom {
+  0% {
+    box-shadow: 0 0 20px rgba(105, 189, 40, 0.35);
+  }
+  100% {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* Keyframes for Wind-Tethered Levitation */
+@keyframes alchemicalWindFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+}
+
+@keyframes flaskLiquidSway {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-0.8px) scaleY(1.05);
+  }
+}
+
+@keyframes flaskBubbleRise {
+  0% {
+    transform: translateY(0) scale(0.7);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-5px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes flaskSparkGlow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+    filter: drop-shadow(0 0 3px #F59E0B);
+  }
+}
+
+@keyframes familiarPawEmerges {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) rotate(15deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0px) rotate(-8deg);
+  }
+  45% {
+    transform: translateY(-2px) rotate(10deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0px) rotate(-4deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(14px) rotate(15deg);
+  }
+}
+
+@keyframes familiarSmileFloats {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.7);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.05);
+  }
+  65% {
+    opacity: 0.95;
+    transform: translateY(-6px) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16px) scale(1.25);
+  }
+}
+
+@keyframes familiarEarsTwitch {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(2px) rotate(0deg);
+  }
+  40% {
+    transform: translateY(0px) rotate(-6deg);
+  }
+  60% {
+    transform: translateY(0px) rotate(6deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(2px) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes vapourRingPuff {
+  0% {
+    opacity: 0.8;
+    transform: translateY(0) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px) scale(1.6);
+  }
 }
 
 /* ==========================================================================
    МОБИЛЬНАЯ АДАПТАЦИЯ (IPHONE / ANDROID)
    ========================================================================== */
-body.is-phone .artcraft-floating-dock:not(.is-vertical),
-body.is-mobile .artcraft-floating-dock:not(.is-vertical),
 @media (max-width: 680px) {
+  body.is-phone .artcraft-floating-dock:not(.is-vertical),
+  body.is-mobile .artcraft-floating-dock:not(.is-vertical),
   .artcraft-floating-dock:not(.is-vertical) {
     right: auto;
     left: 50%;
@@ -1086,11 +1364,67 @@ body.is-mobile .artcraft-overlay-canvas,
 /* ==========================================================================
    7. РЕЖИМ ДЗЕН (ZEN FOCUS MODE) — СКРЫВАЕТ САЙДБАРЫ И ЛИШНИЙ ИНТЕРФЕЙС
    ========================================================================== */
-body.artcraft-zen-mode .workspace-split.mod-left-split,
-body.artcraft-zen-mode .workspace-split.mod-right-split,
-body.artcraft-zen-mode .workspace-ribbon,
+.workspace-split.mod-left-split,
+.workspace-split.mod-right-split,
+.workspace-ribbon,
+.status-bar {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.18s ease;
+}
+
+body.artcraft-zen-mode .workspace-split.mod-left-split {
+  transform: translateX(-24px);
+  opacity: 0;
+  width: 0;
+  min-width: 0;
+  max-width: 0;
+  flex: 0 0 0px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body.artcraft-zen-mode .workspace-split.mod-right-split {
+  transform: translateX(24px);
+  opacity: 0;
+  width: 0;
+  min-width: 0;
+  max-width: 0;
+  flex: 0 0 0px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body.artcraft-zen-mode .workspace-ribbon {
+  transform: translateX(-18px);
+  opacity: 0;
+  pointer-events: none;
+}
+
 body.artcraft-zen-mode .status-bar {
-  display: none;
+  transform: translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.artcraft-zen-mode .workspace-leaf.mod-active .view-content {
+  animation: zenBreezeSwell 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes zenBreezeSwell {
+  0% {
+    opacity: 0.92;
+    transform: scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 body.artcraft-zen-mode .workspace-tab-header-container {
@@ -1629,7 +1963,7 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed),
 body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed),
 body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) {
   flex-direction: column;
-  right: 12px;
+  right: 16px;
   left: auto;
   top: 50%;
   bottom: auto;
@@ -1656,9 +1990,11 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-conte
 body.is-phone .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content,
 body.is-mobile .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-content {
   flex-direction: column;
-  gap: 5px;
-  width: 100%;
-  align-items: center;
+  opacity: 1;
+}
+
+.artcraft-floating-dock.is-vertical.is-collapsed .artcraft-dock-content {
+  display: none;
 }
 
 body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-badge-full,
@@ -2922,6 +3258,36 @@ body.artcraft-dark-craft .artcraft-graph-hud {
   padding: 20px 22px;
   box-sizing: border-box;
   overflow-x: hidden;
+  animation: proModalBackdropFade 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  backdrop-filter: blur(10px);
+}
+
+.artcraft-pro-modal-root {
+  animation: proModalSpringBloom 0.44s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: 50% 30%;
+}
+
+@keyframes proModalBackdropFade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes proModalSpringBloom {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.92);
+    filter: blur(14px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.018);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
 }
 
 .modal.artcraft-wide-craft-modal .modal-content {
@@ -3168,23 +3534,24 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
 .artcraft-bm-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: var(--bm-bg, #FFFDF8);
-  border: 1px solid var(--bm-border, #E2DDD2);
-  border-left: 4px solid var(--bm-accent, #DC2626);
-  border-radius: 5px 8px 8px 5px;
-  padding: 3px 8px;
+  gap: 6px;
+  background: linear-gradient(135deg, #FFFDF7 0%, #FAF4E4 100%);
+  border: 1.5px solid #D4AF37;
+  border-left: 4.5px solid var(--bm-accent, #D97706);
+  border-radius: 6px 9px 9px 6px;
+  padding: 3px 10px 3px 9px;
   font-size: 11px;
   color: #1F2937;
   cursor: pointer;
-  max-width: 310px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  max-width: 440px;
+  box-shadow: 0 2px 6px rgba(212, 175, 55, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
 }
 
 .artcraft-bm-pill:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  border-color: #B48A1E;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 .bm-nut-dot {
@@ -3256,17 +3623,45 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   margin-left: 2px;
 }
 
+/* ==========================================================================
+   v5.6.0 REFINED FOCUS & READING STUDIO POPOVER (3-TAB SWISS BENTO MODAL)
+   ========================================================================== */
 .artcraft-focus-popover {
   position: fixed;
   z-index: 99999;
-  width: 356px;
-  background: #FAF8F3;
-  border: 2px solid #18181B;
+  width: 380px;
+  max-height: min(620px, calc(100vh - 90px));
+  display: flex;
+  flex-direction: column;
+  background: rgba(250, 248, 245, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(60, 50, 35, 0.16);
   border-radius: 16px;
-  box-shadow: 0 6px 0 #18181B, 0 18px 38px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 20px 44px -10px rgba(40, 30, 10, 0.24), 0 4px 12px rgba(40, 30, 10, 0.08);
   padding: 12px;
   color: #1F2937;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-interface);
+  transform-origin: 50% 100%;
+  animation: windPopoverEnter 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes windPopoverEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.theme-dark .artcraft-focus-popover {
+  background: rgba(26, 28, 34, 0.96);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #F3F4F6;
+  box-shadow: 0 26px 58px -12px rgba(0, 0, 0, 0.65), 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 .focus-pop-head {
@@ -3275,35 +3670,108 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   justify-content: space-between;
   padding-bottom: 8px;
   margin-bottom: 8px;
-  border-bottom: 1px dashed #DFDBD0;
+  border-bottom: 1px dashed rgba(60, 50, 35, 0.14);
 }
 
 .focus-pop-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-family: var(--font-interface);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: #57534E;
 }
 
 .focus-pop-badge svg {
-  width: 13px;
-  height: 13px;
-  color: #69BD28;
+  width: 14px;
+  height: 14px;
+  color: #65B71E;
 }
 
 .focus-pop-close {
   background: transparent;
   border: none;
   box-shadow: none;
-  font-size: 16px;
+  font-size: 18px;
   color: #78716C;
   cursor: pointer;
   padding: 0 4px;
   height: 22px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: all 0.12s ease;
+}
+
+.focus-pop-close:hover {
+  background: rgba(60, 50, 35, 0.08);
+  color: #1F2937;
+}
+
+.focus-pop-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(60, 50, 35, 0.06);
+  padding: 3px;
+  border-radius: 9px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.focus-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: #57534E;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.focus-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: #1C1917;
+}
+
+.focus-tab-btn.is-active {
+  background: #FFFFFF;
+  color: #1C1917;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.focus-pop-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 170px);
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(60, 50, 35, 0.2) transparent;
+}
+
+.focus-pop-divider {
+  margin: 9px 0 6px 0;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(60, 50, 35, 0.12);
+  font-family: var(--font-interface);
+  font-size: 9.5px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  color: #78716C;
+}
+
+.focus-pop-divider:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .focus-pop-list {
@@ -3319,19 +3787,19 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   padding: 7px 9px;
   border-radius: 10px;
   background: #FFFFFF;
-  border: 1.5px solid #E5E1D6;
+  border: 1px solid rgba(60, 50, 35, 0.12);
   cursor: pointer;
   transition: all 0.14s ease;
 }
 
 .focus-pop-row:hover {
-  border-color: #A8A29E;
+  border-color: rgba(60, 50, 35, 0.28);
   background: #FFFDF9;
 }
 
 .focus-pop-row.is-checked {
-  background: #F0FDF4;
-  border-color: #69BD28;
+  background: #F4FBF0;
+  border-color: rgba(101, 183, 30, 0.5);
 }
 
 .focus-pop-checkbox {
@@ -3347,59 +3815,50 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   font-weight: 900;
   color: #FFFFFF;
   flex-shrink: 0;
+  transition: all 0.12s ease;
 }
 
 .focus-pop-row.is-checked .focus-pop-checkbox {
-  background: #69BD28;
-  border-color: #15803D;
+  background: #65B71E;
+  border-color: #65B71E;
 }
 
 .focus-pop-icon {
+  width: 16px;
+  height: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #57534E;
+  color: #78716C;
   flex-shrink: 0;
 }
 
-.focus-pop-icon svg {
-  width: 15px;
-  height: 15px;
+.focus-pop-row.is-checked .focus-pop-icon {
+  color: #2F6B0E;
 }
 
 .focus-pop-txt {
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  line-height: 1.25;
+  gap: 1px;
 }
 
 .focus-pop-txt strong {
   font-size: 12px;
-  font-weight: 700;
-  color: #18181B;
+  font-weight: 650;
+  color: #1C1917;
 }
 
 .focus-pop-txt small {
   font-size: 10.5px;
   color: #78716C;
+  line-height: 1.35;
 }
 
-.focus-pop-divider {
-  margin: 9px 0 6px 0;
-  padding-top: 7px;
-  border-top: 1px dashed #DFDBD0;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  color: #78716C;
-}
-
-.focus-pop-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+.focus-pop-tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
 }
 
 .focus-pop-act-btn {
@@ -3408,34 +3867,36 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   justify-content: flex-start;
   gap: 7px;
   width: 100%;
-  padding: 7px 10px;
-  height: auto;
+  padding: 8px 10px;
+  min-height: 36px;
   border-radius: 9px;
-  border: 1.5px solid #DCD7CA;
+  border: 1px solid rgba(60, 50, 35, 0.14);
   background: #FFFFFF;
-  color: #1F2937;
-  font-size: 11.5px;
-  font-weight: 700;
+  color: #1C1917;
+  font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: all 0.14s ease;
+  text-align: left;
 }
 
 .focus-pop-act-btn:hover {
-  border-color: #18181B;
+  border-color: #65B71E;
+  background: #F8FCF5;
   transform: translateY(-1px);
-}
-
-.focus-pop-act-btn.is-primary {
-  background: #18181B;
-  color: #FFFFFF;
-  border-color: #18181B;
+  box-shadow: 0 2px 6px rgba(101, 183, 30, 0.1);
 }
 
 .focus-pop-act-btn svg {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
+  color: #57534E;
+}
+
+.focus-pop-act-btn:hover svg {
+  color: #2F6B0E;
 }
 
 /* ==========================================================================
@@ -4180,39 +4641,44 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   box-sizing: border-box;
   background: #FAF9F5;
   border: 1.5px solid #E6E2D8;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px 10px 12px 10px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease, border-color 0.2s ease, background-color 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .artcraft-ko-tier-card:hover {
-  border-color: #C7BFB0;
+  border-color: rgba(29, 155, 240, 0.5);
   background: #FFFFFF;
-  transform: translateY(-1px);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 14px 32px -10px rgba(29, 155, 240, 0.22), 0 3px 8px rgba(0, 0, 0, 0.04);
 }
 
 .artcraft-ko-tier-card.is-selected {
   background: #FFFFFF;
-  border-color: #69BD28;
-  box-shadow: 0 4px 14px rgba(105, 189, 40, 0.14);
+  border-color: #1D9BF0;
+  box-shadow: 0 0 0 1px #1D9BF0, 0 8px 24px rgba(29, 155, 240, 0.2);
 }
 
 .ko-tier-popular {
   position: absolute;
   top: -9px;
   right: 10px;
-  background: #69BD28;
+  background: #1D9BF0;
   color: #FFFFFF;
   font-size: 9px;
   font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 999px;
+  padding: 3px 9px;
+  border-radius: 9999px;
   letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(29, 155, 240, 0.35);
 }
 
 .ko-tier-art {
@@ -4362,18 +4828,62 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 7px;
+}
+
+.artcraft-pay-action-btn.is-sapphire,
+.artcraft-pay-action-btn.is-x-blue {
+  background: #1D9BF0;
+  border: 1px solid #1A8CD8;
+  border-radius: 9999px;
+  color: #FFFFFF;
+  font-family: var(--font-interface);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 9px 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(29, 155, 240, 0.32);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, background-color 0.2s ease;
+}
+
+.artcraft-pay-action-btn.is-sapphire:hover,
+.artcraft-pay-action-btn.is-x-blue:hover {
+  background: #1A8CD8;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(29, 155, 240, 0.45);
+  color: #FFFFFF;
+}
+
+.artcraft-pay-action-btn.is-sapphire:active,
+.artcraft-pay-action-btn.is-x-blue:active {
+  background: #177CC0;
+  transform: translateY(0) scale(0.98);
+}
+
+.artcraft-pay-action-btn.is-sapphire *,
+.artcraft-pay-action-btn.is-x-blue * {
+  color: #FFFFFF;
 }
 
 .artcraft-pay-action-btn.is-soft {
-  background: #FFFFFF;
-  color: #374151;
-  border: 1px solid #D1D5DB;
+  background: rgba(15, 20, 25, 0.04);
+  border: 1px solid rgba(15, 20, 25, 0.12);
+  border-radius: 9999px;
+  color: var(--text-normal);
+  font-family: var(--font-interface);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 18px;
+  cursor: pointer;
   box-shadow: none;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .artcraft-pay-action-btn.is-soft:hover {
-  background: #F3F4F6;
+  background: rgba(29, 155, 240, 0.08);
+  border-color: rgba(29, 155, 240, 0.35);
+  color: #1D9BF0;
+  transform: translateY(-2px);
 }
 
 /* Soft Verification & Dedicated Promo View */
@@ -4493,12 +5003,12 @@ body.artcraft-dark-craft .artcraft-task-progress-wrap {
    12. CALM, STRUCTURED SWISS BENTO SETTINGS TAB HIERARCHY
    ========================================================================== */
 .artcraft-calm-settings-root .artcraft-settings-group-card {
-  background: #FAF9F5;
-  border: 1px solid #E5E2D9;
-  border-radius: 14px;
+  background: transparent;
+  border: 1px solid rgba(60, 50, 35, 0.12);
+  border-radius: 12px;
   padding: 14px 18px 6px 18px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: none;
 }
 
 .artcraft-calm-settings-root .artcraft-settings-group-head {
@@ -4768,17 +5278,21 @@ body .artcraft-floating-dock.is-vertical:not(.is-collapsed) .artcraft-dock-eq-pi
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  max-width: 260px;
-  height: 25px;
-  padding: 2px 7px 2px 8px;
-  border-radius: 6px;
+  gap: 6px;
+  max-width: 440px;
+  height: 26px;
+  padding: 2px 10px 2px 9px;
+  border-radius: 6px 9px 9px 6px;
+  border: 1.5px solid #D4AF37;
+  border-left: 4.5px solid var(--bm-accent, #D97706);
+  background: linear-gradient(135deg, #FFFDF7 0%, #FAF4E4 100%);
+  box-shadow: 0 2px 6px rgba(212, 175, 55, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   box-sizing: border-box;
   white-space: nowrap;
 }
 
 .artcraft-bm-pill .bm-tag-text {
-  max-width: 130px;
+  max-width: 320px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5076,13 +5590,24 @@ body.artcraft-dark-craft .artcraft-graph-canvas-wrap {
    ========================================================================== */
 
 /* 1. Warm Desk Surface for the entire Markdown View & Scroller */
+body.artcraft-book-spread .workspace-split.mod-root,
+body.artcraft-book-spread .workspace-leaf,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  background: radial-gradient(circle at 50% 16%, #EFEBE0 0%, #E3DDD0 100%);
+  background: radial-gradient(circle at 50% 18%, #F7F4EC 0%, #EDE7D8 100%);
   border-left: none;
   box-shadow: none;
+}
+
+body.artcraft-dark-craft.artcraft-book-spread .workspace-split.mod-root,
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf,
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+body.artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: radial-gradient(circle at 50% 18%, #1D1B18 0%, #11100F 100%);
 }
 
 body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller {
@@ -5153,12 +5678,12 @@ body.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdow
 /* Soft Subtle Amber Inner Spine Crease (Translucent, delicate, non-distracting) */
 @keyframes breathingSpinePulse {
   0%, 100% {
-    opacity: 0.12;
-    transform: scaleY(0.97);
+    opacity: 0.14;
+    filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.2));
   }
   50% {
-    opacity: 0.38;
-    transform: scaleY(1.0);
+    opacity: 0.45;
+    filter: drop-shadow(0 0 6px rgba(217, 119, 6, 0.45));
   }
 }
 
@@ -5264,18 +5789,18 @@ body.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content
 
 body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .cm-sizer,
 body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  border-left: 10px solid #334155;
-  background: linear-gradient(90deg, #EAEEF4 0%, #F9FAFB 3.2%, #FFFFFF 96.5%, #F1F5F9 100%);
+  border-left: 10px solid #3E3A36;
+  background: linear-gradient(90deg, #EFECE2 0%, #FAF8F3 3.2%, #FCFBF7 96.5%, #F4F0E5 100%);
   box-shadow:
-    inset 28px 0 38px -18px rgba(51, 65, 85, 0.18),
+    inset 28px 0 38px -18px rgba(62, 58, 54, 0.18),
     inset -1px 0 0 rgba(255, 255, 255, 0.8),
-    5px 4px 0 -1px #F8FAFC,
-    5px 4px 0 0 #CBD5E1,
-    10px 8px 0 -1px #F1F5F9,
-    10px 8px 0 0 #94A3B8,
-    15px 12px 0 -1px #E2E8F0,
-    15px 12px 0 0 #64748B,
-    28px 26px 48px rgba(15, 23, 42, 0.13);
+    5px 4px 0 -1px #F6F3EC,
+    5px 4px 0 0 #D6CFC0,
+    10px 8px 0 -1px #EFEBE1,
+    10px 8px 0 0 #CCC4B4,
+    15px 12px 0 -1px #E8E3D7,
+    15px 12px 0 0 #C0B8A8,
+    28px 26px 48px rgba(45, 35, 22, 0.14);
 }
 
 body.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] .cm-sizer::before,
@@ -5503,41 +6028,16 @@ body .artcraft-graph-hud-toggle-btn {
 /* 1. Coherent 6-BPM Breathing Book Spine (5.5s Inhale Warm Gold / 5.5s Exhale Calm Leather) */
 @keyframes artcraftCoherentSpineBreath {
   0%, 100% {
-    border-left-color: #8C5828;
-    box-shadow:
-      inset 26px 0 36px -16px rgba(92, 60, 28, 0.16),
-      inset -1px 0 0 rgba(255, 255, 255, 0.7),
-      4px 3px 0 -1px #F6F3EC,
-      4px 3px 0 0 #D8D2C5,
-      8px 6px 0 -1px #EFEBE1,
-      8px 6px 0 0 #CFC8B8,
-      12px 9px 0 -1px #E8E3D7,
-      12px 9px 0 0 #C5BEB0,
-      16px 12px 0 -1px #E1DBD0,
-      16px 12px 0 0 #B8B0A0,
-      22px 20px 38px rgba(45, 35, 22, 0.13);
+    filter: brightness(1.0);
   }
   50% {
-    border-left-color: #D97706;
-    box-shadow:
-      inset 42px 0 54px -12px rgba(217, 119, 6, 0.26),
-      -4px 0 18px rgba(217, 119, 6, 0.28),
-      inset -1px 0 0 rgba(255, 255, 255, 0.7),
-      4px 3px 0 -1px #F6F3EC,
-      4px 3px 0 0 #D8D2C5,
-      8px 6px 0 -1px #EFEBE1,
-      8px 6px 0 0 #CFC8B8,
-      12px 9px 0 -1px #E8E3D7,
-      12px 9px 0 0 #C5BEB0,
-      16px 12px 0 -1px #E1DBD0,
-      16px 12px 0 0 #B8B0A0,
-      22px 20px 38px rgba(45, 35, 22, 0.13);
+    filter: brightness(1.09);
   }
 }
 
-body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  animation: artcraftCoherentSpineBreath 11s ease-in-out infinite;
+/* Fixed: Whole note content NEVER pulses or jerks. Breathing spine pulse is confined exclusively to the ribbon ::before */
+body.artcraft-book-spread.artcraft-breathing-spine .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  animation: none;
 }
 
 /* 2. Peripheral Margin Sandglass Thread permanently disabled per user request */
@@ -6204,7 +6704,7 @@ body.artcraft-theme-active.artcraft-editorial-clean {
    cool-balanced Alabaster canvas (#F6F8FB / #FFFFFF) and deep Slate Ink (#0F172A)
    so long reading sessions remain razor-sharp without yellow muddiness or eye strain. */
 body.artcraft-theme-active.artcraft-nightlight-comp:not(.artcraft-dark-craft) {
-  --artcraft-bg-canvas: #F5F7FA;
+  --artcraft-bg-canvas: #FAF8F3;
   --artcraft-bg-card: #FFFFFF;
   --artcraft-bg-hover: #EDF2F7;
   --artcraft-bg-sidebar: #EEF2F6;
@@ -6213,33 +6713,14 @@ body.artcraft-theme-active.artcraft-nightlight-comp:not(.artcraft-dark-craft) {
   --artcraft-ink-muted: #475569;
   --artcraft-border-hairline: #CBD5E1;
   --artcraft-border-strong: #94A3B8;
-  --background-primary: #F5F7FA;
+  --background-primary: #FAF8F3;
   --background-primary-alt: #FFFFFF;
   --background-secondary: #EEF2F6;
   --text-normal: #0F172A;
   --text-muted: #475569;
 }
 
-body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"],
-body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .view-content,
-body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-scroller,
-body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  background: #E8EEF5;
-}
-
-body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-theme-active.artcraft-nightlight-comp.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  background-color: #FFFFFF;
-  border-color: #CBD5E1;
-  box-shadow:
-    5px 2px 0 -1px #F8FAFC,
-    5px 2px 0 0 #CBD5E1,
-    10px 5px 0 -1px #F1F5F9,
-    10px 5px 0 0 #94A3B8,
-    15px 8px 0 -1px #E2E8F0,
-    15px 8px 0 0 #94A3B8,
-    22px 14px 36px rgba(15, 23, 42, 0.08);
-}
+/* Nightlight compensation preserves Book Spread spine materials and warm sheets */
 
 /* Soft Editorial Inline Title (No harsh black 4px neo-brutalist shadow) */
 body.artcraft-theme-active.artcraft-editorial-clean .inline-title {
@@ -6318,7 +6799,7 @@ body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered table {
 }
 
 body.artcraft-theme-active.artcraft-editorial-clean .markdown-rendered th {
-  background-color: #F1F5F9;
+  background-color: #EFECE6;
   color: #0F172A;
   font-weight: 700;
   border-bottom: 1.5px solid #CBD5E1;
@@ -7276,22 +7757,7 @@ body.artcraft-theme-active.artcraft-surface-grain:not(.artcraft-dark-craft) .wor
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-body.artcraft-theme-active.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"],
-body.artcraft-theme-active.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .view-content,
-body.artcraft-theme-active.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-scroller,
-body.artcraft-theme-active.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
-  background: var(--artcraft-bg-canvas, #FFFFFF);
-}
-
-body.artcraft-theme-active.artcraft-surface-white.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-sizer,
-body.artcraft-theme-active.artcraft-surface-white.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-sizer {
-  background-color: #FFFFFF;
-  border-color: #EBEBEA;
-  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.03);
-}
-
-/* (v5.3.0: Restored Swiss Bento Section Cards, Inline Title & Tactile Paragraphs) */
-
+/* Book-page mode desk & spine materials are handled by the unified Book Folio rules */
 
 body.artcraft-theme-active {
   --checkbox-radius: 5px;
@@ -7317,13 +7783,11 @@ button.mod-cta *,
 .capsule-seal *,
 .nutrient-save-btn,
 .nutrient-save-btn *,
-.artcraft-dock-btn.is-active,
-.artcraft-dock-btn.is-active *,
 .focus-pop-act-btn.is-primary,
 .focus-pop-act-btn.is-primary *,
 .wax-env-btn.is-break,
 .wax-env-btn.is-break * {
-  color: #FFFFFF;
+  color: #14532D;
 }
 
 .artcraft-pay-action-btn.is-green,
@@ -7331,10 +7795,10 @@ button.mod-cta *,
 .rpg-add-quest-btn.mod-cta,
 .capsule-seal.mod-cta,
 .wax-env-btn.is-break {
-  background: #16A34A;
-  border: 1px solid #15803D;
+  background: rgba(101, 183, 30, 0.16);
+  border: 1px solid rgba(79, 143, 28, 0.42);
   border-radius: 9px;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.22);
+  box-shadow: 0 1px 2px rgba(20, 83, 45, 0.06);
   font-weight: 700;
   padding: 8px 14px;
 }
@@ -8559,72 +9023,85 @@ body.theme-dark .artcraft-graph-hud {
   margin-bottom: 20px;
 }
 
-:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h1, .cm-line.HyperMD-header-1) {
-  background: linear-gradient(90deg, rgba(101, 183, 30, 0.16) 0%, rgba(255, 255, 255, 0.96) 100%);
-  border: 1.5px solid #A3E635;
-  border-left: 6px solid #65B71E;
-  border-radius: 10px;
+/* ==========================================================================
+   v5.6.0 REFINED SWISS BENTO HEADING CARDS (CRAFT AESTHETICS, SUBTLE & AIRY)
+   ========================================================================== */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft):not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered h1, .cm-line.HyperMD-header-1) {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(246, 252, 240, 0.72) 100%);
+  border: 1px solid rgba(101, 183, 30, 0.28);
+  border-left: 4px solid #65B71E;
+  border-radius: 12px;
   padding: 10px 16px;
+  margin-top: 22px;
+  margin-bottom: 12px;
+  color: #14532D;
+  font-weight: 750;
+  box-shadow: 0 4px 16px -4px rgba(101, 183, 30, 0.12), 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft):not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered h1, .cm-line.HyperMD-header-1):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -6px rgba(101, 183, 30, 0.18);
+  border-color: #65B71E;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft):not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered h2, .cm-line.HyperMD-header-2) {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(240, 246, 255, 0.72) 100%);
+  border: 1px solid rgba(37, 99, 235, 0.24);
+  border-left: 4px solid #2563EB;
+  border-radius: 11px;
+  padding: 9px 15px;
   margin-top: 18px;
   margin-bottom: 10px;
-  color: #14532D;
-  font-weight: 800;
-  box-shadow: 0 2px 8px rgba(101, 183, 30, 0.08);
-}
-
-:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h2, .cm-line.HyperMD-header-2) {
-  background: linear-gradient(90deg, #EFF6FF 0%, #F8FAFC 100%);
-  border: 1.5px solid #BFDBFE;
-  border-left: 6px solid #2563EB;
-  border-radius: 10px;
-  padding: 9px 15px;
-  margin-top: 16px;
-  margin-bottom: 9px;
   color: #1E3A8A;
-  font-weight: 800;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06);
-}
-
-:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h3, .cm-line.HyperMD-header-3) {
-  background: linear-gradient(90deg, #FFF7ED 0%, #FFFDF9 100%);
-  border: 1.5px solid #FED7AA;
-  border-left: 6px solid #F59E0B;
-  border-radius: 9px;
-  padding: 7px 14px;
-  margin-top: 14px;
-  margin-bottom: 8px;
-  color: #9A3412;
   font-weight: 750;
+  box-shadow: 0 3px 12px -3px rgba(37, 99, 235, 0.09), 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft):not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered h2, .cm-line.HyperMD-header-2):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -4px rgba(37, 99, 235, 0.15);
+  border-color: #2563EB;
 }
 
-:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h4, .cm-line.HyperMD-header-4) {
-  background: linear-gradient(90deg, #F5F3FF 0%, #FDFCFF 100%);
-  border: 1.5px solid #DDD6FE;
-  border-left: 5px solid #8B5CF6;
-  border-radius: 8px;
-  padding: 6px 12px;
-  margin-top: 12px;
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft):not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered h3, .cm-line.HyperMD-header-3) {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 251, 235, 0.72) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  border-left: 3.5px solid #F59E0B;
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  color: #92400E;
+  font-weight: 700;
+  box-shadow: 0 2px 10px -2px rgba(245, 158, 11, 0.07);
+  transition: transform 0.2s ease;
+}
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft):not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered h3, .cm-line.HyperMD-header-3):hover {
+  transform: translateY(-1px);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft):not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered h4, .cm-line.HyperMD-header-4) {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(245, 243, 255, 0.72) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  border-left: 3px solid #8B5CF6;
+  border-radius: 9px;
+  padding: 7px 12px;
+  margin-top: 14px;
   margin-bottom: 6px;
   color: #5B21B6;
   font-weight: 700;
+  box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.06);
 }
 
-/* Writing Mode (Live Preview) & Reading Mode Paragraph Separation & Active Line Highlight */
-:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered > p {
-  padding: 9px 14px;
-  margin-bottom: 11px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid #E6E1D6;
-  line-height: 1.74;
-  color: #1F2328;
-  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered > p:hover {
-  background: #FFFFFF;
-  border-color: #65B71E;
-  box-shadow: 0 3px 12px rgba(101, 183, 30, 0.08);
+/* Paragraphs stay clean, airy and natural with no outline box */
+:is(html, body).artcraft-theme-active .workspace-leaf-content .markdown-rendered > p {
+  padding: 4px 0;
+  margin-bottom: 12px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  line-height: 1.76;
 }
 
 :is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .cm-s-obsidian .cm-line:not(.HyperMD-header):not(.HyperMD-codeblock):not(.HyperMD-frontmatter) {
@@ -8733,7 +9210,6 @@ body.theme-dark .artcraft-graph-hud {
   .capsule-seal *,
   .nutrient-save-btn *,
   .dc-primary-btn *,
-  .artcraft-dock-btn.is-active *,
   .wax-env-btn.is-break *,
   .wind-lock-chain-btn *
 ) {
@@ -9439,4 +9915,3481 @@ pre.artcraft-ide-code-window > code {
   background: linear-gradient(180deg, #6EC424 0%, #56A315 100%);
   color: #FFFFFF;
   border-color: #3F7D0B;
+}
+
+/* ==========================================================================
+   v5.4.0 — MOTION BUDGET
+   Decorative loops run only where someone can see them. A plugin that keeps
+   repainting while you read costs battery and makes scrolling feel heavy.
+   ========================================================================== */
+
+/* Dock flask: alive with physical sloshing liquid, rising micro-bubbles & sparks */
+.artcraft-floating-dock .artcraft-dock-badge .artcraft-flask-bubble,
+.artcraft-floating-dock .artcraft-dock-badge .artcraft-flask-liquid,
+.artcraft-floating-dock .artcraft-dock-badge .artcraft-flask-liquid-back,
+.artcraft-floating-dock .artcraft-dock-badge .artcraft-flask-meniscus,
+.artcraft-floating-dock .artcraft-dock-badge .artcraft-flask-spark {
+  animation-play-state: running;
+}
+
+/* Related-notes footer: moves only while it is on screen (.is-in-view is set by an IntersectionObserver). */
+.artcraft-wind-chain-footer .wind-arrow-path,
+.artcraft-wind-chain-footer .wind-leaf-card {
+  animation-play-state: paused;
+}
+
+.artcraft-wind-chain-footer.is-in-view .wind-arrow-path,
+.artcraft-wind-chain-footer.is-in-view .wind-leaf-card {
+  animation-play-state: running;
+}
+
+/* Respect the system "reduce motion" setting: no loops, near-instant transitions. */
+@media (prefers-reduced-motion: reduce) {
+  [class*="artcraft-"],
+  [class*="sicraft-"],
+  [class*="artcraft-"] *,
+  [class*="sicraft-"] *,
+  .wind-arrow-path,
+  .wind-leaf-card {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
+
+/* ==========================================================================
+   v5.4.0 — DOCK FITS THE WINDOW
+   .is-compact drops button labels, .is-scrollable lets the row scroll.
+   Both classes are set by fitDockToWindow() from the real measured width.
+   ========================================================================== */
+.artcraft-floating-dock.is-compact .artcraft-btn-label,
+.artcraft-floating-dock.is-compact .artcraft-badge-text {
+  display: none;
+}
+
+.artcraft-floating-dock.is-scrollable {
+  max-width: calc(100vw - 32px);
+}
+
+.artcraft-floating-dock.is-scrollable .artcraft-dock-content {
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.artcraft-floating-dock.is-scrollable .artcraft-dock-content > * {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   v5.4.0 — KEY SENTENCE MARKER (reading view)
+   A highlighter stroke under the sentences that carry the note's subject.
+   The stroke is drawn once, left to right, when the sentence scrolls into view.
+   The background of a wrapped inline box is laid out as one long strip, so the
+   stroke travels line by line the way a hand would draw it.
+   ========================================================================== */
+.artcraft-key-mark {
+  --key-ink: rgba(132, 204, 22, 0.28);
+  background-image: linear-gradient(var(--key-ink), var(--key-ink));
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 0% 100%;
+  border-radius: 4px;
+  padding: 1px 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition: background-size var(--key-time, 600ms) cubic-bezier(0.22, 1, 0.36, 1) var(--key-delay, 0ms);
+}
+
+.artcraft-key-mark.is-inked {
+  background-size: 100% 100%;
+}
+
+.theme-dark .artcraft-key-mark {
+  --key-ink: rgba(163, 230, 53, 0.32);
+}
+
+/* 5 Pastel Marker Color Variants */
+body.artcraft-marker-lime .artcraft-key-mark {
+  --key-ink: rgba(132, 204, 22, 0.28);
+}
+.theme-dark body.artcraft-marker-lime .artcraft-key-mark {
+  --key-ink: rgba(163, 230, 53, 0.34);
+}
+
+body.artcraft-marker-amber .artcraft-key-mark {
+  --key-ink: rgba(245, 158, 11, 0.28);
+}
+.theme-dark body.artcraft-marker-amber .artcraft-key-mark {
+  --key-ink: rgba(251, 191, 36, 0.34);
+}
+
+body.artcraft-marker-rose .artcraft-key-mark {
+  --key-ink: rgba(244, 63, 94, 0.24);
+}
+.theme-dark body.artcraft-marker-rose .artcraft-key-mark {
+  --key-ink: rgba(251, 113, 133, 0.30);
+}
+
+body.artcraft-marker-sky .artcraft-key-mark {
+  --key-ink: rgba(14, 165, 233, 0.24);
+}
+.theme-dark body.artcraft-marker-sky .artcraft-key-mark {
+  --key-ink: rgba(56, 189, 248, 0.30);
+}
+
+body.artcraft-marker-lavender .artcraft-key-mark {
+  --key-ink: rgba(168, 85, 247, 0.24);
+}
+.theme-dark body.artcraft-marker-lavender .artcraft-key-mark {
+  --key-ink: rgba(192, 132, 252, 0.30);
+}
+
+/* Marker color picker swatch pills in Focus popover */
+.artcraft-marker-colors-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 8px 36px;
+  margin-top: -4px;
+}
+
+.artcraft-marker-color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 2px solid transparent;
+}
+
+.artcraft-marker-color-dot:hover {
+  transform: scale(1.25);
+}
+
+.artcraft-marker-color-dot.is-active {
+  transform: scale(1.2);
+  border-color: #111111;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9), 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Switched off: marks already on the page lose their ink at once, no re-render needed. */
+body:not(.artcraft-key-marker) .artcraft-key-mark {
+  background-image: none;
+}
+
+@media print {
+  .artcraft-key-mark {
+    background-size: 100% 36%;
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   v5.4.0 — DOCK IN THE DARK APP THEME
+   The dock keeps its paper look in both app themes. Without these rules
+   Obsidian's dark button colors win and leave dark icons on dark buttons.
+   ========================================================================== */
+.theme-dark .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-active) {
+  background-color: #FFFFFF;
+  color: #111111;
+}
+
+.theme-dark .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-active):hover {
+  background-color: #EFECE6;
+}
+
+/* ==========================================================================
+   v5.6.0 — PAPER AND INK
+   Paper: a procedural grain tile (see buildPaperTile) scrolls with the text,
+   a soft pool of light stays fixed to the pane.
+   Ink: near-black with a slight hue instead of pure black or washed grey.
+   Body text keeps a contrast of about 14:1, secondary text about 5:1.
+   ========================================================================== */
+body.artcraft-theme-active.artcraft-surface-white:not(.artcraft-dark-craft) {
+  --text-normal: #24272D;
+  --text-muted: #6B7078;
+  --text-faint: #A2A7AF;
+  --artcraft-paper-light:
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, rgba(40, 44, 56, 0) 62%, rgba(40, 44, 56, 0.035) 100%);
+}
+
+body.artcraft-theme-active.artcraft-surface-book:not(.artcraft-dark-craft),
+body.artcraft-theme-active.artcraft-surface-grain:not(.artcraft-dark-craft) {
+  --text-normal: #2B2620;
+  --text-muted: #71685C;
+  --text-faint: #A99F92;
+  --artcraft-paper-light:
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 252, 244, 0.75) 0%, rgba(255, 252, 244, 0) 60%),
+    linear-gradient(180deg, rgba(90, 66, 30, 0) 60%, rgba(90, 66, 30, 0.06) 100%);
+}
+
+body.artcraft-theme-active.artcraft-paper-on:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-view,
+body.artcraft-theme-active.artcraft-paper-on:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-scroller {
+  background-image: var(--artcraft-paper-light), var(--artcraft-paper-tile);
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: 100% 100%, 100% 100%, 400px 400px;
+  background-attachment: scroll, scroll, local;
+}
+
+/* Book-page mode paints the grain via ::after so the spine gradient is never overwritten */
+
+/* The pre-5.5 grain overlay (an SVG filter stretched over the pane) is replaced by the tile. */
+body.artcraft-theme-active.artcraft-surface-grain.artcraft-paper-on:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .view-content::after {
+  content: none;
+}
+
+/* Line breaking: no lonely last word in a paragraph, headings split into lines of similar length. */
+body.artcraft-theme-active .markdown-preview-view :is(p, li, blockquote) {
+  text-wrap: pretty;
+}
+
+body.artcraft-theme-active .markdown-preview-view :is(h1, h2, h3, h4, h5, h6),
+body.artcraft-theme-active .inline-title {
+  text-wrap: balance;
+}
+
+/* ==========================================================================
+   v5.6.0 — FILE EXPLORER
+   Thin outline icons in the text colour; names carry the weight.
+   ========================================================================== */
+.nav-files-container .artcraft-sidebar-icon-slot {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin-right: 7px;
+}
+
+.nav-files-container .artcraft-sidebar-icon-slot .artcraft-bespoke-squircle {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  opacity: 0.7;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.nav-files-container .nav-file-title.is-active .artcraft-bespoke-squircle,
+.nav-files-container .nav-file-title:hover .artcraft-bespoke-squircle,
+.nav-files-container .nav-folder-title:hover .artcraft-bespoke-squircle {
+  color: var(--text-normal);
+  opacity: 1;
+}
+
+.nav-files-container .nav-folder-title .artcraft-folder-count-pill {
+  margin-left: auto;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   v5.6.0 — RELATED NOTES
+   Slips of paper on threads under the note. Positions come from the physics
+   loop in main.js (transform only); everything else is static styling.
+   ========================================================================== */
+.artcraft-kin {
+  --kin-thread: rgba(64, 58, 48, 0.46);
+  --kin-accent: #4F8F1C;
+  --kin-paper: #FFFEFB;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--artcraft-line-width, 760px);
+  margin: 64px auto 140px;
+  padding: 0 6px;
+  user-select: none;
+}
+
+.artcraft-kin .kin-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.artcraft-kin .kin-head-count {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.artcraft-kin .kin-stage {
+  position: relative;
+  width: 100%;
+}
+
+.artcraft-kin .kin-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* One SVG per thread: the compositor shears and stretches it about the root while the slip moves. */
+.artcraft-kin .kin-thread-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.artcraft-kin .kin-thread {
+  fill: none;
+  stroke: var(--kin-thread);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+}
+
+.artcraft-kin .kin-thread.kin-kind-both {
+  stroke-width: 1.5;
+}
+
+.artcraft-kin .kin-thread.kin-kind-sim {
+  stroke-dasharray: 1.5 5;
+  stroke: rgba(64, 58, 48, 0.36);
+}
+
+.artcraft-kin .kin-arrowhead {
+  fill: none;
+  stroke: var(--kin-thread);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.artcraft-kin .kin-root {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 82%;
+  padding: 5px 13px 5px 10px;
+  border: 1px solid rgba(60, 50, 35, 0.16);
+  border-radius: 999px;
+  background: var(--kin-paper);
+  color: var(--text-normal);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.artcraft-kin .kin-root-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--kin-accent);
+}
+
+.artcraft-kin .kin-root-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artcraft-kin .kin-leaf {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  box-sizing: border-box;
+  height: auto;
+  margin: 0;
+  padding: 15px 15px 13px;
+  border: 1px solid rgba(60, 50, 35, 0.14);
+  border-radius: 3px 3px 9px 9px;
+  background: var(--kin-paper);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 12px 24px -14px rgba(50, 40, 20, 0.32), 0 2px 5px rgba(50, 40, 20, 0.06);
+  color: var(--text-normal);
+  font: inherit;
+  text-align: left;
+  white-space: normal;
+  cursor: pointer;
+  transform-origin: 50% 0;
+  will-change: transform;
+  transition: box-shadow 0.25s ease, border-color 0.2s ease, opacity 0.3s ease;
+}
+
+/* the knot where the thread is tied */
+.artcraft-kin .kin-leaf::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border: 1.2px solid var(--kin-thread);
+  border-radius: 50%;
+  background: var(--kin-paper);
+}
+
+.artcraft-kin .kin-leaf:hover,
+.artcraft-kin .kin-leaf:focus-visible {
+  border-color: rgba(60, 50, 35, 0.3);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 18px 30px -14px rgba(50, 40, 20, 0.4), 0 3px 8px rgba(50, 40, 20, 0.08);
+  outline: none;
+}
+
+.artcraft-kin .kin-leaf-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.artcraft-kin .kin-leaf-glyph {
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--kin-accent);
+}
+
+.artcraft-kin .kin-leaf-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 14.5px;
+  font-weight: 650;
+  line-height: 1.3;
+  color: var(--text-normal);
+}
+
+/* the text of a neighbour is there but out of focus until the slip is opened */
+.artcraft-kin .kin-leaf-body {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-normal);
+  opacity: 0.62;
+  filter: blur(3.2px);
+  pointer-events: none;
+  transition: filter 0.35s ease, opacity 0.35s ease;
+}
+
+.artcraft-kin .kin-leaf:hover .kin-leaf-body,
+.artcraft-kin .kin-leaf:focus-visible .kin-leaf-body {
+  opacity: 0.74;
+  filter: blur(2.2px);
+}
+
+.artcraft-kin .kin-leaf.is-open {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.artcraft-kin .kin-stage.has-reader .kin-leaf:not(.is-open) {
+  opacity: 0.5;
+}
+
+.artcraft-kin .kin-reader {
+  position: absolute;
+  z-index: 5;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid rgba(60, 50, 35, 0.16);
+  border-radius: 12px;
+  background: var(--kin-paper);
+  box-shadow: 0 34px 64px -30px rgba(40, 30, 10, 0.5), 0 4px 14px rgba(40, 30, 10, 0.08);
+  user-select: text;
+  will-change: transform;
+}
+
+.artcraft-kin .kin-reader-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px 10px 20px;
+  border-bottom: 1px solid rgba(60, 50, 35, 0.1);
+}
+
+.artcraft-kin .kin-reader-title {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  white-space: normal;
+  cursor: pointer;
+}
+
+.artcraft-kin .kin-reader-title:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.artcraft-kin .kin-reader-open,
+.artcraft-kin .kin-reader-close {
+  flex: none;
+  height: 28px;
+  border: 1px solid rgba(60, 50, 35, 0.16);
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.artcraft-kin .kin-reader-open {
+  padding: 0 11px;
+}
+
+.artcraft-kin .kin-reader-close {
+  width: 28px;
+  padding: 0;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.artcraft-kin .kin-reader-open:hover,
+.artcraft-kin .kin-reader-close:hover {
+  background: rgba(60, 50, 35, 0.06);
+  color: var(--text-normal);
+}
+
+.artcraft-kin .kin-reader-body {
+  max-height: min(56vh, 520px);
+  overflow: auto;
+  padding: 12px 22px 18px;
+  font-size: 14.5px;
+  line-height: 1.62;
+}
+
+.artcraft-kin .kin-reader-more {
+  color: var(--text-faint);
+  text-align: center;
+  letter-spacing: 0.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .artcraft-kin .kin-leaf {
+    will-change: auto;
+  }
+}
+
+@media print {
+  .artcraft-kin {
+    display: none;
+  }
+}
+
+/* Inside the reading card the text is plain: no heading cards or paragraph boxes from the page theme. */
+:is(html, body).artcraft-theme-active .workspace-leaf-content .artcraft-kin .kin-reader .kin-reader-body :is(h1, h2, h3, h4, h5, h6, p, li) {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+:is(html, body).artcraft-theme-active .workspace-leaf-content .artcraft-kin .kin-reader .kin-reader-body :is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 1.1em;
+  margin-bottom: 0.4em;
+  color: var(--text-normal);
+  font-size: 1.12em;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+:is(html, body).artcraft-theme-active .workspace-leaf-content .artcraft-kin .kin-reader .kin-reader-body :is(h1, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0.2em;
+}
+
+:is(html, body).artcraft-theme-active .workspace-leaf-content .artcraft-kin .kin-reader .kin-reader-body :is(h1, h2, h3, h4, h5, h6)::before,
+:is(html, body).artcraft-theme-active .workspace-leaf-content .artcraft-kin .kin-reader .kin-reader-body :is(h1, h2, h3, h4, h5, h6)::after {
+  content: none;
+}
+
+.artcraft-kin .kin-reader-title {
+  display: block;
+  justify-content: flex-start;
+}
+
+/* The numbered, coloured view of a code block sits next to the original <code>, which is hidden. */
+pre.artcraft-ide-code-window > code.artcraft-ide-code-source {
+  display: none;
+}
+
+/* ==========================================================================
+   v5.6.0 — FILE EXPLORER ROWS
+   No boxes, no coloured side bars: weight and a quiet tint mark the place.
+   ========================================================================== */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-folder:nth-of-type(n) > .nav-folder-title,
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-file > .nav-file-title {
+  margin: 1px 4px 1px 0;
+  padding: 4px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-folder:nth-of-type(n) > .nav-folder-title {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-file > .nav-file-title {
+  color: var(--text-muted);
+  font-weight: 450;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-folder:nth-of-type(n) > .nav-folder-title:hover,
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-file > .nav-file-title:hover {
+  background: rgba(40, 36, 28, 0.045);
+  color: var(--text-normal);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-split .nav-files-container .nav-file > .nav-file-title.is-active {
+  background: rgba(40, 36, 28, 0.06);
+  box-shadow: inset 2px 0 0 var(--artcraft-excel-green, #65B71E);
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+/* Obsidian adds its own copy button to every code block; the code window already has one. */
+pre.artcraft-ide-code-window > button.copy-code-button {
+  display: none;
+}
+
+/* The tag above the note title follows the "show header tag" setting. A later rule used to hard-code
+   display:block, so the switch in settings did nothing. */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .inline-title::before {
+  display: var(--artcraft-header-tag-display, none);
+}
+
+/* ==========================================================================
+   v5.6.0 — TOOL ROW UNDER THE TAB HEADER
+   Quiet while reading, full strength when the pointer or keyboard is on it.
+   ========================================================================== */
+.workspace-leaf-content .artcraft-task-progress-wrap {
+  opacity: 0.4;
+  filter: saturate(0.15);
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.workspace-leaf-content .artcraft-task-progress-wrap:hover,
+.workspace-leaf-content .artcraft-task-progress-wrap:focus-within {
+  opacity: 1;
+  filter: none;
+}
+
+/* ==========================================================================
+   v5.6.0 — NARROW PANES
+   A split view or a phone leaves 300-500 px for the note. The page layout
+   used to keep its full margins there (77 px of text in a 288 px pane) and
+   headings broke in the middle of words.
+   .artcraft-narrow-pane is set by markNarrowPanes() from the measured width.
+   ========================================================================== */
+:is(html, body).artcraft-theme-active .workspace-leaf-content.artcraft-narrow-pane[data-type="markdown"] .view-content .cm-scroller,
+:is(html, body).artcraft-theme-active .workspace-leaf-content.artcraft-narrow-pane[data-type="markdown"] .view-content .markdown-preview-view {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane[data-type="markdown"] .view-content .cm-sizer,
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane[data-type="markdown"] .view-content .markdown-preview-sizer {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .cm-content .HyperMD-header,
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .markdown-preview-view :is(h1, h2, h3, h4),
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .inline-title {
+  padding-left: 11px;
+  padding-right: 10px;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .inline-title,
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .cm-content .HyperMD-header-1,
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .markdown-preview-view h1 {
+  font-size: 1.3rem;
+  line-height: 1.25;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .cm-content .HyperMD-header-2,
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .markdown-preview-view h2 {
+  font-size: 1.16rem;
+  line-height: 1.28;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .cm-content :is(.HyperMD-header-3, .HyperMD-header-4),
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content.artcraft-narrow-pane .markdown-preview-view :is(h3, h4) {
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+/* Lamp window: the "pulse on music beats" switch */
+.sicraft-led-modal .sicraft-led-beat-row {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+}
+
+.sicraft-led-modal .sicraft-led-beat-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sicraft-led-modal .sicraft-led-beat-hint {
+  margin-top: 5px;
+  padding-left: 30px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ==========================================================================
+   v5.6.0 — PLAIN PAGE (default)
+   body.artcraft-plain-page is set unless the "decorated page" switch is on.
+   The page is carried by type: size, weight and spacing. Headings, quotes
+   and tables lose their boxes, gradients, coloured side bars and shadows,
+   so nothing on the page is louder than the text.
+   ========================================================================== */
+
+/* headings */
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered :is(h1, h2, h3, h4), .cm-line:is(.HyperMD-header-1, .HyperMD-header-2, .HyperMD-header-3, .HyperMD-header-4)) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text-normal);
+  letter-spacing: -0.012em;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered :is(h1, h2, h3, h4) {
+  margin: 1.7em 0 0.55em;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h1, .cm-line.HyperMD-header-1) {
+  font-size: 1.62em;
+  font-weight: 720;
+  line-height: 1.22;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h2, .cm-line.HyperMD-header-2) {
+  font-size: 1.34em;
+  font-weight: 700;
+  line-height: 1.26;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h3, .cm-line.HyperMD-header-3) {
+  font-size: 1.14em;
+  font-weight: 680;
+  line-height: 1.3;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h4, .cm-line.HyperMD-header-4) {
+  font-size: 1em;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
+/* note title */
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content .inline-title {
+  margin-bottom: 0.5em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text-normal);
+  font-size: 2em;
+  font-weight: 740;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+/* quotes: a thin rule, no card */
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered blockquote {
+  margin: 1.2em 0;
+  padding: 2px 0 2px 18px;
+  border: 0;
+  border-left: 2px solid rgba(60, 50, 35, 0.3);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text-normal);
+}
+
+/* tables: rules instead of a frame, a plain header */
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table th {
+  padding: 9px 14px;
+  border: 0;
+  border-bottom: 1.5px solid var(--text-normal);
+  background: none;
+  color: var(--text-normal);
+  font-weight: 680;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:is(html, body).artcraft-theme-active.artcraft-plain-page:not(.artcraft-dark-craft) .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table td {
+  border: 0;
+  border-bottom: 1px solid rgba(60, 50, 35, 0.14);
+  background: none;
+}
+
+/* ==========================================================================
+   v5.6.0 — MINIMALIST CHROME (ALWAYS CLEAN & REFINED)
+   Dock and tool row: the interface font, one neutral colour, no hard black
+   outline, no stacked shadows, no gradient fills.
+   ========================================================================== */
+body .artcraft-floating-dock,
+body .artcraft-floating-dock :is(button, span, div),
+body .artcraft-task-progress-wrap,
+body .artcraft-task-progress-wrap :is(button, span, div, strong) {
+  font-family: var(--font-interface);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body .artcraft-floating-dock {
+  border: 1px solid rgba(60, 50, 35, 0.16);
+  border-radius: 12px;
+  background: #FDFCF9;
+  box-shadow: 0 12px 30px -14px rgba(40, 30, 10, 0.3), 0 2px 6px rgba(40, 30, 10, 0.06);
+}
+
+body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-active) {
+  border-color: transparent;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  color: #4A4E57;
+  font-weight: 550;
+}
+
+body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-active):hover {
+  background: rgba(40, 36, 28, 0.06);
+  color: var(--text-normal);
+}
+
+
+/* Robust contrast for active dock buttons (Zen, Focus, UI, Laser, Draw) */
+body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active,
+body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active * {
+  color: #15803D;
+  stroke: #15803D;
+}
+
+body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active svg {
+  color: #15803D;
+  stroke: #15803D;
+}
+
+body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active svg path {
+  stroke: inherit;
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active,
+.theme-dark body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active * {
+  color: #86EFAC;
+  stroke: #86EFAC;
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active svg {
+  color: #86EFAC;
+  stroke: #86EFAC;
+}
+
+body .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active {
+  border-color: transparent;
+  border-radius: 7px;
+  background: rgba(79, 143, 28, 0.13);
+  box-shadow: none;
+  color: #2F6B0E;
+  font-weight: 650;
+}
+
+body .artcraft-floating-dock .artcraft-dock-btn.is-active :is(.artcraft-btn-label, .artcraft-btn-caret) {
+  color: inherit;
+}
+
+body .artcraft-floating-dock .artcraft-dock-badge {
+  padding: 4px 6px;
+  background: transparent;
+  color: var(--text-normal);
+}
+
+body .artcraft-floating-dock .artcraft-dock-badge .artcraft-badge-text {
+  display: none;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill {
+  border: 1px solid rgba(60, 50, 35, 0.22);
+  background: rgba(255, 255, 255, 0.85);
+  color: #1C1917;
+  box-shadow: none;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: all 0.2s ease;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill:hover {
+  background: #FFFFFF;
+  border-color: rgba(60, 50, 35, 0.4);
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-running {
+  background: rgba(101, 183, 30, 0.14);
+  border-color: rgba(101, 183, 30, 0.45);
+  color: #15803D;
+  font-weight: 750;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-running .artcraft-timer-dot {
+  background: #22C55E;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
+  animation: timerDotGlow 2s ease-in-out infinite;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-break.is-running {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.4);
+  color: #1D4ED8;
+  font-weight: 750;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-break.is-running .artcraft-timer-dot {
+  background: #3B82F6;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.7);
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill {
+  background: rgba(30, 32, 38, 0.85);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #F3F4F6;
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill.is-running,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #86EFAC;
+}
+
+@keyframes timerDotGlow {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.25); opacity: 1; }
+}
+
+body .artcraft-floating-dock .artcraft-dock-eq-pill {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* tool row: every item in the same quiet outline */
+body .workspace-leaf-content .artcraft-task-progress-wrap {
+  filter: none;
+  opacity: 0.85;
+}
+
+body .workspace-leaf-content .artcraft-task-progress-wrap:hover,
+body .workspace-leaf-content .artcraft-task-progress-wrap:focus-within {
+  opacity: 1;
+}
+
+body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn) {
+  border-color: rgba(60, 50, 35, 0.16);
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-weight: 550;
+}
+
+body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn):hover {
+  border-color: rgba(60, 50, 35, 0.3);
+  background: rgba(40, 36, 28, 0.04);
+  color: var(--text-normal);
+}
+
+body .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn) :is(span, strong) {
+  color: inherit;
+}
+
+/* plain page: numbers and percentages in text are marked by weight alone */
+body.artcraft-theme-active.artcraft-plain-page .markdown-rendered :is(.artcraft-capsule-num, .artcraft-capsule-pct, .artcraft-capsule-money, .artcraft-capsule-time, .artcraft-capsule-link, .artcraft-capsule-crypto) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text-normal);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 640;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+body.artcraft-theme-active.artcraft-plain-page .markdown-rendered :is(.artcraft-capsule-link, .artcraft-capsule-crypto) {
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: rgba(60, 50, 35, 0.3);
+  text-underline-offset: 3px;
+}
+
+/* plain page: inline code is a quiet grey chip in the code font Obsidian is set to */
+body.artcraft-theme-active.artcraft-plain-page .markdown-rendered code:not(pre code),
+body.artcraft-theme-active.artcraft-plain-page .cm-s-obsidian span.cm-inline-code {
+  padding: 1px 5px;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(60, 50, 35, 0.075);
+  color: var(--text-normal);
+  font-family: var(--font-monospace);
+  font-size: 0.88em;
+  font-weight: 500;
+}
+
+/* plain page: the code block is a code block, not a mock application window */
+body.artcraft-plain-page pre.artcraft-ide-code-window {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+body.artcraft-plain-page pre.artcraft-ide-code-window .ide-dot {
+  display: none;
+}
+
+body.artcraft-plain-page pre.artcraft-ide-code-window :is(.artcraft-ide-header, .ide-lang-pill, .ide-lines-meta, .ide-palette-select, .ide-copy-btn, .ide-copy-btn span, .ide-line-num) {
+  font-family: var(--font-monospace);
+  letter-spacing: 0;
+}
+
+body.artcraft-plain-page pre.artcraft-ide-code-window .ide-lang-pill {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+body.artcraft-plain-page pre.artcraft-ide-code-window :is(.ide-copy-btn, .ide-palette-select) {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  color: inherit;
+  font-weight: 500;
+}
+
+body.artcraft-plain-page pre.artcraft-ide-code-window .ide-copy-btn span {
+  color: inherit;
+}
+
+body.artcraft-plain-page pre.artcraft-ide-code-window :is(.ide-copy-btn, .ide-palette-select):hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* plain page: task circles without a drop shadow */
+body.artcraft-theme-active.artcraft-plain-page .markdown-rendered input.task-list-item-checkbox {
+  box-shadow: none;
+}
+
+
+/* ==========================================================================
+   ANCHORED POMODORO POPOVER & DYNAMIC ISLAND TRACK CAPSULE
+   ========================================================================== */
+.modal.artcraft-anchored-timer-popover {
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  background: rgba(253, 252, 249, 0.95);
+  border: 1.5px solid #111111;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: timerPopIn 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  padding: 16px 20px;
+  max-width: 330px;
+  z-index: 10010;
+}
+
+.theme-dark .modal.artcraft-anchored-timer-popover,
+body.artcraft-dark-craft .modal.artcraft-anchored-timer-popover {
+  background: rgba(24, 26, 32, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #F3F4F6;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes timerPopIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.9);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+.artcraft-dock-eq-pill {
+  position: relative;
+}
+
+.artcraft-island-capsule {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 13px 0 10px;
+  border-radius: 999px;
+  background: rgba(24, 26, 32, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.1);
+  color: #F9FAFB;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  z-index: 10005;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.artcraft-island-capsule.is-visible {
+  display: inline-flex;
+}
+
+.theme-light .artcraft-island-capsule {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.04);
+  color: #111827;
+}
+
+.artcraft-island-capsule .island-mini-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  width: 10px;
+}
+
+.artcraft-island-capsule .island-bar {
+  flex: 1;
+  background: #22C55E;
+  border-radius: 1px;
+  animation: islandBarBounce 0.85s ease-in-out infinite alternate;
+}
+
+.artcraft-island-capsule .island-bar.b1 { height: 60%; animation-delay: 0.1s; }
+.artcraft-island-capsule .island-bar.b2 { height: 100%; animation-delay: 0.35s; }
+.artcraft-island-capsule .island-bar.b3 { height: 40%; animation-delay: 0.2s; }
+
+@keyframes islandBarBounce {
+  0% { transform: scaleY(0.28); }
+  100% { transform: scaleY(1); }
+}
+
+.artcraft-island-capsule .island-track-title {
+  font-weight: 600;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artcraft-island-capsule .island-vol-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.theme-light .artcraft-island-capsule .island-vol-badge {
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.65);
+}
+
+
+/* ==========================================================================
+   CRAFT POMODORO STUDIO POPOVER (IDENTICAL CRAFT AESTHETIC AS FOCUS POPOVER)
+   ========================================================================== */
+.artcraft-pomodoro-popover {
+  position: fixed;
+  z-index: 99999;
+  width: 320px;
+  background: rgba(250, 248, 245, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(60, 50, 35, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 20px 44px -10px rgba(40, 30, 10, 0.24), 0 4px 12px rgba(40, 30, 10, 0.08);
+  padding: 14px 16px;
+  color: #1F2937;
+  font-family: var(--font-interface);
+  user-select: none;
+  animation: windPopoverEnter 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: 50% 100%;
+}
+
+.artcraft-floating-dock.is-vertical .artcraft-pomodoro-popover {
+  transform-origin: 100% 50%;
+}
+
+.theme-dark .artcraft-pomodoro-popover,
+body.artcraft-dark-craft .artcraft-pomodoro-popover {
+  background: rgba(26, 28, 34, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #F3F4F6;
+  box-shadow: 0 20px 44px -10px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pomoSpringBloom {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pomo-pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
+
+.theme-dark .pomo-pop-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pomo-pop-time-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.pomo-pop-big-digits {
+  font-size: 24px;
+  font-weight: 800;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: -0.02em;
+}
+
+.pomo-pop-status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #DCFCE7;
+  color: #15803D;
+  font-family: var(--font-monospace);
+}
+
+.pomo-pop-status-badge.is-break {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.pomo-pop-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pomo-pop-btn {
+  background: rgba(101, 183, 30, 0.16);
+  color: #14532D;
+  border: 1px solid rgba(79, 143, 28, 0.42);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-dark .pomo-pop-btn {
+  background: rgba(101, 183, 30, 0.22);
+  border-color: rgba(134, 239, 172, 0.4);
+  color: #86EFAC;
+}
+
+.pomo-pop-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(101, 183, 30, 0.24);
+}
+
+.pomo-pop-btn.is-secondary {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111111;
+}
+
+.theme-dark .pomo-pop-btn.is-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #F3F4F6;
+}
+
+.pomo-pop-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6B7280;
+  margin: 10px 0 6px 0;
+}
+
+.theme-dark .pomo-pop-section-title {
+  color: #9CA3AF;
+}
+
+.pomo-pop-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pomo-pop-chip {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  color: inherit;
+}
+
+.theme-dark .pomo-pop-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pomo-pop-chip:hover {
+  transform: translateY(-1.5px);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.theme-dark .pomo-pop-chip:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.pomo-pop-chip.is-active {
+  background: rgba(101, 183, 30, 0.16);
+  color: #14532D;
+  border-color: rgba(79, 143, 28, 0.42);
+  font-weight: 700;
+}
+
+.theme-dark .pomo-pop-chip.is-active {
+  background: rgba(101, 183, 30, 0.24);
+  color: #86EFAC;
+  border-color: rgba(134, 239, 172, 0.45);
+}
+
+.pomo-pop-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.pomo-pop-input {
+  width: 70px;
+  padding: 5px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.theme-dark .pomo-pop-input {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   ENHANCED PAYMENT & PRO CARDS (COMPLEX PHYSICS & SPRING HOVER)
+   ========================================================================== */
+.artcraft-pro-buy-card {
+  position: relative;
+  background: #FAF8F3;
+  border: 1.5px solid #111111;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 0 #111111, 0 12px 30px rgba(0, 0, 0, 0.08);
+  margin-top: 16px;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
+  overflow: hidden;
+}
+
+.artcraft-pro-buy-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #111111, 0 16px 36px rgba(0, 0, 0, 0.12);
+}
+
+.theme-dark .artcraft-pro-buy-card {
+  background: #181A20;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+.artcraft-buy-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.artcraft-pay-pill-btn {
+  background: #111111;
+  color: #FFFFFF;
+  border: 1.5px solid #111111;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-dark .artcraft-pay-pill-btn {
+  background: #22C55E;
+  color: #111111;
+  border-color: #22C55E;
+}
+
+.artcraft-pay-pill-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.artcraft-pay-pill-btn.is-secondary {
+  background: transparent;
+  color: #111111;
+  border-color: #111111;
+}
+
+.theme-dark .artcraft-pay-pill-btn.is-secondary {
+  color: #F3F4F6;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+
+/* ==========================================================================
+   ALCHEMY CRAFT PRO STUDIO & SAPPHIRE MINIMALIST ESTHETICS
+   ========================================================================== */
+.artcraft-pro-verified-badge {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.artcraft-pro-studio-banner {
+  background: linear-gradient(135deg, #0F1419 0%, #1A242D 100%);
+  border: 1px solid #2F3336;
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  color: #FFFFFF;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.35);
+}
+
+.artcraft-pro-studio-banner .x-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.artcraft-pro-studio-banner .x-verified-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(29, 155, 240, 0.15);
+  border: 1px solid rgba(29, 155, 240, 0.4);
+  color: #1D9BF0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.artcraft-pro-studio-banner .x-version-pill {
+  font-size: 11px;
+  color: #8B98A5;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.artcraft-pro-studio-banner .x-banner-title {
+  margin: 0 0 6px 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.artcraft-pro-studio-banner .x-banner-sub {
+  margin: 0;
+  font-size: 12.5px;
+  color: #8B98A5;
+  line-height: 1.45;
+}
+
+.artcraft-x-member-card {
+  background: #FAF9F5;
+  border: 1px solid #E5E2D9;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+
+.artcraft-x-member-card .x-member-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.artcraft-x-member-card .x-member-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.artcraft-x-member-card .x-avatar-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #E8F5FD;
+  border: 1px solid #BAE3F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.artcraft-x-member-card .x-member-name {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-normal);
+}
+
+.artcraft-x-member-card .x-member-handle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.artcraft-x-member-card .x-active-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(29, 155, 240, 0.12);
+  border: 1px solid rgba(29, 155, 240, 0.35);
+  color: #1D9BF0;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.artcraft-x-member-card .x-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1D9BF0;
+  box-shadow: 0 0 8px #1D9BF0;
+}
+
+.artcraft-ai-studio-card {
+  background: #FAF9F5;
+  border: 1px solid #E5E2D9;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 14px 0;
+}
+
+.artcraft-ai-studio-card .ai-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.artcraft-ai-studio-card .ai-sparkle-pill {
+  background: rgba(29, 155, 240, 0.1);
+  color: #1D9BF0;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.artcraft-ai-studio-card .ai-status-pill {
+  font-size: 10px;
+  color: #10B981;
+  font-weight: 700;
+}
+
+.artcraft-ai-studio-card .ai-studio-title {
+  margin: 0 0 6px 0;
+  font-size: 14.5px;
+  font-weight: 750;
+  color: var(--text-normal);
+}
+
+.artcraft-ai-studio-card .ai-studio-desc {
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.artcraft-ai-studio-card .ai-studio-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-digest-result-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(29, 155, 240, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  animation: proModalSpringBloom 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 6px 20px rgba(29, 155, 240, 0.08);
+}
+
+.ai-digest-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.ai-digest-tag {
+  color: #1D9BF0;
+  font-weight: 800;
+  font-size: 10.5px;
+}
+
+.ai-digest-points {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-normal);
+  margin-bottom: 10px;
+}
+
+.ai-digest-points strong {
+  color: #1D9BF0;
+}
+
+.ai-digest-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire,
+:is(html, body) .artcraft-pay-action-btn.is-x-blue {
+  background: #1D9BF0;
+  border: 1px solid #1A8CD8;
+  border-radius: 9999px;
+  color: #FFFFFF;
+  font-family: var(--font-interface);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 9px 18px;
+  box-shadow: 0 4px 14px rgba(29, 155, 240, 0.32);
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire:hover,
+:is(html, body) .artcraft-pay-action-btn.is-x-blue:hover {
+  background: #1A8CD8;
+  border-color: #177CC0;
+  color: #FFFFFF;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(29, 155, 240, 0.45);
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire *,
+:is(html, body) .artcraft-pay-action-btn.is-x-blue * {
+  color: #FFFFFF;
+}
+
+
+/* ==========================================================================
+   CALM, UNIFIED SWISS SETTINGS (ZERO FLOATING WHITE WINDOWS)
+   ========================================================================== */
+.artcraft-calm-settings-root {
+  background: transparent;
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-card {
+  background: transparent;
+  border: 1px solid rgba(60, 50, 35, 0.12);
+  border-radius: 12px;
+  padding: 14px 18px 6px 18px;
+  margin-bottom: 16px;
+  box-shadow: none;
+}
+
+.artcraft-calm-settings-root .artcraft-settings-bento-hero {
+  background: transparent;
+  border: 1px solid rgba(60, 50, 35, 0.12);
+  border-left: 5px solid #1D9BF0;
+  box-shadow: none;
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-items .setting-item {
+  border-top: 1px solid rgba(60, 50, 35, 0.07);
+  background: transparent;
+  padding: 11px 0;
+}
+
+.artcraft-pro-status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: rgba(29, 155, 240, 0.05);
+  border: 1px solid rgba(29, 155, 240, 0.22);
+  border-radius: 10px;
+}
+
+.artcraft-pro-status-banner .pro-status-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.artcraft-pro-status-banner .pro-verified-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #1D9BF0;
+  background: rgba(29, 155, 240, 0.1);
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.artcraft-pro-status-banner .pro-plan-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-normal);
+}
+
+.artcraft-pro-status-banner .pro-status-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire {
+  background: #1D9BF0;
+  border: 1px solid #1A8CD8;
+  border-radius: 9999px;
+  color: #FFFFFF;
+  font-family: var(--font-interface);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 16px;
+  box-shadow: 0 3px 10px rgba(29, 155, 240, 0.28);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire:hover {
+  background: #1A8CD8;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(29, 155, 240, 0.4);
+  color: #FFFFFF;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire * {
+  color: #FFFFFF;
+}
+
+body.theme-dark .artcraft-calm-settings-root .artcraft-settings-group-card,
+body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-group-card {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-dark .artcraft-calm-settings-root .artcraft-settings-bento-hero,
+body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-bento-hero {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.12);
+  border-left-color: #1D9BF0;
+}
+
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h1, .cm-line.HyperMD-header-1) {
+  background: linear-gradient(90deg, rgba(101, 183, 30, 0.16) 0%, rgba(255, 255, 255, 0.96) 100%);
+  border: 1.5px solid #A3E635;
+  border-left: 6px solid #65B71E;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-top: 18px;
+  margin-bottom: 10px;
+  color: #14532D;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(101, 183, 30, 0.08);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h2, .cm-line.HyperMD-header-2) {
+  background: linear-gradient(90deg, #EFF6FF 0%, #F8FAFC 100%);
+  border: 1.5px solid #BFDBFE;
+  border-left: 6px solid #2563EB;
+  border-radius: 10px;
+  padding: 9px 15px;
+  margin-top: 16px;
+  margin-bottom: 9px;
+  color: #1E3A8A;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h3, .cm-line.HyperMD-header-3) {
+  background: linear-gradient(90deg, #FFF7ED 0%, #FFFDF9 100%);
+  border: 1.5px solid #FED7AA;
+  border-left: 6px solid #F59E0B;
+  border-radius: 9px;
+  padding: 7px 14px;
+  margin-top: 14px;
+  margin-bottom: 8px;
+  color: #9A3412;
+  font-weight: 750;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h4, .cm-line.HyperMD-header-4) {
+  background: linear-gradient(90deg, #F5F3FF 0%, #FDFCFF 100%);
+  border: 1.5px solid #DDD6FE;
+  border-left: 5px solid #8B5CF6;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #5B21B6;
+  font-weight: 700;
+}
+
+/* Writing Mode (Live Preview) & Reading Mode Paragraph Separation & Active Line Highlight */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered > p {
+  padding: 9px 14px;
+  margin-bottom: 11px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #E6E1D6;
+  line-height: 1.74;
+  color: #1F2328;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content .markdown-rendered > p:hover {
+  background: #FFFFFF;
+  border-color: #65B71E;
+  box-shadow: 0 3px 12px rgba(101, 183, 30, 0.08);
+}
+
+/* ==========================================================================
+   v5.6.0 — DARK PAGE (Midnight Dark Craft)
+   On when the Pro switch is on AND Obsidian itself is in its dark colour
+   scheme: body.theme-dark.artcraft-dark-craft. The plugin's own windows
+   (quests, studios, Pro) keep their light cards.
+   Paper: warm near-black, not pure black. Ink: warm off-white, about 12:1
+   on the page; secondary text about 5.5:1.
+   ========================================================================== */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft {
+  color-scheme: dark;
+  --artcraft-bg-canvas: #1C1B19;
+  --artcraft-bg-card: #242321;
+  --artcraft-bg-hover: #2C2A27;
+  --artcraft-bg-sidebar: #171614;
+  --artcraft-ink-primary: #E4DFD4;
+  --artcraft-ink-secondary: #C9C3B6;
+  --artcraft-ink-muted: #9C968A;
+  --artcraft-border-hairline: #36332E;
+  --artcraft-border-strong: #5A564E;
+  --artcraft-dark-rule: rgba(228, 223, 212, 0.16);
+  --artcraft-dark-accent: #8FCB5B;
+  --background-primary: var(--artcraft-bg-canvas);
+  --background-primary-alt: var(--artcraft-bg-card);
+  --background-secondary: var(--artcraft-bg-sidebar);
+  --background-secondary-alt: var(--artcraft-bg-sidebar);
+  --background-modifier-border: var(--artcraft-border-hairline);
+  --text-normal: var(--artcraft-ink-primary);
+  --text-muted: var(--artcraft-ink-muted);
+  --text-faint: #7C776D;
+}
+
+/* the plugin's own windows stay light cards: give them back the light palette they were drawn for */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft :is(.artcraft-wide-craft-modal, .artcraft-capsule-modal) {
+  color-scheme: light;
+  --artcraft-bg-canvas: #FFFFFF;
+  --artcraft-bg-card: #FFFFFF;
+  --artcraft-bg-hover: #F7F7F5;
+  --artcraft-bg-sidebar: #FBFBFA;
+  --artcraft-ink-primary: #1F2328;
+  --artcraft-ink-secondary: #37352F;
+  --artcraft-ink-muted: #6B7280;
+  --artcraft-border-hairline: #E6E1D6;
+  --artcraft-border-strong: #111111;
+  --background-primary: #FFFFFF;
+  --background-primary-alt: #FFFFFF;
+  --background-secondary: #FBFBFA;
+  --background-secondary-alt: #FBFBFA;
+  --background-modifier-border: #E6E1D6;
+  --text-normal: #24272D;
+  --text-muted: #6B7280;
+  --text-faint: #9CA3AF;
+  /* Obsidian derives these from its own dark scheme at the body level; a light card needs the light values back,
+  or a text field inside it is dark with dark text */
+  --modal-background: #FFFFFF;
+  --background-modifier-form-field: #FFFFFF;
+  --background-modifier-hover: rgba(0, 0, 0, 0.055);
+  --background-modifier-active-hover: rgba(105, 189, 40, 0.14);
+  --background-modifier-border-hover: #C9C5BB;
+  --background-modifier-border-focus: #A8A39A;
+  --interactive-normal: #FFFFFF;
+  --interactive-hover: #F6F5F1;
+  --icon-color: #6B7280;
+  --icon-color-hover: #24272D;
+  --icon-color-focused: #24272D;
+  --input-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --input-shadow-hover: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --code-background: #F4F3EF;
+  --divider-color: #E6E1D6;
+  background-color: #FFFFFF;
+  color: #24272D;
+}
+
+/* dark page: paper. The grain tile is drawn for a dark sheet (see buildPaperTile, surface "dark");
+   the pool of light at the top is a faint warm glow instead of white. */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft {
+  --artcraft-paper-light:
+  radial-gradient(120% 70% at 50% 0%, rgba(255, 240, 214, 0.05) 0%, rgba(255, 240, 214, 0) 60%),
+  linear-gradient(180deg, rgba(0, 0, 0, 0) 62%, rgba(0, 0, 0, 0.16) 100%);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content[data-type="markdown"] :is(.view-content, .markdown-preview-view, .markdown-source-view, .cm-scroller) {
+  background-color: var(--artcraft-bg-canvas);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-paper-on .workspace-leaf-content[data-type="markdown"] .markdown-preview-view,
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-paper-on .workspace-leaf-content[data-type="markdown"] .cm-scroller {
+  background-image: var(--artcraft-paper-light), var(--artcraft-paper-tile);
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: 100% 100%, 100% 100%, 400px 400px;
+  background-attachment: scroll, scroll, local;
+}
+
+/* Dark book-page grain is rendered via ::after */
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-paper-on .workspace-leaf-content[data-type="markdown"] .view-content::after {
+  content: none;
+}
+
+/* dark page: file list. One warm dark instead of the navy the first draft of this mode used. */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .nav-files-container {
+  background: var(--artcraft-bg-sidebar);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .nav-files-container :is(.nav-folder-title, .nav-file-title) {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--artcraft-ink-secondary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .nav-files-container :is(.nav-folder-title, .nav-file-title):hover {
+  background: rgba(228, 223, 212, 0.06);
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .nav-files-container .nav-file-title.is-active {
+  border-color: transparent;
+  background: rgba(228, 223, 212, 0.1);
+  box-shadow: none;
+  color: var(--artcraft-ink-primary);
+}
+
+/* dark page, plain look: the rules and underlines drawn in dark brown on the light sheet turn light */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-plain-page .workspace-leaf-content .markdown-rendered blockquote {
+  border-left-color: rgba(228, 223, 212, 0.34);
+  background: none;
+  color: var(--text-normal);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-plain-page .app-container :is(.markdown-rendered, .cm-embed-block, .markdown-preview-view) table td {
+  border-bottom-color: var(--artcraft-dark-rule);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-plain-page .markdown-rendered :is(.artcraft-capsule-link, .artcraft-capsule-crypto) {
+  text-decoration-color: rgba(228, 223, 212, 0.36);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-plain-page .markdown-rendered code:not(pre code),
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft.artcraft-plain-page .cm-s-obsidian span.cm-inline-code {
+  background: rgba(228, 223, 212, 0.1);
+  color: var(--text-normal);
+}
+
+/* dark page: tool row above the note */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap :is(.artcraft-reading-stats-pill, .artcraft-compact-task-pill, button, .artcraft-craft-mini-btn) {
+  border-color: var(--artcraft-border-hairline);
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  color: var(--artcraft-ink-muted);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap :is(.artcraft-reading-stats-pill, .artcraft-compact-task-pill, button, .artcraft-craft-mini-btn) :is(span, strong) {
+  color: inherit;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .workspace-leaf-content .artcraft-task-progress-wrap :is(button, .artcraft-craft-mini-btn):hover {
+  border-color: var(--artcraft-border-strong);
+  background: rgba(228, 223, 212, 0.06);
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-task-progress-bar-bg {
+  background: rgba(228, 223, 212, 0.14);
+}
+
+/* dark page: dock */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock {
+  border: 1px solid var(--artcraft-border-hairline);
+  background: #262522;
+  box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-active) {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--artcraft-ink-secondary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-active) :is(.artcraft-btn-label, .artcraft-btn-caret) {
+  color: inherit;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn:not(.is-active):hover {
+  background: rgba(228, 223, 212, 0.08);
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock .artcraft-dock-content .artcraft-dock-btn.is-active {
+  border-color: transparent;
+  background: rgba(143, 203, 91, 0.16);
+  background-image: none;
+  box-shadow: none;
+  color: #A9DB7C;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock .artcraft-dock-btn.is-active :is(.artcraft-btn-label, .artcraft-btn-caret) {
+  color: inherit;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill {
+  border-color: var(--artcraft-border-hairline);
+  background: transparent;
+  box-shadow: none;
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-floating-dock .artcraft-dock-badge {
+  background: transparent;
+  color: var(--artcraft-ink-primary);
+}
+
+/* dark page: related notes on threads */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin {
+  --kin-thread: rgba(228, 223, 212, 0.4);
+  --kin-accent: #8FCB5B;
+  --kin-paper: #2B2A27;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin :is(.kin-root, .kin-leaf, .kin-reader) {
+  border-color: rgba(228, 223, 212, 0.14);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin .kin-leaf {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 14px 26px -14px rgba(0, 0, 0, 0.7), 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin .kin-leaf:is(:hover, :focus-visible) {
+  border-color: rgba(228, 223, 212, 0.3);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07) inset, 0 20px 32px -14px rgba(0, 0, 0, 0.8), 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* dark page: properties block */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft :is(.metadata-container, .cm-line.HyperMD-frontmatter) {
+  border-color: var(--artcraft-border-hairline);
+  background: var(--artcraft-bg-card);
+  box-shadow: none;
+  color: var(--artcraft-ink-secondary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .metadata-container :is(.metadata-properties-heading, .metadata-properties-title, .metadata-property-key-input, .metadata-add-button) {
+  color: var(--artcraft-ink-muted);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .metadata-container :is(.metadata-input-longtext, .metadata-input-text, .metadata-input-number, .metadata-property-value) {
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .metadata-container .multi-select-pill {
+  border-color: transparent;
+  background: rgba(228, 223, 212, 0.1);
+  color: var(--artcraft-ink-primary);
+}
+
+/* dark page: tags */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft :is(a.tag, .cm-hashtag) {
+  border-color: rgba(143, 203, 91, 0.3);
+  background: rgba(143, 203, 91, 0.1);
+  color: #A9DB7C;
+}
+
+/* dark page: finished tasks stay readable, just quieter */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft :is(.HyperMD-task-line[data-task="x"], .HyperMD-task-line[data-task="X"], li.task-list-item.is-checked) {
+  color: var(--text-faint);
+}
+
+/* dark page: callouts keep their coloured edge and icon; the body is a faint tint, the text is page ink */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft :is(.callout, .markdown-rendered .callout, .cm-embed-block .callout) {
+  border-top-color: rgba(228, 223, 212, 0.1);
+  border-right-color: rgba(228, 223, 212, 0.1);
+  border-bottom-color: rgba(228, 223, 212, 0.1);
+  background-color: rgba(228, 223, 212, 0.045);
+  background-image: none;
+  box-shadow: none;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .callout :is(.callout-title, .callout-title-inner) {
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .callout :is(.callout-content, .callout-content p, .callout-content li) {
+  color: var(--artcraft-ink-secondary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .callout .callout-content :is(strong, b) {
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .callout .callout-content code {
+  background: rgba(228, 223, 212, 0.1);
+  color: var(--artcraft-ink-primary);
+}
+
+/* dark page, decorated look: heading cards, quote card and the small capsules keep their shape and their
+   coloured edge, but sit on a dark card with page ink instead of a light card with dark coloured text */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered :is(h1, h2, h3, h4), .cm-line:is(.HyperMD-header-1, .HyperMD-header-2, .HyperMD-header-3, .HyperMD-header-4), .inline-title) {
+  border-top-color: var(--artcraft-border-hairline);
+  border-right-color: var(--artcraft-border-hairline);
+  border-bottom-color: var(--artcraft-border-hairline);
+  background-color: var(--artcraft-bg-card);
+  background-image: none;
+  box-shadow: none;
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) .workspace-leaf-content :is(.markdown-rendered :is(h1, h2, h3, h4), .cm-line:is(.HyperMD-header-1, .HyperMD-header-2, .HyperMD-header-3, .HyperMD-header-4)) :is(span, strong, em, a) {
+  color: inherit;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) .workspace-leaf-content .markdown-rendered blockquote {
+  border-top-color: var(--artcraft-border-hairline);
+  border-right-color: var(--artcraft-border-hairline);
+  border-bottom-color: var(--artcraft-border-hairline);
+  background: var(--artcraft-bg-card);
+  box-shadow: none;
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) .workspace-leaf-content .markdown-rendered blockquote :is(p, span, li) {
+  color: inherit;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) .markdown-rendered code:not(pre code),
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) .cm-s-obsidian span.cm-inline-code {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.1);
+  box-shadow: none;
+  color: #F5BE6B;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) .markdown-rendered .artcraft-task-date {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.12);
+  box-shadow: none;
+  color: #7FE3BD;
+}
+
+/* dark page: sentence wrappers and the text inside list items follow the page ink */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .markdown-rendered .artcraft-sentence {
+  color: inherit;
+}
+
+/* dark page, decorated look: table. Warm dark rows instead of the slate of the first draft, a green-tinted header. */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) :is(.markdown-rendered, .cm-embed-block) table {
+  border-color: var(--artcraft-border-hairline);
+  box-shadow: none;
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) :is(.markdown-rendered, .cm-embed-block) table thead th {
+  border-color: var(--artcraft-border-hairline);
+  background-color: rgba(143, 203, 91, 0.13);
+  background-image: none;
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) :is(.markdown-rendered, .cm-embed-block) table tbody td {
+  border-color: var(--artcraft-border-hairline);
+  color: var(--artcraft-ink-primary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) :is(.markdown-rendered, .cm-embed-block) table tbody tr:nth-child(odd) td {
+  background-color: var(--artcraft-bg-card);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft:not(.artcraft-plain-page) :is(.markdown-rendered, .cm-embed-block) table tbody tr:nth-child(even) td {
+  background-color: transparent;
+}
+
+/* dark page: the reading card of a related note */
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin .kin-reader {
+  background: var(--kin-paper);
+  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.85), 0 4px 12px rgba(0, 0, 0, 0.4);
+  color: var(--text-normal);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin :is(.kin-reader-bar, .kin-reader-title) {
+  border-color: rgba(228, 223, 212, 0.12);
+  color: var(--text-normal);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin :is(.kin-reader-close, .kin-reader-open) {
+  border-color: rgba(228, 223, 212, 0.18);
+  background: transparent;
+  color: var(--artcraft-ink-secondary);
+}
+
+body.theme-dark.artcraft-theme-active.artcraft-dark-craft .artcraft-kin :is(.kin-reader-close, .kin-reader-open):hover {
+  background: rgba(228, 223, 212, 0.08);
+  color: var(--artcraft-ink-primary);
+}
+
+
+
+/* ==========================================================================
+   DOCK POSITIONING (HORIZONTAL BOTTOM & VERTICAL RIGHT WITH FLAWLESS COLLAPSE)
+   ========================================================================== */
+
+/* 1. Horizontal Bottom Dock (Expanded & Collapsed) */
+body .artcraft-floating-dock:not(.is-vertical),
+.artcraft-floating-dock:not(.is-vertical) {
+  position: fixed;
+  bottom: 22px;
+  right: 24px;
+  left: auto;
+  top: auto;
+  transform: none;
+  z-index: 9999;
+}
+
+body .artcraft-floating-dock:not(.is-vertical).is-collapsed,
+.artcraft-floating-dock:not(.is-vertical).is-collapsed {
+  position: fixed;
+  bottom: 22px;
+  right: 24px;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: auto;
+  height: auto;
+  min-width: unset;
+  min-height: unset;
+  max-width: unset;
+  max-height: unset;
+  padding: 2px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* 2. Vertical Right-Side Dock (Expanded & Collapsed) */
+body .artcraft-floating-dock.is-vertical,
+.artcraft-floating-dock.is-vertical {
+  position: fixed;
+  top: 50%;
+  bottom: auto;
+  right: 16px;
+  left: auto;
+  transform: translateY(-50%);
+  z-index: 9999;
+}
+
+/* 3. Collapsed Vertical Dock: Flask stays anchored on the right edge, NEVER jumps to center! */
+body .artcraft-floating-dock.is-vertical.is-collapsed,
+.artcraft-floating-dock.is-vertical.is-collapsed {
+  position: fixed;
+  top: 50%;
+  bottom: auto;
+  right: 16px;
+  left: auto;
+  transform: translateY(-50%);
+  width: auto;
+  height: auto;
+  min-width: unset;
+  min-height: unset;
+  max-width: unset;
+  max-height: unset;
+  padding: 2px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+body .artcraft-floating-dock.is-collapsed .artcraft-dock-content,
+.artcraft-floating-dock.is-collapsed .artcraft-dock-content,
+body .artcraft-floating-dock.is-vertical.is-collapsed .artcraft-dock-content,
+.artcraft-floating-dock.is-vertical.is-collapsed .artcraft-dock-content {
+  display: none;
+}
+
+
+/* ==========================================================================
+   v5.5.1 COMPREHENSIVE FIXES & ENHANCEMENTS
+   - Spine materials (Cognac, Emerald, Crimson, Linen) 100% immune to border-color overrides
+   - Warm desk radial canvas enforced under Book Folio in both light and dark
+   - Persistent rock-solid archival paper grain via ::after (no flicker on scroll)
+   - 100% contrast Pomodoro pill (green active, crisp text, zero white-on-white)
+   - Warm editorial headings & tags (replaces cold #EFF6FF blue boxes)
+   - Living Alchemical Flask floating physics with zero circular container border
+   - Creator Studio @brand Context vibrant cards (Emerald, Amber, Indigo, Rose)
+   ========================================================================== */
+
+/* 1. WARM DESK RADIAL GRADIENT CANVAS FOR BOOK FOLIO */
+:is(html, body).artcraft-book-spread:not(.artcraft-dark-craft) .workspace-split.mod-root,
+:is(html, body).artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf,
+:is(html, body).artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"],
+:is(html, body).artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .view-content,
+:is(html, body).artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+:is(html, body).artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] .markdown-preview-view,
+:is(html, body).artcraft-theme-active.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.view-content, .markdown-preview-view, .markdown-source-view, .cm-scroller) {
+  background: radial-gradient(circle at 50% 18%, #F6F2E8 0%, #EAE2D0 100%);
+  border-left: none;
+  box-shadow: none;
+}
+
+:is(html, body).artcraft-dark-craft.artcraft-book-spread .workspace-split.mod-root,
+:is(html, body).artcraft-dark-craft.artcraft-book-spread .workspace-leaf,
+:is(html, body).artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"],
+:is(html, body).artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .view-content,
+:is(html, body).artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .cm-scroller,
+:is(html, body).artcraft-dark-craft.artcraft-book-spread .workspace-leaf-content[data-type="markdown"] .markdown-preview-view {
+  background: radial-gradient(circle at 50% 18%, #1D1B18 0%, #11100F 100%);
+  border-left: none;
+  box-shadow: none;
+}
+
+/* 2. BULLETPROOF BOOKBINDER SPINE MATERIALS & 4-SHEET DECKLE SHADOWS */
+:is(html, body).artcraft-book-spread .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer),
+:is(html, body).artcraft-theme-active.artcraft-book-spread:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left-width: 14px;
+  border-left-style: solid;
+  border-top: 1px solid #E4DEC9;
+  border-right: 1px solid #DCD4BE;
+  border-bottom: 1px solid #DCD4BE;
+  border-radius: 5px 18px 18px 5px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Even in Full Canvas width mode, keep breathing room on the right so the stacked book pages and spine are always visible */
+:is(html, body).artcraft-book-spread.artcraft-width-full .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  max-width: min(1180px, calc(100% - 64px));
+}
+
+:is(html, body).artcraft-book-spread:is([data-spine-material="cognac"], :not([data-spine-material])):not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer),
+:is(html, body).artcraft-theme-active.artcraft-book-spread:is([data-spine-material="cognac"], :not([data-spine-material])):not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 14px solid #8C5222;
+  background: linear-gradient(90deg, #EFE7D6 0%, #FAF7EF 3.8%, #FCFBF6 96%, #F3EDE0 100%);
+  box-shadow:
+    inset 3px 0 0 #D4AF37,
+    inset 32px 0 42px -16px rgba(140, 82, 34, 0.24),
+    inset -1px 0 0 rgba(255, 255, 255, 0.85),
+    5px 4px 0 -1px #F7F3E8,
+    5px 4px 0 0 #D8CEB8,
+    10px 8px 0 -1px #F0EAD9,
+    10px 8px 0 0 #CCC0A8,
+    15px 12px 0 -1px #E8E0CC,
+    15px 12px 0 0 #BFB298,
+    20px 16px 0 -1px #DFD6C0,
+    20px 16px 0 0 #B3A58A,
+    28px 26px 48px rgba(45, 35, 22, 0.16);
+}
+
+:is(html, body).artcraft-book-spread[data-spine-material="emerald"]:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer),
+:is(html, body).artcraft-theme-active.artcraft-book-spread[data-spine-material="emerald"]:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 14px solid #14532D;
+  background: linear-gradient(90deg, #E3F1E8 0%, #FAF8F1 3.8%, #FCFBF6 96%, #F2EDE0 100%);
+  box-shadow:
+    inset 3px 0 0 #D4AF37,
+    inset 32px 0 42px -16px rgba(20, 83, 45, 0.26),
+    inset -1px 0 0 rgba(255, 255, 255, 0.85),
+    5px 4px 0 -1px #F7F3E8,
+    5px 4px 0 0 #D8CEB8,
+    10px 8px 0 -1px #F0EAD9,
+    10px 8px 0 0 #CCC0A8,
+    15px 12px 0 -1px #E8E0CC,
+    15px 12px 0 0 #BFB298,
+    20px 16px 0 -1px #DFD6C0,
+    20px 16px 0 0 #B3A58A,
+    28px 26px 48px rgba(20, 45, 30, 0.17);
+}
+
+:is(html, body).artcraft-book-spread[data-spine-material="crimson"]:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer),
+:is(html, body).artcraft-theme-active.artcraft-book-spread[data-spine-material="crimson"]:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 14px solid #7F1D1D;
+  background: linear-gradient(90deg, #F6E5E3 0%, #FCF8F2 3.8%, #FFFDF8 96%, #F4EDE0 100%);
+  box-shadow:
+    inset 3px 0 0 #D4AF37,
+    inset 32px 0 42px -16px rgba(127, 29, 29, 0.26),
+    inset -1px 0 0 rgba(255, 255, 255, 0.85),
+    5px 4px 0 -1px #F7F3E8,
+    5px 4px 0 0 #D8CEB8,
+    10px 8px 0 -1px #F0EAD9,
+    10px 8px 0 0 #CCC0A8,
+    15px 12px 0 -1px #E8E0CC,
+    15px 12px 0 0 #BFB298,
+    20px 16px 0 -1px #DFD6C0,
+    20px 16px 0 0 #B3A58A,
+    28px 26px 48px rgba(60, 20, 20, 0.17);
+}
+
+:is(html, body).artcraft-book-spread[data-spine-material="linen"]:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer),
+:is(html, body).artcraft-theme-active.artcraft-book-spread[data-spine-material="linen"]:not(.artcraft-dark-craft) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 14px solid #3B4252;
+  background: linear-gradient(90deg, #EAE8E1 0%, #FAF8F2 3.8%, #FCFBF7 96%, #F3EFE4 100%);
+  box-shadow:
+    inset 3px 0 0 #C8B273,
+    inset 32px 0 42px -16px rgba(59, 66, 82, 0.24),
+    inset -1px 0 0 rgba(255, 255, 255, 0.85),
+    5px 4px 0 -1px #F7F3E8,
+    5px 4px 0 0 #D8CEB8,
+    10px 8px 0 -1px #F0EAD9,
+    10px 8px 0 0 #CCC0A8,
+    15px 12px 0 -1px #E8E0CC,
+    15px 12px 0 0 #BFB298,
+    20px 16px 0 -1px #DFD6C0,
+    20px 16px 0 0 #B3A58A,
+    28px 26px 48px rgba(45, 35, 22, 0.16);
+}
+
+/* Dark Mode Spine Materials */
+:is(html, body).artcraft-dark-craft.artcraft-book-spread[data-spine-material="emerald"] .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 10px solid #064E3B;
+}
+:is(html, body).artcraft-dark-craft.artcraft-book-spread[data-spine-material="crimson"] .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 10px solid #7F1D1D;
+}
+:is(html, body).artcraft-dark-craft.artcraft-book-spread[data-spine-material="linen"] .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 10px solid #27272A;
+}
+:is(html, body).artcraft-dark-craft.artcraft-book-spread:is([data-spine-material="cognac"], :not([data-spine-material])) .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer) {
+  border-left: 10px solid #78350F;
+}
+
+/* 3. ROCK-SOLID PERSISTENT ARCHIVAL GRAIN VIA ::after */
+:is(html, body).artcraft-paper-on .workspace-leaf-content[data-type="markdown"] :is(.cm-sizer, .markdown-preview-sizer)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--artcraft-paper-tile);
+  background-size: 360px 360px;
+  background-repeat: repeat;
+  opacity: var(--artcraft-grain-opacity, 0.45);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+/* 4. HIGH-CONTRAST POMODORO PILL (ZERO WHITE-ON-WHITE) */
+body .artcraft-floating-dock .artcraft-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFFFFF;
+  color: #1C1917;
+  border: 1px solid rgba(60, 50, 35, 0.22);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill span,
+body .artcraft-floating-dock .artcraft-timer-pill svg {
+  color: #1C1917;
+  stroke: #1C1917;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill .artcraft-timer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9CA3AF;
+  flex-shrink: 0;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-running {
+  background: #DCFCE7;
+  border-color: #86EFAC;
+  color: #14532D;
+  font-weight: 850;
+  box-shadow: 0 1px 4px rgba(20, 83, 45, 0.12);
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-running span,
+body .artcraft-floating-dock .artcraft-timer-pill.is-running svg {
+  color: #14532D;
+  stroke: #14532D;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-running .artcraft-timer-dot {
+  background: #16A34A;
+  box-shadow: 0 0 6px rgba(22, 163, 74, 0.8);
+  animation: timerDotGlow 2s ease-in-out infinite;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-break.is-running {
+  background: #DBEAFE;
+  border-color: #93C5FD;
+  color: #1E40AF;
+  font-weight: 850;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-break.is-running span,
+body .artcraft-floating-dock .artcraft-timer-pill.is-break.is-running svg {
+  color: #1E40AF;
+  stroke: #1E40AF;
+}
+
+body .artcraft-floating-dock .artcraft-timer-pill.is-break.is-running .artcraft-timer-dot {
+  background: #2563EB;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.8);
+}
+
+/* Dark Mode Timer Pill */
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill {
+  background: rgba(30, 32, 38, 0.88);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #F3F4F6;
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill span,
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill svg,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill span,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill svg {
+  color: #F3F4F6;
+  stroke: #F3F4F6;
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill.is-running,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running {
+  background: rgba(34, 197, 94, 0.24);
+  border-color: #22C55E;
+  color: #86EFAC;
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill.is-running span,
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill.is-running svg,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running span,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running svg {
+  color: #86EFAC;
+  stroke: #86EFAC;
+}
+
+.theme-dark body .artcraft-floating-dock .artcraft-timer-pill.is-running .artcraft-timer-dot,
+body.artcraft-dark-craft .artcraft-floating-dock .artcraft-timer-pill.is-running .artcraft-timer-dot {
+  background: #4ADE80;
+  box-shadow: 0 0 6px #4ADE80;
+}
+
+/* 5. WARM CRAFT EDITORIAL HEADINGS & TAGS (REPLACES COLD BLUE RECTANGLES) */
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h1, .cm-line.HyperMD-header-1) {
+  background: linear-gradient(90deg, #FAF8F2 0%, #F5F1E6 100%);
+  border: 1px solid #DFD9C8;
+  border-left: 6px solid #8C5828;
+  border-radius: 12px;
+  padding: 12px 18px;
+  color: #1C1917;
+  font-weight: 850;
+  box-shadow: 0 2px 8px rgba(45, 35, 22, 0.05);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h2, .cm-line.HyperMD-header-2) {
+  background: linear-gradient(90deg, #FFFDF8 0%, #FAF8F2 100%);
+  border: 1px solid #E8E2D2;
+  border-left: 5px solid #D97706;
+  border-radius: 10px;
+  padding: 9px 15px;
+  margin-top: 16px;
+  margin-bottom: 9px;
+  color: #292524;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(45, 35, 22, 0.04);
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h3, .cm-line.HyperMD-header-3) {
+  border-left: 4px solid #16A34A;
+  color: #1C1917;
+  padding-left: 10px;
+}
+
+:is(html, body).artcraft-theme-active:not(.artcraft-dark-craft) .workspace-leaf-content :is(.markdown-rendered h4, .cm-line.HyperMD-header-4) {
+  border-left: 4px solid #EA580C;
+  color: #1C1917;
+  padding-left: 8px;
+}
+
+body.artcraft-theme-active a.tag,
+body.artcraft-theme-active .cm-hashtag {
+  background-color: #F5F1E8;
+  color: #44403C;
+  border: 1px solid #E2DAC8;
+  border-radius: 6px;
+  padding: 1px 7px;
+  font-family: var(--font-monospace);
+  font-size: 0.82em;
+  font-weight: 700;
+}
+
+/* 6. COMPACT VECTOR FLASK: ZERO CIRCLE BORDER & PHYSICAL LIQUID / BUBBLE / SPARK DYNAMICS */
+.artcraft-floating-dock.is-collapsed {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 2px;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-dock-badge {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-flask-wrap {
+  width: 32px;
+  height: 32px;
+  animation: alchemicalFlaskFloat 3.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  filter: drop-shadow(0 4px 10px rgba(105, 189, 40, 0.42)) drop-shadow(0 0 4px rgba(245, 158, 11, 0.22));
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), filter 0.22s ease;
+}
+
+.artcraft-floating-dock.is-collapsed:hover .artcraft-flask-wrap {
+  transform: scale(1.16) rotate(-4deg);
+  filter: drop-shadow(0 6px 14px rgba(105, 189, 40, 0.62)) drop-shadow(0 0 8px rgba(245, 158, 11, 0.38));
+}
+
+.artcraft-svg-flask .artcraft-flask-liquid {
+  transform-origin: 12px 17.5px;
+  animation: flaskLiquidSloshFront 2.8s ease-in-out infinite;
+}
+
+.artcraft-svg-flask .artcraft-flask-liquid-back {
+  transform-origin: 12px 17.5px;
+  animation: flaskLiquidSloshBack 3.4s ease-in-out infinite;
+}
+
+.artcraft-svg-flask .artcraft-flask-meniscus {
+  transform-origin: 12px 16.2px;
+  animation: flaskLiquidSloshFront 2.8s ease-in-out infinite;
+}
+
+.artcraft-svg-flask .artcraft-flask-bubble.b1 {
+  animation: flaskBubbleRiseA 2.2s ease-in infinite;
+}
+.artcraft-svg-flask .artcraft-flask-bubble.b2 {
+  animation: flaskBubbleRiseB 2.7s ease-in 0.55s infinite;
+}
+.artcraft-svg-flask .artcraft-flask-bubble.b3 {
+  animation: flaskBubbleRiseA 1.9s ease-in 1.1s infinite;
+}
+.artcraft-svg-flask .artcraft-flask-bubble.b4 {
+  animation: flaskBubbleRiseB 2.5s ease-in 1.5s infinite;
+}
+.artcraft-svg-flask .artcraft-flask-spark.s1 {
+  animation: flaskSparkPulse 2.1s ease-in-out infinite;
+}
+.artcraft-svg-flask .artcraft-flask-spark.s2 {
+  animation: flaskSparkPulse 2.6s ease-in-out 0.9s infinite;
+}
+
+@keyframes alchemicalFlaskFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-2.5px) rotate(-2.2deg); }
+  50% { transform: translateY(-4px) rotate(0.8deg); }
+  75% { transform: translateY(-1.5px) rotate(2.4deg); }
+}
+
+@keyframes flaskLiquidSloshFront {
+  0%, 100% { transform: rotate(0deg) translateX(0px) scaleY(1); }
+  25% { transform: rotate(4.5deg) translateX(0.35px) scaleY(1.04); }
+  50% { transform: rotate(-1.5deg) translateX(-0.2px) scaleY(0.98); }
+  75% { transform: rotate(-4.5deg) translateX(-0.35px) scaleY(1.03); }
+}
+
+@keyframes flaskLiquidSloshBack {
+  0%, 100% { transform: rotate(0deg) translateX(0px); }
+  30% { transform: rotate(-5.5deg) translateX(-0.45px); }
+  70% { transform: rotate(5.5deg) translateX(0.45px); }
+}
+
+@keyframes flaskBubbleRiseA {
+  0% { transform: translate(0px, 1.5px) scale(0.45); opacity: 0; }
+  25% { opacity: 0.95; }
+  70% { transform: translate(-0.8px, -4.5px) scale(1.05); opacity: 0.85; }
+  100% { transform: translate(0.6px, -8.2px) scale(0.2); opacity: 0; }
+}
+
+@keyframes flaskBubbleRiseB {
+  0% { transform: translate(0px, 1.2px) scale(0.4); opacity: 0; }
+  30% { opacity: 0.9; }
+  75% { transform: translate(0.9px, -5.0px) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-0.5px, -9.0px) scale(0.15); opacity: 0; }
+}
+
+@keyframes flaskSparkPulse {
+  0%, 100% { transform: translateY(0px) scale(0.75); opacity: 0.35; }
+  50% { transform: translateY(-2.4px) scale(1.3); opacity: 1; }
+}
+
+/* 7. DYNAMIC ISLAND TRACK CAPSULE ABOVE EQUALIZER */
+.artcraft-island-capsule {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 22, 28, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #F8FAFC;
+  padding: 5px 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10008;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  animation: islandSpringIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes islandSpringIn {
+  0% { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.95); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* 8. CREATOR STUDIO @brand Context VIBRANT CARDS */
+.artcraft-creator-os-modal .artcraft-rpg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.artcraft-creator-os-modal .artcraft-rpg-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E2DDD2;
+  border-radius: 12px;
+  padding: 14px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.artcraft-creator-os-modal .artcraft-rpg-card:focus-within {
+  border-color: #84CC16;
+  box-shadow: 0 4px 14px rgba(132, 204, 22, 0.15);
+  transform: translateY(-1px);
+}
+
+.artcraft-creator-os-modal .artcraft-rpg-card.is-voice {
+  border-left: 5px solid #10B981;
+}
+.artcraft-creator-os-modal .artcraft-rpg-card.is-audience {
+  border-left: 5px solid #F59E0B;
+}
+.artcraft-creator-os-modal .artcraft-rpg-card.is-offer {
+  border-left: 5px solid #6366F1;
+}
+.artcraft-creator-os-modal .artcraft-rpg-card.is-pillar {
+  border-left: 5px solid #F43F5E;
+}
+
+.rpg-card-kicker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.rpg-card-kicker-pill.is-voice {
+  background: #DCFCE7;
+  color: #15803D;
+}
+.rpg-card-kicker-pill.is-audience {
+  background: #FEF3C7;
+  color: #B45309;
+}
+.rpg-card-kicker-pill.is-offer {
+  background: #E0E7FF;
+  color: #4338CA;
+}
+.rpg-card-kicker-pill.is-pillar {
+  background: #FFE4E6;
+  color: #BE123C;
+}
+
+.theme-dark .artcraft-creator-os-modal .artcraft-rpg-card {
+  background: #181A20;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+
+/* ==========================================================================
+   v5.6.0 — CLEAN DESIGN SYSTEM, UNIFIED POPOVERS & COMPACT VECTOR FLASK
+   ========================================================================== */
+
+:root {
+  --ac-emerald: #58B126;
+  --ac-emerald-dark: #3F8A18;
+  --ac-emerald-glow: rgba(105, 189, 40, 0.34);
+  --ac-gold: #D97706;
+  --ac-gold-bright: #F59E0B;
+  --ac-gold-glow: rgba(245, 158, 11, 0.28);
+  --ac-ink: #1C1917;
+  --ac-surface-warm: #F6F4EE;
+  --ac-border-warm: #DFD9CC;
+  --ac-spring: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 1. UNIFIED BUTTON PALETTE & COHESIVE SPRING PHYSICS */
+:is(html, body) .artcraft-pay-action-btn,
+:is(html, body) .artcraft-hero-soft-btn,
+:is(html, body) .sonic-src-pill,
+:is(html, body) .sonic-eq-btn,
+:is(html, body) .artcraft-ko-tab {
+  border-radius: 10px;
+  font-family: var(--font-interface);
+  font-weight: 650;
+  transition: transform 0.18s var(--ac-spring),
+              box-shadow 0.18s var(--ac-spring),
+              background 0.16s ease,
+              border-color 0.16s ease,
+              color 0.16s ease;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-green,
+:is(html, body) .artcraft-hero-soft-btn.is-primary-soft {
+  background: rgba(101, 183, 30, 0.16);
+  border: 1px solid rgba(79, 143, 28, 0.42);
+  color: #14532D;
+  box-shadow: 0 1px 2px rgba(20, 83, 45, 0.06);
+  font-weight: 700;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-green:hover,
+:is(html, body) .artcraft-hero-soft-btn.is-primary-soft:hover {
+  background: rgba(101, 183, 30, 0.24);
+  border-color: rgba(79, 143, 28, 0.58);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(20, 83, 45, 0.12);
+  color: #14532D;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-green *,
+:is(html, body) .artcraft-hero-soft-btn.is-primary-soft * {
+  color: #14532D;
+  stroke: currentColor;
+}
+
+body.theme-dark .artcraft-pay-action-btn.is-green,
+body.artcraft-dark-craft .artcraft-pay-action-btn.is-green,
+body.theme-dark .artcraft-hero-soft-btn.is-primary-soft,
+body.artcraft-dark-craft .artcraft-hero-soft-btn.is-primary-soft {
+  background: rgba(101, 183, 30, 0.22);
+  border-color: rgba(134, 239, 172, 0.42);
+  color: #86EFAC;
+}
+
+body.theme-dark .artcraft-pay-action-btn.is-green *,
+body.artcraft-dark-craft .artcraft-pay-action-btn.is-green *,
+body.theme-dark .artcraft-hero-soft-btn.is-primary-soft *,
+body.artcraft-dark-craft .artcraft-hero-soft-btn.is-primary-soft * {
+  color: #86EFAC;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire,
+:is(html, body) .artcraft-pay-action-btn.is-x-blue,
+:is(html, body) .artcraft-pay-action-btn.is-blue {
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+  border: 1px solid #9A3412;
+  border-radius: 10px;
+  color: #FFFFFF;
+  box-shadow: 0 3px 10px rgba(217, 119, 6, 0.24);
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire:hover,
+:is(html, body) .artcraft-pay-action-btn.is-x-blue:hover,
+:is(html, body) .artcraft-pay-action-btn.is-blue:hover {
+  background: linear-gradient(135deg, #EA850C 0%, #C25E0A 100%);
+  border-color: #9A3412;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(217, 119, 6, 0.32);
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-sapphire *,
+:is(html, body) .artcraft-pay-action-btn.is-x-blue *,
+:is(html, body) .artcraft-pay-action-btn.is-blue * {
+  color: #FFFFFF;
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-soft,
+:is(html, body) .artcraft-hero-soft-btn:not(.is-primary-soft) {
+  background: #F5F2EB;
+  border: 1px solid #DCD5C6;
+  color: #292524;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.04);
+}
+
+:is(html, body) .artcraft-pay-action-btn.is-soft:hover,
+:is(html, body) .artcraft-hero-soft-btn:not(.is-primary-soft):hover {
+  background: #EDE8DD;
+  border-color: #C7BFA9;
+  transform: translateY(-1px);
+}
+
+body.theme-dark .artcraft-pay-action-btn.is-soft,
+body.artcraft-dark-craft .artcraft-pay-action-btn.is-soft,
+body.theme-dark .artcraft-hero-soft-btn:not(.is-primary-soft),
+body.artcraft-dark-craft .artcraft-hero-soft-btn:not(.is-primary-soft) {
+  background: #1E222B;
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #F1F5F9;
+}
+
+/* 2. CLEAN SWISS SETTINGS DESIGN (FULL-SCREEN FLEX SAFE) */
+.artcraft-calm-settings-root {
+  width: 100%;
+  max-width: 860px;
+  min-width: min(100%, 560px);
+  flex: 1 1 auto;
+  align-self: stretch;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 4px 0 32px 0;
+}
+
+.artcraft-calm-settings-root .artcraft-settings-bento-hero {
+  width: 100%;
+  box-sizing: border-box;
+  border-left: 4px solid var(--ac-emerald);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  background: rgba(60, 50, 35, 0.025);
+  border-top: 1px solid rgba(60, 50, 35, 0.1);
+  border-right: 1px solid rgba(60, 50, 35, 0.1);
+  border-bottom: 1px solid rgba(60, 50, 35, 0.1);
+}
+
+body.theme-dark .artcraft-calm-settings-root .artcraft-settings-bento-hero,
+body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-bento-hero {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+  border-left-color: var(--ac-emerald);
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-card {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  padding: 16px 20px 8px 20px;
+  margin-bottom: 16px;
+  background: transparent;
+  border: 1px solid rgba(60, 50, 35, 0.12);
+}
+
+body.theme-dark .artcraft-calm-settings-root .artcraft-settings-group-card,
+body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-group-card {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-head {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(60, 50, 35, 0.08);
+}
+
+body.theme-dark .artcraft-calm-settings-root .artcraft-settings-group-head,
+body.artcraft-dark-craft .artcraft-calm-settings-root .artcraft-settings-group-head {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-items .setting-item {
+  border-top: 1px solid rgba(60, 50, 35, 0.06);
+  padding: 10px 0;
+}
+
+.artcraft-calm-settings-root .artcraft-settings-group-items .setting-item:first-child {
+  border-top: none;
+}
+
+.artcraft-calm-settings-root .setting-item-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.artcraft-calm-settings-root .setting-item-description {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.artcraft-pro-status-banner {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(105, 189, 40, 0.06) 100%);
+  border: 1px solid rgba(217, 119, 6, 0.28);
+  border-radius: 12px;
+}
+
+.artcraft-pro-status-banner .pro-verified-tag {
+  color: #B45309;
+  background: rgba(245, 158, 11, 0.16);
+}
+
+body.theme-dark .artcraft-pro-status-banner .pro-verified-tag,
+body.artcraft-dark-craft .artcraft-pro-status-banner .pro-verified-tag {
+  color: #FBBF24;
+  background: rgba(245, 158, 11, 0.2);
+}
+
+/* 3. COMPACT VECTOR FLASK & FAMILIAR STAGE */
+.artcraft-familiar-stage {
+  display: block;
+}
+
+.artcraft-flask-hydro-canvas {
+  display: none;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-flask-wrap {
+  width: 28px;
+  height: 28px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.artcraft-floating-dock.is-collapsed .artcraft-svg-flask {
+  position: relative;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  transform: none;
+  transition: transform 0.2s var(--ac-spring), filter 0.2s ease;
+}
+
+/* 4. UNIFIED SONIC EQUALIZER POPOVER (MATCHING POMODORO & FOCUS POPOVER) */
+.artcraft-sonic-popover {
+  position: fixed;
+  z-index: 99999;
+  width: 340px;
+  max-height: min(560px, calc(100vh - 90px));
+  display: flex;
+  flex-direction: column;
+  background: rgba(250, 248, 245, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(60, 50, 35, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 20px 44px -10px rgba(40, 30, 10, 0.24), 0 4px 12px rgba(40, 30, 10, 0.08);
+  padding: 12px 14px;
+  color: #1F2937;
+  font-family: var(--font-interface);
+  user-select: none;
+  animation: windPopoverEnter 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-dark .artcraft-sonic-popover,
+body.artcraft-dark-craft .artcraft-sonic-popover {
+  background: rgba(26, 28, 34, 0.96);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #F3F4F6;
+  box-shadow: 0 20px 44px -10px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sonic-pop-vol-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 2px 8px 2px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sonic-pop-vol-lbl {
+  min-width: 52px;
+  color: var(--text-muted);
+}
+
+.sonic-pop-vol-slider {
+  flex: 1;
+  accent-color: #58B126;
+  cursor: pointer;
+}
+
+.sonic-pop-vol-val {
+  min-width: 34px;
+  text-align: right;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sonic-pop-section-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 6px 0 4px 2px;
+}
+
+.sonic-pop-modes-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.sonic-pop-mode-chip {
+  padding: 5px 4px;
+  border-radius: 7px;
+  border: 1px solid rgba(60, 50, 35, 0.14);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text-normal);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.theme-dark .sonic-pop-mode-chip,
+body.artcraft-dark-craft .sonic-pop-mode-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.sonic-pop-mode-chip.is-active {
+  background: rgba(101, 183, 30, 0.16);
+  border-color: rgba(79, 143, 28, 0.42);
+  color: #14532D;
+  font-weight: 700;
+}
+
+/* Swatch row inside Laser & Draw dock popovers */
+.artcraft-popover-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 2px 0 8px 0;
+}
+
+.artcraft-pop-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.artcraft-pop-swatch:hover {
+  transform: scale(1.15);
+}
+
+.artcraft-pop-swatch.is-active {
+  transform: scale(1.18);
+  border-color: #111111;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sonic-pop-tracks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 2px 0;
+  margin-bottom: 8px;
+}
+
+.sonic-pop-track-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(60, 50, 35, 0.12);
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--text-normal);
+  font-size: 11px;
+  font-weight: 550;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.14s ease;
+}
+
+.theme-dark .sonic-pop-track-btn,
+body.artcraft-dark-craft .sonic-pop-track-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sonic-pop-track-btn:hover {
+  border-color: rgba(88, 177, 38, 0.45);
+  background: rgba(88, 177, 38, 0.08);
+}
+
+.sonic-pop-track-btn.is-active {
+  background: rgba(88, 177, 38, 0.16);
+  border-color: #58B126;
+  color: #15803D;
+  font-weight: 700;
+}
+
+.theme-dark .sonic-pop-track-btn.is-active,
+body.artcraft-dark-craft .sonic-pop-track-btn.is-active {
+  color: #86EFAC;
+}
+
+/* 5. EXTENDED GRAPH STUDIO HUD SELECTS & CONTROLS */
+.artcraft-graph-hud-select {
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 7px;
+  border: 1px solid rgba(28, 25, 23, 0.16);
+  background: rgba(255, 255, 255, 0.88);
+  color: #1C1917;
+  font-family: var(--font-interface);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.artcraft-graph-hud-select:hover {
+  border-color: var(--ac-emerald);
+}
+
+body.theme-dark .artcraft-graph-hud-select,
+body.artcraft-dark-craft .artcraft-graph-hud-select {
+  background: rgba(30, 34, 43, 0.92);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #F1F5F9;
+}
+
+.artcraft-minted-key-seal {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.48);
+  box-shadow: 0 10px 28px rgba(245, 158, 11, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  color: var(--text-normal);
+  font-size: 12.5px;
+}
+
+body.artcraft-marker-amber .markdown-rendered mark,
+body.artcraft-marker-amber .cm-s-obsidian span.cm-highlight {
+  background: linear-gradient(120deg, rgba(251, 191, 36, 0.32), rgba(245, 158, 11, 0.22));
+  border-bottom: 1.5px solid rgba(245, 158, 11, 0.55);
+}
+
+body.artcraft-marker-rose .markdown-rendered mark,
+body.artcraft-marker-rose .cm-s-obsidian span.cm-highlight {
+  background: linear-gradient(120deg, rgba(251, 113, 133, 0.28), rgba(244, 63, 94, 0.18));
+  border-bottom: 1.5px solid rgba(244, 63, 94, 0.5);
+}
+
+body.artcraft-marker-sky .markdown-rendered mark,
+body.artcraft-marker-sky .cm-s-obsidian span.cm-highlight {
+  background: linear-gradient(120deg, rgba(56, 189, 248, 0.28), rgba(14, 165, 233, 0.18));
+  border-bottom: 1.5px solid rgba(14, 165, 233, 0.5);
+}
+
+body.artcraft-marker-lavender .markdown-rendered mark,
+body.artcraft-marker-lavender .cm-s-obsidian span.cm-highlight {
+  background: linear-gradient(120deg, rgba(192, 132, 252, 0.28), rgba(168, 85, 247, 0.18));
+  border-bottom: 1.5px solid rgba(168, 85, 247, 0.5);
+}
+
+body.artcraft-dark-craft .workspace-leaf .markdown-reading-view .markdown-preview-view,
+body.artcraft-dark-craft .workspace-leaf .markdown-source-view.mod-cm6 .cm-scroller {
+  background-color: #151821;
+  color: #e2e8f0;
 }

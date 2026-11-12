@@ -1,14 +1,14 @@
 {
   "id": "artcraft-reader",
   "name": "Alchemy Craft",
-  "version": "5.3.1",
+  "version": "5.6.0",
   "minAppVersion": "1.5.0",
-  "description": "Swiss Bento reading, IDE Code Studio, Wind-Tethered Note Blockchain, Bespoke Folder Icons, Clipy 4-Column Kanban & Human x AI Dual-Cognition Engine.",
+  "description": "Tactile Book Studio, Argon Cinematic Physics (Verlet Flask Hydrodynamics, Wind-Arc Dock, Live WebAudio Island, 3D Book Folio, Roastery Steam), and Clean Design Folder Studio.",
   "author": "Elyaz Aliverdiyev",
   "authorUrl": "https://elyazaliverdiyev.github.io/alchemy-craft/",
   "isDesktopOnly": false,
   "fundingUrl": {
-    "☕ Fuel the Craft — Cappuccino Roastery & Instant Pro ($4.99)": "https://elyazaliverdiyev.github.io/alchemy-craft/#panel-checkout",
-    "💬 Direct Founder Line — Telegram (@StratAlchemy)": "https://t.me/StratAlchemy"
+    "Support the project (Pro, $4.99)": "https://elyazaliverdiyev.github.io/alchemy-craft/#panel-checkout",
+    "Telegram (@StratAlchemy)": "https://t.me/StratAlchemy"
   }
 }

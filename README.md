@@ -1,108 +1,173 @@
-## 🚀 What's New in v5.3.1 — 100% Clean CSS Parser & Obsidian Store Compliance
+# Alchemy Craft
 
-- **✨ 100% Clean CSS Parser Pass (CSS Lint Zero-Error Benchmark)**:
-  - Fixed line 1616 nested comment syntax error (`Unknown word */`) in `styles.css`.
-  - Verified 0 dangling `*/` tokens, 0 nested comments, 0 `clip-path` warnings, 0 `mask` warnings, and 0 `!important` flags across the entire codebase.
+A reading and focus studio for Obsidian: a paper page with real grain, a key sentence marker, related notes hanging on threads under the note, a focus timer, soundscapes with an equalizer that follows what your PC plays, drawing tools and graph styling.
 
-## 🚀 What's New in v5.3.0 — IDE Poly-Chromatic Code Studio, Wind-Tethered Note Blockchain & Bespoke Icons
+Version 5.6.0. MIT License.
 
-- **🎨 IDE Poly-Chromatic Code Studio (5 Switchable Color Palettes + 1-Click Copy)**:
-  - Transforms every code block into a full IDE window with traffic-light controls, line numbers, language badges, and a built-in multi-token syntax highlighter.
-  - Switch palettes live on any code block header between **VS Code Dark+ Neon**, **Tokyo Night Cyber**, **Monokai Pro Spectrum**, **Catppuccin Mocha**, and **Swiss Alabaster Light**.
-- **🍃 Wind-Tethered Blurred Backlinks & Immutable Note Blockchain**:
-  - Renders an interactive **SVG Bezier Arrow Canopy** at the bottom of your note connecting to floating, wind-swaying related note leaves.
-  - Connected note bodies are veiled in a frosted blur while titles and SimHash match scores remain razor-sharp — **click once** to lift the mist with a 3D unfold animation, and **click again** to open the note or seal it into an unbreakable `SHA-256` Note Blockchain (`⛓️ Приковать заметку в цепь`).
-- **🗂️ Bespoke Duotone Squircle Folder & Note Icon Pack (Fulcrum Style)**:
-  - Automatically decorates folders and notes in the left File Explorer with 24 custom multi-layered SVG squircle icons, child item count badges, and an unmistakable **Saladt Lime-Green (`#65B71E`)** active note highlight.
-- **📊 Clipy-Style 4-Column Pro Kanban & Flow Funnel**:
-  - Upgraded Kanban board with **Backlog → In Progress → Review → Shipped** columns, HTML5 Drag-and-Drop, priority tags (`🔥 High`, `⚡ Med`, `🌱 Normal`), top pastel KPI cards, and a live conversion funnel bar synced directly with your note's `- [ ]` tasks.
-- **📐 Centered Page Geometry, Restored Swiss Bento Cards & Tactile Paper Grain**:
-  - Centered `760px`, `1080px`, `Full`, and `Book Page` views in both Live Preview and Reading Mode, restored colored `H1–H4` section cards and Excel-Lime tables, and added a visible archival paper fiber & grain layer (`🌾 Зерно 0% → 35% → 65% → 100%`).
+## Install
 
-## What's New in v5.0.2 (Direct 3-Surface Chips, APAG English i18n, Universal 2-Page Spread)
+1. Copy `main.js`, `manifest.json` and `styles.css` into `.obsidian/plugins/artcraft-reader/` in your vault.
+2. Reload Obsidian and enable **Alchemy Craft** in Settings → Community plugins.
 
-- **Direct 1-Click Page Surface Selector**: Replaced confusing 3-cycle checkbox with 3 explicit segmented chips ([Pure White] [Warm Book] [Archival Grain]). Select any canvas instantly with 1 single click!
+`data.json` holds your personal settings. Do not share it or ship it with the plugin.
 
-## 🧠 What's New in v5.2.0 — Human × AI Dual-Cognition Engine & WASM Semantic Radar
+## What's new in 5.6.0
 
-- **Human × AI Dual-Cognition Studio (`🧠 AI·Бриф` in Note Header Bar)**:
-  - **For Humans (Instant Executive TL;DR)**: Automatically transforms any long note into a structured Swiss Bento Executive Brief with a **Human Clarity Score (`0–100%`)**, extracted **Core Thesis Anchors (`01 //`, `02 //`)**, a **Quantitative Metrics & Dates Matrix** (`$`, `%`, `x`, dates, KPIs), and a 1-click **Insert Executive Brief Callout** button for the top of your note.
-  - **For AI Agents (`llms.txt` / MCP XML / JSON-LD Compiler)**: Compiles your active note or your entire Obsidian vault into a token-optimized semantic capsule (`<knowledge_capsule>`, `llms.txt`, or `JSON-LD`), reducing raw Markdown token overhead by **~60%** so AI coding and research agents (Cursor, Claude Code, Windsurf, local LLMs) read your knowledge base with zero noise.
-- **⚡ Local WebAssembly 64-Bit SimHash Semantic Radar (`100% Offline`)**:
-  - Uses the embedded WebAssembly `fnv1a_step` kernel to compute 64-bit SimHash semantic fingerprints across your vault in `<3ms` locally (zero external API calls) and discovers **Unlinked Semantic Connections** with 1-click `+ [[Link]]` insertion.
-- **🏛️ Collectible Vector SVG Ex-Libris Mastery Seals**:
-  - Pure inline SVG mastery badges (*Archival Initiate*, *Swiss Bento Architect*, *Dual-Cognition Alchemist*, *Sovereign Proof-of-Work Monolith*) engineered with **zero `SVG polygon geometry`** and **zero `mask-image`** for 100% Obsidian Store Scorecard compliance.
+### The page
 
-- **APAG Builder Full English & Russian Localization**: Textareas now load polished English copywriting templates when English UI is selected, and Russian templates when Russian is selected.
-- **Universal 2-Page Side-by-Side Spread**: Fixed `openTrueTwoPageBookSpread` with universal `app.workspace.getLeaf("split", "vertical")` fallback across all Obsidian versions.
-- **Removed Competitor Trademarks**: Replaced all third-party brand comparisons with authentic Swiss Bento Editorial design standards.
-- **Midnight Dark Craft Contrast Suite**: 100% visible buttons and callouts in dark mode. 0 high-specificity selectors warnings.
+- **Paper with grain.** The page carries a paper texture: fine grain, soft cloudiness and scattered fibres. It is drawn once by the plugin, scrolls with the text, and a soft pool of light stays fixed to the pane, so the sheet moves under still light. Strength: the *Grain* control in the tool row (0 turns it off). Before 5.5 the grain layer was attached in a way that left it invisible.
+- **Ink.** Body text is a near-black with a slight hue instead of pure black, secondary text is no longer washed-out grey. Contrast is about 14:1 for body text and 5:1 for secondary text.
+- **Plain page by default.** Headings, quotes and tables are set by type alone: no cards, gradients, coloured side bars or shadows. Figures in the text are marked by weight instead of coloured badges, inline code is a quiet grey chip, a code block is a code block and not a mock application window. The dock and the tool row use one neutral colour and the interface font. The earlier decorated look is one switch away: Focus menu → *Decorated page (heading cards)*.
+- **Your font.** The text font chosen in Obsidian settings is used. The plugin used to force its own; that font is now only the fallback.
+- **Line breaking.** Paragraphs avoid a lonely last word, headings split into lines of similar length.
+- **Quieter chrome.** The tool row under the tab header stays faint until you point at it. File explorer rows have no boxes or coloured side bars; icons are thin outlines in the text colour. The brand tag above the note title is off by default (and its switch in settings now works).
+- **Narrow panes.** A split view or a phone used to leave 77 px for text in a 288 px pane, and headings broke in the middle of words. Narrow panes now get their own margins and heading sizes.
 
-## What's New in v5.0.1 (Light Green Swiss Bento Buttons & Auto-Expanding Creator Studio)
+### Related notes on threads
 
-- **Light Green Swiss Bento Buttons (https://www.google.com/search?q=%2369BD28)**: Replaced dark green buttons (`#16A34A`) with signature bright Swiss Apple/Lime Green (`#69BD28` / border `#559E1D`) across all modal actions (`Save Flow Check-In`, `Save @brand_context.md`, `Add Quest`, `Seal Capsule`, `Insert into Note`), perfectly harmonized with the floating dock's UI and Focus buttons.
-- **Auto-Expanding Creator Studio (⚡ Creator OS)**: Modal widened to 860px with dynamic auto-fit height on all textareas (`@brand Context`, `APAG Builder`, and compiled Markdown). All text is immediately visible without scrolling or dragging textarea corners.
-- **Base Sepolia Smart Contract Registry Preconfigured**: Connected to deployed on-chain registry contract (`0xe55230492ec0e029481fd72f5DAbf5d3B4127e03`).
-- **100% Scorecard Audit Pass**: 0 high-specificity selectors warnings, 0 CSS parse errors, zero leaked secrets.
+Under every note, related notes hang as slips of paper tied by threads to the current note. Arrows show the direction of the link: → a link from this note, ← a backlink, ↔ both, a dotted thread for a note with similar wording and no link.
 
-## What's New in v5.0.0 (Pure White Surface, 3 Surface Modes, 3D Envelope Time Capsule, 3D Walnut Bookshelf & Graph Studio)
+- The title of each slip is sharp, its text is out of focus. Click a slip and it grows into a reading card with the opening of that note; the text clears block by block. Click the title to open the note (Ctrl-click for a new tab), Esc or a click outside to fold it back.
+- The slips move: each is a mass on a spring with a pendulum lean, pushed by a slow wind with gusts that travel left to right. Moving the cursor past them pushes them, scrolling makes them lag and swing back, a slip under the cursor holds still.
+- Cost: the motion is simulated a few seconds ahead and handed to the GPU as a finished trajectory, so the main thread is idle between interactions. Measured in Obsidian 1.15: about 11% of one core while the block is on screen (the first, frame-by-frame version took about 40%), 0% when it is scrolled away.
+- "Similar" is computed on your device from the words of the notes (stop-words removed, word endings folded). It works for Cyrillic as well as Latin text.
+- Off switch: Focus menu in the dock → *Related notes under the note*, or the command *Toggle related notes under the note*.
 
-- **Pure White Canvas & 3 Surface Modes (surfaceMode)**: Pure White (`#FFFFFF`) background with soft sidebar (`#FBFBFA`) without paragraph border noise. Toggle between Pure White (`#FFFFFF`), Warm Book Paper (`#FAF8F3`), and Archival Grain (`#F8F6F0`).
-- **3D Envelope Time Capsule & Acoustic Physics**: Notes fold into a realistic 3D envelope with a centered wax seal and acoustic Cello & Harp chords (`playEnvelopeSealAcousticSound` / `playEnvelopeOpenAcousticSound`).
-- **3D Walnut Bookshelf Studio**: Dark walnut wood shelf with rich lighting and synchronized 3D multi-layer book spines.
-- **Fixed Live Graph Studio**: Shows orphans (`showOrphans = true`), fixes HUD coordinate positioning, and WebGL center projection.
-- **Base Sepolia On-Chain Smart Contract Preconfigured**: Automatically linked to official deployed registry (`0xe55230492ec0e029481fd72f5DAbf5d3B4127e03`).
-- **100% Scorecard Audit Pass**: 0 high-specificity selectors warnings, 0 CSS parse errors, zero leaked secrets.
+### Fixes that protect your notes and settings
 
-## What's New in v4.9.0 (365-Day Proof-of-Work Heatmap, Base Sepolia Smart Contract Bridge, Creator OS & 60s Pro Test-Drive)
+- The graph button no longer rewrites `.obsidian/graph.json`. It used to replace all your colour groups, forces and filters, once automatically the first time a graph was opened. Now it adds folder colours next to your own groups and touches nothing else.
+- The task board (Creator Studio) changed a task by rewriting the whole note from a copy taken when the board was drawn. If the note had changed since, the edit was lost or the wrong line was changed. It now edits one line and checks that the line is still the same task.
+- "Clean AI watermarks" removed the joiners inside emoji and inside Persian, Arabic and Indic words, replaced every typographic quote and non-breaking space, rewrote the whole note and copied it to the clipboard. It now removes only invisible characters, in place.
+- Stamps, seals and stickers follow a note when it is renamed or moved.
+- Text from notes, file names and typed fields is escaped everywhere it is put into the interface (59 places). A note containing HTML could run script inside Obsidian before.
 
-- **365-Day Proof-of-Work Heatmap (🟩 365-Карта Потока)**: Full 52-week × 7-day interactive matrix inside the Quest Studio showing daily XP, SHA-256 blocks mined, and deep work streaks.
-- **Zero-Cost On-Chain Smart Contract Bridge (AlchemyProofOfWorkRegistry.sol)**: Anchors your Obsidian SHA-256 Quest Chain root hash on Base Sepolia Testnet (Chain ID: 84532, $0.00 gas) or L2 mainnets (Base, opBNB, Polygon, Arbitrum) with auto-generated ABI calldata and ★ ON-CHAIN ALCHEMIST verification.
-- **Creator OS Studio (⚡ Creator OS)**:
-  - **9-Block @brand_context.md Compiler for AI**: Synthesizes your Vision, Anti-Vision, Brand Voice, and 5-Nutrient stickers into a ready-to-paste context file for Claude, Cursor, and ChatGPT.
-  - **APAG Post & Thread Builder**: Structured Attention → Perspective → Advantage → Gamify editor with high-retention value hook templates.
-  - **4-Level Content Map**: Turns any note into 4 content angles (Contrarian, Build-in-Public, 01–03 Framework, Life RPG).
-  - **Interactive 3-Column Note Kanban**: Turns `- [ ]` tasks in the active note into a live Backlog → In Flow → Signed SHA-256 board.
-  - **5 Mindful Autopilot Interrupt Alarms (11:00, 13:30, 15:15, 17:00, 19:30)**: Mindful check-ins that sign reflections into the SHA-256 Quest Chain.
-- **60-Second Free Pro Test-Drive & Spring Physics (`cubic-bezier(0.22, 1, 0.36, 1)`)**: 1-click live preview of Midnight Dark Craft and all Pro features with multi-harmonic WebAudio tactile feedback.
+### Other fixes
 
-## What's New in v4.8.2 (Swiss Editorial Readability, Windows 11 Night Light Calibration, Life RPG Blockchain & Bio-Flow)
+- Code blocks: lines ran together with their numbers (`1function …{2 const …`). Fixed.
+- Ctrl+Z while typing no longer also undoes a drawing.
+- Pausing or resetting the timer no longer stops a soundscape you started yourself.
+- The header refreshed on every metadata change of any file in the vault; now only for the note on screen, debounced.
+- A sealed note could open early by itself when the header refreshed during "hold to open".
+- Quest log: two tasks ticked in quick succession produced two blocks with one index; about 29% of blocks did not meet the stated difficulty; the first block was never checked. All three fixed.
+- Number badges: `50%`, `10 $`, `5 тыс`, `2 млн` and ranges like `20–30%` were never recognised. Fixed.
+- Streaks and alarms use your local day instead of the UTC day.
+- Two switches needed two clicks the first time. Night Light compensation did nothing. Both fixed.
+- 365-day map had 364 cells and filled an empty today with lifetime totals.
 
-- **Swiss Editorial Cards Editorial Block Isolation (`editorialCleanMode`)**: Replaces heavy neo-brutalist black borders with airy, tactile block cards (`1px` subtle borders, soft elevation, clear visual anchors) so every paragraph and step stands out cleanly without turning into a monotonous wall of grey text.
-- **Windows 11 Night Light Compensation (`nightLightCompensation`)**: Dedicated color-calibration mode (Cool Alabaster `#F5F7FA` / `#FFFFFF` + Crisp Slate Ink `#0F172A`) that neutralizes the yellow/orange cast of Windows 11 Night Light so text stays razor-sharp without eye strain.
-- **Fixed PC System Audio Loopback (`WASAPI + getDisplayMedia`)**: Preserves the multi-endpoint Windows CoreAudio WASAPI Loopback bridge across fallbacks and adds Chromium `getDisplayMedia` audio loopback so the 6-mode equalizer reacts to YouTube, Spotify, and desktop audio out of the box.
-- **Official Obsidian Graph & Canvas Studio**: Uses official `--graph-*` and `--canvas-*` CSS variables and exact PixiJS/WebGL world-to-screen coordinate projection.
-- **Life RPG & SHA-256 Proof-of-Work Quest Chain (`Квесты · L4`)**: Built on the 6-component Focus & Vision Architecture (*Anti-Vision, Vision MVP, 1-Year Mission, 1-Month Boss Fight, Daily Levers*) and Value Architecture's Value Equation. Every completed task mines a verifiable **SHA-256 block** linked to `prevHash` and exports signed Proof-of-Work certificates into your notes.
-- **Bio-Rhythm & Cognitive Flow Readiness (`Поток · 82%`)**: Tracks Low/Mid/High cognitive entropy waves and diagnoses your Csikszentmihalyi Flow Channel (*Challenge vs. Skill*).
-- **Creative Margin Sketchpad (`Скетч`)**: Pressure-smooth Bezier canvas with Dot Grid, Archival Paper, and Blueprint modes that embeds drawings directly into the active note.
+### Honest numbers and names
 
+- "AI tokens saved" was clamped to 15–92% (18–88% in one place) with made-up fallbacks of 58% and 64%. It now shows the real ratio, larger or smaller, and says it is an estimate at 3.8 characters per token.
+- "Human Clarity" is renamed "Structure". It counts headings, steps, callouts and links; it does not measure readability. An empty note scores 0, not 58.
+- The similar-notes tab no longer says "WASM kernel" or "64-bit SimHash": the old hash dropped the high byte of every character, so Cyrillic text collided. It now uses the same word comparison as the related notes block, over up to 400 recent notes instead of the first 120.
+- A pasted transaction hash in the quest log is labelled "saved (not checked by the plugin)" instead of "ON-CHAIN VERIFIED", and an empty field is no longer filled with an invented hash.
+- Soundscape tiles are named for what they play. Health claims are removed.
+- Commands have plain names without emoji; about two thirds of the emoji in the interface are gone. Tooltips say what a button does in one short line.
+- A new user starts with an empty quest log at level 1. The defaults used to contain the author's own goals, 340 XP and level 4.
 
-# Alchemy Craft — Swiss Bento Studio, Smart LED Lamp & Audio Equalizer (v4.3.4)
+### Pro activation
 
-> **A warm, tactile Swiss Bento reading, focus, presentation, and visual studio plugin.**
+- Removed: "any text of 6 characters", "anything starting with IV / VIP- / AC-PRO-", and activation on a network error.
+- Built-in promo codes are stored as SHA-256 hashes instead of readable text.
+- Transfers are checked against the author's wallet: USDT on TRON (token and amount), BNB Chain and Solana (recipient). Before, any successful BNB Chain transaction by anyone was accepted.
+- A paid @CryptoBot invoice must cover the price of the chosen tier.
+- Still open, and only a server can close it: a public transaction can be reused by another person, offline keys and promo codes can be shared, and `isPro` lives in `data.json`.
 
-[](#)
-[License: MIT](https://www.google.com/search?q=LICENSE)
+## Network use and payments
 
----
+The plugin works offline. It connects to the network only for the optional Pro purchase:
 
-## What's New in v4.3.4
+- `tsnnckbvxokjmbgfeqdj.supabase.co`: creating a @CryptoBot invoice, checking a paid invoice, redeeming a code.
+- `api.trongrid.io`, `bsc-dataseed.binance.org`, `api.mainnet-beta.solana.com`: looking up a transaction hash you paste.
 
-- **One-Click Cappuccino Focus Recipes:** Instant focus presets (`Morning Cappuccino • 25m`, `Rainy Chemex • 45m`, `Night Roastery 40Hz • 60m`) that configure ambient soundscapes, craft equalizer mode, Smart LED Lamp Kelvin & shape, and Pomodoro sprint in one click.
-- **Margin Craft Bookmarks (`+ Sticker`):** Pin tactile paper ribbon stickers (`Key`, `Idea`, `Quote`, `Review`) to note sections and jump directly to them with smooth scrolling and amber highlight flash.
-- **Two-Column Open Book Spread (`Book Spread`):** Transform wide notes into an open two-column book spread with a warm editorial spine divider.
-- **Vintage Risograph Ink Stamp (`[ APPROVED / ИЗУЧЕНО ]`):** Automatically stamps notes when tasks reach 100% completion or on manual click in the note header bar.
-- **Zero-Overflow Wide Craft Modals (`680px`):** Fixed grid overflow in Sonic Studio and Cappuccino Support Modal (`minmax(0, 1fr)`, 2-column Equalizer grid, and fixed Bybit bolt SVG icon).
+Nothing from your notes is sent anywhere. Pro features are paid; the free part needs no account.
 
----
+## Known limits
 
-## 🚀 Quickstart & Installation
+- Tested in Obsidian 1.15 and 1.8.10 on Windows. Not tested on macOS, Linux or mobile.
+- System audio for the equalizer is a Windows feature.
+- The page stays light in Obsidian's dark theme; the plugin has no dark page yet.
+- The key sentence marker works in reading view only. The related notes block works in reading view and in Live Preview.
+- `CHANGES-5.6.0.md` lists what was checked, what was not, and what is left for the author.
 
-1. Copy `main.js`, `manifest.json`, and `styles.css` into your `.obsidian/plugins/artcraft-reader/` folder.
-2. Reload the app (`Ctrl+R` / `Cmd+R`) and enable **Alchemy Craft** in Settings.
+## License
+
+MIT License © 2026 Elyaz Aliverdiyev
 
 ---
 
-## 📄 License
+## Earlier releases
 
-MIT License © 2026 Elyaz Aliverdiyev (@elyazaliverdiyev)
+### 5.4.0
+
+#### The equalizer hears what the PC plays
+
+Click the equalizer pill in the dock. The plugin connects to the Windows output mix, so the meter follows the browser, a player or a game without a microphone and without "Stereo Mix".
+
+- The spectrum is real: 16 bands spaced by octaves from 40 Hz to 16 kHz, computed from the live signal.
+- The status dot blinks on bass beats. The command *Toggle cursor lamp pulse on music beats* makes the cursor lamp breathe with them.
+- The connection is remembered: once connected, PC audio reconnects on the next launch until you disconnect it.
+- How it works: Electron only gives loopback audio together with a screen-video track. The plugin asks for a 16×16 px, 1 fps track and stops it immediately. No screen content is read, nothing is recorded, nothing leaves the computer.
+- System loopback is a Windows feature. On macOS and on mobile the button reports that it is unavailable; a microphone can still be chosen in Sonic Studio.
+
+Removed: the old path that kept a full-resolution screen capture running for as long as audio was connected, the PowerShell bridge, and the simulated spectrum that was drawn when no real signal was available.
+
+#### Key sentence marker
+
+In reading view the plugin underlines the sentences that carry the note's subject, so a reader scanning the page lands on them first. The stroke is drawn once, left to right, when the sentence scrolls into view.
+
+- It runs locally on the text of the note. A sentence ranks high when it packs many of the note's repeated, meaningful words; heading words count extra, figures and cue words ("therefore", "важно") add a small bonus.
+- About one sentence in six is marked, two per paragraph at most. Tasks, tables, code and short notes are left alone.
+- Toggle: Focus menu in the dock → *Key sentence marker*, or the command *Toggle key sentence marker*.
+- Reading view only. Live Preview is not marked.
+
+#### Performance
+
+Measured in Obsidian 1.8.10 on Windows, one note open, nothing playing:
+
+| | 5.3.1 | 5.4.0 |
+|---|---|---|
+| CPU used by the app at rest (one core) | 34–37% | about 2% |
+| Screen capture while audio is connected | full screen, continuous | none |
+
+- The equalizer and graph loop now runs only while there is something to draw. With audio connected but nothing playing it checks for sound five times a second.
+- Decorative loops (the dock flask, the related-notes footer) run only on hover or while on screen.
+- The system "reduce motion" setting is respected.
+
+#### Fixes
+
+- The dock no longer slides off the left edge on windows narrower than about 1200 px. It drops button labels first, then scrolls.
+- Disabling the plugin now removes everything it added: body classes, CSS variables, sidebar icons, the paper-grain layer, the footer, window listeners and the background loop.
+- Sentence Focus no longer splits a sentence at a decimal point ("1.5", "$4.99") or at "т. е.".
+- The 60-second Pro test-drive no longer survives disabling the plugin, and saving settings during the preview no longer writes Pro into `data.json` for good.
+- The lamp notice no longer claims a frame rate.
+
+### Before 5.4.0
+
+- **5.3.1**: stylesheet clean-up (parser errors removed).
+- **5.3.0**: code blocks as a window with line numbers, palettes and a copy button; related notes under the note; file explorer icons; four-column task board; page width modes and paper grain.
+- **5.2.0**: note summary window (summary for people, capsule for AI tools, similar notes).
+- **5.0.2**: page surface chips; two-page spread fix; English and Russian templates in the post builder.
+- **5.0.1**: button colours; wider Creator Studio with auto-sized fields.
+- **5.0.0**: three page surfaces; time capsule; bookshelf; graph view fixes.
+- **4.9.0**: 365-day activity map; quest log with an optional test-network record; Creator Studio; 60-second Pro preview.
+- **4.8.2**: paragraph cards; Night Light compensation; graph styling; quest log; energy tracker; sketchpad.
+- **4.3.4**: focus presets; margin stickers; two-column spread; reading stamp.
+
+## What's New in v5.6.0 — Argon Cinematic Physics & Zero-Slop Audit
+
+1. **Verlet Flask Hydrodynamics & Living Familiar (Canvas 2D)**:
+   - Real-time 1D spring-wave fluid simulation (`initArgonFlaskHydroEngine`) with cursor inertia, wall splashing, internal caustic light refraction, and multi-density buoyant bubbles.
+   - Procedural alchemical vapor plume on dock expand and golden/emerald vortex suction on collapse (`emitFlaskPlume`).
+   - Smooth spring-interpolated Familiar morphing: 3D paw wave, floating Cheshire grin & wink, and audio/timer-reactive ear twitches.
+2. **Wind & Scatter Dock Kinematics**:
+   - Fluid-to-interface parabolic arc trajectory with dynamic velocity motion blur and damped pendulum wind settle on expand, plus spiral vortex suction on collapse.
+3. **Dynamic Island iOS Fluid & Real-Time Spectrogram**:
+   - Jelly squash & stretch on mouse-wheel volume scrub, directional shockwave on side-button track switch, live 5-band WebAudio frequency bars, and SVG metaball gooey bridge.
+4. **Cinematic Zen Focus Camera Transition**:
+   - Optical focal depth zoom with radial atmospheric fog veil (`.artcraft-zen-atmosphere-veil`) and layout-jump-free sidebar dissolution.
+5. **Tactile Popovers (3D Tilt & Magnetic Tether)**:
+   - Elastic SVG bezier bridge connecting the active pill to Pomodoro/Focus/Equalizer popovers, paired with interactive 3D cursor tilt and specular glass glare.
+6. **Roastery Interactive Steam & Pro Key Minting Forge**:
+   - Cursor-repelled Canvas steam over the Cappuccino & Chemex hero, procedural coffee pour / crypto coin drop on tier selection, and molten gold seal forging with WebAudio chime + 3 verifiable `ACPRO-...` gift keys for Gold Patrons.
+7. **3D Hardcover Book Folio Page Curl & Parallax**:
+   - Scroll-velocity cylindrical page curl (`--book-curl-rot-y/x`), spine crease depth modulation, and cursor-driven multi-layer shadow parallax.

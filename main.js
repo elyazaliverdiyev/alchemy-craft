@@ -1,10 +1,28 @@
+// Capture mouse buttons 3 & 4 at the window root to completely block history navigation in Obsidian
+if (!window._artcraftMouseNavBlocker) {
+  window._artcraftMouseNavBlocker = (e) => {
+    if (e.button === 3 || e.button === 4) {
+      const t = e.target;
+      if (t && t.closest && t.closest(".artcraft-dock-eq-pill, .artcraft-floating-dock, .artcraft-island-capsule, .artcraft-pomodoro-popover")) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+      }
+    }
+  };
+  window.addEventListener("pointerdown", window._artcraftMouseNavBlocker, { capture: true });
+  window.addEventListener("mousedown", window._artcraftMouseNavBlocker, { capture: true });
+  window.addEventListener("mouseup", window._artcraftMouseNavBlocker, { capture: true });
+  window.addEventListener("auxclick", window._artcraftMouseNavBlocker, { capture: true });
+}
+
 const { Plugin, PluginSettingTab, Setting, Notice, Modal, Menu, addIcon } = require("obsidian");
 
 const DEFAULT_SETTINGS = {
   uiLanguage: "en", // "en" | "ru" | "zh" | "ja" | "es" | "de" (auto-detected on first load from Obsidian language)
   artcraftTheme: true,
   headerTagText: "STRATALCHEMY // KNOWLEDGE BRIEF",
-  showHeaderTag: true,
+  showHeaderTag: false, // the brand tag above every note title is opt-in
   hoverCards: true,
   sentenceFocus: true,
   colorizeNumbers: true,
@@ -14,6 +32,13 @@ const DEFAULT_SETTINGS = {
   showTaskProgress: true,
   strokeColor: "#2563EB",
   activeColorKey: "blue",
+  laserSize: 6,
+  laserColor: "#EF4444",
+  laserTrailMs: 420,
+  drawSize: 4,
+  drawColor: "#2563EB",
+  drawOpacity: 90,
+  drawStyle: "pen",
   timerMode: "pomodoro", // "pomodoro" | "stopwatch"
   pomodoroMinutes: 25,
   breakMinutes: 5,
@@ -29,7 +54,12 @@ const DEFAULT_SETTINGS = {
   lampMode: "kelvin", // "kelvin" | "color"
   lampCustomColor: "#F59E0B",
   tactileTypingSound: "off", // "off" | "creamy_pom" | "thock" | "matcha_lubed" | "raindrop_wood" | "velvet_felt" | "paper_brush"
-  audioInputDeviceId: "auto", // "auto" | deviceId of a chosen audio input / loopback device
+  audioInputDeviceId: "auto", // "auto" | deviceId of a chosen microphone / input device
+  systemAudioAutoConnect: false, // reconnect PC audio (Windows output loopback) on launch; set when the user connects it
+  lampBeatSync: false, // the cursor lamp breathes on bass beats of the connected audio
+  keySentenceMarker: true,
+  keyMarkerColor: "lime", // "lime" | "amber" | "rose" | "sky" | "lavender" // reading view: underline the sentences that carry the note's subject
+  pageCards: false, // false: plain typographic page and a quiet dock; true: heading cards, coloured bars, bold dock
   showEqualizer: true,
   eqMode: "craft", // "bars" (Risograph) | "wave" (Ink Ribbon) | "orb" (Compass) | "dna" (Quantum Matrix) | "craft" (Craft Ink) | "ferro" (Espresso Ferro)
   audioVolume: 75, // 0..100%
@@ -51,7 +81,10 @@ const DEFAULT_SETTINGS = {
   supabaseFunctionUrl: "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay",
   spotlightFocus: false,
   enableBentoGraph: true,
-  graphPreset: "bento", // "bento" | "constellation" | "radar"
+  graphPreset: "bento", // "bento" | "mindpalace" | "constellation" | "radar"
+  graphColorMode: "folders", // "folders" | "heatmap" | "recency" | "nutrients"
+  graphFilterMode: "all", // "all" | "hubs" | "stamped" | "no_orphans"
+  familiarAnimationMode: "auto", // "auto" | "paw" | "smile" | "ears" | "astrolabe" | "phoenix"
   isPro: false,
   proTxHash: "",
   proActivatedAt: null,
@@ -74,25 +107,21 @@ const DEFAULT_SETTINGS = {
   wasmSemanticRadar: true, // v5.2.0 WASM 64-Bit SimHash Offline Semantic Connection Radar
   ideCodeStudio: true, // v5.3.0 IDE Poly-Chromatic Code Blocks with 5 Palettes & Line Numbers
   codeThemePalette: "vscode-dark", // "vscode-dark" | "tokyo-night" | "monokai-pro" | "catppuccin" | "alabaster-light"
-  windChainFooter: true, // v5.3.0 Floating Wind-Physics Blurred Backlinks & Immutable Note Chain
+  windChainFooter: true, // related notes on threads under the note
   bespokeSidebarIcons: true, // v5.3.0 Custom Duotone Squircle Folder & Note Icons + Counts
   customFolderIcons: {}, // Custom user-assigned icon keys per folder/file path
   noteBlockchain: [], // Immutable chain of linked notes [{ path, title, prevHash, hash, ts }]
   paperGrain: 42, // 0..100% micro-grain intensity // Calibrated Cool Alabaster & Crisp Slate Ink for Windows 11 Night Light users
-  editorialCleanMode: true, // Swiss Bento tactile block isolation without harsh neo-brutalist black borders
+  editorialCleanMode: true, // Swiss Craft tactile block isolation without harsh neo-brutalist black borders
   lifeRpg: {
-    antiVision: "Бесцельный скроллинг, расфокус, стена серого текста и откладывание ключевого проекта.",
-    visionMvp: "Состояние глубокого потока: 4 часа чистого созидания утром, сильный продукт и полная ясность ума.",
-    oneYearMission: "Превратить экосистему продуктов (Alchemy Craft & ИИ-инструменты) в узнаваемый стандарт для тысяч создателей.",
-    oneMonthBoss: "Релиз Alchemy Craft v4.8 с безупречной читаемостью SWISS EDITORIAL, системным звуком, Graph Studio и цепочкой квестов.",
-    dailyLevers: [
-      { id: "lever-1", title: "90 минут утреннего Deep Work (низкая энтропия до соцсетей)", xp: 50, done: false },
-      { id: "lever-2", title: "Довести 1 ключевой модуль / улучшение до продакшена", xp: 40, done: false },
-      { id: "lever-3", title: "Высокоэффективная дистрибуция ценности (пост, демо или разбор кейса)", xp: 35, done: false }
-    ],
-    constraints: "Никаких правок без проверки читаемости; не открывать ленты до завершения первого рычага.",
-    xp: 340,
-    level: 4
+    antiVision: "",
+    visionMvp: "",
+    oneYearMission: "",
+    oneMonthBoss: "",
+    dailyLevers: [],
+    constraints: "",
+    xp: 0,
+    level: 1
   },
   questBlockchain: [
     {
@@ -126,7 +155,7 @@ const DEFAULT_SETTINGS = {
     isVerifiedOnChain: false
   },
   autopilotAlarms: {
-    enabled: true,
+    enabled: false,
     times: ["11:00", "13:30", "15:15", "17:00", "19:30"],
     lastTriggeredKey: "",
     reflections: []
@@ -226,7 +255,10 @@ const EXTRA_SICRAFT_SVGS = {
   envelope: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`,
   eye: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
   unlock: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`,
-  grain: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="18" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="6" cy="18" r="1"/><circle cx="12" cy="18" r="1"/><circle cx="18" cy="18" r="1"/></svg>`
+  grain: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="18" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="6" cy="18" r="1"/><circle cx="12" cy="18" r="1"/><circle cx="18" cy="18" r="1"/></svg>`,
+  sparkle: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>`,
+  compass: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`,
+  target: `<svg class="sicraft-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>`
 };
 Object.assign(SICRAFT_SVGS, EXTRA_SICRAFT_SVGS);
 function sicraftIcon(key) {
@@ -236,11 +268,26 @@ function sicraftIcon(key) {
 function openExternalUrl(url) {
   if (!url) return;
   try {
+    const electron = window.require ? window.require("electron") : (typeof require !== "undefined" ? require("electron") : null);
+    if (electron && electron.shell && typeof electron.shell.openExternal === "function") {
+      electron.shell.openExternal(url);
+      return;
+    }
+  } catch (err) {
+    console.warn("openExternalUrl electron error:", err);
+  }
+  try {
     window.open(url, "_blank", "noopener,noreferrer");
   } catch (e) {
-    console.warn("openExternalUrl error:", e);
+    console.warn("openExternalUrl fallback error:", e);
   }
 }
+
+// Verified Pro Badge (8-Point Certified Rosette with White Checkmark)
+const PRO_VERIFIED_BADGE_SVG = `<svg class="artcraft-pro-verified-badge" viewBox="0 0 22 22" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: -2.5px; display: inline-block; flex-shrink: 0; margin-left: 3px;">
+  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.887-1.687-.47-.47-1.054-.775-1.688-.905-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.275.213-1.816.568-.54.355-.972.852-1.246 1.44-.608-.223-1.267-.27-1.902-.14-.635.13-1.22.436-1.69.887-.47.47-.775 1.054-.905 1.688-.13.633-.083 1.29.14 1.897-.587.274-1.086.705-1.44 1.246-.355.54-.551 1.17-.569 1.816.018.646.214 1.275.569 1.816.354.54.853.972 1.44 1.246-.224.608-.27 1.264-.14 1.897.13.634.435 1.218.887 1.688.47.47 1.054.775 1.688.905.633.13 1.29.083 1.897-.14.274.587.705 1.086 1.246 1.44.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816z" fill="#1D9BF0"/>
+  <path d="M9.684 15.5l-3.39-3.39 1.414-1.414 1.976 1.975 6.22-6.22 1.414 1.414-7.634 7.635z" fill="#FFFFFF"/>
+</svg>`;
 
 // Hand-crafted Warm Coffee & Alchemy SVG Tier Illustrations (with explicit dimensions so they always render crisply)
 const TIER_BRONZE_SVG = `<svg width="124" height="62" viewBox="0 0 124 62" fill="none" xmlns="http://www.w3.org/2000/svg" class="artcraft-tier-art">
@@ -303,15 +350,23 @@ function registerSicraftMenuIcons() {
     addIcon("sicraft-orb", wrap(`<circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/>`));
     addIcon("sicraft-matrix", wrap(`<rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/>`));
     addIcon("sicraft-stop", wrap(`<rect x="5" y="5" width="14" height="14" rx="2"/>`));
+    addIcon("sicraft-check", wrap(`<polyline points="20 6 9 17 4 12"/>`));
+    addIcon("sicraft-spark", wrap(`<path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/>`));
   } catch (e) {}
 }
 const ALCHEMY_ICON_SVG = `<svg class="artcraft-svg-flask" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path class="artcraft-flask-liquid-back" d="M6.4 16.0C8.4 17.4 10.6 14.8 12.6 16.0C14.6 17.2 16.4 15.2 17.7 16.0L17.9 20H6.1L6.4 16.0Z" fill="#22C55E" opacity="0.52" />
+  <path class="artcraft-flask-liquid" d="M6.1 16.4C8.2 14.9 10.2 17.3 12.2 16.1C14.2 14.9 16.1 17.1 17.9 16.3L17.9 20H6.1L6.1 16.4Z" fill="#69BD28" opacity="0.94" />
+  <path class="artcraft-flask-meniscus" d="M6.3 16.3C8.3 15.0 10.2 17.2 12.2 16.0C14.2 14.8 16.1 17.0 17.7 16.2" stroke="#BBF7D0" stroke-width="0.95" stroke-linecap="round" opacity="0.88" />
+  <circle class="artcraft-flask-bubble b1" cx="9.4" cy="17.8" r="1.05" fill="#FFFFFF" opacity="0.92" />
+  <circle class="artcraft-flask-bubble b2" cx="13.6" cy="17.2" r="0.8" fill="#DCFCE7" opacity="0.9" />
+  <circle class="artcraft-flask-bubble b3" cx="11.6" cy="18.5" r="0.65" fill="#FFFFFF" opacity="0.85" />
+  <circle class="artcraft-flask-bubble b4" cx="15.1" cy="18.2" r="0.55" fill="#FEF08A" opacity="0.85" />
+  <circle class="artcraft-flask-spark s1" cx="11.8" cy="7.2" r="0.9" fill="#F59E0B" />
+  <circle class="artcraft-flask-spark s2" cx="13.2" cy="5.2" r="0.6" fill="#34D399" />
   <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
   <path d="M10 3V8L4.5 17.5C3.8 18.7 4.7 20.2 6.1 20.2H17.9C19.3 20.2 20.2 18.7 19.5 17.5L14 8V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
-  <path class="artcraft-flask-liquid" d="M6.2 16.5C8 15 10 17 12 16C14 15 16 17 17.8 16.5L17.9 20H6.1L6.2 16.5Z" fill="#69BD28" opacity="0.9" />
-  <circle class="artcraft-flask-bubble b1" cx="10" cy="14" r="1" fill="#FFFFFF" />
-  <circle class="artcraft-flask-bubble b2" cx="13.5" cy="12" r="0.75" fill="#FFFFFF" />
-  <circle class="artcraft-flask-spark" cx="12" cy="7" r="0.8" fill="#F59E0B" />
+  <path class="artcraft-flask-glass-glint" d="M7.2 14.5L5.7 17.2C5.4 17.8 5.7 18.5 6.4 18.6" stroke="#FFFFFF" stroke-width="1.0" stroke-linecap="round" opacity="0.68" />
 </svg>`;
 
 const TRANSLATIONS = {
@@ -320,10 +375,10 @@ const TRANSLATIONS = {
     audioSyncSystem: "Desktop Audio Loopback (Telegram / YouTube / Spotify)",
     audioSyncMic: "Microphone / Stereo Mix Input",
     audioStopSync: "Stop Live Audio Sync",
-    audioModeBars: "01 // Peak-Hold Neon Spectrum",
-    audioModeWave: "02 // Cyber Liquid Spline Ribbon",
-    audioModeOrb: "03 // Supernova Polar Sunburst",
-    audioModeDna: "04 // Quantum Matrix Rain",
+    audioModeBars: "01 // Spectrum (Peak-Hold)",
+    audioModeWave: "02 // Silk Wave",
+    audioModeOrb: "03 // Compass Orb",
+    audioModeDna: "04 // Matrix Rain",
     ambientRain: "Ambient: Soft Rain on Paper",
     ambientBrown: "Ambient: Deep Warm Brown Noise",
     ambientGamma: "Ambient: 40Hz Gamma Focus Drone",
@@ -334,7 +389,7 @@ const TRANSLATIONS = {
     dockCollapseTip: "Click to collapse/expand Alchemy Craft Dock",
     timerTip: "LMB: Start/Pause | RMB: Presets & Audio | Double Click: Reset",
     uiBtn: "UI",
-    uiTip: "Swiss Bento UI Theme (Warm Paper #F4F3EF + Sage Green Tables)",
+    uiTip: "Swiss Craft UI Theme (Warm Paper #F4F3EF + Sage Green Tables)",
     zenBtn: "Zen",
     zenTip: "Zen Mode — hide sidebars for pure distraction-free focus",
     focusBtn: "Focus",
@@ -347,7 +402,7 @@ const TRANSLATIONS = {
     eraserTip: "Eraser — erase drawings under cursor (Esc to exit)",
     lampBtn: "Lamp",
     lampBtnFull: "Smart LED Lamp",
-    lampTip: "LMB: Toggle Smart LED Lamp | RMB: Configure Brightness, Kelvin (2700K–6500K) & Room Dimmer",
+    lampTip: "Click: lamp on or off. Right-click: settings",
     rulerBtn: "Ruler",
     rulerTip: "Toggle Laser Reading Ruler Line",
     undoTip: "Undo last stroke (Ctrl+Z)",
@@ -374,7 +429,7 @@ const TRANSLATIONS = {
     ledShapeBar: "Desk Lightbar",
     modalBadge: "ALCHEMIST PRO • 1 YEAR PASS",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). Instant activation via 0% Fee EVM, Bybit UID, @CryptoBot, or Promo Key.",
+    modalSubtitle: "Annual pass for the price of one coffee ($4.99 / yr). Instant activation via EVM transfer, Bybit UID, @CryptoBot, or Promo Key.",
     step1Title: "STEP 1: SELECT PAYMENT METHOD",
     netPromo: "Promo / VIP Key",
     netPromoHint: "Instant Code Activation",
@@ -398,7 +453,7 @@ const TRANSLATIONS = {
     cardNote: "Enter your Promo Code, VIP Key, or @CryptoBot Invoice ID in Step 2 below, or click below to pay $4.99 via @CryptoBot.",
     cryptobotNote: "Click below to generate an official @CryptoBot invoice ($4.99) with full product description and instant verification.",
     evmNote: "This single Universal EVM 0x address accepts 4.99 USDT, USDC, DAI, ETH, or BNB on BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism, and Ethereum!",
-    bybitNote: "In Bybit App: Assets -> Withdraw -> Internal Transfer (0% Fee) -> enter UID 8015849 and 4.99 USDT.",
+    bybitNote: "In Bybit App: Assets -> Withdraw -> Internal Transfer -> enter UID 8015849 and 4.99 USDT.",
     trcNote: "Send 4.99 USDT via TRON network (TRC-20) from any wallet or exchange.",
     solNote: "Send 4.99 USDT or USDC on Solana network.",
     supportText: "Need assistance or instant manual activation?",
@@ -419,22 +474,22 @@ const TRANSLATIONS = {
     proBuyCardTitle: "Unlock All Pro Features in Alchemy Craft",
     proPerk1: "Midnight Dark Craft — full Swiss dark theme for notes, tables, callouts & Graph",
     proPerk2: "Expanded 8-Color Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
-    proPerk3: "Swiss Bento Graph Studio — automatic vault folder coloring, orphan filter & live HUD",
+    proPerk3: "Swiss Craft Graph Studio — automatic vault folder coloring, orphan filter & live HUD",
     proPerk4: "Smart LED Lamp & 4-Mode Equalizer — 2700K–6500K spotlight & desktop audio sync",
     getProBtn: "Get Alchemy Craft Pro ($4.99 / yr)",
     graphHudTitle: "ALCHEMY BENTO GRAPH",
-    graphPresetBento: "Swiss Bento",
+    graphPresetBento: "Swiss Craft",
     graphPresetConstellation: "Constellation",
     graphPresetRadar: "Focus Radar",
     graphColorizeBtn: "Colorize My Vault",
     graphOrphansBtn: "Hide Orphans",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Craft Studio",
     checkUpdatesBtn: "Check Updates",
     langName: "Interface Language (6 Global Languages)",
     langDesc: "Instantly translates all settings, floating dock buttons, Graph HUD, and modals.",
-    themeName: "Swiss Bento UI Theme (#F4F3EF + #69BD28 Tables)",
-    bentoGraphName: "Swiss Bento Graph Studio & Auto-Coloring",
-    bentoGraphDesc: "Scans your actual vault folders and colors every node in the Graph View with Swiss Bento palette + adds Constellation & Radar HUD.",
+    themeName: "Swiss Craft UI Theme (#F4F3EF + #69BD28 Tables)",
+    bentoGraphName: "Swiss Craft Graph Studio & Auto-Coloring",
+    bentoGraphDesc: "Scans your actual vault folders and colors every node in the Graph View with Swiss Craft palette + adds Constellation & Radar HUD.",
     taskBarName: "Sticky Task Progress Bar (Mobile Safe + Dismiss)",
     taskBarDesc: "Shows task completion % at the top of checklist notes with a tap-to-close button and 100% confetti.",
     headerBadgeName: "Note Header Badge Text",
@@ -462,19 +517,19 @@ const TRANSLATIONS = {
     statDeepWork: "Deep Work",
     statChecklists: "100% Lists",
     statStreak: "Day Streak",
-    supportHeading: "Direct 0%-Fee Checkout, @CryptoBot & Community",
+    supportHeading: "Direct Checkout, @CryptoBot & Community",
     supportSetName: "Global Payment & Direct Author Contact",
-    supportSetDesc: "Pay with 0% fee via Universal EVM (BEP20, Arbitrum, Base, Polygon, ERC20), Bybit UID 8015849, or 1-Click @CryptoBot."
+    supportSetDesc: "Manage license verification, author contact, and support for Alchemy Craft Pro."
   },
   ru: {
     eqTip: "ЛКМ: Смена 4 визуализаторов | ПКМ: Подключить звук ПК (Telegram/YouTube/Spotify) или Эмбиент",
     audioSyncSystem: "Системный звук ПК (Telegram / YouTube / Spotify)",
     audioSyncMic: "Микрофон / Стерео микшер",
     audioStopSync: "Остановить синхронизацию звука",
-    audioModeBars: "01 // Спектроанализатор с пиками (Peak-Hold)",
-    audioModeWave: "02 // Кибер-жидкая неоновая волна (3 слоя)",
-    audioModeOrb: "03 // Полярная сверхновая (Supernova Rays)",
-    audioModeDna: "04 // Квантовая матрица (Quantum Matrix)",
+    audioModeBars: "01 // Спектр (Peak-Hold)",
+    audioModeWave: "02 // Шёлковая Волна",
+    audioModeOrb: "03 // Сфера Компас",
+    audioModeDna: "04 // Матрица Знаний",
     ambientRain: "Эмбиент: Мягкий дождь по бумаге",
     ambientBrown: "Эмбиент: Глубокий коричневый шум",
     ambientGamma: "Эмбиент: 40Hz Гамма-ритм фокуса",
@@ -485,7 +540,7 @@ const TRANSLATIONS = {
     dockCollapseTip: "Клик для сворачивания/разворачивания панели",
     timerTip: "ЛКМ: Старт/Пауза | ПКМ: Пресеты и Звук | Двойной клик: Сброс",
     uiBtn: "UI",
-    uiTip: "Теплый бумажный режим Swiss Bento UI (#F4F3EF) + зеленые таблицы",
+    uiTip: "Теплый бумажный режим Swiss Craft UI (#F4F3EF) + зеленые таблицы",
     zenBtn: "Дзен",
     zenTip: "Режим Дзен — скрыть боковые панели для чистого фокуса",
     focusBtn: "Фокус",
@@ -498,7 +553,7 @@ const TRANSLATIONS = {
     eraserTip: "Ластик — стирать рисунки (Esc для выхода)",
     lampBtn: "Лампа",
     lampBtnFull: "Умная Лампа",
-    lampTip: "ЛКМ: Вкл/Выкл Умную Лампу | ПКМ: Настроить яркость, Кельвины (2700K–6500K) и затемнение",
+    lampTip: "Клик: включить или выключить лампу. Правый клик: настройки",
     rulerBtn: "Линейка",
     rulerTip: "Включить лазерную линейку чтения",
     undoTip: "Отменить последний штрих (Ctrl+Z)",
@@ -525,7 +580,7 @@ const TRANSLATIONS = {
     ledShapeBar: "Настольная лампа BenQ",
     modalBadge: "ALCHEMIST PRO • ГОДОВОЙ ПАСС",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Мгновенная активация через 0% EVM, Bybit UID, @CryptoBot или Промокод.",
+    modalSubtitle: "Годовой доступ по цене чашки кофе ($4.99 / год). Мгновенная активация через EVM, Bybit UID, @CryptoBot или Промокод.",
     step1Title: "ШАГ 1: ВЫБЕРИТЕ УДОБНЫЙ СПОСОБ ОПЛАТЫ",
     netPromo: "Промокод / VIP Ключ",
     netPromoHint: "Активация по коду",
@@ -549,7 +604,7 @@ const TRANSLATIONS = {
     cardNote: "Введите ваш промокод, VIP-ключ или номер чека @CryptoBot во 2-м шаге ниже, либо нажмите кнопку для оплаты $4.99 через @CryptoBot.",
     cryptobotNote: "Нажмите кнопку ниже для оплаты $4.99 через @CryptoBot в 1 клик с полным описанием товара.",
     evmNote: "Этот единый 0x EVM-адрес принимает 4.99 USDT, USDC, DAI, ETH или BNB в сетях BNB Chain (BEP-20), Arbitrum One, Base, Polygon, Optimism и Ethereum!",
-    bybitNote: "В приложении Bybit: Активы -> Вывод -> Внутренний перевод (0% комиссии) -> укажите UID 8015849 и 4.99 USDT.",
+    bybitNote: "В приложении Bybit: Активы -> Вывод -> Внутренний перевод -> укажите UID 8015849 и 4.99 USDT.",
     trcNote: "Отправьте 4.99 USDT в сети TRON (TRC-20) с любого кошелька или биржи.",
     solNote: "Отправьте 4.99 USDT или USDC в сети Solana.",
     supportText: "Нужна помощь с оплатой или мгновенная ручная активация?",
@@ -570,21 +625,21 @@ const TRANSLATIONS = {
     proBuyCardTitle: "Разблокируйте все Pro функции Alchemy Craft",
     proPerk1: "Midnight Dark Craft — полная темная тема для заметок, таблиц и Графа",
     proPerk2: "Расширенная палитра (8 цветов) — Rose Quartz, Cyber Cyan, Ruby Crimson и Solar Gold",
-    proPerk3: "Swiss Bento Graph Studio — авто-раскраска всех папок вашей базы и скрытие мусорных точек",
+    proPerk3: "Swiss Craft Graph Studio — авто-раскраска всех папок вашей базы и скрытие мусорных точек",
     proPerk4: "Умная Лампа 2700K–6500K и 4-режимный Эквалайзер со звуком ПК (Telegram/Spotify)",
     getProBtn: "Получить Alchemy Craft Pro ($4.99 / год)",
     graphHudTitle: "ALCHEMY BENTO ГРАФ",
-    graphPresetBento: "Swiss Bento",
+    graphPresetBento: "Swiss Craft",
     graphPresetConstellation: "Созвездие",
     graphPresetRadar: "Фокус Радар",
     graphColorizeBtn: "Раскрасить мои папки",
     graphOrphansBtn: "Без одиночек",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Craft Studio",
     checkUpdatesBtn: "Проверить обновления",
     langName: "Язык интерфейса (6 мировых языков)",
     langDesc: "Мгновенно переводит все настройки, кнопки панели, Граф и окно оплаты на выбранный язык.",
-    themeName: "Стиль Swiss Bento UI (Теплая бумага #F4F3EF + зеленые таблицы)",
-    bentoGraphName: "Улучшенный Граф (Swiss Bento Graph Studio)",
+    themeName: "Стиль Swiss Craft UI (Теплая бумага #F4F3EF + зеленые таблицы)",
+    bentoGraphName: "Улучшенный Граф (Swiss Craft Graph Studio)",
     bentoGraphDesc: "Автоматически сканирует реальные папки вашей базы и раскрашивает все узлы Графа в 8 фирменных цветов + добавляет режимы Созвездия и Радара.",
     taskBarName: "Верхняя полоса прогресса задач (с кнопкой закрытия)",
     taskBarDesc: "Показывает процент выполненных задач вверху заметки и запускает салют при 100%.",
@@ -613,9 +668,9 @@ const TRANSLATIONS = {
     statDeepWork: "В потоке",
     statChecklists: "100% Списки",
     statStreak: "Серия дней",
-    supportHeading: "Прямая оплата 0% комиссии, @CryptoBot и Сообщество",
+    supportHeading: "Прямая оплата, @CryptoBot и Сообщество",
     supportSetName: "Глобальная оплата и связь с автором",
-    supportSetDesc: "Оплата без комиссии через Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 или в 1 клик через @CryptoBot."
+    supportSetDesc: "Оплата через Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 или в 1 клик через @CryptoBot."
   },
   zh: {
     eqTip: "左键: 切换4种高级频谱动画 | 右键: 同步电脑系统音乐 (Telegram/Spotify/YouTube)",
@@ -649,7 +704,7 @@ const TRANSLATIONS = {
     eraserTip: "橡皮擦 — 擦除画笔轨迹（按 Esc 退出）",
     lampBtn: "神灯",
     lampBtnFull: "智能台灯",
-    lampTip: "左键: 开关智能光标台灯 | 右键: 调节亮度、色温 (2700K–6500K) 与环境暗度",
+    lampTip: "左键：开关台灯 | 右键：设置",
     rulerBtn: "标尺",
     rulerTip: "开启激光阅读辅助标尺",
     undoTip: "撤销上一笔 (Ctrl+Z)",
@@ -676,7 +731,7 @@ const TRANSLATIONS = {
     ledShapeBar: "显示器挂灯模式",
     modalBadge: "ALCHEMIST PRO • 年度通行证",
     modalTitle: "Alchemy Craft Pro 专业版",
-    modalSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)。支持 0% 手续费 EVM、Bybit UID、@CryptoBot 及激活码。",
+    modalSubtitle: "仅需一杯咖啡的价格 ($4.99 / 年)。支持 EVM、Bybit UID、@CryptoBot 及激活码。",
     step1Title: "第 1 步：选择支付方式",
     netPromo: "激活码 / VIP 密钥",
     netPromoHint: "使用代码即时激活",
@@ -764,7 +819,7 @@ const TRANSLATIONS = {
     statDeepWork: "深度专注",
     statChecklists: "满分清单",
     statStreak: "连续天数",
-    supportHeading: "0% 手续费直付、@CryptoBot 与社区支持",
+    supportHeading: "直付、@CryptoBot 与社区支持",
     supportSetName: "全球支付与直接联系作者",
     supportSetDesc: "支持 Universal EVM (BEP20, Arbitrum, Base, Polygon)、Bybit UID 8015849 或 @CryptoBot。"
   },
@@ -787,7 +842,7 @@ const TRANSLATIONS = {
     dockCollapseTip: "クリックしてドックを折りたたみ/展開",
     timerTip: "左: 開始/一時停止 | 右: プリセット＆音声 | ダブルクリック: リセット",
     uiBtn: "UI",
-    uiTip: "Swiss Bento UI テーマ（アーカイブ紙 #F4F3EF ＆ Excelグリーン表）",
+    uiTip: "Swiss Craft UI テーマ（アーカイブ紙 #F4F3EF ＆ Excelグリーン表）",
     zenBtn: "禅",
     zenTip: "禅モード — サイドバーを隠して深い集中へ",
     focusBtn: "フォーカス",
@@ -800,7 +855,7 @@ const TRANSLATIONS = {
     eraserTip: "消しゴム — 描画を消去（Escで終了）",
     lampBtn: "ランプ",
     lampBtnFull: "スマートLEDランプ",
-    lampTip: "左: スマートLEDランプ切替 | 右: 輝度・色温度 (2700K–6500K)・周囲減光の設定",
+    lampTip: "左クリック：ランプ切替 | 右クリック：設定",
     rulerBtn: "ルーラー",
     rulerTip: "レーザー読書ルーラーを表示",
     undoTip: "元に戻す (Ctrl+Z)",
@@ -827,7 +882,7 @@ const TRANSLATIONS = {
     ledShapeBar: "デスクライトバー",
     modalBadge: "ALCHEMIST PRO • 1年間パス",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。0%手数料EVM、Bybit UID、@CryptoBot、プロモコードで即座に有効化。",
+    modalSubtitle: "コーヒー1杯分の価格 ($4.99 / 年)。EVM、Bybit UID、@CryptoBot、プロモコードで即座に有効化。",
     step1Title: "ステップ 1: 支払い方法を選択",
     netPromo: "プロモ / VIPキー",
     netPromoHint: "コードで即時有効化",
@@ -872,21 +927,21 @@ const TRANSLATIONS = {
     proBuyCardTitle: "Alchemy Craft Pro の全機能をアンロック",
     proPerk1: "Midnight Dark Craft — ノート、表、グラフ対応の完全ダークモード",
     proPerk2: "8色拡張パレット — ローズ、サイバーシアン、クリムゾン、ソーラーゴールド",
-    proPerk3: "Swiss Bento グラフスタジオ — フォルダ自動カラーリング＆専用HUD",
+    proPerk3: "Swiss Craft グラフスタジオ — フォルダ自動カラーリング＆専用HUD",
     proPerk4: "2700K–6500K スマートLEDランプ＆PC音楽連動4モードイコライザー",
     getProBtn: "Alchemy Craft Pro を入手 ($4.99 / 年)",
     graphHudTitle: "ALCHEMY BENTO グラフ",
-    graphPresetBento: "Swiss Bento",
+    graphPresetBento: "Swiss Craft",
     graphPresetConstellation: "星座モード",
     graphPresetRadar: "レーダー",
     graphColorizeBtn: "フォルダ自動色分け",
     graphOrphansBtn: "孤立ノード非表示",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Craft Studio",
     checkUpdatesBtn: "アップデート確認",
     langName: "インターフェース言語 (6ヶ国語対応)",
     langDesc: "すべての設定項目、ドック、グラフHUD、決済画面を選択した言語に切り替えます。",
-    themeName: "Swiss Bento UI テーマ (#F4F3EF 紙キャンバス + #69BD28 表)",
-    bentoGraphName: "Swiss Bento グラフスタジオ (自動フォルダ色分け)",
+    themeName: "Swiss Craft UI テーマ (#F4F3EF 紙キャンバス + #69BD28 表)",
+    bentoGraphName: "Swiss Craft グラフスタジオ (自動フォルダ色分け)",
     bentoGraphDesc: "保管庫内の実際のフォルダを自動スキャンして8色のBentoカラーを割り当て、美しいグラフを生成します。",
     taskBarName: "上部タスク進捗バー (閉じるボタン＆100%紙吹雪付き)",
     taskBarDesc: "チェックリスト付きノートの上部に進捗率を表示します。",
@@ -915,7 +970,7 @@ const TRANSLATIONS = {
     statDeepWork: "集中時間",
     statChecklists: "100%達成",
     statStreak: "連続日数",
-    supportHeading: "手数料0%決済、@CryptoBot ＆ コミュニティ",
+    supportHeading: "直接決済、@CryptoBot ＆ コミュニティ",
     supportSetName: "グローバル決済＆開発者への直接連絡",
     supportSetDesc: "Universal EVM (BEP20, Arbitrum, Base, Polygon)、Bybit UID 8015849、または @CryptoBot で決済可能。"
   },
@@ -938,7 +993,7 @@ const TRANSLATIONS = {
     dockCollapseTip: "Clic para plegar/desplegar el panel Alchemy Craft",
     timerTip: "Clic Izq: Iniciar/Pausar | Clic Der: Ajustes y Audio | Doble Clic: Reiniciar",
     uiBtn: "UI",
-    uiTip: "Tema Swiss Bento UI (Papel cálido #F4F3EF + Tablas verde salvia)",
+    uiTip: "Tema Swiss Craft UI (Papel cálido #F4F3EF + Tablas verde salvia)",
     zenBtn: "Zen",
     zenTip: "Modo Zen — oculta paneles laterales para concentración total",
     focusBtn: "Enfoque",
@@ -951,7 +1006,7 @@ const TRANSLATIONS = {
     eraserTip: "Borrador — elimina trazos bajo el cursor (Esc para salir)",
     lampBtn: "Lámpara",
     lampBtnFull: "Lámpara LED",
-    lampTip: "Clic Izq: Encender/Apagar Lámpara LED | Clic Der: Ajustar Brillo, Kelvin (2700K–6500K) y Atenuador",
+    lampTip: "Clic: encender o apagar la lámpara. Clic derecho: ajustes",
     rulerBtn: "Regla",
     rulerTip: "Mostrar regla láser de lectura",
     undoTip: "Deshacer último trazo (Ctrl+Z)",
@@ -978,7 +1033,7 @@ const TRANSLATIONS = {
     ledShapeBar: "Barra de Escritorio",
     modalBadge: "ALCHEMIST PRO • PASE DE 1 AÑO",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago directo 0% comisión vía EVM, Bybit UID, @CryptoBot o Código Promo.",
+    modalSubtitle: "Pase anual por el precio de un café ($4.99 / año). Pago directo vía EVM, Bybit UID, @CryptoBot o Código Promo.",
     step1Title: "PASO 1: SELECCIONA MÉTODO DE PAGO",
     netPromo: "Código Promo / VIP",
     netPromoHint: "Activación por código",
@@ -1023,22 +1078,22 @@ const TRANSLATIONS = {
     proBuyCardTitle: "Desbloquea Todas las Funciones Pro en Alchemy Craft",
     proPerk1: "Midnight Dark Craft — tema oscuro completo para notas, tablas y Grafo",
     proPerk2: "Paleta Expandida de 8 Colores — Rosa, Cian, Carmesí y Oro Solar",
-    proPerk3: "Swiss Bento Graph Studio — coloreado automático de tus carpetas reales y HUD",
+    proPerk3: "Swiss Craft Graph Studio — coloreado automático de tus carpetas reales y HUD",
     proPerk4: "Lámpara LED 2700K–6500K y Ecualizador de 4 Modos con Audio del PC",
     getProBtn: "Obtener Alchemy Craft Pro ($4.99 / año)",
     graphHudTitle: "GRAFO ALCHEMY BENTO",
-    graphPresetBento: "Swiss Bento",
+    graphPresetBento: "Swiss Craft",
     graphPresetConstellation: "Constelación",
     graphPresetRadar: "Radar Focus",
     graphColorizeBtn: "Colorear Mis Carpetas",
     graphOrphansBtn: "Ocultar Huérfanos",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Craft Studio",
     checkUpdatesBtn: "Buscar Actualizaciones",
     langName: "Idioma de la Interfaz (6 Idiomas Globales)",
     langDesc: "Traduce al instante todos los ajustes, botones de la barra, Grafo y ventana de pago.",
-    themeName: "Tema Swiss Bento UI (Papel cálido #F4F3EF + Tablas verdes)",
-    bentoGraphName: "Swiss Bento Graph Studio (Coloreado Automático de Carpetas)",
-    bentoGraphDesc: "Escanea las carpetas reales de tu bóveda y asigna los 8 colores Swiss Bento a todos los nodos del Grafo.",
+    themeName: "Tema Swiss Craft UI (Papel cálido #F4F3EF + Tablas verdes)",
+    bentoGraphName: "Swiss Craft Graph Studio (Coloreado Automático de Carpetas)",
+    bentoGraphDesc: "Escanea las carpetas reales de tu bóveda y asigna los 8 colores Swiss Craft a todos los nodos del Grafo.",
     taskBarName: "Barra Superior de Progreso de Tareas (Con botón cerrar)",
     taskBarDesc: "Muestra el % de tareas completadas arriba de la nota con confeti al llegar al 100%.",
     headerBadgeName: "Texto de Insignia Superior de Nota",
@@ -1066,9 +1121,9 @@ const TRANSLATIONS = {
     statDeepWork: "Enfoque",
     statChecklists: "Listas 100%",
     statStreak: "Racha Días",
-    supportHeading: "Pago Directo 0% Comisión, @CryptoBot y Comunidad",
+    supportHeading: "Pago Directo, @CryptoBot y Comunidad",
     supportSetName: "Pago Global y Contacto Directo con el Autor",
-    supportSetDesc: "Paga con 0% comisión vía Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 o @CryptoBot."
+    supportSetDesc: "Paga vía Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 o @CryptoBot."
   },
   de: {
     eqTip: "L-Klick: 4 Pro-Visualizer wechseln | R-Klick: PC-System-Audio synchronisieren (Telegram/Spotify/YouTube)",
@@ -1089,7 +1144,7 @@ const TRANSLATIONS = {
     dockCollapseTip: "Klicken zum Ein-/Ausklappen des Alchemy Craft Docks",
     timerTip: "Links: Start/Pause | Rechts: Presets & Audio | Doppelklick: Reset",
     uiBtn: "UI",
-    uiTip: "Swiss Bento UI-Theme (Warmes Papier #F4F3EF + Salbeigrüne Tabellen)",
+    uiTip: "Swiss Craft UI-Theme (Warmes Papier #F4F3EF + Salbeigrüne Tabellen)",
     zenBtn: "Zen",
     zenTip: "Zen-Modus — Seitenleisten für puren Fokus ausblenden",
     focusBtn: "Fokus",
@@ -1102,7 +1157,7 @@ const TRANSLATIONS = {
     eraserTip: "Radierer — Zeichnungen löschen (Esc zum Beenden)",
     lampBtn: "Lampe",
     lampBtnFull: "Smart LED Lampe",
-    lampTip: "Links: Smart LED Lampe ein/aus | Rechts: Helligkeit, Kelvin (2700K–6500K) & Raum-Dimmer einstellen",
+    lampTip: "Klick: Lampe ein/aus. Rechtsklick: Einstellungen",
     rulerBtn: "Lineal",
     rulerTip: "Laser-Leselineal ein-/ausblenden",
     undoTip: "Rückgängig (Ctrl+Z)",
@@ -1129,7 +1184,7 @@ const TRANSLATIONS = {
     ledShapeBar: "Schreibtisch-Lightbar",
     modalBadge: "ALCHEMIST PRO • 1-JAHRES-PASS",
     modalTitle: "Alchemy Craft Pro",
-    modalSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Sofortige Aktivierung via 0% EVM, Bybit UID, @CryptoBot oder Promo-Key.",
+    modalSubtitle: "Jahrespass zum Preis eines Kaffees ($4.99 / Jahr). Sofortige Aktivierung via EVM, Bybit UID, @CryptoBot oder Promo-Key.",
     step1Title: "SCHRITT 1: ZAHLUNGSMETHODE WÄHLEN",
     netPromo: "Promo / VIP-Key",
     netPromoHint: "Sofortige Code-Aktivierung",
@@ -1174,22 +1229,22 @@ const TRANSLATIONS = {
     proBuyCardTitle: "Alle Pro-Funktionen in Alchemy Craft freischalten",
     proPerk1: "Midnight Dark Craft — komplettes Schweizer Dark-Theme für Notizen, Tabellen & Graph",
     proPerk2: "Erweiterte 8-Farben-Palette — Rose Quartz, Cyber Cyan, Ruby Crimson & Solar Gold",
-    proPerk3: "Swiss Bento Graph Studio — automatische Ordner-Farbgruppen & Live-HUD",
+    proPerk3: "Swiss Craft Graph Studio — automatische Ordner-Farbgruppen & Live-HUD",
     proPerk4: "Smart LED Lampe (2700K–6500K) & 4-Modus PC-Audio-Equalizer",
     getProBtn: "Alchemy Craft Pro holen ($4.99 / Jahr)",
     graphHudTitle: "ALCHEMY BENTO GRAPH",
-    graphPresetBento: "Swiss Bento",
+    graphPresetBento: "Swiss Craft",
     graphPresetConstellation: "Konstellation",
     graphPresetRadar: "Fokus-Radar",
     graphColorizeBtn: "Meine Ordner färben",
     graphOrphansBtn: "Waisen ausblenden",
-    settingsTitle: "Alchemy Craft — Tactile Swiss Bento Studio",
+    settingsTitle: "Alchemy Craft — Tactile Swiss Craft Studio",
     checkUpdatesBtn: "Updates prüfen",
     langName: "Oberflächensprache (6 Weltsprachen)",
     langDesc: "Übersetzt sofort alle Einstellungen, Dock-Buttons, Graph-HUD und das Checkout-Fenster.",
-    themeName: "Swiss Bento UI-Theme (#F4F3EF Papier + #69BD28 Tabellen)",
-    bentoGraphName: "Swiss Bento Graph Studio (Automatische Ordner-Farben)",
-    bentoGraphDesc: "Scannt deine echten Ordner und weist jedem Knoten im Graphen automatisch die 8 Swiss Bento Farben zu.",
+    themeName: "Swiss Craft UI-Theme (#F4F3EF Papier + #69BD28 Tabellen)",
+    bentoGraphName: "Swiss Craft Graph Studio (Automatische Ordner-Farben)",
+    bentoGraphDesc: "Scannt deine echten Ordner und weist jedem Knoten im Graphen automatisch die 8 Swiss Craft Farben zu.",
     taskBarName: "Obere Aufgaben-Fortschrittsleiste (Mit Schließen-Button)",
     taskBarDesc: "Zeigt den Fortschritt von Checklisten oben in der Notiz mit 100%-Konfetti.",
     headerBadgeName: "Text des oberen Notiz-Badges",
@@ -1217,9 +1272,9 @@ const TRANSLATIONS = {
     statDeepWork: "Deep Work",
     statChecklists: "100% Listen",
     statStreak: "Tages-Serie",
-    supportHeading: "Direkter 0%-Checkout, @CryptoBot & Community",
+    supportHeading: "Direkter Checkout, @CryptoBot & Community",
     supportSetName: "Globale Zahlung & Direkter Autorenkontakt",
-    supportSetDesc: "0% Gebühr via Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 oder @CryptoBot."
+    supportSetDesc: "Zahlung via Universal EVM (BEP20, Arbitrum, Base, Polygon), Bybit UID 8015849 oder @CryptoBot."
   }
 };
 const SUPPORTED_LANGS = ["en", "ru", "zh", "ja", "es", "de"];
@@ -1264,12 +1319,12 @@ function t(key, plugin) {
 
 const I18N_CAPSULE = {
   badge: {
-    en: "TIME CAPSULE // WAX SEAL",
-    ru: "КАПСУЛА ВРЕМЕНИ // СУРГУЧНАЯ ПЕЧАТЬ",
-    zh: "时间胶囊 // 火漆封印",
-    ja: "タイムカプセル // 封蝋印",
-    es: "CÁPSULA DEL TIEMPO // SELLO DE LACRE",
-    de: "ZEITKAPSEL // SIEGELLACK",
+    en: "TIME CAPSULE · WAX SEAL",
+    ru: "КАПСУЛА ВРЕМЕНИ · СУРГУЧНАЯ ПЕЧАТЬ",
+    zh: "时间胶囊 · 火漆封印",
+    ja: "タイムカプセル · 封蝋印",
+    es: "CÁPSULA DEL TIEMPO · SELLO DE LACRE",
+    de: "ZEITKAPSEL · SIEGELLACK",
   },
   title: {
     en: "Seal this note until a date",
@@ -1304,12 +1359,12 @@ const I18N_CAPSULE = {
     de: "Aus der eigenen Frage erinnern",
   },
   step2Desc: {
-    en: "While the countdown runs, try to recall the essence. Early open: hold the seal for 2 seconds.",
-    ru: "Пока идёт отсчёт, пытайтесь вспомнить суть. Досрочно — удерживать печать 2 секунды.",
-    zh: "倒计时期间，尝试复述核心观点。提前开封：长按印章2秒。",
-    ja: "カウントダウン中、要点を思い出してください。早期開封：印を2秒長押し。",
-    es: "Durante la cuenta regresiva, intenta recordar lo esencial. Apertura anticipada: mantén presionado el sello 2 s.",
-    de: "Während der Countdown läuft, erinnere den Kern. Vorzeitiges Öffnen: Siegel 2 Sekunden gedrückt halten.",
+    en: "While the countdown runs, try to recall the essence. Early open: hold the seal for 1.5 seconds.",
+    ru: "Пока идёт отсчёт, пытайтесь вспомнить суть. Досрочно — удерживать печать 1,5 секунды.",
+    zh: "倒计时期间，尝试复述核心观点。提前开封：长按印章1.5秒。",
+    ja: "カウントダウン中、要点を思い出してください。早期開封：印を1.5秒長押し。",
+    es: "Durante la cuenta regresiva, intenta recordar lo esencial. Apertura anticipada: mantén presionado el sello 1,5 s.",
+    de: "Während der Countdown läuft, erinnere den Kern. Vorzeitiges Öffnen: Siegel 1,5 Sekunden gedrückt halten.",
   },
   step3Title: {
     en: "Open it on time",
@@ -1368,12 +1423,12 @@ const I18N_CAPSULE = {
     de: "Abbrechen",
   },
   sealBtn: {
-    en: "🕯️ Seal note",
-    ru: "🕯️ Запечатать",
-    zh: "🕯️ 封存笔记",
-    ja: "🕯️ ノートを封印",
-    es: "🕯️ Sellar nota",
-    de: "🕯️ Notiz versiegeln",
+    en: "Seal note",
+    ru: "Запечатать",
+    zh: "封存笔记",
+    ja: "ノートを封印",
+    es: "Sellar nota",
+    de: "Notiz versiegeln",
   },
   summaryPrefix: {
     en: "The seal can be opened on: ",
@@ -1473,6 +1528,177 @@ function isValidSiCraftLicenseKey(codeStr) {
   return String(chk).padStart(4, "0") === m[4];
 }
 
+// --- Shared helpers ---
+// Escapes text for use inside an HTML template (element content or a quoted attribute).
+function escHtml(value) {
+  return String(value === null || value === undefined ? "" : value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// A number from settings for use in a template: never a string someone typed into data.json.
+function safeNum(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+// Today's date in the user's own time zone as YYYY-MM-DD (toISOString would give the UTC day).
+function localDayKey(date) {
+  const d = date || new Date();
+  const p = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+}
+
+// Plain text start of a note: no frontmatter, code, embeds or markup.
+function kinExcerpt(raw, limit) {
+  const text = String(raw || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/^---\n[\s\S]*?\n---\n?/, "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/!\[\[[^\]]*\]\]/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[\[([^\]|]*\|)?([^\]]*)\]\]/g, "$2")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/^\s*>+\s?/gm, "")
+    .replace(/^\s*(?:[-*+]|\d+[.)])\s+(?:\[.\]\s+)?/gm, "")
+    .replace(/[*_~`=]{1,3}/g, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  const space = cut.lastIndexOf(" ");
+  return (space > limit * 0.6 ? cut.slice(0, space) : cut) + "…";
+}
+
+// The opening part of a note as Markdown for the reading card: frontmatter and embeds removed, cut at a
+// paragraph end where possible. Fences are never left open.
+function kinReaderMarkdown(raw, limit) {
+  let text = String(raw || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/^---\n[\s\S]*?\n---\n?/, "")
+    .replace(/!\[\[[^\]]*\]\]/g, "")
+    .trim();
+  if (text.length <= limit) return { text, truncated: false };
+  let cut = text.slice(0, limit);
+  const para = cut.lastIndexOf("\n\n");
+  if (para > limit * 0.45) cut = cut.slice(0, para);
+  const fences = (cut.match(/^```/gm) || []).length;
+  if (fences % 2 === 1) cut += "\n```";
+  return { text: cut, truncated: true };
+}
+
+// Positions of a damped spring released at 0 towards 1, sampled evenly. Used as animation keyframes so
+// motion accelerates, overshoots and settles the way a physical object does.
+function kinSpringFrames(stiffness, damping, samples) {
+  const out = [];
+  const total = 0.64;
+  const steps = 240;
+  const dt = total / steps;
+  let x = 0;
+  let v = 0;
+  const every = Math.max(1, Math.floor(steps / (samples - 1)));
+  for (let i = 0; i <= steps; i++) {
+    if (i % every === 0 && out.length < samples - 1) out.push(x);
+    v += (-stiffness * (x - 1) - damping * v) * dt;
+    x += v * dt;
+  }
+  out.push(1);
+  return out;
+}
+
+// --- Key sentence marker: text helpers (pure functions, no DOM) ---
+const KEY_STOPWORDS = new Set(
+  (
+    "это как так что чтобы или его она они оно мы вы ты он для при над под про без из за на по до от об во со не ни да но же ли бы был была были быть есть нет уже ещё еще " +
+    "очень только также тоже там тут здесь где когда если то тем чем кто эти этот эта этих этим того этой такой такая такие свой своя свои свою наш ваш их её ее ему ей им " +
+    "нас вас них нее него себя себе мне меня мной тебя тебе который которая которые которых которой между через после перед более менее всё все всех всего весь вся можно нужно надо будет будут " +
+    "the and for are but not you all any can had her was one our out has have this that with from they will would there their what which when your were been than then them these those into " +
+    "also about just only over such some more most other its his she him who how why where while does did each very much many may might must should could being both between after before because"
+  ).split(/\s+/)
+);
+
+const KEY_CUE_RE =
+  /(?:^|[^a-zа-яё])(?:главн|важн|ключев|итог|вывод|поэтому|значит|следовательно|суть|нужно|правило|причин|результат|задач|therefore|important|key\s|in short|the point|means|must|result|rule|because|so that)/i;
+
+function keyPlainText(line) {
+  return line
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/!\[\[[^\]]*\]\]/g, " ")
+    .replace(/\[\[([^\]|]*\|)?([^\]]*)\]\]/g, "$2")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/^\s*>+\s?/, "")
+    .replace(/^\s*(?:[-*+]|\d+[.)])\s+(?:\[.\]\s+)?/, "")
+    .replace(/[*_~=]{1,3}/g, "")
+    .replace(/<[^>]+>/g, " ");
+}
+
+function keyWords(text) {
+  const found = text.toLowerCase().match(/[a-zа-яё][a-zа-яё'-]{2,}/g) || [];
+  return found.filter((w) => !KEY_STOPWORDS.has(w));
+}
+
+// Crude stem: enough to fold Russian case endings and English plurals into one bucket.
+function keyStem(word) {
+  return word.length > 5 ? word.slice(0, 5) : word;
+}
+
+function keyScoreSentence(text, weights) {
+  const wordCount = (text.match(/[A-Za-zА-Яа-яЁё0-9][A-Za-zА-Яа-яЁё0-9'-]*/g) || []).length;
+  if (wordCount < 6 || wordCount > 42) return 0;
+  const seen = new Set();
+  let sum = 0;
+  keyWords(text).forEach((w) => {
+    const st = keyStem(w);
+    if (seen.has(st)) return;
+    seen.add(st);
+    sum += weights.get(st) || 0;
+  });
+  let score = sum / Math.sqrt(wordCount);
+  if (/\d/.test(text)) score *= 1.12;
+  if (KEY_CUE_RE.test(text)) score *= 1.18;
+  return score;
+}
+
+// Sentence ranges in a text. A dot inside a number ("1.5"), after an initial or a common abbreviation
+// ("т. е.", "e.g."), or before a lowercase word is not treated as the end of a sentence.
+function keySplitSentences(text) {
+  const out = [];
+  let start = 0;
+  const push = (end) => {
+    let s = start;
+    while (s < end && /\s/.test(text[s])) s++;
+    if (end > s) out.push({ start: s, end });
+    start = end;
+  };
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch !== "." && ch !== "!" && ch !== "?" && ch !== "…") continue;
+    let j = i;
+    while (j + 1 < text.length && ".!?…".includes(text[j + 1])) j++;
+    while (j + 1 < text.length && "»\"”’)".includes(text[j + 1])) j++;
+    const rest = text.slice(j + 1);
+    if (!rest.trim()) {
+      push(text.length);
+      return out;
+    }
+    const after = rest.match(/^\s+(\S)/);
+    let boundary = !!after && /[A-ZА-ЯЁ0-9«"“(\[—–-]/.test(after[1]);
+    if (boundary && ch === "." && j === i) {
+      const last = (text.slice(start, i).match(/(\S+)$/) || ["", ""])[1].replace(/^[«"“(]+/, "");
+      if (/^(?:[A-Za-zА-Яа-яЁё]|т|г|гг|ул|им|др|пр|см|стр|рис|тыс|млн|vs|etc|e\.g|i\.e|mr|mrs|dr|no|fig)$/i.test(last)) boundary = false;
+    }
+    if (boundary) push(j + 1);
+    i = j;
+  }
+  if (start < text.length && text.slice(start).trim()) push(text.length);
+  return out;
+}
+
 class SmartLedLampModal extends Modal {
   constructor(app, plugin) {
     super(app);
@@ -1534,7 +1760,7 @@ class SmartLedLampModal extends Modal {
             <span>${t("ledRadius", this.plugin)}</span>
             <strong id="led-rad-val">${s.lampRadius || 310} px</strong>
           </div>
-          <input type="range" id="led-rad-slider" min="140" max="600" value="${s.lampRadius || 310}" class="sicraft-led-slider" />
+          <input type="range" id="led-rad-slider" min="140" max="600" value="${safeNum(s.lampRadius, 310)}" class="sicraft-led-slider" />
           <div class="sicraft-kelvin-presets" style="margin-top:8px; grid-template-columns: 1fr 1fr 1fr;">
             <button data-shape="radial" class="sicraft-shape-btn ${(s.lampShape || "radial") === "radial" ? "is-active" : ""}">${t("ledShapeRadial", this.plugin)}</button>
             <button data-shape="deskbar" class="sicraft-shape-btn ${s.lampShape === "deskbar" ? "is-active" : ""}">${t("ledShapeBar", this.plugin)}</button>
@@ -1543,6 +1769,33 @@ class SmartLedLampModal extends Modal {
         </div>
       </div>
     `;
+    // Beat pulse: the lamp breathes with the bass of whatever is connected to the equalizer.
+    const beatRow = contentEl.createDiv({ cls: "sicraft-led-beat-row" });
+    const beatLabel = beatRow.createEl("label", { cls: "sicraft-led-beat-label" });
+    const beatBox = beatLabel.createEl("input", { type: "checkbox" });
+    beatBox.checked = !!s.lampBeatSync;
+    beatLabel.createSpan({
+      text: i18n({ en: "Pulse on music beats", ru: "Пульс в такт музыке", zh: "随音乐节拍脉动", ja: "音楽のビートに合わせて明滅", es: "Pulso al ritmo de la música", de: "Im Takt der Musik pulsieren" }, this.plugin),
+    });
+    beatRow.createDiv({
+      cls: "sicraft-led-beat-hint",
+      text: i18n(
+        {
+          en: "Needs the lamp on and audio connected to the equalizer.",
+          ru: "Нужны включённая лампа и звук, подключённый к эквалайзеру.",
+          zh: "需要开启灯光并将音频连接到均衡器。",
+          ja: "ランプをオンにし、イコライザーに音声を接続してください。",
+          es: "Requiere la lámpara encendida y audio conectado al ecualizador.",
+          de: "Lampe muss an und Audio mit dem Equalizer verbunden sein.",
+        },
+        this.plugin
+      ),
+    });
+    beatBox.addEventListener("change", async () => {
+      s.lampBeatSync = beatBox.checked;
+      await this.plugin.saveSettings();
+    });
+
     const powerBtn = contentEl.querySelector("#led-power-btn");
     const powerTxt = contentEl.querySelector("#led-power-text");
     powerBtn.onclick = async () => {
@@ -2030,8 +2283,8 @@ class BookNutrientDigestModal extends Modal {
         groupItems.forEach((item) => {
           const row = sec.createDiv({ cls: "nutrient-digest-row" });
           row.innerHTML = `
-            <div class="digest-row-meaning"><strong>${item.meaning || item.label}:</strong></div>
-            <div class="digest-row-quote">«${item.snippet}»</div>
+            <div class="digest-row-meaning"><strong>${escHtml(item.meaning || item.label)}:</strong></div>
+            <div class="digest-row-quote">«${escHtml(item.snippet)}»</div>
           `;
           row.onclick = () => {
             this.close();
@@ -2044,7 +2297,7 @@ class BookNutrientDigestModal extends Modal {
     const buildDigestMarkdown = () => {
       const lines = [];
       lines.push(`\n\n---`);
-      lines.push(`## ⚗️ ${i18n({
+      lines.push(`## ${i18n({
         en: "Book Nutrient Digest & Action Plan",
         ru: "Усвоение книги: Дайджест 5 Нутриентов",
         zh: "书籍养分摘要与行动规划",
@@ -2079,7 +2332,7 @@ class BookNutrientDigestModal extends Modal {
           de: "Kohlenhydrate — Zum Nachdenken & Verinnerlichen",
         }, this.plugin)}`);
         carbs.forEach((c) => {
-          lines.push(`> [! lightbulb] **${c.meaning || c.label}**\n> *«${c.snippet}»*`);
+          lines.push(`> [!tip] **${c.meaning || c.label}**\n> *«${c.snippet}»*`);
         });
       }
       if (others.length > 0) {
@@ -2138,9 +2391,8 @@ class BookNutrientDigestModal extends Modal {
     btnAppend.onclick = async () => {
       const obsidian = require("obsidian");
       const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-      if (view && view.editor && this.bookmarks.length > 0) {
-        const cur = view.editor.getValue();
-        view.editor.setValue(cur + buildDigestMarkdown());
+      if (view && view.file && this.bookmarks.length > 0) {
+        await this.plugin.editNote(view.file, (cur) => cur + buildDigestMarkdown());
         this.plugin.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
         new Notice(i18n({
           en: "Book Digest appended to note!",
@@ -2265,7 +2517,7 @@ class ClassicsBookshelfModal extends Modal {
 
       const filtered = books.filter((bk) => {
         if (this.activeFilter === "all") return true;
-        if (this.activeFilter === "classics") return bk.isClassics || !!bk.stamp;
+        if (this.activeFilter === "classics") return bk.isClassics;
         return bk.bookmarks.some((m) => (m.type || "proteins") === this.activeFilter);
       });
 
@@ -2299,8 +2551,8 @@ class ClassicsBookshelfModal extends Modal {
         card.innerHTML = `
           <div class="book-folio-spine" style="background:${spineCol}"></div>
           <div class="book-folio-inner">
-            <div class="book-folio-folder">${bk.folder}</div>
-            <h4 class="book-folio-title" title="${bk.title}">${bk.title}</h4>
+            <div class="book-folio-folder">${escHtml(bk.folder)}</div>
+            <h4 class="book-folio-title" title="${escHtml(bk.title)}">${escHtml(bk.title)}</h4>
             <div class="book-folio-meta">
               ${stampTxt ? `<span class="book-folio-stamp-pill">${stampTxt}</span>` : ""}
               <span class="book-folio-nutrients-count">${bk.bookmarks.length} ${i18n({ en: "stickers", ru: "закладок", zh: "个书签", ja: "付箋", es: "pegatinas", de: "Lesezeichen" }, this.plugin)}</span>
@@ -2311,7 +2563,7 @@ class ClassicsBookshelfModal extends Modal {
                     .slice(0, 6)
                     .map((m) => {
                       const nObj = BOOK_NUTRIENTS[m.type] || BOOK_NUTRIENTS.proteins;
-                      return `<span class="nut-dot" style="background:${nObj.color}" title="${m.meaning || m.label}"></span>`;
+                      return `<span class="nut-dot" style="background:${nObj.color}" title="${escHtml(m.meaning || m.label)}"></span>`;
                     })
                     .join("")}</div>`
                 : ""
@@ -2351,9 +2603,9 @@ class ClassicsBookshelfModal extends Modal {
       }, this.plugin)
     }</span>`;
     btnExportAll.onclick = async () => {
-      const lines = [`# 📚 ${i18n({ en: "Master Classics & Book Nutrient Digest", ru: "Полка Классики и Сводный Дайджест Книг", zh: "经典书架与全库书籍摘要", ja: "名著の本棚と統合ダイジェスト", es: "Estantería de clásicos y resumen maestro", de: "Klassiker-Regal und Gesamt-Auszug" }, this.plugin)}\n`];
+      const lines = [`# ${i18n({ en: "Master Classics & Book Nutrient Digest", ru: "Полка Классики и Сводный Дайджест Книг", zh: "经典书架与全库书籍摘要", ja: "名著の本棚と統合ダイジェスト", es: "Estantería de clásicos y resumen maestro", de: "Klassiker-Regal und Gesamt-Auszug" }, this.plugin)}\n`];
       books.forEach((bk) => {
-        lines.push(`## 📖 ${bk.title} (${bk.isClassics ? `★ CLASSICS #${bk.stamp.count}` : "Read"})`);
+        lines.push(`## ${bk.title} (${bk.isClassics ? `★ CLASSICS #${bk.stamp.count}` : "Read"})`);
         bk.bookmarks.forEach((m) => {
           const nObj = BOOK_NUTRIENTS[m.type] || BOOK_NUTRIENTS.proteins;
           const i18nN = getNutrientI18n(nObj, this.plugin);
@@ -2379,22 +2631,22 @@ class ClassicsBookshelfModal extends Modal {
 }
 
 const AMBIENT_SOUNDSCAPES = [
-  { id: "balanced", ru: "Бархатный Розовый Дождь", en: "Velvet Pink Rain", subRu: "Стерео -3dB • Память и фокус", subEn: "Stereo -3dB • Memory & Focus", icon: SICRAFT_SVGS.sliders },
-  { id: "brown", ru: "Глубокий Тёмный Кокон", en: "Deep Brown Shield", subRu: "Мягкий басовый щит • СДВГ-фокус", subEn: "Sub-Bass Shield • ADHD Focus", icon: SICRAFT_SVGS.shield },
-  { id: "gamma40", ru: "40Hz Нейро-Фокус в Шёлке", en: "40Hz Gamma Silk", subRu: "Ритм 40Hz + тёплый розовый шум", subEn: "40Hz Binaural + Warm Pink Pad", icon: SICRAFT_SVGS.brain },
-  { id: "bright", ru: "10Hz Альфа-Спокойствие", en: "10Hz Alpha Calm Flow", subRu: "Снятие тревоги и лёгкое чтение", subEn: "Stress Relief & Calm Reading", icon: SICRAFT_SVGS.sun },
-  { id: "night", ru: "6Hz Тета-Медитация Души", en: "6Hz Theta Deep Peace", subRu: "Глубокий покой 174Hz + 528Hz", subEn: "Deep Inner Peace 174Hz + 528Hz", icon: SICRAFT_SVGS.moon },
-  { id: "rain_roof", ru: "Поющие Чаши и Тёплый Ветер", en: "Singing Bowls & Air", subRu: "Тибетский резонанс 432Hz", subEn: "Harmonic Bowl Overtones 432Hz", icon: SICRAFT_SVGS.roof },
-  { id: "ocean", ru: "Дыхание Океана (0.1Hz)", en: "Coherent Ocean Breath", subRu: "Прибой в ритме спокойного пульса", subEn: "0.1Hz Coherent Breathing Surf", icon: SICRAFT_SVGS.waves },
-  { id: "rain", ru: "Дождь по Ткани Шатра", en: "Cozy Rain on Tent", subRu: "Мягкий стерео-дождь по бумаге", subEn: "Gentle Stereo Rain on Paper", icon: SICRAFT_SVGS.rain },
-  { id: "stream", ru: "Горный Ручей и Хвоя", en: "Mountain Brook & Pines", subRu: "Живая вода и лесной воздух", subEn: "Babbling Brook & Soft Breeze", icon: SICRAFT_SVGS.stream },
-  { id: "fire", ru: "Камин и Тёплые Угли", en: "Cozy Hearth & Embers", subRu: "Тёплый очаг и мягкий треск дров", subEn: "Warm Hearth & Soft Crackling", icon: SICRAFT_SVGS.flame },
-  { id: "train", ru: "Ночной Поезд под Дождём", en: "Night Sleeper Train", subRu: "Мерный стук колёс и уют купе", subEn: "Rhythmic Rail Cadence & Rain", icon: SICRAFT_SVGS.train },
-  { id: "cafe", ru: "Вечерняя Кофейня Алхимика", en: "Warm Roastery Ambience", subRu: "Мягкая акустика зала и пар", subEn: "Warm Coffeehouse Acoustic Pad", icon: SICRAFT_SVGS.coffee },
-  { id: "crystal_432", ru: "432Hz Кристальные Чаши и Дождь", en: "432Hz Crystal Bowls & Rain", subRu: "Гармоники 432Hz + тёплый ливень", subEn: "432Hz Pure Crystal + Warm Rain", icon: SICRAFT_SVGS.spark },
-  { id: "solfeggio_528", ru: "528Hz Сольфеджио Глубокий Покой", en: "528Hz Solfeggio Deep Repair", subRu: "Частота восстановления + шёлк", subEn: "528Hz Restorative Drone + Silk", icon: SICRAFT_SVGS.sun },
-  { id: "nordic_wind", ru: "Северный Фьорд и Сосновый Лес", en: "Nordic Fjord & Pine Wind", subRu: "Дыхание ветра в кронах сосен", subEn: "Slow Boreal Wind Through Pines", icon: SICRAFT_SVGS.waves },
-  { id: "vinyl_library", ru: "Винил в Старой Библиотеке", en: "Old Library Vinyl & Hearth", subRu: "Тёплый виниловый шорох и камин", subEn: "Warm Vinyl Crackle & Study Room", icon: SICRAFT_SVGS.book }
+  { id: "balanced", ru: "Мягкий розовый шум", en: "Soft pink noise", subRu: "Ровный фон, стерео", subEn: "Even background, stereo", icon: SICRAFT_SVGS.sliders },
+  { id: "brown", ru: "Коричневый шум", en: "Brown noise", subRu: "Глубокий низкий фон", subEn: "Deep low-frequency bed", icon: SICRAFT_SVGS.shield },
+  { id: "gamma40", ru: "40 Гц с розовым шумом", en: "40 Hz with pink noise", subRu: "Биение 40 Гц и тёплый шум", subEn: "40 Hz beat and warm noise", icon: SICRAFT_SVGS.brain },
+  { id: "bright", ru: "10 Гц, альфа", en: "10 Hz alpha", subRu: "Спокойный фон для чтения", subEn: "Calm background for reading", icon: SICRAFT_SVGS.sun },
+  { id: "night", ru: "6 Гц, тета", en: "6 Hz theta", subRu: "Тон 174 Гц с биением 6 Гц", subEn: "174 Hz tone with a 6 Hz beat", icon: SICRAFT_SVGS.moon },
+  { id: "rain_roof", ru: "Поющие чаши", en: "Singing bowls", subRu: "Обертоны около 432 Гц", subEn: "Overtones around 432 Hz", icon: SICRAFT_SVGS.roof },
+  { id: "ocean", ru: "Прибой", en: "Ocean surf", subRu: "Волна раз в 8 секунд", subEn: "One wave every 8 seconds", icon: SICRAFT_SVGS.waves },
+  { id: "rain", ru: "Дождь", en: "Rain", subRu: "Ровный шум дождя", subEn: "Steady rain noise", icon: SICRAFT_SVGS.rain },
+  { id: "stream", ru: "Ручей", en: "Brook", subRu: "Шум воды с медленными переливами", subEn: "Water noise with a slow swell", icon: SICRAFT_SVGS.stream },
+  { id: "fire", ru: "Камин", en: "Fireplace", subRu: "Тёплый шум и треск", subEn: "Warm noise and crackle", icon: SICRAFT_SVGS.flame },
+  { id: "train", ru: "Ночной поезд", en: "Night train", subRu: "Мерный стук колёс", subEn: "Steady rail rhythm", icon: SICRAFT_SVGS.train },
+  { id: "cafe", ru: "Кофейня", en: "Coffee house", subRu: "Мягкий гул зала", subEn: "Soft room murmur", icon: SICRAFT_SVGS.coffee },
+  { id: "crystal_432", ru: "432 Гц, чистые тоны", en: "432 Hz pure tones", subRu: "Тоны 216, 220 и 432 Гц", subEn: "216, 220 and 432 Hz tones", icon: SICRAFT_SVGS.spark },
+  { id: "solfeggio_528", ru: "528 Гц", en: "528 Hz drone", subRu: "Тон 528 Гц и мягкий шум", subEn: "528 Hz tone with soft noise", icon: SICRAFT_SVGS.sun },
+  { id: "nordic_wind", ru: "Ветер", en: "Wind", subRu: "Ровный шум, как ветер в кронах", subEn: "Steady noise, like wind in the trees", icon: SICRAFT_SVGS.waves },
+  { id: "vinyl_library", ru: "Тёплый шум", en: "Warm noise", subRu: "Ровный тёплый фон", subEn: "Steady warm background", icon: SICRAFT_SVGS.book }
 ];
 
 class AlchemySonicStudioModal extends Modal {
@@ -2405,6 +2657,8 @@ class AlchemySonicStudioModal extends Modal {
   }
 
   onOpen() {
+    // onOpen doubles as "re-render" and is called after awaits; a modal closed in the meantime stays closed
+    if (this.isClosed) return;
     this.plugin.activeSonicModal = this;
     if (this.modalEl) this.modalEl.addClass("artcraft-wide-craft-modal");
     const { contentEl } = this;
@@ -2489,7 +2743,7 @@ class AlchemySonicStudioModal extends Modal {
           <div class="sonic-player-bar">
             <button class="sonic-play-btn" id="sonic-play-toggle" title="Play / Pause">${hasTrack && !this.plugin.ambientNodes.audioEl.paused ? SICRAFT_SVGS.pause : SICRAFT_SVGS.play}</button>
             <div class="sonic-track-meta">
-              <div class="sonic-track-title" id="sonic-track-name">${trackName}</div>
+              <div class="sonic-track-title" id="sonic-track-name">${escHtml(trackName)}</div>
               <div class="sonic-seek-row">
                 <span class="sonic-time-lbl" id="sonic-time-cur">00:00</span>
                 <input type="range" id="sonic-seek-slider" min="0" max="100" value="0" class="sonic-seek-slider" ${hasTrack ? "" : "disabled"} />
@@ -2536,7 +2790,7 @@ class AlchemySonicStudioModal extends Modal {
 
         <!-- 3. 12 APPLE iOS INSPIRED BACKGROUND SOUNDS -->
         <div class="sonic-card">
-          <div class="sonic-sec-label">${isRu ? "12 ФОНОВЫХ ЗВУКОВ ДЛЯ ФОКУСА (КОЛЛЕКЦИЯ iOS)" : "12 FOCUS BACKGROUND SOUNDSCAPES (iOS COLLECTION)"}</div>
+          <div class="sonic-sec-label">${isRu ? "ФОНОВЫЕ ЗВУКИ" : "BACKGROUND SOUNDSCAPES"}</div>
           <div class="sonic-ambient-grid">
             ${AMBIENT_SOUNDSCAPES.map((s) => `
               <button class="sonic-amb-tile ${this.plugin.settings.ambientSound === s.id ? "is-active" : ""}" data-amb="${s.id}">
@@ -2715,7 +2969,9 @@ class AlchemySonicStudioModal extends Modal {
   }
 
   onClose() {
+    this.isClosed = true;
     if (this.progressTimer) clearInterval(this.progressTimer);
+    this.progressTimer = null;
     if (this.plugin && this.plugin.activeSonicModal === this) {
       this.plugin.activeSonicModal = null;
     }
@@ -2731,9 +2987,21 @@ class CustomPomodoroModal extends Modal {
     this.onSave = onSave;
   }
   onOpen() {
-    const { contentEl } = this;
+    const { contentEl, modalEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-pro-modal-root");
+
+    modalEl.classList.add("artcraft-anchored-timer-popover");
+    const timerPill = document.querySelector(".artcraft-timer-pill");
+    if (timerPill) {
+      const rect = timerPill.getBoundingClientRect();
+      modalEl.style.position = "fixed";
+      modalEl.style.bottom = `${Math.max(72, window.innerHeight - rect.top + 10)}px`;
+      modalEl.style.left = `${Math.max(16, Math.min(window.innerWidth - 330, rect.left - 40))}px`;
+      modalEl.style.top = "auto";
+      modalEl.style.transform = "none";
+      modalEl.style.margin = "0";
+    }
 
     const header = contentEl.createDiv({ cls: "artcraft-modal-header-card" });
     header.createEl("h3", { cls: "artcraft-modal-title", text: t("customPomodoroTitle", this.plugin) });
@@ -2795,6 +3063,7 @@ class AlchemyFlowPlugin extends Plugin {
     await this.loadSettings();
     registerSicraftMenuIcons();
 
+    this._unloaded = false;
     this.mode = "none"; // "none" | "laser" | "draw" | "eraser"
     this.isDrawing = false;
     this.strokes = [];
@@ -2813,6 +3082,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.initWasmCore();
     this.initMagicSpotlightTracker();
+    this.initBookFolio3DPhysics();
     this.applyBodyClasses();
     this.createLampGpuLayer();
     this.createOverlayCanvas();
@@ -2821,8 +3091,12 @@ class AlchemyFlowPlugin extends Plugin {
     }
 
     // 1. Reading View Post-Processor
-    this.registerMarkdownPostProcessor((el) => {
+    this.registerMarkdownPostProcessor(async (el, ctx) => {
       this.enhanceMarkdownElement(el);
+      if (this.settings.keySentenceMarker !== false && ctx && ctx.sourcePath) {
+        const model = await this.getKeySentenceModel(ctx.sourcePath);
+        if (model && !this._unloaded) this.markKeySentences(el, model);
+      }
     });
 
     // 2. Live Preview (CM6) & Graph View Observer
@@ -2831,6 +3105,14 @@ class AlchemyFlowPlugin extends Plugin {
     this.registerDomEvent(document, "visibilitychange", () => {
       if (!document.hidden && this.timerRunning) {
         this.tickTimer();
+      }
+      if (!document.hidden) {
+        this.wakeVisualLoop();
+        this.kinStartLoop();
+        if (this.settings.dockCollapsed) this.wakeFlaskHydroLoop();
+      } else {
+        this.stopFlaskHydroLoop();
+        this.stopIslandLiveSpectrogram();
       }
     });
     this.registerDomEvent(window, "focus", () => {
@@ -2847,16 +3129,40 @@ class AlchemyFlowPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("layout-change", () => {
         setTimeout(() => {
+          if (this._unloaded) return;
+          this.markNarrowPanes();
           this.updateTaskProgressBar();
           this.injectGraphViewHUD();
+          this.wakeVisualLoop();
         }, 150);
       })
     );
+    // Only the note on screen matters here, and a burst of cache updates (typing, sync, indexing) is
+    // folded into one refresh.
     this.registerEvent(
-      this.app.metadataCache.on("changed", () => {
-        this.updateTaskProgressBar();
+      this.app.metadataCache.on("changed", (file) => {
+        const active = this.app.workspace.getActiveFile();
+        if (!active || !file || file.path !== active.path) return;
+        if (this.progressRefreshTimer) clearTimeout(this.progressRefreshTimer);
+        this.progressRefreshTimer = setTimeout(() => {
+          this.progressRefreshTimer = null;
+          if (!this._unloaded) this.updateTaskProgressBar();
+        }, 350);
       })
     );
+    this.registerEvent(
+      this.app.workspace.on("resize", () => {
+        if (this.narrowPaneFrame) return;
+        this.narrowPaneFrame = requestAnimationFrame(() => {
+          this.narrowPaneFrame = null;
+          if (!this._unloaded) this.markNarrowPanes();
+        });
+      })
+    );
+    // Stamps, seals and stickers are stored by note path: follow a note when it is renamed or moved,
+    // drop its records when it is deleted.
+    this.registerEvent(this.app.vault.on("rename", (file, oldPath) => this.rekeyNoteRecords(oldPath, file.path)));
+    this.registerEvent(this.app.vault.on("delete", (file) => this.rekeyNoteRecords(file.path, null)));
     this.registerDomEvent(document, "click", (e) => {
       if (e.target && e.target.classList && e.target.classList.contains("task-list-item-checkbox")) {
         const isChecked = e.target.checked || e.target.getAttribute("data-task") === "x";
@@ -2882,14 +3188,14 @@ class AlchemyFlowPlugin extends Plugin {
         this.toggleMode("none");
         new Notice("Alchemy Craft: Pointer / Marker deactivated");
       } else if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z") && !e.shiftKey) {
-        if (this.mode !== "none" || (this.history && this.history.length > 0)) {
+        if (this.mode !== "none") {
           this.undo();
         }
       } else if (
         (e.ctrlKey || e.metaKey) &&
         (e.key === "y" || e.key === "Y" || ((e.key === "z" || e.key === "Z") && e.shiftKey))
       ) {
-        if (this.mode !== "none" || (this.redoHistory && this.redoHistory.length > 0)) {
+        if (this.mode !== "none") {
           this.redo();
         }
       }
@@ -2897,25 +3203,48 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.setupTactileKeystrokesAndRipples();
     this.setupMagicCursorLamp();
-    if (this.settings.showEqualizer !== false) {
-      setTimeout(() => this.startWindowsWasapiLoopbackBridge(), 300);
-    }
     this.addSettingTab(new AlchemyFlowSettingTab(this.app, this));
     setTimeout(() => {
+      if (this._unloaded) return;
       this.injectGraphViewHUD();
       this.renderNoteWaxSealOverlay();
       this.updateReadingPacerState();
+      this.fitDockToWindow();
     }, 400);
 
     // Time Capsules: announce sealed notes whose unlock date has arrived
     this.app.workspace.onLayoutReady(() => {
-      setTimeout(() => this.announceReadyTimeCapsules(), 1500);
-      setTimeout(() => this.offerInteractiveTourOnce(), 2200);
+      try {
+        if (typeof this.decorateSidebarFileExplorer === 'function') {
+          this.decorateSidebarFileExplorer();
+          setTimeout(() => !this._unloaded && this.decorateSidebarFileExplorer(), 300);
+          setTimeout(() => !this._unloaded && this.decorateSidebarFileExplorer(), 1200);
+        }
+        if (typeof this.setupSidebarObserver === 'function') {
+          this.setupSidebarObserver();
+        }
+      } catch (err) {
+        console.error("[Alchemy Craft] startup sidebar error:", err);
+      }
+      setTimeout(() => !this._unloaded && this.announceReadyTimeCapsules(), 1500);
+      setTimeout(() => !this._unloaded && this.offerInteractiveTourOnce(), 2200);
       this.startAutopilotAlarmScheduler();
+      // Decorate the note that is already open (enabling the plugin fires no file-open event).
+      setTimeout(() => {
+        if (this._unloaded) return;
+        this.markNarrowPanes();
+        this.updateTaskProgressBar();
+      }, 300);
+      // Plugin CSS and fonts are in by now, so the measured dock width is final.
+      setTimeout(() => this.fitDockToWindow(), 800);
+      // PC audio stays connected between sessions until the user disconnects it.
+      if (this.settings.systemAudioAutoConnect && this.settings.showEqualizer !== false) {
+        this.startSystemAudioCapture(true);
+      }
     });
   }
 
-  // --- 🏮 1. MAGIC CURSOR LANTERN (LUMINA LAMP — DYNAMIC LIGHTING & 3D SHADOWS) ---
+  // --- 1. MAGIC CURSOR LANTERN (LUMINA LAMP — DYNAMIC LIGHTING & 3D SHADOWS) ---
   isPointInsideActiveNoteArea(x, y) {
     // Check if (x, y) is inside a markdown note view-content and not over the dock or sidebars
     if (this.dockEl) {
@@ -2991,7 +3320,7 @@ class AlchemyFlowPlugin extends Plugin {
       }
       this.targetLampX = e.clientX;
       this.targetLampY = e.clientY;
-      // Pure GPU hardware-composited translate3d (0% CPU, 0 DOM style invalidations, 240 FPS!)
+      // The beam is one composited layer moved with translate3d: no layout, no repaint.
       if (this.settings.magicLamp && this.lampBeamEl) {
         this.lampBeamEl.style.transform = `translate3d(${e.clientX - 2500}px, ${e.clientY - 32 - 2500}px, 0)`;
       }
@@ -3006,7 +3335,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.updateDockUI();
     new Notice(
       this.settings.magicLamp
-        ? "Smart LED Cursor Lamp ON (GPU 144 FPS)"
+        ? "Smart LED Cursor Lamp ON"
         : "Smart LED Cursor Lamp OFF"
     );
   }
@@ -3177,7 +3506,69 @@ class AlchemyFlowPlugin extends Plugin {
     this.wakeOverlayCanvas();
   }
 
-  // --- 🎚️ 3. NATIVE ELECTRON DESKTOP SYSTEM AUDIO LOOPBACK (TELEGRAM / YOUTUBE / SPOTIFY) & 4-MODE EQUALIZER ---
+  // --- 3. NATIVE ELECTRON DESKTOP SYSTEM AUDIO LOOPBACK (TELEGRAM / YOUTUBE / SPOTIFY) & 4-MODE EQUALIZER ---
+  async cycleAmbientSound(direction = 1) {
+    const list = AMBIENT_SOUNDSCAPES.map((s) => s.id);
+    const cur = this.settings.ambientSound || "off";
+    let curIdx = list.indexOf(cur);
+    let nextIdx;
+    if (curIdx === -1) {
+      nextIdx = direction > 0 ? 0 : list.length - 1;
+    } else {
+      nextIdx = (curIdx + direction + list.length) % list.length;
+    }
+    const nextId = list[nextIdx];
+    await this.setAmbientSound(nextId);
+    const soundObj = AMBIENT_SOUNDSCAPES[nextIdx];
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const soundName = soundObj ? (isRu ? soundObj.ru : soundObj.en) : nextId;
+    this.showIslandTrackCapsule(soundName, null, undefined, { mode: "switch", dir: direction });
+  }
+
+  showIslandTrackCapsule(trackName, iconSvg, volPct, morphOpts = null) {
+    if (!this.eqWrap) return;
+    let island = this.eqWrap.querySelector(".artcraft-island-capsule");
+    if (!island) {
+      island = document.createElement("div");
+      island.className = "artcraft-island-capsule";
+      this.eqWrap.appendChild(island);
+    }
+
+    const oldBridge = this.eqWrap.querySelector(".island-gooey-bridge");
+    if (oldBridge) oldBridge.remove();
+
+    const vol = volPct !== undefined ? volPct : (this.settings.audioVolume !== undefined ? this.settings.audioVolume : 75);
+    island.innerHTML = `
+      <span class="island-live-dot"></span>
+      <div class="island-track-title">${escHtml(trackName)}</div>
+      <div class="island-vol-badge" style="--vol-fill:${vol}%">${vol}%</div>
+    `;
+
+    island.classList.remove("is-hiding");
+    island.classList.add("is-visible");
+
+    island.onclick = (e) => {
+      e.stopPropagation();
+      this.toggleSonicPopover(this.eqWrap);
+    };
+
+    if (this._islandHideTimer) clearTimeout(this._islandHideTimer);
+    this._islandHideTimer = setTimeout(() => {
+      if (island && !island.matches(":hover") && (!this.eqWrap || !this.eqWrap.matches(":hover"))) {
+        island.classList.remove("is-visible");
+      }
+    }, 2400);
+  }
+
+  startIslandLiveSpectrogram() {}
+
+  stopIslandLiveSpectrogram() {
+    if (this._islandSpecRaf) {
+      cancelAnimationFrame(this._islandSpecRaf);
+      this._islandSpecRaf = null;
+    }
+  }
+
   async setAmbientSound(val) {
     this.settings.ambientSound = val;
     await this.saveSettings();
@@ -3190,6 +3581,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   openSonicStudioModal() {
+    this.closeAllDockPopovers();
     if (this.activeSonicModal) {
       this.activeSonicModal.close();
       this.activeSonicModal = null;
@@ -3201,6 +3593,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   async applyFocusRecipe(recipeId) {
+    this.settings.timerMode = "pomodoro"; // a recipe is a timed sprint, never a count-up stopwatch
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     this.activeRecipeId = recipeId;
     if (recipeId === "morning_cappuccino") {
@@ -3236,14 +3629,524 @@ class AlchemyFlowPlugin extends Plugin {
     }
     await this.saveSettings();
     this.applyBodyClasses();
+    this.updateLampGpuStyle(); // the recipe changed lamp colour and shape
     this.updateDockUI();
     this.updateEqualizerPillUI();
+  }
+
+  closeAllDockPopovers(except = null) {
+    if (except !== "pomo") {
+      if (this.pomoPopoverCloseHandler) {
+        document.removeEventListener("pointerdown", this.pomoPopoverCloseHandler);
+        this.pomoPopoverCloseHandler = null;
+      }
+      if (this.pomoPopoverEl) {
+        this.pomoPopoverEl.remove();
+        this.pomoPopoverEl = null;
+      }
+    }
+    if (except !== "focus") {
+      if (this.focusPopoverCloseHandler) {
+        document.removeEventListener("pointerdown", this.focusPopoverCloseHandler);
+        this.focusPopoverCloseHandler = null;
+      }
+      if (this.focusPopoverEl) {
+        this.focusPopoverEl.remove();
+        this.focusPopoverEl = null;
+      }
+    }
+    if (except !== "sonic") {
+      if (this.sonicPopoverCloseHandler) {
+        document.removeEventListener("pointerdown", this.sonicPopoverCloseHandler);
+        this.sonicPopoverCloseHandler = null;
+      }
+      if (this.sonicPopoverEl) {
+        this.sonicPopoverEl.remove();
+        this.sonicPopoverEl = null;
+      }
+    }
+    if (except !== "laser") {
+      if (this.laserPopoverCloseHandler) {
+        document.removeEventListener("pointerdown", this.laserPopoverCloseHandler);
+        this.laserPopoverCloseHandler = null;
+      }
+      if (this.laserPopoverEl) {
+        this.laserPopoverEl.remove();
+        this.laserPopoverEl = null;
+      }
+    }
+    if (except !== "draw") {
+      if (this.drawPopoverCloseHandler) {
+        document.removeEventListener("pointerdown", this.drawPopoverCloseHandler);
+        this.drawPopoverCloseHandler = null;
+      }
+      if (this.drawPopoverEl) {
+        this.drawPopoverEl.remove();
+        this.drawPopoverEl = null;
+      }
+    }
+    if (this.activePopoverTetherEl) {
+      this.activePopoverTetherEl.remove();
+      this.activePopoverTetherEl = null;
+    }
+  }
+
+  toggleLaserPopover(anchorBtn) {
+    if (this.laserPopoverEl) {
+      this.closeAllDockPopovers();
+      return;
+    }
+    this.closeAllDockPopovers("laser");
+
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const pop = document.createElement("div");
+    pop.className = "artcraft-pomodoro-popover artcraft-laser-popover";
+    pop.addEventListener("pointerdown", (e) => e.stopPropagation());
+    pop.addEventListener("click", (e) => e.stopPropagation());
+    this.laserPopoverEl = pop;
+
+    const laserColors = [
+      { id: "#EF4444", label: isRu ? "Рубин" : "Crimson" },
+      { id: "#69BD28", label: isRu ? "Алхимия" : "Emerald" },
+      { id: "#2563EB", label: isRu ? "Сапфир" : "Sapphire" },
+      { id: "#F59E0B", label: isRu ? "Янтарь" : "Amber" },
+      { id: "#A855F7", label: isRu ? "Аметист" : "Amethyst" },
+      { id: "#06B6D4", label: isRu ? "Циан" : "Cyan" },
+    ];
+    const laserSizes = [
+      { val: 4, label: isRu ? "Тонкий · 4px" : "Fine · 4px" },
+      { val: 6, label: isRu ? "Средний · 6px" : "Medium · 6px" },
+      { val: 10, label: isRu ? "Крупный · 10px" : "Bold · 10px" },
+      { val: 14, label: isRu ? "Прожектор · 14px" : "Beam · 14px" },
+    ];
+    const trailModes = [
+      { val: 220, label: isRu ? "Короткий" : "Short" },
+      { val: 450, label: isRu ? "Средний" : "Medium" },
+      { val: 850, label: isRu ? "Комета" : "Comet" },
+    ];
+
+    const renderLaser = () => {
+      const curSize = this.settings.laserSize || 6;
+      const curColor = this.settings.laserColor || this.settings.strokeColor || "#EF4444";
+      const curTrail = this.settings.laserTrailMs || 450;
+      const isLaserOn = this.mode === "laser";
+
+      pop.innerHTML = `
+        <div class="pomo-pop-head">
+          <div class="pomo-pop-time-wrap">
+            <span class="pomo-pop-big-digits" style="font-size:14.5px;letter-spacing:0;">${isRu ? "Лазерная указка" : "Laser Pointer Studio"}</span>
+            <span class="pomo-pop-status-badge ${isLaserOn ? "" : "is-break"}">${isLaserOn ? (isRu ? "Активен" : "Active") : (isRu ? "Готов" : "Ready")}</span>
+          </div>
+          <div class="pomo-pop-actions">
+            <button class="pomo-pop-btn" id="laser-toggle-mode-btn">
+              ${isLaserOn ? (isRu ? "Выключить" : "Turn Off") : (isRu ? "Включить" : "Turn On")}
+            </button>
+          </div>
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Цвет луча" : "Laser Beam Color"}</div>
+        <div class="artcraft-popover-swatch-row">
+          ${laserColors.map((c) => `
+            <button class="artcraft-pop-swatch ${curColor.toLowerCase() === c.id.toLowerCase() ? "is-active" : ""}" data-laser-color="${c.id}" title="${c.label}" style="background:${c.id};"></button>
+          `).join("")}
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Размер точки и луча" : "Beam Size & Thickness"}</div>
+        <div class="pomo-pop-chips-grid" style="grid-template-columns: repeat(2, 1fr);">
+          ${laserSizes.map((s) => `
+            <div class="pomo-pop-chip ${curSize === s.val ? "is-active" : ""}" data-laser-size="${s.val}">
+              ${s.label}
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Длина шлейфа" : "Comet Trail Length"}</div>
+        <div class="pomo-pop-chips-grid">
+          ${trailModes.map((t) => `
+            <div class="pomo-pop-chip ${curTrail === t.val ? "is-active" : ""}" data-laser-trail="${t.val}">
+              ${t.label}
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      pop.querySelector("#laser-toggle-mode-btn")?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        this.toggleMode(this.mode === "laser" ? "none" : "laser");
+        renderLaser();
+      });
+
+      pop.querySelectorAll("[data-laser-color]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          const col = el.getAttribute("data-laser-color") || "#EF4444";
+          this.settings.laserColor = col;
+          this.settings.strokeColor = col;
+          await this.saveSettings();
+          if (this.mode !== "laser") this.toggleMode("laser");
+          this.updateDockUI();
+          renderLaser();
+        });
+      });
+
+      pop.querySelectorAll("[data-laser-size]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          this.settings.laserSize = parseInt(el.getAttribute("data-laser-size"), 10) || 6;
+          await this.saveSettings();
+          if (this.mode !== "laser") this.toggleMode("laser");
+          renderLaser();
+        });
+      });
+
+      pop.querySelectorAll("[data-laser-trail]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          this.settings.laserTrailMs = parseInt(el.getAttribute("data-laser-trail"), 10) || 450;
+          await this.saveSettings();
+          if (this.mode !== "laser") this.toggleMode("laser");
+          renderLaser();
+        });
+      });
+    };
+
+    renderLaser();
+    document.body.appendChild(pop);
+    this.positionDockPopover(pop, anchorBtn || this.btnLaser, 310);
+
+    const closeHandler = (e) => {
+      if (!e.target || !e.target.isConnected) return;
+      if (this.laserPopoverEl && !this.laserPopoverEl.contains(e.target) && (!anchorBtn || !anchorBtn.contains(e.target))) {
+        this.closeAllDockPopovers();
+      }
+    };
+    this.laserPopoverCloseHandler = closeHandler;
+    setTimeout(() => {
+      if (this.laserPopoverCloseHandler === closeHandler) {
+        document.addEventListener("pointerdown", closeHandler);
+      }
+    }, 40);
+  }
+
+  toggleDrawPopover(anchorBtn) {
+    if (this.drawPopoverEl) {
+      this.closeAllDockPopovers();
+      return;
+    }
+    this.closeAllDockPopovers("draw");
+
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const pop = document.createElement("div");
+    pop.className = "artcraft-pomodoro-popover artcraft-draw-popover";
+    pop.addEventListener("pointerdown", (e) => e.stopPropagation());
+    pop.addEventListener("click", (e) => e.stopPropagation());
+    this.drawPopoverEl = pop;
+
+    const drawColors = [
+      { id: "#2563EB", label: isRu ? "Сапфир" : "Sapphire" },
+      { id: "#69BD28", label: isRu ? "Изумруд" : "Emerald" },
+      { id: "#F59E0B", label: isRu ? "Янтарь" : "Amber" },
+      { id: "#EF4444", label: isRu ? "Рубин" : "Crimson" },
+      { id: "#8B5CF6", label: isRu ? "Аметист" : "Amethyst" },
+      { id: "#EC4899", label: isRu ? "Роза" : "Rose" },
+      { id: "#06B6D4", label: isRu ? "Циан" : "Cyan" },
+      { id: "#1E293B", label: isRu ? "Тушь" : "Ink" },
+    ];
+    const drawSizes = [
+      { val: 2, label: "2px · Fine" },
+      { val: 4, label: "4px · Pen" },
+      { val: 8, label: "8px · Bold" },
+      { val: 16, label: "16px · Marker" },
+    ];
+    const drawStyles = [
+      { id: "pen", label: isRu ? "✒️ Перо (Чёткое)" : "✒️ Smooth Pen", op: 92 },
+      { id: "highlighter", label: isRu ? "🖍️ Текстовыделитель" : "🖍️ Highlighter", op: 38 },
+    ];
+
+    const renderDraw = () => {
+      const curSize = this.settings.drawSize || 4;
+      const curColor = this.settings.drawColor || this.settings.strokeColor || "#2563EB";
+      const curStyle = this.settings.drawStyle || "pen";
+      const isDrawOn = this.mode === "draw";
+
+      pop.innerHTML = `
+        <div class="pomo-pop-head">
+          <div class="pomo-pop-time-wrap">
+            <span class="pomo-pop-big-digits" style="font-size:14.5px;letter-spacing:0;">${isRu ? "Кисть и Маркер" : "Draw & Marker Studio"}</span>
+            <span class="pomo-pop-status-badge ${isDrawOn ? "" : "is-break"}">${isDrawOn ? (isRu ? "Рисование" : "Drawing") : (isRu ? "Готов" : "Ready")}</span>
+          </div>
+          <div class="pomo-pop-actions">
+            <button class="pomo-pop-btn" id="draw-toggle-mode-btn">
+              ${isDrawOn ? (isRu ? "Выкл" : "Stop") : (isRu ? "Рисовать" : "Draw")}
+            </button>
+          </div>
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Режим инструмента" : "Brush Mode"}</div>
+        <div class="pomo-pop-chips-grid" style="grid-template-columns: repeat(2, 1fr);">
+          ${drawStyles.map((st) => `
+            <div class="pomo-pop-chip ${curStyle === st.id ? "is-active" : ""}" data-draw-style="${st.id}" data-draw-op="${st.op}">
+              ${st.label}
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Цвет чернил" : "Ink Color"}</div>
+        <div class="artcraft-popover-swatch-row">
+          ${drawColors.map((c) => `
+            <button class="artcraft-pop-swatch ${curColor.toLowerCase() === c.id.toLowerCase() ? "is-active" : ""}" data-draw-color="${c.id}" title="${c.label}" style="background:${c.id};"></button>
+          `).join("")}
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Толщина линии" : "Stroke Thickness"}</div>
+        <div class="pomo-pop-chips-grid" style="grid-template-columns: repeat(2, 1fr);">
+          ${drawSizes.map((s) => `
+            <div class="pomo-pop-chip ${curSize === s.val ? "is-active" : ""}" data-draw-size="${s.val}">
+              ${s.label}
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="pomo-pop-actions" style="margin-top:8px;justify-content:space-between;width:100%;">
+          <button class="pomo-pop-btn is-secondary" id="draw-pop-undo" style="flex:1;justify-content:center;">↩ ${isRu ? "Отменить" : "Undo"}</button>
+          <button class="pomo-pop-btn is-secondary" id="draw-pop-clear" style="flex:1;justify-content:center;">✕ ${isRu ? "Очистить всё" : "Clear All"}</button>
+        </div>
+      `;
+
+      pop.querySelector("#draw-toggle-mode-btn")?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        this.toggleMode(this.mode === "draw" ? "none" : "draw");
+        renderDraw();
+      });
+
+      pop.querySelectorAll("[data-draw-style]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          const st = el.getAttribute("data-draw-style") || "pen";
+          this.settings.drawStyle = st;
+          this.settings.drawOpacity = parseInt(el.getAttribute("data-draw-op"), 10) || (st === "highlighter" ? 38 : 92);
+          if (st === "highlighter" && (this.settings.drawSize || 4) < 12) {
+            this.settings.drawSize = 16;
+          } else if (st === "pen" && (this.settings.drawSize || 4) >= 16) {
+            this.settings.drawSize = 4;
+          }
+          await this.saveSettings();
+          if (this.mode !== "draw") this.toggleMode("draw");
+          renderDraw();
+        });
+      });
+
+      pop.querySelectorAll("[data-draw-color]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          const col = el.getAttribute("data-draw-color") || "#2563EB";
+          this.settings.drawColor = col;
+          this.settings.strokeColor = col;
+          await this.saveSettings();
+          if (this.mode !== "draw") this.toggleMode("draw");
+          this.updateDockUI();
+          renderDraw();
+        });
+      });
+
+      pop.querySelectorAll("[data-draw-size]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          this.settings.drawSize = parseInt(el.getAttribute("data-draw-size"), 10) || 4;
+          await this.saveSettings();
+          if (this.mode !== "draw") this.toggleMode("draw");
+          renderDraw();
+        });
+      });
+
+      pop.querySelector("#draw-pop-undo")?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        this.undo();
+      });
+
+      pop.querySelector("#draw-pop-clear")?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        this.clearAllAnnotations();
+      });
+    };
+
+    renderDraw();
+    document.body.appendChild(pop);
+    this.positionDockPopover(pop, anchorBtn || this.btnDraw, 320);
+
+    const closeHandler = (e) => {
+      if (!e.target || !e.target.isConnected) return;
+      if (this.drawPopoverEl && !this.drawPopoverEl.contains(e.target) && (!anchorBtn || !anchorBtn.contains(e.target))) {
+        this.closeAllDockPopovers();
+      }
+    };
+    this.drawPopoverCloseHandler = closeHandler;
+    setTimeout(() => {
+      if (this.drawPopoverCloseHandler === closeHandler) {
+        document.addEventListener("pointerdown", closeHandler);
+      }
+    }, 40);
+  }
+
+  positionDockPopover(popEl, anchorBtn, popW = 340) {
+    if (!popEl || !anchorBtn) return;
+    const btnRect = anchorBtn.getBoundingClientRect();
+    const dockRect = this.dockEl ? this.dockEl.getBoundingClientRect() : btnRect;
+    const isVertical = !!(this.dockEl && this.dockEl.classList.contains("is-vertical"));
+
+    popEl.style.left = "";
+    popEl.style.right = "";
+    popEl.style.top = "";
+    popEl.style.bottom = "";
+
+    if (isVertical) {
+      const rightGap = Math.max(16, window.innerWidth - dockRect.left + 12);
+      popEl.style.right = `${rightGap}px`;
+      const popH = popEl.offsetHeight || 340;
+      const idealTop = btnRect.top + btnRect.height / 2 - popH / 2;
+      const clampedTop = Math.max(16, Math.min(window.innerHeight - popH - 16, idealTop));
+      popEl.style.top = `${Math.round(clampedTop)}px`;
+    } else {
+      let left = btnRect.left + btnRect.width / 2 - popW / 2;
+      if (left < 16) left = 16;
+      if (left + popW > window.innerWidth - 16) left = window.innerWidth - popW - 16;
+      popEl.style.left = `${Math.round(left)}px`;
+      const bottomGap = Math.max(76, window.innerHeight - dockRect.top + 12);
+      popEl.style.bottom = `${Math.round(bottomGap)}px`;
+    }
+  }
+
+  toggleSonicPopover(anchorBtn) {
+    if (this.sonicPopoverEl) {
+      this.closeAllDockPopovers();
+      return;
+    }
+    this.closeAllDockPopovers("sonic");
+
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const pop = document.createElement("div");
+    pop.className = "artcraft-pomodoro-popover artcraft-sonic-popover";
+    pop.addEventListener("pointerdown", (e) => e.stopPropagation());
+    pop.addEventListener("click", (e) => e.stopPropagation());
+    this.sonicPopoverEl = pop;
+
+    const eqModes = [
+      { id: "craft", ru: "01 · Сейсмограф", en: "01 · Seismograph" },
+      { id: "dna", ru: "02 · Матрица", en: "02 · Matrix" },
+      { id: "bars", ru: "03 · Ризограф", en: "03 · Risograph" },
+      { id: "wave", ru: "04 · Лента", en: "04 · Silk Wave" },
+      { id: "orb", ru: "05 · Оригами", en: "05 · Origami" },
+      { id: "ferro", ru: "06 · Струны", en: "06 · Strings" },
+    ];
+
+    const quickSounds = [
+      { id: "off", ru: "Выкл", en: "Off" },
+      { id: "rain", ru: "Дождь", en: "Rain" },
+      { id: "brown", ru: "Шум", en: "Brown" },
+      { id: "ocean", ru: "Прибой", en: "Ocean" },
+      { id: "fire", ru: "Камин", en: "Hearth" },
+      { id: "cafe", ru: "Кофейня", en: "Cafe" },
+      { id: "stream", ru: "Ручей", en: "Stream" },
+      { id: "gamma40", ru: "40 Гц", en: "40 Hz" },
+      { id: "nordic_wind", ru: "Ветер", en: "Wind" },
+    ];
+
+    const renderSonic = () => {
+      const curMode = this.settings.eqMode || "craft";
+      const curSnd = this.settings.ambientSound || "off";
+      const curVol = this.settings.audioVolume !== undefined ? this.settings.audioVolume : 75;
+      const isPcSync = !!this.desktopAudioNodes;
+
+      pop.innerHTML = `
+        <div class="pomo-pop-head">
+          <div class="pomo-pop-time-wrap">
+            <span class="pomo-pop-big-digits" style="font-size:15px;letter-spacing:0;">${isRu ? "Аудио и Эквалайзер" : "Sonic & Equalizer"}</span>
+            <span class="pomo-pop-status-badge ${isPcSync || curSnd !== "off" ? "" : "is-break"}">${
+              isPcSync ? (isRu ? "Звук ПК" : "PC Sync") : curSnd !== "off" ? `${curVol}%` : (isRu ? "Тишина" : "Idle")
+            }</span>
+          </div>
+          <div class="pomo-pop-actions">
+            <button class="pomo-pop-btn" id="sonic-pc-sync-btn">
+              ${isPcSync ? (isRu ? "Откл. ПК" : "Stop PC") : (isRu ? "Звук ПК" : "PC Audio")}
+            </button>
+            <button class="pomo-pop-btn is-secondary" id="sonic-open-full-btn" title="${isRu ? "Открыть полную студию" : "Open full Sonic Studio"}">
+              ⋯
+            </button>
+          </div>
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Стиль эквалайзера" : "Equalizer Visualizer"}</div>
+        <div class="pomo-pop-chips-grid">
+          ${eqModes.map((m) => `
+            <div class="pomo-pop-chip ${curMode === m.id ? "is-active" : ""}" data-eq-mode="${m.id}">
+              ${isRu ? m.ru : m.en}
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Фоновый звук" : "Ambient Soundscape"} · ${curVol}%</div>
+        <div class="pomo-pop-chips-grid">
+          ${quickSounds.map((s) => `
+            <div class="pomo-pop-chip ${curSnd === s.id ? "is-active" : ""}" data-snd-id="${s.id}">
+              ${isRu ? s.ru : s.en}
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      pop.querySelector("#sonic-pc-sync-btn")?.addEventListener("click", async (ev) => {
+        ev.stopPropagation();
+        await this.toggleDesktopAudioCapture();
+        renderSonic();
+      });
+
+      pop.querySelector("#sonic-open-full-btn")?.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        this.openSonicStudioModal();
+      });
+
+      pop.querySelectorAll("[data-eq-mode]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          this.settings.eqMode = el.getAttribute("data-eq-mode") || "craft";
+          await this.saveSettings();
+          this.updateEqualizerPillUI();
+          renderSonic();
+        });
+      });
+
+      pop.querySelectorAll("[data-snd-id]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          const sid = el.getAttribute("data-snd-id") || "off";
+          await this.setAmbientSound(sid);
+          renderSonic();
+        });
+      });
+    };
+
+    renderSonic();
+    document.body.appendChild(pop);
+    this.positionDockPopover(pop, anchorBtn || this.eqWrap, 330);
+
+    const closeHandler = (e) => {
+      if (!e.target || !e.target.isConnected) return;
+      if (this.sonicPopoverEl && !this.sonicPopoverEl.contains(e.target) && (!anchorBtn || !anchorBtn.contains(e.target))) {
+        this.closeAllDockPopovers();
+      }
+    };
+    this.sonicPopoverCloseHandler = closeHandler;
+    setTimeout(() => {
+      if (this.sonicPopoverCloseHandler === closeHandler) {
+        document.addEventListener("pointerdown", closeHandler);
+      }
+    }, 40);
   }
 
   showAudioMenu(event) {
     if (event && event.preventDefault) event.preventDefault();
     if (event && event.stopPropagation) event.stopPropagation();
-    this.openSonicStudioModal();
+    this.toggleSonicPopover(this.eqWrap || (event && event.currentTarget));
   }
 
   applyAudioVolume(vol0to1) {
@@ -3307,348 +4210,269 @@ class AlchemyFlowPlugin extends Plugin {
     input.click();
   }
 
-  connectStreamToAnalyser(stream, type, gainVal = 2.8) {
+  // --- AUDIO SOURCE FOR THE EQUALIZER ---
+  // type "system" = what the PC is playing (Windows output loopback), "mic" = an input device.
+  connectStreamToAnalyser(stream, type) {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioCtx();
     if (ctx.state === "suspended") ctx.resume();
 
-    // Keep full stream (including Electron's required desktop video carrier track) playing in a hidden muted <video> sink
-    // so Windows WASAPI loopback never pauses the capture pump!
-    const sinkVideo = document.createElement("video");
-    sinkVideo.muted = true;
-    sinkVideo.autoplay = true;
-    sinkVideo.playsInline = true;
-    sinkVideo.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;";
-    document.body.appendChild(sinkVideo);
-    try {
-      sinkVideo.srcObject = stream;
-      sinkVideo.play().catch(() => {});
-    } catch (e) {}
-
-    // Extract an audio-only MediaStream for WebAudio's createMediaStreamSource (prevents Chromium stall on video tracks)
     const audioTracks = stream.getAudioTracks ? stream.getAudioTracks() : [];
     const audioOnlyStream = audioTracks.length > 0 ? new MediaStream(audioTracks) : stream;
-
-    const source = ctx.createMediaStreamSource(audioOnlyStream);
-    const preAmp = ctx.createGain();
-    preAmp.gain.value = gainVal;
+    let source;
+    try {
+      source = ctx.createMediaStreamSource(audioOnlyStream);
+    } catch (e) {
+      ctx.close();
+      throw e;
+    }
     const analyser = ctx.createAnalyser();
-    analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.70;
-    analyser.minDecibels = -110;
-    analyser.maxDecibels = -20;
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.55;
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = -12;
+    // The analyser is deliberately not routed to ctx.destination: captured sound must never be played back twice.
+    source.connect(analyser);
 
-    const silentGain = ctx.createGain();
-    silentGain.gain.value = 0;
-
-    source.connect(preAmp);
-    preAmp.connect(analyser);
-    analyser.connect(silentGain);
-    silentGain.connect(ctx.destination);
-
-    this.desktopAudioNodes = { ctx, stream, audioOnlyStream, source, analyser, silentGain, sinkAudio: sinkVideo, type };
+    const nodes = { ctx, stream, audioOnlyStream, source, analyser, type };
+    // If Windows drops the capture (output device unplugged or switched), release everything cleanly.
+    audioTracks.forEach((track) => {
+      track.addEventListener("ended", () => {
+        if (this.desktopAudioNodes === nodes) this.stopAudioCapture(true);
+      });
+    });
+    this.desktopAudioNodes = nodes;
     this.updateEqualizerPillUI();
   }
 
-  startWindowsWasapiLoopbackBridge() {
-    if (this.wasapiBridgeProc) return true;
+  // Multi-strategy PC System Audio Loopback for Obsidian Desktop (Electron 25-33+ on Windows WASAPI, macOS & Linux):
+  // 1. Queries electron.desktopCapturer for screen sourceId when available, then requests chromeMediaSource: "desktop".
+  //    CRITICAL: Keeps carrier video track muted (vt.enabled = false) instead of calling vt.stop(), because stopping
+  //    the carrier video track immediately terminates WASAPI loopback audio in Chromium/Electron!
+  // 2. Falls back to getDisplayMedia({ audio: true, systemAudio: "include" }) if desktop constraints are restricted.
+  // 3. Falls back to Loopback / Stereo Mix / VB-Cable / BlackHole input device or active DOM <audio>/<video> elements.
+  async openSystemLoopbackStream() {
+    if (!navigator.mediaDevices) return null;
+    let stream = null;
+
+    // Strategy A: Electron desktopCapturer sourceId + chromeMediaSource: "desktop"
+    let desktopSourceId = null;
     try {
-      const cp = null;
-      const os = window.require ? window.require("os") : null;
-      if (!cp || !os || os.platform() !== "win32") return false;
+      const electronMod = typeof window.require === "function" ? window.require("electron") : null;
+      const capturer =
+        (electronMod && electronMod.desktopCapturer) ||
+        (electronMod && electronMod.remote && electronMod.remote.desktopCapturer) ||
+        null;
+      if (capturer && typeof capturer.getSources === "function") {
+        const sources = await capturer.getSources({ types: ["screen"] });
+        if (Array.isArray(sources) && sources.length > 0 && sources[0].id) {
+          desktopSourceId = sources[0].id;
+        }
+      }
+    } catch (e) {}
 
-      // Native C# CoreAudio Multi-Endpoint Loopback Meter:
-      // Enumerates ALL active playback endpoints (eRender = 0, DEVICE_STATE_ACTIVE = 1) + default endpoints
-      // so whether music plays on USB headphones, speakers, HDMI monitor, or Bluetooth, it captures the live peak & stereo channels at 40 FPS
-      // and flushes Console.Out on every frame! Launched via -EncodedCommand (UTF-16LE Base64) to avoid any command-line escaping issues.
-      const csharpSource = [
-        "using System;",
-        "using System.Collections.Generic;",
-        "using System.Globalization;",
-        "using System.Runtime.InteropServices;",
-        "using System.Threading;",
-        "[Guid(\"BCDE0395-E52F-467C-8E3D-C4579291692E\"), ComImport] class MMDeviceEnumeratorComObject { }",
-        "[Guid(\"0BD7A1BE-7A1A-44DB-8397-CC5392387B5E\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
-        "interface IMMDeviceCollection { int GetCount(out uint pcDevices); int Item(uint nDevice, out IMMDevice ppDevice); }",
-        "[Guid(\"A95664D2-9614-4F35-A746-DE8DB63617E6\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
-        "interface IMMDeviceEnumerator { int EnumAudioEndpoints(int dataFlow, int dwStateMask, out IMMDeviceCollection ppDevices); int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppEndpoint); }",
-        "[Guid(\"D666063F-1587-4E43-81F1-B948E807363F\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
-        "interface IMMDevice { int Activate(ref Guid iid, int dwClsCtx, IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface); }",
-        "[Guid(\"C02216F6-8C67-4B5B-9D00-D008E73E0064\"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]",
-        "interface IAudioMeterInformation { int GetPeakValue(out float pfPeak); int GetMeteringChannelCount(out int pnChannelCount); int GetChannelsPeakValues(int u32ChannelCount, [Out] float[] afPeakValues); }",
-        "public class WinCoreAudioLoopback {",
-        "  private static List<IAudioMeterInformation> meters = new List<IAudioMeterInformation>();",
-        "  public static void Init() {",
-        "    meters.Clear();",
-        "    var enumerator = (IMMDeviceEnumerator)(new MMDeviceEnumeratorComObject());",
-        "    Guid iid = new Guid(\"C02216F6-8C67-4B5B-9D00-D008E73E0064\");",
-        "    try {",
-        "      IMMDeviceCollection col;",
-        "      enumerator.EnumAudioEndpoints(0, 1, out col);",
-        "      if (col != null) {",
-        "        uint count = 0; col.GetCount(out count);",
-        "        for (uint i = 0; i < count; i++) {",
-        "          try { IMMDevice d; col.Item(i, out d); object o; d.Activate(ref iid, 23, IntPtr.Zero, out o); if (o != null) meters.Add((IAudioMeterInformation)o); } catch {}",
-        "        }",
-        "      }",
-        "    } catch {}",
-        "    if (meters.Count == 0) {",
-        "      for (int role = 0; role < 3; role++) {",
-        "        try { IMMDevice d; enumerator.GetDefaultAudioEndpoint(0, role, out d); object o; d.Activate(ref iid, 23, IntPtr.Zero, out o); if (o != null) meters.Add((IAudioMeterInformation)o); } catch {}",
-        "      }",
-        "    }",
-        "  }",
-        "  public static void RunLoop() {",
-        "    Init();",
-        "    int tick = 0;",
-        "    while (true) {",
-        "      try {",
-        "        if (meters.Count == 0 || (++tick % 240 == 0)) Init();",
-        "        float bestP = 0f, bestL = 0f, bestR = 0f;",
-        "        for (int i = 0; i < meters.Count; i++) {",
-        "          float p = 0f; meters[i].GetPeakValue(out p);",
-        "          if (p > bestP) {",
-        "            bestP = p; bestL = p; bestR = p;",
-        "            int ch = 0; meters[i].GetMeteringChannelCount(out ch);",
-        "            if (ch >= 2 && ch <= 16) {",
-        "              float[] vals = new float[ch]; meters[i].GetChannelsPeakValues(ch, vals);",
-        "              bestL = vals[0]; bestR = vals[1];",
-        "            }",
-        "          }",
-        "        }",
-        "        Console.Out.WriteLine(bestP.ToString(\"F4\", CultureInfo.InvariantCulture) + \",\" + bestL.ToString(\"F4\", CultureInfo.InvariantCulture) + \",\" + bestR.ToString(\"F4\", CultureInfo.InvariantCulture));",
-        "        Console.Out.Flush();",
-        "      } catch { try { Init(); } catch {} }",
-        "      Thread.Sleep(25);",
-        "    }",
-        "  }",
-        "}"
-      ].join("\n");
+    if (navigator.mediaDevices.getUserMedia) {
+      const constraintVariants = [];
+      if (desktopSourceId) {
+        constraintVariants.push({
+          audio: {
+            mandatory: {
+              chromeMediaSource: "desktop",
+              chromeMediaSourceId: desktopSourceId,
+            },
+          },
+          video: {
+            mandatory: {
+              chromeMediaSource: "desktop",
+              chromeMediaSourceId: desktopSourceId,
+              minWidth: 16,
+              maxWidth: 32,
+              minHeight: 16,
+              maxHeight: 32,
+              maxFrameRate: 1,
+            },
+          },
+        });
+      }
+      constraintVariants.push({
+        audio: { mandatory: { chromeMediaSource: "desktop" } },
+        video: { mandatory: { chromeMediaSource: "desktop", maxWidth: 32, maxHeight: 32, maxFrameRate: 1 } },
+      });
 
-      const b64Cs = Buffer.from(csharpSource, "utf8").toString("base64");
-      const psBootstrap = `$cs = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${b64Cs}')); Add-Type -TypeDefinition $cs; [WinCoreAudioLoopback]::RunLoop()`;
-      const encodedPs = Buffer.from(psBootstrap, "utf16le").toString("base64");
+      for (let i = 0; i < constraintVariants.length; i++) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(constraintVariants[i]);
+          if (stream && stream.getAudioTracks().length > 0) break;
+          if (stream) stream.getTracks().forEach((tr) => tr.stop());
+          stream = null;
+        } catch (e) {
+          stream = null;
+        }
+      }
+    }
 
-      const proc = cp.spawn(
-        "powershell.exe",
-        ["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-EncodedCommand", encodedPs],
-        { windowsHide: true, stdio: ["ignore", "pipe", "ignore"] }
+    // Strategy B: Chromium getDisplayMedia with systemAudio: "include"
+    if (!stream && typeof navigator.mediaDevices.getDisplayMedia === "function") {
+      try {
+        stream = await navigator.mediaDevices.getDisplayMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+          },
+          video: { width: 32, height: 32, frameRate: 1 },
+          systemAudio: "include",
+        });
+        if (!stream || stream.getAudioTracks().length === 0) {
+          if (stream) stream.getTracks().forEach((tr) => tr.stop());
+          stream = null;
+        }
+      } catch (e) {
+        stream = null;
+      }
+    }
+
+    if (!stream) return null;
+
+    // Disable (do NOT stop!) carrier video tracks so Chromium keeps WASAPI audio loopback alive
+    stream.getVideoTracks().forEach((vt) => {
+      try {
+        vt.enabled = false;
+      } catch (e) {}
+    });
+
+    if (stream.getAudioTracks().length === 0) {
+      stream.getTracks().forEach((tr) => tr.stop());
+      return null;
+    }
+    return stream;
+  }
+
+  // Fallback where desktop loopback is unavailable: a "Stereo Mix", VB-Cable, BlackHole, or user-selected device
+  async openLoopbackInputDeviceStream() {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return null;
+      const savedDevId = this.settings.audioInputDeviceId;
+      if (savedDevId && savedDevId !== "auto") {
+        try {
+          return await navigator.mediaDevices.getUserMedia({
+            audio: { deviceId: { exact: savedDevId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            video: false,
+          });
+        } catch (e) {}
+      }
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const dev = devices.find(
+        (d) =>
+          d.kind === "audioinput" &&
+          /stereo mix|стерео микшер|смеситель|what u hear|loopback|blackhole|soundflower|voicemeeter|vb-audio|cable output|monitor|wasapi|системн/i.test(
+            d.label || ""
+          )
       );
-      this.wasapiBridgeProc = proc;
-      this.wasapiLoopbackLevels = { peak: 0, left: 0, right: 0, active: false, ts: 0 };
+      if (!dev) return null;
+      return await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: { exact: dev.deviceId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+        video: false,
+      });
+    } catch (e) {
+      return null;
+    }
+  }
 
-      let buf = "";
-      proc.stdout.on("data", (chunk) => {
-        buf += chunk.toString();
-        const lines = buf.split(/\r?\n/);
-        buf = lines.pop() || "";
-        for (let i = lines.length - 1; i >= 0; i--) {
-          const ln = lines[i].trim();
-          if (ln && ln.includes(",")) {
-            const parts = ln.split(",");
-            const pk = parseFloat(parts[0]) || 0;
-            const l = parseFloat(parts[1]) || pk;
-            const r = parseFloat(parts[2]) || pk;
-            this.wasapiLoopbackLevels = {
-              peak: pk,
-              left: l,
-              right: r,
-              active: pk > 0.0015,
-              ts: Date.now()
-            };
-            break;
-          }
+  // Hooks any playing HTML5 <audio> or <video> elements inside Obsidian so embedded media always drives the equalizer
+  connectPageMediaElementsToAnalyser() {
+    try {
+      const mediaEls = Array.from(document.querySelectorAll("audio, video"));
+      if (mediaEls.length === 0) return false;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return false;
+      if (!this._pageMediaCtx || this._pageMediaCtx.state === "closed") {
+        this._pageMediaCtx = new AudioCtx();
+        this._pageMediaAnalyser = this._pageMediaCtx.createAnalyser();
+        this._pageMediaAnalyser.fftSize = 2048;
+        this._pageMediaAnalyser.smoothingTimeConstant = 0.62;
+        this._pageMediaAnalyser.minDecibels = -95;
+        this._pageMediaAnalyser.maxDecibels = -12;
+        this._pageMediaAnalyser.connect(this._pageMediaCtx.destination);
+      }
+      if (this._pageMediaCtx.state === "suspended") this._pageMediaCtx.resume();
+      let hooked = 0;
+      mediaEls.forEach((el) => {
+        if (this.ambientNodes && this.ambientNodes.audioEl === el) return;
+        if (!el._artcraftMediaSource) {
+          try {
+            const srcNode = this._pageMediaCtx.createMediaElementSource(el);
+            srcNode.connect(this._pageMediaAnalyser);
+            el._artcraftMediaSource = srcNode;
+            hooked++;
+          } catch (e) {}
+        } else {
+          hooked++;
         }
       });
-      proc.on("exit", () => {
-        if (this.wasapiBridgeProc === proc) this.wasapiBridgeProc = null;
-      });
-      return true;
+      return hooked > 0;
     } catch (e) {
       return false;
     }
   }
 
-  stopWindowsWasapiLoopbackBridge() {
-    if (this.wasapiBridgeProc) {
-      try {
-        this.wasapiBridgeProc.kill();
-      } catch (e) {}
-      this.wasapiBridgeProc = null;
-    }
-    this.wasapiLoopbackLevels = null;
-  }
-
-  async startSystemAudioCapture() {
+  async startSystemAudioCapture(silent = false) {
     this.stopAudioCapture(true);
+    const seq = (this.captureSeq = (this.captureSeq || 0) + 1);
     const isRu = (this.settings.uiLanguage || "en") === "ru";
-    let stream = null;
-    const hasAudio = (s) => !!(s && s.getAudioTracks && s.getAudioTracks().length > 0);
-    const dropStream = (s) => {
-      try {
-        if (s) s.getTracks().forEach((tr) => tr.stop());
-      } catch (e) {}
-    };
-
-    // Start the native Windows CoreAudio WASAPI Loopback bridge immediately in parallel!
-    // This guarantees that on Windows (even with USB headsets, DACs, or Bluetooth headphones where WebRTC desktop loopback is blocked),
-    // the equalizer ALWAYS receives real-time desktop output audio from Telegram, YouTube, Spotify, etc.
-    const winBridgeStarted = this.startWindowsWasapiLoopbackBridge();
-
-    // If the user explicitly picked a hardware/virtual input device in Sonic Studio, honor it first
-    const savedDevice = this.settings.audioInputDeviceId;
-    if (savedDevice && savedDevice !== "auto") {
-      const ok = await this.startDeviceAudioCapture(savedDevice, true);
-      if (ok) return;
+    let stream = (await this.openSystemLoopbackStream()) || (await this.openLoopbackInputDeviceStream());
+    if (stream && (seq !== this.captureSeq || this._unloaded)) {
+      stream.getTracks().forEach((tr) => tr.stop());
+      return false;
     }
-
-    // Collect real desktop capture source ids via Electron desktopCapturer or IPC if available
-    const sourceIds = [];
-    try {
-      let electron = null;
-      try {
-        electron = window.require ? window.require("electron") : require("electron");
-      } catch (e) {}
-      const capturers = [];
-      if (electron && electron.desktopCapturer) capturers.push(electron.desktopCapturer);
-      if (electron && electron.remote && electron.remote.desktopCapturer) capturers.push(electron.remote.desktopCapturer);
-      for (const cap of capturers) {
-        try {
-          const srcs = await cap.getSources({ types: ["screen"], thumbnailSize: { width: 0, height: 0 } });
-          (srcs || []).forEach((s) => s && s.id && sourceIds.push(s.id));
-          if (sourceIds.length) break;
-        } catch (e) {}
-      }
-      // Safe standard screen capture IDs
-    } catch (e) {}
-    ["screen:0:0", "screen:1:0", "screen:65537:0", "screen:65539:0"].forEach((id) => {
-      if (!sourceIds.includes(id)) sourceIds.push(id);
-    });
-
-    // Strategy 1: Clean Chromium desktop loopback WITHOUT minWidth/maxWidth in mandatory (which caused OverconstrainedError!)
-    const constraintCandidates = [
-      {
-        audio: { mandatory: { chromeMediaSource: "desktop" } },
-        video: { mandatory: { chromeMediaSource: "desktop" } },
-      },
-      ...sourceIds.map((id) => ({
-        audio: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: id } },
-        video: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: id } },
-      })),
-      ...sourceIds.map((id) => ({
-        audio: { mandatory: { chromeMediaSource: "desktop" } },
-        video: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: id } },
-      })),
-    ];
-
-    for (const c of constraintCandidates) {
-      if (hasAudio(stream)) break;
-      try {
-        const s = await navigator.mediaDevices.getUserMedia(c);
-        if (hasAudio(s)) {
-          stream = s;
-          break;
-        } else {
-          dropStream(s);
-        }
-      } catch (e1) {}
-    }
-
-    // Strategy 1B: Chromium / Electron 25+ getDisplayMedia with system audio loopback (immediately stops video track so only system audio remains)
-    if (!hasAudio(stream) && navigator.mediaDevices && typeof navigator.mediaDevices.getDisplayMedia === "function" && !winBridgeStarted) {
-      try {
-        const dispStream = await navigator.mediaDevices.getDisplayMedia({
-          audio: {
-            echoCancellation: false,
-            noiseSuppression: false,
-            autoGainControl: false,
-            suppressLocalAudioPlayback: false
-          },
-          video: { width: 1, height: 1, frameRate: 1 }
-        });
-        if (dispStream && dispStream.getVideoTracks) {
-          dispStream.getVideoTracks().forEach((vt) => {
-            try { vt.stop(); dispStream.removeTrack(vt); } catch (e) {}
-          });
-        }
-        if (hasAudio(dispStream)) {
-          stream = dispStream;
-        } else {
-          dropStream(dispStream);
-        }
-      } catch (eDisp) {}
-    }
-
-    // Strategy 2: Stereo Mix / What U Hear / virtual loopback input device if present
-    if (!hasAudio(stream) && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const loopbackDev = devices.find(
-          (d) =>
-            d.kind === "audioinput" &&
-            /stereo mix|смеситель|стерео микшер|loopback|cable|what u hear|blackhole|soundflower|monitor|voicemeeter/i.test(d.label || "")
-        );
-        if (loopbackDev) {
-          const s = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              deviceId: { exact: loopbackDev.deviceId },
-              echoCancellation: false,
-              noiseSuppression: false,
-              autoGainControl: false,
-            },
-            video: false,
-          });
-          if (hasAudio(s)) {
-            stream = s;
-          }
-        }
-      } catch (e0) {}
-    }
-
-    if (hasAudio(stream)) {
-      try {
-        this.connectStreamToAnalyser(stream, "system", 3.4);
-        new Notice(t("audioConnectedNotice", this));
-        return;
-      } catch (err) {
-        dropStream(stream);
-      }
-    }
-
-    // Strategy 3: If Windows CoreAudio WASAPI Loopback Bridge is running, create a live WebAudio Analyser driven by the Windows master output endpoint!
-    // Also attach optional ambient mic without killing WASAPI bridge so both PC loopback and room acoustics work seamlessly!
-    if (winBridgeStarted) {
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioCtx();
-        if (ctx.state === "suspended") ctx.resume();
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.65;
+    if (!stream) {
+      // Try hooking in-app media elements or microphone fallback when explicit user action requested capture
+      const hookedPageMedia = this.connectPageMediaElementsToAnalyser();
+      if (hookedPageMedia) {
         this.desktopAudioNodes = {
-          ctx,
-          analyser,
+          ctx: this._pageMediaCtx,
+          analyser: this._pageMediaAnalyser,
           type: "system",
-          strategy: "win-coreaudio-loopback"
         };
         this.updateEqualizerPillUI();
+        if (!silent) new Notice(isRu ? "Эквалайзер подключён к медиа-потоку Obsidian!" : "Equalizer connected to Obsidian media stream!");
+        return true;
+      }
+      if (!silent) {
+        // Automatic fallback to microphone/input capture so the equalizer immediately responds to room/speaker sound
+        const micOk = await this.startMicAudioCapture();
+        if (micOk) return true;
         new Notice(
           isRu
-            ? "🔊 Системный звук ПК подключён (Windows WASAPI Loopback: YouTube, Spotify, браузер и игры синхронизированы с эквалайзером)"
-            : "🔊 PC System Audio connected (Windows WASAPI Loopback synced to equalizer)"
+            ? "Системный звук на этом устройстве недоступен. Выберите вход в Sonic Studio."
+            : "System audio is not available on this device. Select an input in Sonic Studio."
         );
-        return;
-      } catch (e) {}
+      }
+      return false;
     }
-
-    // Final fallback: Microphone / Ambient pickup (preserve WASAPI bridge if it is still initializing!)
-    return this.startMicAudioCapture(true, true);
+    try {
+      this.connectStreamToAnalyser(stream, "system");
+    } catch (err) {
+      stream.getTracks().forEach((tr) => tr.stop());
+      if (!silent) new Notice(isRu ? "Не удалось подключить системный звук." : "Could not connect system audio.");
+      return false;
+    }
+    if (!this.settings.systemAudioAutoConnect) {
+      this.settings.systemAudioAutoConnect = true;
+      this.saveSettings();
+    }
+    if (!silent) {
+      new Notice(t("audioConnectedNotice", this));
+      this.showIslandTrackCapsule(isRu ? "Звук ПК (Loopback)" : "PC Audio Loopback");
+    }
+    return true;
   }
 
   async startDeviceAudioCapture(deviceId, silent = false) {
-    this.stopAudioCapture(true, true);
+    this.stopAudioCapture(true);
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     try {
+      const seq = (this.captureSeq = (this.captureSeq || 0) + 1);
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           deviceId: { exact: deviceId },
@@ -3658,7 +4482,11 @@ class AlchemyFlowPlugin extends Plugin {
         },
         video: false,
       });
-      this.connectStreamToAnalyser(stream, "mic", 2.8);
+      if (seq !== this.captureSeq || this._unloaded) {
+        stream.getTracks().forEach((tr) => tr.stop());
+        return false;
+      }
+      this.connectStreamToAnalyser(stream, "mic");
       if (!silent) new Notice(t("audioMicConnectedNotice", this));
       return true;
     } catch (err) {
@@ -3669,46 +4497,50 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
-  async startMicAudioCapture(highGainForSpeakers = false, preserveWasapi = false) {
-    this.stopAudioCapture(true, preserveWasapi);
+  async startMicAudioCapture() {
+    this.stopAudioCapture(true);
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
     try {
       const audioConstraints = { echoCancellation: false, noiseSuppression: false, autoGainControl: true };
       const savedDevice = this.settings.audioInputDeviceId;
       if (savedDevice && savedDevice !== "auto") audioConstraints.deviceId = { ideal: savedDevice };
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: audioConstraints,
-        video: false,
-      });
-      this.connectStreamToAnalyser(stream, "mic", highGainForSpeakers ? 4.0 : 3.0);
+      const seq = (this.captureSeq = (this.captureSeq || 0) + 1);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints, video: false });
+      if (seq !== this.captureSeq || this._unloaded) {
+        stream.getTracks().forEach((tr) => tr.stop());
+        return false;
+      }
+      this.connectStreamToAnalyser(stream, "mic");
       new Notice(t("audioMicConnectedNotice", this));
+      return true;
     } catch (err) {
-      new Notice("Could not access audio device.");
+      new Notice(isRu ? "Нет доступа к микрофону." : "Could not access the microphone.");
+      return false;
     }
   }
 
-  stopAudioCapture(silent = false, preserveWasapi = false) {
-    if (!preserveWasapi) {
-      this.stopWindowsWasapiLoopbackBridge();
-    }
-    if (!this.desktopAudioNodes) return;
-    try {
-      if (this.desktopAudioNodes.sinkAudio) {
-        this.desktopAudioNodes.sinkAudio.pause();
-        this.desktopAudioNodes.sinkAudio.srcObject = null;
-        if (this.desktopAudioNodes.sinkAudio.parentNode) {
-          this.desktopAudioNodes.sinkAudio.remove();
-        }
-      }
-      if (this.desktopAudioNodes.stream) {
-        this.desktopAudioNodes.stream.getTracks().forEach((t) => t.stop());
-      }
-      if (this.desktopAudioNodes.ctx) {
-        this.desktopAudioNodes.ctx.close();
-      }
-    } catch (e) {}
+  stopAudioCapture(silent = false) {
+    const nodes = this.desktopAudioNodes;
+    if (!nodes) return;
     this.desktopAudioNodes = null;
+    try {
+      if (nodes.stream) nodes.stream.getTracks().forEach((tr) => tr.stop());
+    } catch (e) {}
+    try {
+      if (nodes.source) nodes.source.disconnect();
+    } catch (e) {}
+    try {
+      if (nodes.ctx && nodes.ctx.state !== "closed") nodes.ctx.close();
+    } catch (e) {}
     this.updateEqualizerPillUI();
-    if (!silent) new Notice(t("audioStoppedNotice", this));
+    if (!silent) {
+      // An explicit stop by the user also cancels the reconnect on next launch.
+      if (nodes.type === "system" && this.settings.systemAudioAutoConnect) {
+        this.settings.systemAudioAutoConnect = false;
+        this.saveSettings();
+      }
+      new Notice(t("audioStoppedNotice", this));
+    }
   }
 
   stopDesktopAudioCapture() {
@@ -3723,11 +4555,42 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
+    async toggleAudioPlayStop() {
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const curSound = this.settings.ambientSound || "off";
+    if (curSound !== "off") {
+      this._lastAmbientSound = curSound;
+      await this.setAmbientSound("off");
+      new Notice(isRu ? "Звук: Пауза ⏸" : "Audio: Paused ⏸", 1200);
+    } else {
+      const soundToPlay = this._lastAmbientSound || "rain";
+      await this.setAmbientSound(soundToPlay);
+      const soundLabel = soundToPlay === "rain" ? (isRu ? "Дождь" : "Rain") : soundToPlay === "brown" ? (isRu ? "Шум" : "Brown Noise") : (isRu ? "Гамма 40Hz" : "Gamma 40Hz");
+      new Notice(isRu ? `Звук: Воспроизведение ▶ (${soundLabel})` : `Audio: Playing ▶ (${soundLabel})`, 1400);
+    }
+    this.updateEqualizerPillUI();
+  }
+
   updateEqualizerPillUI() {
+    // Source, mode or dock changed: redraw at least once and let the loop decide whether to keep running.
+    this.eqRestFrames = 0;
+    this.eqRestKey = null;
+    this.wakeVisualLoop();
     if (!this.eqWrap) return;
-    const isSynced = !!(this.desktopAudioNodes || this.ambientNodes || this.wasapiBridgeProc);
+    const isSynced = !!(this.desktopAudioNodes || this.ambientNodes);
     this.eqWrap.classList.toggle("is-synced", isSynced);
     this.eqWrap.classList.toggle("is-audio-live", isSynced);
+    const isRuUi = (this.settings.uiLanguage || "en") === "ru";
+    const srcType = this.desktopAudioNodes ? this.desktopAudioNodes.type : this.ambientNodes ? "ambient" : "off";
+    const srcLabels = {
+      system: isRuUi ? "Эквалайзер: звук ПК" : "Equalizer: PC audio",
+      mic: isRuUi ? "Эквалайзер: микрофон" : "Equalizer: microphone",
+      ambient: isRuUi ? "Эквалайзер: звуки плагина" : "Equalizer: plugin soundscape",
+      off: isRuUi ? "Эквалайзер: нажмите, чтобы подключить звук ПК" : "Equalizer: click to connect PC audio",
+    };
+    // aria-label removed to prevent duplicate tooltip underneath the dock overlapping status bar
+    this.eqWrap.removeAttribute("aria-label");
+    this.eqWrap.dataset.audioSource = srcType;
     const dotEl = this.eqWrap.querySelector(".artcraft-eq-status-dot");
     if (dotEl) dotEl.classList.toggle("is-live", isSynced);
     const iconEl = this.eqWrap.querySelector(".artcraft-eq-icon-wrap") || this.eqModeIconEl;
@@ -3746,7 +4609,9 @@ class AlchemyFlowPlugin extends Plugin {
 
   async cycleEqualizerMode() {
     if (!this.desktopAudioNodes && !this.ambientNodes) {
-      this.openSonicStudioModal();
+      // Nothing connected yet: the first click hooks up what the PC is playing. The studio stays on right-click.
+      const ok = await this.startSystemAudioCapture();
+      if (!ok) this.openSonicStudioModal();
       return;
     }
     const modes = ["craft", "dna", "bars", "wave", "orb", "ferro"];
@@ -3766,7 +4631,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.updateEqualizerPillUI();
     new Notice(`Equalizer: ${names[next]}`);
   }
-  // --- 📸 4. 1-CLICK SWISS BENTO QUOTE CARD EXPORTER ---
+  // --- 4. 1-CLICK SWISS BENTO QUOTE CARD EXPORTER ---
   async exportSelectionAsBentoCard() {
     const obsidian = require("obsidian");
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
@@ -3786,79 +4651,134 @@ class AlchemyFlowPlugin extends Plugin {
       if (pinned.length > 0) text = pinned.join(" ");
     }
     if (!text && view && view.editor) {
-      text = view.editor.getValue().split("\n").filter((l) => l.trim().length > 20)[0] || "Deep work in Swiss Bento clarity.";
+      text = view.editor.getValue().split("\n").filter((l) => l.trim().length > 20)[0] || "Deep work in Swiss Craft clarity.";
     }
 
-    const cardMarkdown = `> [!NOTE] ⚗️ ${title} — ALCHEMY CRAFT // STUDIO
+    const cardMarkdown = `> [!NOTE] ${title} — ALCHEMY CRAFT // STUDIO
 > **"${text.replace(/\n+/g, " ")}"**
 > 
 > \`01 // FOCUS\` • \`#F4F3EF ARCHIVAL PAPER\` • \`@StratAlchemy\``;
 
     await navigator.clipboard.writeText(cardMarkdown);
     this.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 45);
-    new Notice("📸 Swiss Bento Callout Card copied to clipboard! Paste anywhere in Obsidian or social media.");
+    new Notice("Swiss Craft Callout Card copied to clipboard! Paste anywhere in Obsidian or social media.");
   }
 
   registerCommands() {
     this.addCommand({
+      id: "open-note-kanban-studio",
+      name: "Open Note Kanban Studio (Note Kanban Board)",
+      callback: () => this.openNoteKanbanModal(),
+    });
+
+    this.addCommand({
+      id: "open-alchemist-roastery",
+      name: "Open Alchemist Roastery & Pro Studio",
+      callback: () => new AlchemyCraftProModal(this.app, this).open(),
+    });
+
+    this.addCommand({
+      id: "toggle-page-cards",
+      name: "Toggle decorated page (heading cards)",
+      callback: async () => {
+        this.settings.pageCards = this.settings.pageCards !== true;
+        await this.saveSettings();
+        this.applyBodyClasses();
+        this.fitDockToWindow();
+      },
+    });
+    this.addCommand({
+      id: "toggle-related-notes",
+      name: "Toggle related notes under the note",
+      callback: async () => {
+        this.settings.windChainFooter = this.settings.windChainFooter === false;
+        await this.saveSettings();
+        this.updateTaskProgressBar();
+      },
+    });
+    this.addCommand({
+      id: "toggle-key-sentence-marker",
+      name: "Toggle key sentence marker (reading view)",
+      callback: () => this.toggleKeySentenceMarker(),
+    });
+    this.addCommand({
+      id: "toggle-pc-audio-equalizer",
+      name: "Connect / disconnect PC audio for the equalizer",
+      callback: () => this.toggleDesktopAudioCapture(),
+    });
+    this.addCommand({
+      id: "toggle-lamp-beat-sync",
+      name: "Toggle cursor lamp pulse on music beats",
+      callback: async () => {
+        this.settings.lampBeatSync = !this.settings.lampBeatSync;
+        await this.saveSettings();
+        const isRu = (this.settings.uiLanguage || "en") === "ru";
+        new Notice(
+          isRu
+            ? `Лампа в такт музыке: ${this.settings.lampBeatSync ? "включена (нужны лампа и подключённый звук)" : "выключена"}`
+            : `Lamp beat pulse: ${this.settings.lampBeatSync ? "on (needs the lamp and connected audio)" : "off"}`
+        );
+      },
+    });
+    this.addCommand({
       id: "open-creator-os-studio",
-      name: "Open Creator OS Studio (@brand AI Compiler, APAG Post Builder & Note Kanban)",
+      name: "Open Creator Studio (brand brief, post builder, task board)",
       callback: () => this.openCreatorOsModal(),
     });
     this.addCommand({
       id: "trigger-autopilot-interrupt",
-      name: "Trigger Mindful Focus Calibration Reflection (+30 XP)",
+      name: "Open focus check-in",
       callback: () => this.openAutopilotInterruptModal(),
     });
     this.addCommand({
       id: "start-60s-pro-test-drive",
-      name: "Start 60-Second Pro Test-Drive (Preview Midnight Dark Craft & 16 Soundscapes)",
+      name: "Try Pro features for 60 seconds",
       callback: () => this.startProTestDrive60s(),
     });
     this.addCommand({
       id: "open-life-rpg-quest-blockchain",
-      name: "Open Life RPG & SHA-256 Blockchain Quest Chain (Deep Work & Value Studio)",
+      name: "Open quest log",
       callback: () => this.openQuestChainModal(),
     });
     this.addCommand({
       id: "open-bio-flow-readiness",
-      name: "Open Bio-Rhythm & Cognitive Flow Tracker (Circadian & Flow Studio)",
+      name: "Open energy and focus tracker",
       callback: () => this.openBioFlowModal(),
     });
     this.addCommand({
       id: "open-creative-margin-sketchpad",
-      name: "Open Creative Margin Sketchpad & Embed Drawing in Note",
+      name: "Open sketchpad and insert a drawing into the note",
       callback: () => this.openCreativeSketchModal(),
     });
     this.addCommand({
       id: "toggle-night-light-compensation",
-      name: "Toggle Windows 11 Night Light Compensation Mode (Cool Alabaster & Crisp Ink)",
+      name: "Toggle Night Light compensation (cooler page colours)",
       callback: async () => {
         this.settings.nightLightCompensation = !this.settings.nightLightCompensation;
         await this.saveSettings();
         this.applyBodyClasses();
         new Notice(
           this.settings.nightLightCompensation
-            ? "🌙 Компенсация «Ночного света» Windows 11 ВКЛЮЧЕНА (Чистый алебастровый лист без желтизны)"
-            : "☀️ Компенсация «Ночного света» ВЫКЛЮЧЕНА (Тёплый архивный пергамент)"
+            ? "Компенсация «Ночного света» Windows 11 ВКЛЮЧЕНА (Чистый алебастровый лист без желтизны)"
+            : "Компенсация «Ночного света» ВЫКЛЮЧЕНА (Тёплый архивный пергамент)"
         );
       },
     });
     this.addCommand({
       id: "toggle-dock-orientation",
-      name: "Toggle Dock Orientation (Bottom / Right Side Pillar)",
+      name: "Toggle dock position (bottom / right side)",
       callback: () => this.toggleDockOrientation(),
     });
 
     this.addCommand({
       id: "toggle-dock-collapse",
-      name: "Collapse / Expand Alchemy Dock",
+      name: "Collapse or expand the dock",
       callback: () => this.toggleDockCollapse(),
     });
 
     this.addCommand({
       id: "toggle-artcraft-theme",
-      name: "Toggle Swiss Bento UI Theme",
+      name: "Toggle page theme",
       callback: async () => {
         this.settings.artcraftTheme = !this.settings.artcraftTheme;
         await this.saveSettings();
@@ -3869,7 +4789,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.addCommand({
       id: "toggle-dark-craft-theme",
-      name: "Toggle Midnight Dark Craft Mode (Pro) [Disabled]",
+      name: "Toggle dark page theme (Pro, not available yet)",
       callback: async () => {
         if (!this.settings.isPro) {
           new AlchemyCraftProModal(this.app, this).open();
@@ -3884,25 +4804,25 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.addCommand({
       id: "apply-bento-graph-colors",
-      name: "Graph View: Apply Swiss Bento Color Groups & Theme",
+      name: "Graph view: colour notes by top-level folder",
       callback: () => this.applyBentoGraphColorGroups(),
     });
 
     this.addCommand({
       id: "toggle-focus-timer",
-      name: "Start / Pause Focus Timer",
+      name: "Start or pause the focus timer",
       callback: () => this.toggleTimer(),
     });
 
     this.addCommand({
       id: "reset-focus-timer",
-      name: "Reset Focus Timer",
+      name: "Reset the focus timer",
       callback: () => this.resetTimer(),
     });
 
     this.addCommand({
       id: "toggle-sentence-focus",
-      name: "Toggle Sentence Focus & Number Badges",
+      name: "Toggle sentence focus and number badges",
       callback: async () => {
         this.settings.sentenceFocus = !this.settings.sentenceFocus;
         await this.saveSettings();
@@ -3913,61 +4833,61 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.addCommand({
       id: "toggle-laser-pointer",
-      name: "Toggle Laser Pointer Mode",
+      name: "Toggle laser pointer",
       callback: () => this.toggleMode(this.mode === "laser" ? "none" : "laser"),
     });
 
     this.addCommand({
       id: "toggle-draw-marker",
-      name: "Toggle Freehand Draw Marker Mode",
+      name: "Toggle drawing marker",
       callback: () => this.toggleMode(this.mode === "draw" ? "none" : "draw"),
     });
 
     this.addCommand({
       id: "toggle-eraser",
-      name: "Toggle Eraser Mode",
+      name: "Toggle eraser",
       callback: () => this.toggleMode(this.mode === "eraser" ? "none" : "eraser"),
     });
 
     this.addCommand({
       id: "undo-drawing",
-      name: "Undo Drawing / Annotation",
+      name: "Undo last drawing stroke",
       callback: () => this.undo(),
     });
 
     this.addCommand({
       id: "redo-drawing",
-      name: "Redo Drawing / Annotation",
+      name: "Redo drawing stroke",
       callback: () => this.redo(),
     });
 
     this.addCommand({
       id: "clean-ai-watermarks",
-      name: "Clean AI Watermarks & Zero-Width Characters",
+      name: "Remove invisible characters from the note or selection",
       callback: () => this.cleanCurrentNoteAIWatermarks(),
     });
 
     this.addCommand({
       id: "toggle-magic-cursor-lamp",
-      name: "🏮 Toggle Magic Cursor Lantern (Interactive Text Illumination & Shadows)",
+      name: "Toggle cursor lamp",
       callback: () => this.toggleMagicLamp(),
     });
 
     this.addCommand({
       id: "load-custom-music-visualizer",
-      name: "🎵 Load Custom Music / Audio File into Sonic Equalizer",
+      name: "Play an audio file through the equalizer",
       callback: () => this.openCustomAudioPicker(),
     });
 
     this.addCommand({
       id: "export-bento-quote-card",
-      name: "📸 Export Selection as Swiss Bento Callout Card",
+      name: "Copy selection as a quote callout",
       callback: () => this.exportSelectionAsBentoCard(),
     });
 
     this.addCommand({
       id: "toggle-spotlight-focus",
-      name: "🔦 Toggle Spotlight Paragraph Dimmer Mode",
+      name: "Toggle paragraph spotlight",
       callback: async () => {
         this.settings.spotlightFocus = !this.settings.spotlightFocus;
         await this.saveSettings();
@@ -3978,78 +4898,130 @@ class AlchemyFlowPlugin extends Plugin {
 
     this.addCommand({
       id: "add-nutrient-book-sticker",
-      name: "🔖 Attach 5-Nutrient Book Sticker (Proteins, Carbs, Fats, Vitamins, Fiber)",
+      name: "Add a margin sticker to the current line",
       callback: () => this.addMarginBookmarkToActiveNote(),
     });
 
     this.addCommand({
       id: "open-book-nutrient-digest",
-      name: "📖 Open Book Nutrient Digest (Proteins & Carbs Summary)",
+      name: "Open the digest of stickers in this note",
       callback: () => this.openBookNutrientDigestModal(),
     });
 
     this.addCommand({
       id: "open-two-page-book-spread",
-      name: "📚 Open True 2-Page Side-by-Side Book Spread",
+      name: "Open the note as a two-page spread",
       callback: () => this.openTrueTwoPageBookSpread(),
     });
 
     this.addCommand({
       id: "open-interactive-tour",
-      name: "✨ Open Interactive Tour note (every feature, live examples)",
+      name: "Open the tour note",
       callback: () => this.openInteractiveTourNote(),
     });
 
     this.addCommand({
       id: "toggle-time-capsule-seal",
-      name: "🕯️ Time Capsule: seal / open current note",
+      name: "Time capsule: seal or open the current note",
       callback: () => this.toggleNoteWaxSeal(),
     });
 
     this.addCommand({
       id: "open-dual-cognition-studio",
-      name: "🧠 Human × AI Dual-Cognition Studio: Executive Brief, llms.txt & WASM Semantic Radar",
+      name: "Open note summary, AI capsule and similar notes",
       callback: () => this.openDualCognitionModal(),
     });
 
     this.addCommand({
       id: "compile-vault-llms-txt",
-      name: "🤖 Compile & Save Vault llms.txt Index for AI Agents (Cursor / Claude / MCP)",
+      name: "Write llms.txt index of recent notes to the vault root",
       callback: () => this.compileVaultLlmsTxtFile(),
     });
 
     this.addCommand({
       id: "insert-executive-brief-callout",
-      name: "📑 Insert Human × AI Executive Brief Callout at Top of Active Note",
+      name: "Insert a summary callout at the top of the note",
       callback: () => this.insertExecutiveBriefIntoActiveNote(),
     });
 
     this.addCommand({
       id: "clear-drawings",
-      name: "Clear All Drawings & Highlights",
+      name: "Clear all drawings",
       callback: () => this.clearAllAnnotations(),
     });
   }
 
   onunload() {
+    this._unloaded = true;
+    if (this.progressRefreshTimer) {
+      clearTimeout(this.progressRefreshTimer);
+      this.progressRefreshTimer = null;
+    }
+    // A running Pro test-drive must not outlive the plugin: its timer would rebuild the dock after unload.
+    if (this.proTestDriveTimer) {
+      clearInterval(this.proTestDriveTimer);
+      this.proTestDriveTimer = null;
+    }
+    if (this.proTestDriveActive && this.proTestDrivePrev) {
+      this.settings.isPro = this.proTestDrivePrev.isPro;
+      this.settings.darkCraftTheme = this.proTestDrivePrev.darkCraftTheme;
+      this.proTestDriveActive = false;
+    }
+    document.querySelectorAll(".artcraft-testdrive-banner").forEach((el) => el.remove());
+    if (this.eqIdleTimer) {
+      clearTimeout(this.eqIdleTimer);
+      this.eqIdleTimer = null;
+    }
+    if (this.inViewObserver) {
+      this.inViewObserver.disconnect();
+      this.inViewObserver = null;
+    }
+    if (this.keyMarkObserver) {
+      this.keyMarkObserver.disconnect();
+      this.keyMarkObserver = null;
+    }
+    this.kinDestroyAll();
+    this.stopFlaskHydroLoop();
+    this.stopIslandLiveSpectrogram();
+    this.destroyBookFolio3DPhysics();
+    if (this.zenAtmosphereEl) { this.zenAtmosphereEl.remove(); this.zenAtmosphereEl = null; }
+    if (this.activePopoverTetherEl) { this.activePopoverTetherEl.remove(); this.activePopoverTetherEl = null; }
+    this.releasePaperTexture();
+    this.paperTileKey = null;
+    // Windows of the plugin that are still open would keep running code of the unloaded plugin.
+    document.querySelectorAll(".modal-container").forEach((mc) => {
+      const modal = mc.querySelector(".modal");
+      if (!modal || !/artcraft-|sicraft-/.test(modal.className + " " + (modal.querySelector(".modal-content") || modal).className)) return;
+      const closeBtn = mc.querySelector(".modal-close-button");
+      if (closeBtn) closeBtn.click();
+      else mc.remove();
+    });
     if (this._spotlightHandler) {
       document.removeEventListener("pointermove", this._spotlightHandler);
       this._spotlightHandler = null;
     }
-    document.body.classList.remove(
-      "artcraft-theme-active",
-      "artcraft-hover-cards",
-      "artcraft-sentence-focus",
-      "artcraft-zen-mode",
-      "artcraft-dark-craft",
-      "artcraft-bento-graph",
-      "artcraft-spotlight-mode",
-      "artcraft-magic-lamp",
-      "artcraft-book-spread"
+    // Leave the app exactly as it was: every body class, data attribute and CSS variable the plugin set goes away.
+    Array.from(document.body.classList)
+      .filter((c) => c.startsWith("artcraft-") || c.startsWith("sicraft-"))
+      .forEach((c) => document.body.classList.remove(c));
+    ["data-surface-mode", "data-page-width", "data-spine-material"].forEach((a) => document.body.removeAttribute(a));
+    ["--artcraft-line-width", "--artcraft-grain-opacity", "--artcraft-header-tag", "--artcraft-header-tag-display"].forEach((v) =>
+      document.documentElement.style.removeProperty(v)
     );
     this.stopAmbientSound();
     this.stopDesktopAudioCapture();
-    this.stopWindowsWasapiLoopbackBridge();
+    // the shared context for key clicks, chimes and seals
+    if (this.keyAudioCtx) {
+      try {
+        this.keyAudioCtx.close();
+      } catch (e) {}
+      this.keyAudioCtx = null;
+    }
+    if (this.activeSonicModal) {
+      try {
+        this.activeSonicModal.close();
+      } catch (e) {}
+    }
     if (this.pacerAnimFrame) cancelAnimationFrame(this.pacerAnimFrame);
     if (this.pacerBarEl) this.pacerBarEl.remove();
     document.querySelectorAll(".artcraft-wax-seal-veil").forEach((el) => el.remove());
@@ -4071,11 +5043,78 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.canvasEl) this.canvasEl.remove();
     if (this.dockEl) this.dockEl.remove();
     if (this.focusPopoverEl) this.focusPopoverEl.remove();
+    if (this.focusPopoverCloseHandler) {
+      document.removeEventListener("pointerdown", this.focusPopoverCloseHandler);
+      this.focusPopoverCloseHandler = null;
+    }
     document
       .querySelectorAll(
-        ".artcraft-task-progress-wrap, .artcraft-exlibris-corner-seal, .artcraft-quiet-meta-line, .artcraft-nutrient-margin-dock, .artcraft-focus-popover, .artcraft-graph-hud, .artcraft-graph-legend-pill, .artcraft-graph-hint-pill, .artcraft-graph-fx-canvas"
+        ".artcraft-task-progress-wrap, .artcraft-exlibris-corner-seal, .artcraft-quiet-meta-line, .artcraft-nutrient-margin-dock, .artcraft-focus-popover, .artcraft-graph-hud, .artcraft-graph-legend-pill, .artcraft-graph-hint-pill, .artcraft-graph-fx-canvas, .artcraft-wind-chain-footer, .artcraft-paper-grain-layer, .artcraft-sidebar-icon-slot"
       )
       .forEach((el) => el.remove());
+    document.querySelectorAll(".artcraft-graph-canvas-wrap").forEach((el) => el.classList.remove("artcraft-graph-canvas-wrap"));
+    document.querySelectorAll(".artcraft-narrow-pane").forEach((el) => el.classList.remove("artcraft-narrow-pane"));
+    // Key sentence marks are plain wrappers around text: put the text back as it was.
+    document.querySelectorAll(".artcraft-key-mark").forEach((el) => el.replaceWith(...el.childNodes));
+    document.querySelectorAll("[data-artcraft-key-done]").forEach((el) => el.removeAttribute("data-artcraft-key-done"));
+    // Rendered notes still carry the wrappers this plugin added (sentences, number badges, step badges).
+    // Render them again once Obsidian has unregistered the post-processors, which happens right after onunload.
+    const workspace = this.app.workspace;
+    setTimeout(() => {
+      workspace.getLeavesOfType("markdown").forEach((leaf) => {
+        const view = leaf.view;
+        if (view && view.previewMode && typeof view.previewMode.rerender === "function") view.previewMode.rerender(true);
+      });
+    }, 0);
+  }
+
+  async rekeyNoteRecords(oldPath, newPath) {
+    let changed = false;
+    const prefix = oldPath + "/";
+    ["waxSealNotes", "stampedNotes", "marginBookmarks"].forEach((key) => {
+      const map = this.settings[key];
+      if (!map || typeof map !== "object" || Array.isArray(map)) return;
+      Object.keys(map).forEach((k) => {
+        let target;
+        if (k === oldPath) target = newPath;
+        else if (k.startsWith(prefix)) target = newPath === null ? null : newPath + "/" + k.slice(prefix.length); // a folder was moved
+        else return;
+        const value = map[k];
+        delete map[k];
+        if (target !== null) map[target] = value;
+        changed = true;
+      });
+    });
+    if (changed) {
+      await this.saveSettings();
+      if (!this._unloaded) this.updateTaskProgressBar();
+    }
+    if (!this._unloaded && typeof this.decorateSidebarFileExplorer === "function") {
+      setTimeout(() => !this._unloaded && this.decorateSidebarFileExplorer(), 60);
+    }
+  }
+
+  // Panes narrower than a phone screen in landscape get their own page layout (see .artcraft-narrow-pane
+  // in styles.css): side margins shrink and headings stop breaking in the middle of words.
+  markNarrowPanes() {
+    this.app.workspace.getLeavesOfType("markdown").forEach((leaf) => {
+      const el = leaf.view && leaf.view.containerEl;
+      if (!el) return;
+      const width = el.clientWidth;
+      if (width > 0) el.classList.toggle("artcraft-narrow-pane", width < 520);
+    });
+  }
+
+  // Marks an element with .is-in-view while it is on screen. CSS uses the class to run decorative
+  // animations only where someone can see them; off-screen they stay paused and cost nothing.
+  observeInView(el) {
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (!this.inViewObserver) {
+      this.inViewObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => entry.target.classList.toggle("is-in-view", entry.isIntersecting));
+      });
+    }
+    this.inViewObserver.observe(el);
   }
 
   // --- AMBIENT FOCUS SOUNDSCAPE ENGINE (12 iOS-INSPIRED WEBAUDIO SYNTHESIS SOUNDSCAPES) ---
@@ -4112,9 +5151,20 @@ class AlchemyFlowPlugin extends Plugin {
       const bufferSize = durationSec * ctx.sampleRate;
       const noiseBuffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
 
+      // drops and pops are timed in seconds, so they sound the same at 44.1 and 48 kHz
+      const seamGuard = Math.round(ctx.sampleRate * 0.05); // nothing starts in the last 50 ms, so the loop point stays silent
+      const dropChance = 85 / ctx.sampleRate;
+      const dropFallFast = Math.exp(-1 / (ctx.sampleRate * 0.0025));
+      const dropFallSpread = Math.exp(-1 / (ctx.sampleRate * 0.009)) - dropFallFast;
+      const popChance = 3 / ctx.sampleRate;
+      const popFall = Math.exp(-1 / (ctx.sampleRate * 0.0012));
+
       for (let ch = 0; ch < 2; ch++) {
         const output = noiseBuffer.getChannelData(ch);
         let lastOut = 0.0;
+        let dropEnv = 0;
+        let dropFall = dropFallFast;
+        let popEnv = 0;
         let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
         const chPhase = ch * 0.85;
 
@@ -4170,8 +5220,33 @@ class AlchemyFlowPlugin extends Plugin {
             // Warm Roastery Ambience: gentle room murmur envelope
             const murmur = 0.82 + 0.22 * Math.sin(loopAngle * 3 + chPhase) * Math.sin(loopAngle * 5);
             output[i] = (pink * 0.75 + brown * 0.42) * murmur;
+          } else if (type === "rain") {
+            // Rain: an even hiss of fine drops with separate heavier drops on top.
+            // A drop is a burst of noise that dies away in a few milliseconds.
+            if (i < bufferSize - seamGuard && Math.random() < dropChance) {
+              dropEnv = 0.3 + Math.random() * 0.7;
+              dropFall = dropFallFast + Math.random() * dropFallSpread;
+            }
+            dropEnv *= dropFall;
+            output[i] = pink * 1.5 + white * 0.07 + white * dropEnv * 0.5;
+          } else if (type === "nordic_wind") {
+            // Wind: the level rises and falls in gusts. The pitch of a gust is moved by the filter below.
+            const gust = 0.62 + 0.26 * Math.sin(loopAngle + chPhase) + 0.12 * Math.sin(loopAngle * 3 + 1.7 + chPhase * 0.5);
+            output[i] = (pink * 3.0 + brown * 1.4) * gust;
+          } else if (type === "vinyl_library") {
+            // Record player: a warm bed, surface hiss, sparse pops and one soft tick per turn of the record.
+            if (i < bufferSize - seamGuard && Math.random() < popChance) {
+              popEnv = (Math.random() < 0.5 ? -1 : 1) * (0.25 + Math.random() * 0.75);
+            }
+            popEnv *= popFall;
+            const turn = (tSec / 1.6) % 1;
+            const tick = Math.exp(-Math.pow((turn - 0.5) * 240, 2));
+            output[i] = brown * 0.42 + pink * 0.24 + white * 0.012 + popEnv * 1.1 + white * tick * 0.5;
+          } else if (type === "balanced") {
+            // Soft pink noise: pink noise alone, with no low rumble under it and no swell.
+            output[i] = pink * 1.05;
           } else {
-            // Velvet Pink Rain / Tent Rain / Binaural silk bed
+            // bed under the tone-based sounds (40 Hz, alpha, theta, bowls, 432 and 528 Hz)
             const gentle = 0.9 + 0.14 * Math.sin(loopAngle + chPhase);
             output[i] = (pink * 0.82 + brown * 0.32) * gentle;
           }
@@ -4208,7 +5283,29 @@ class AlchemyFlowPlugin extends Plugin {
       } else if (type === "stream") {
         filter.frequency.value = 1150;
       } else if (type === "rain") {
-        filter.frequency.value = 920;
+        // rain is a bright sound: a wide band around 2.4 kHz instead of the dull low-pass of the other beds
+        filter.type = "bandpass";
+        filter.frequency.value = 2400;
+        filter.Q.value = 0.4;
+      } else if (type === "nordic_wind") {
+        // the howl: a band whose centre drifts with two slow oscillators that never line up the same way twice
+        filter.type = "bandpass";
+        filter.frequency.value = 520;
+        filter.Q.value = 1.3;
+        [[0.11, 210], [0.043, 130]].forEach(([rate, depth]) => {
+          const lfo = ctx.createOscillator();
+          const lfoGain = ctx.createGain();
+          lfo.frequency.value = rate;
+          lfoGain.gain.value = depth;
+          lfo.connect(lfoGain);
+          lfoGain.connect(filter.frequency);
+          lfo.start();
+          extraOscs.push(lfo);
+        });
+      } else if (type === "vinyl_library") {
+        filter.frequency.value = 3400;
+      } else if (type === "balanced") {
+        filter.frequency.value = 5200;
       } else {
         // Velvet Pink Rain & neuro-acoustic beds
         filter.frequency.value = 840;
@@ -4379,9 +5476,9 @@ class AlchemyFlowPlugin extends Plugin {
     fa.completedSprints = (fa.completedSprints || 0) + 1;
     fa.totalFocusMinutes = (fa.totalFocusMinutes || 0) + (minutes || 25);
 
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDayKey();
     if (fa.lastSprintDate !== today) {
-      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const yesterday = localDayKey(new Date(Date.now() - 86400000));
       fa.currentStreak = fa.lastSprintDate === yesterday ? (fa.currentStreak || 0) + 1 : 1;
       fa.lastSprintDate = today;
     }
@@ -4428,8 +5525,11 @@ class AlchemyFlowPlugin extends Plugin {
     } else {
       this.timerStartTimestamp = now - this.timerSeconds * 1000;
     }
-    if (this.timerState === "work" && this.settings.ambientSound && this.settings.ambientSound !== "off") {
+    // Start the linked soundscape only when nothing is playing. A soundscape or a track the user
+    // started by hand is left alone, and only the timer's own sound is stopped on pause.
+    if (this.timerState === "work" && this.settings.ambientSound && this.settings.ambientSound !== "off" && !this.ambientNodes) {
       this.startAmbientSound(this.settings.ambientSound);
+      this.timerStartedAmbient = true;
     }
     this.fadeAudioForPomodoroBreak(this.timerState === "break");
     this.timerInterval = setInterval(() => {
@@ -4477,7 +5577,10 @@ class AlchemyFlowPlugin extends Plugin {
       this.tickTimer();
     }
     this.timerRunning = false;
-    this.stopAmbientSound();
+    if (this.timerStartedAmbient) {
+      this.timerStartedAmbient = false;
+      this.stopAmbientSound();
+    }
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.updateTimerDisplay();
   }
@@ -4570,7 +5673,7 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addSeparator();
     menu.addItem((item) => {
       item
-        .setTitle(isRu ? "5 мин — Короткий перерыв" : "5 min — Short Break")
+        .setTitle(isRu ? `${this.settings.breakMinutes || 5} мин — короткий перерыв` : `${this.settings.breakMinutes || 5} min — short break`)
         .setIcon("sicraft-coffee")
         .setChecked(this.timerState === "break" && this.timerSeconds <= 300)
         .onClick(() => this.startBreak(this.settings.breakMinutes || 5));
@@ -4629,7 +5732,7 @@ class AlchemyFlowPlugin extends Plugin {
     });
     menu.addItem((item) => {
       item
-        .setTitle(isRu ? `Стиль эквалайзера (${(this.settings.eqMode || "bars").toUpperCase()})` : `Switch Equalizer Style (${(this.settings.eqMode || "bars").toUpperCase()})`)
+        .setTitle(isRu ? `Стиль эквалайзера (${(this.settings.eqMode || "craft").toUpperCase()})` : `Switch Equalizer Style (${(this.settings.eqMode || "craft").toUpperCase()})`)
         .setIcon("sicraft-bars")
         .onClick(() => {
           this.cycleEqualizerMode();
@@ -4647,8 +5750,9 @@ class AlchemyFlowPlugin extends Plugin {
           this.resetTimer();
         });
     });
-    const safeX = Math.min(event.clientX, window.innerWidth - 250);
-    const safeY = Math.max(40, Math.min(event.clientY - 340, window.innerHeight - 380));
+    const timerRect = this.timerEl ? this.timerEl.getBoundingClientRect() : null;
+    const safeX = timerRect ? Math.max(16, Math.min(timerRect.left, window.innerWidth - 260)) : Math.min(event.clientX, window.innerWidth - 250);
+    const safeY = timerRect ? Math.max(20, timerRect.top - 8) : Math.max(40, event.clientY - 10);
     menu.showAtPosition({ x: safeX, y: safeY });
   }
 
@@ -4659,12 +5763,37 @@ class AlchemyFlowPlugin extends Plugin {
     this.timerTextEl.innerHTML = `${sicraftIcon('timer')}<span>${this.formatTime(this.timerSeconds)}</span>`;
   }
 
+  isDarkPage() {
+    return !!(
+      this.settings.artcraftTheme &&
+      this.settings.isPro &&
+      this.settings.darkCraftTheme &&
+      document.body.classList.contains("theme-dark")
+    );
+  }
+
+  noticeDarkPageState() {
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    if (!this.settings.darkCraftTheme) {
+      new Notice(isRu ? "Тёмная страница: выключена" : "Dark page: off");
+    } else if (!document.body.classList.contains("theme-dark")) {
+      new Notice(
+        isRu
+          ? "Тёмная страница включится вместе с тёмной схемой Obsidian: Настройки → Оформление → Базовая цветовая схема."
+          : "The dark page turns on together with Obsidian's dark colour scheme: Settings → Appearance → Base color scheme.",
+        9000
+      );
+    } else {
+      new Notice(isRu ? "Тёмная страница: включена" : "Dark page: on");
+    }
+  }
+
   applyBodyClasses() {
     document.body.classList.toggle("artcraft-theme-active", this.settings.artcraftTheme);
     document.body.classList.toggle("artcraft-hover-cards", this.settings.hoverCards);
     document.body.classList.toggle("artcraft-sentence-focus", this.settings.sentenceFocus);
     document.body.classList.toggle("artcraft-zen-mode", !!this.zenMode);
-    document.body.classList.remove("artcraft-dark-craft"); // Disabled until full dark adaptation
+    document.body.classList.toggle("artcraft-dark-craft", this.isDarkPage());
     document.body.classList.toggle("artcraft-bento-graph", this.settings.enableBentoGraph !== false);
     document.body.classList.toggle("artcraft-spotlight-mode", !!this.settings.spotlightFocus);
     document.body.classList.toggle("artcraft-magic-lamp", !!this.settings.magicLamp);
@@ -4672,7 +5801,7 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.classList.toggle("artcraft-breathing-spine", !!this.settings.breathingSpine);
     document.body.classList.remove("artcraft-margin-sandglass");
     document.body.classList.toggle("artcraft-chrono-ink", this.settings.chronoInkAging !== false);
-    document.body.classList.remove("artcraft-nightlight-comp");
+    document.body.classList.toggle("artcraft-nightlight-comp", !!this.settings.nightLightCompensation);
     document.body.classList.toggle("artcraft-editorial-clean", this.settings.editorialCleanMode !== false);
     const surf = this.settings.surfaceMode || "white";
     document.body.setAttribute("data-surface-mode", surf);
@@ -4687,28 +5816,83 @@ class AlchemyFlowPlugin extends Plugin {
     const lineWidthCss = widthMode === "wide" ? "1080px" : widthMode === "full" ? "94%" : "760px";
     document.documentElement.style.setProperty("--artcraft-line-width", lineWidthCss);
     document.body.classList.toggle("artcraft-bionic-active", !!this.settings.bionicAnchors);
+    document.body.classList.toggle("artcraft-key-marker", this.settings.keySentenceMarker !== false);
+    const markerCol = this.settings.keyMarkerColor || "lime";
+    ["lime", "amber", "rose", "sky", "lavender"].forEach((c) => {
+      document.body.classList.toggle("artcraft-marker-" + c, markerCol === c);
+    });
+    document.body.classList.toggle("artcraft-plain-page", this.settings.pageCards !== true);
+    this.applyPaperTexture();
     const grainPct = Math.max(0, Math.min(100, Number(this.settings.paperGrain !== undefined ? this.settings.paperGrain : 28)));
     document.documentElement.style.setProperty("--artcraft-grain-opacity", (grainPct / 100 * 0.14).toFixed(3));
     document.body.setAttribute("data-spine-material", this.settings.spineMaterial || "cognac");
 
-    const tag = (this.settings.headerTagText !== undefined ? this.settings.headerTagText : "STRATALCHEMY // KNOWLEDGE BRIEF").trim();
+    // settings may come from a hand-edited or synced data.json: never assume a string
+    const rawTag = this.settings.headerTagText;
+    const tag = String(rawTag === undefined || rawTag === null ? "" : rawTag).replace(/[\r\n]+/g, " ").trim();
     const show = this.settings.showHeaderTag !== false && tag.length > 0;
     if (show) {
-      document.documentElement.style.setProperty("--artcraft-header-tag", `"${tag.replace(/"/g, '\\"')}"`);
+      document.documentElement.style.setProperty("--artcraft-header-tag", `"${tag.replace(/[\\"]/g, "\\$&")}"`);
       document.documentElement.style.setProperty("--artcraft-header-tag-display", "block");
     } else {
       document.documentElement.style.setProperty("--artcraft-header-tag-display", "none");
     }
   }
 
-  // --- SWISS BENTO GRAPH STUDIO (CLEAN BOTTOM-LEFT HUD, REAL WEBGL COORDINATE MAPPING & LIVE FX) ---
+  async editNote(file, change) {
+    if (!file) return false;
+    const obsidian = require("obsidian");
+    let view = null;
+    const active = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+    if (active && active.file === file) view = active;
+    if (!view) {
+      this.app.workspace.iterateAllLeaves((leaf) => {
+        if (!view && leaf.view instanceof obsidian.MarkdownView && leaf.view.file === file) view = leaf.view;
+      });
+    }
+    if (view && view.editor && typeof view.getMode === "function" && view.getMode() === "source") {
+      const cur = view.editor.getValue();
+      const next = change(cur);
+      if (next === null || next === undefined || next === cur) return false;
+      const max = Math.min(cur.length, next.length);
+      let head = 0;
+      while (head < max && cur.charCodeAt(head) === next.charCodeAt(head)) head++;
+      let tail = 0;
+      while (tail < max - head && cur.charCodeAt(cur.length - 1 - tail) === next.charCodeAt(next.length - 1 - tail)) tail++;
+      view.editor.replaceRange(
+        next.slice(head, next.length - tail),
+        view.editor.offsetToPos(head),
+        view.editor.offsetToPos(cur.length - tail)
+      );
+      return true;
+    }
+    // reading view: flush whatever the editor still holds, then change the file itself
+    if (view && typeof view.save === "function") {
+      try {
+        await view.save();
+      } catch (e) {}
+    }
+    let changed = false;
+    await this.app.vault.process(file, (cur) => {
+      const next = change(cur);
+      if (next === null || next === undefined || next === cur) return cur;
+      changed = true;
+      return next;
+    });
+    return changed;
+  }
+
+  // =========================================================================
+  // OBSIDIAN EXTENDED GRAPH STUDIO ENGINE (v5.7.0)
+  // Direct PixiJS/WebGL renderer.nodes manipulation, BFS Color Propagation,
+  // Hub & Recency Heatmaps, Nutrient Highlighting, Focus Isolation & Live HUD
+  // =========================================================================
   injectGraphViewHUD() {
     if (this.settings.enableBentoGraph === false) {
       document.querySelectorAll(".artcraft-graph-hud, .artcraft-graph-legend-pill, .artcraft-graph-hint-pill, .artcraft-graph-fx-canvas").forEach((el) => el.remove());
       return;
     }
 
-    // Remove legacy top-left legend & bottom-left hint pills so they never clutter or overlap graph text
     document.querySelectorAll(".artcraft-graph-legend-pill, .artcraft-graph-hint-pill").forEach((el) => el.remove());
 
     const leaves = this.app.workspace.getLeavesOfType("graph").concat(this.app.workspace.getLeavesOfType("localgraph"));
@@ -4719,20 +5903,14 @@ class AlchemyFlowPlugin extends Plugin {
       if (!viewContent) return;
 
       viewContent.classList.add("artcraft-graph-canvas-wrap");
-      viewContent.setAttribute("data-graph-preset", this.settings.graphPreset || "bento");
-
-      // Auto-upgrade graph.json once so folders are colored
-      if (!this.hasAutoUpgradedGraph || this.settings.graphConfigVersion !== "4.6.6") {
-        this.hasAutoUpgradedGraph = true;
-        this.settings.graphConfigVersion = "4.6.6";
-        this.saveSettings();
-        setTimeout(() => this.applyBentoGraphColorGroups(false, true), 220);
-      }
+      const curPreset = this.settings.graphPreset || "bento";
+      const curColorMode = this.settings.graphColorMode || "folders";
+      const curFilter = this.settings.graphFilterMode || "all";
+      viewContent.setAttribute("data-graph-preset", curPreset);
 
       const lang = this.settings.uiLanguage || "en";
       const isRu = lang === "ru";
 
-      // Track mouse inside Graph View for 3D Mind-Palace parallax & interactive radar
       if (!viewContent.dataset.artcraftMouseWired) {
         viewContent.dataset.artcraftMouseWired = "true";
         viewContent.addEventListener("mousemove", (ev) => {
@@ -4743,7 +5921,6 @@ class AlchemyFlowPlugin extends Plugin {
         }, { passive: true });
       }
 
-      // Compact, Soft Bottom-Left Studio Bar (Never overlaps top tabs, center graph, or right filter panel!)
       let hud = viewContent.querySelector(".artcraft-graph-hud");
       if (hud && hud.getAttribute("data-lang") !== lang) {
         hud.remove();
@@ -4755,18 +5932,29 @@ class AlchemyFlowPlugin extends Plugin {
         hud.className = "artcraft-graph-hud";
         hud.setAttribute("data-lang", lang);
         hud.innerHTML = `
-          <button class="artcraft-graph-hud-btn artcraft-graph-hud-toggle-btn" data-action="toggle-hud" title="${isRu ? "Свернуть / Развернуть панель графа" : "Minimize / Expand Graph Studio"}">${SICRAFT_SVGS.graph}</button>
+          <button class="artcraft-graph-hud-btn artcraft-graph-hud-toggle-btn" data-action="toggle-hud" title="${isRu ? "Свернуть / Развернуть студию графа" : "Minimize / Expand Graph Studio"}">${SICRAFT_SVGS.graph}</button>
           <div class="artcraft-graph-hud-items">
-            <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "bento" ? "is-active" : ""}" data-preset="bento" title="${isRu ? "Чистая сетка Swiss Bento" : "Swiss Bento Grid"}"><span>Bento</span></button>
-            <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "mindpalace" ? "is-active" : ""}" data-preset="mindpalace" title="${isRu ? "Пространственный 3D-режим с глубиной и ореолами узлов" : "Spatial 3D Mind-Palace with depth halos"}"><span>3D Palace</span></button>
-            <button class="artcraft-graph-hud-btn ${this.settings.graphPreset === "radar" ? "is-active" : ""}" data-preset="radar" title="${isRu ? "Фокус-Радар с концентрическими кольцами и лучом сканирования" : "Focus Radar with concentric rings & sweep"}"><span>${isRu ? "Радар" : "Radar"}</span></button>
+            <button class="artcraft-graph-hud-btn ${curPreset === "bento" ? "is-active" : ""}" data-preset="bento" title="${isRu ? "Сетка Swiss Craft" : "Swiss Craft Grid"}"><span>Bento</span></button>
+            <button class="artcraft-graph-hud-btn ${curPreset === "mindpalace" ? "is-active" : ""}" data-preset="mindpalace" title="${isRu ? "3D Чертоги разума с изометрическими ореолами" : "3D Mind-Palace with depth halos"}"><span>3D Palace</span></button>
+            <button class="artcraft-graph-hud-btn ${curPreset === "constellation" ? "is-active" : ""}" data-preset="constellation" title="${isRu ? "Алхимическое созвездие: линии между главными хабами" : "Alchemical Constellation: hub bridges"}"><span>${isRu ? "Созвездие" : "Star Map"}</span></button>
+            <button class="artcraft-graph-hud-btn ${curPreset === "radar" ? "is-active" : ""}" data-preset="radar" title="${isRu ? "Фокус-Радар с лучом сканирования" : "Focus Radar sweep"}"><span>${isRu ? "Радар" : "Radar"}</span></button>
             <span class="artcraft-graph-hud-sep"></span>
-            <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse" title="${isRu ? "Поток нейронных фотонов по связям графа" : "Neural photon pulses along graph links"}">${sicraftIcon('bolt')} <span>${isRu ? "Поток" : "Flow"}</span></button>
-            <button class="artcraft-graph-hud-btn artcraft-graph-resonance-btn" data-action="resonance" title="${isRu ? "Подсветить ключевые узлы гармоническим резонансом" : "Highlight key hub nodes with harmonic resonance"}">${sicraftIcon('spark')} <span>${isRu ? "Резонанс" : "Resonance"}</span></button>
-            <button class="artcraft-graph-hud-btn artcraft-graph-walk-btn" data-action="walk" title="${isRu ? "Авто-тур по созвездию связанных заметок" : "Constellation auto-tour across linked notes"}"><span>${isRu ? "Тур" : "Tour"}</span></button>
+            <select class="artcraft-graph-hud-select" data-role="color-mode" title="${isRu ? "Режим раскраски узлов (Extended Graph)" : "Node Color Mode"}">
+              <option value="folders" ${curColorMode === "folders" ? "selected" : ""}>${isRu ? "🎨 Папки + Поток цвета" : "🎨 Folders + BFS Spread"}</option>
+              <option value="heatmap" ${curColorMode === "heatmap" ? "selected" : ""}>${isRu ? "🔥 Тепловая карта хабов" : "🔥 Hub Heatmap"}</option>
+              <option value="recency" ${curColorMode === "recency" ? "selected" : ""}>${isRu ? "⚡ Свежесть заметок" : "⚡ Recency Heatmap"}</option>
+              <option value="nutrients" ${curColorMode === "nutrients" ? "selected" : ""}>${isRu ? "📚 Книги и Нутриенты" : "📚 Books & Nutrients"}</option>
+            </select>
+            <select class="artcraft-graph-hud-select" data-role="filter-mode" title="${isRu ? "Фокус-фильтр узлов графа" : "Graph Focus Filter"}">
+              <option value="all" ${curFilter === "all" ? "selected" : ""}>${isRu ? "👁 Все узлы" : "👁 All Nodes"}</option>
+              <option value="hubs" ${curFilter === "hubs" ? "selected" : ""}>${isRu ? "★ Только Хабы (Топ 25%)" : "★ Hubs Only (Top 25%)"}</option>
+              <option value="stamped" ${curFilter === "stamped" ? "selected" : ""}>${isRu ? "🔖 Со штампами и закладками" : "🔖 Stamped & Annotated"}</option>
+              <option value="no_orphans" ${curFilter === "no_orphans" ? "selected" : ""}>${isRu ? "🔗 Скрыть одиночки" : "🔗 Hide Orphans"}</option>
+            </select>
             <span class="artcraft-graph-hud-sep"></span>
-            <button class="artcraft-graph-hud-btn artcraft-graph-color-btn" data-action="colorize" title="${isRu ? "Раскрасить папки вашей базы в 8 цветов" : "Auto-color vault folders"}"><span>${isRu ? "Цвета" : "Colors"}</span></button>
-            <button class="artcraft-graph-hud-btn" data-action="toggle-orphans" title="${isRu ? "Скрыть / Показать заметки без связей" : "Toggle orphan nodes"}"><span>${isRu ? "Сироты" : "Orphans"}</span></button>
+            <button class="artcraft-graph-hud-btn artcraft-graph-pulse-btn ${this.settings.graphPulseNodes ? "is-pulse-on" : ""}" data-action="pulse" title="${isRu ? "Поток импульсов по связям" : "Photon pulses along links"}">${sicraftIcon('bolt')} <span>${isRu ? "Поток" : "Flow"}</span></button>
+            <button class="artcraft-graph-hud-btn artcraft-graph-resonance-btn" data-action="resonance" title="${isRu ? "Гармонический резонанс ключевых узлов" : "Harmonic hub resonance"}">${sicraftIcon('spark')} <span>${isRu ? "Резонанс" : "Resonance"}</span></button>
+            <button class="artcraft-graph-hud-btn artcraft-graph-walk-btn" data-action="walk" title="${isRu ? "Авто-тур по созвездию заметок" : "Constellation auto-tour"}"><span>${isRu ? "Тур" : "Tour"}</span></button>
             <button class="artcraft-graph-hud-btn" data-action="snap-png" title="${isRu ? "Сохранить снимок графа в PNG" : "Export Graph as PNG"}">${sicraftIcon('camera')}</button>
           </div>
         `;
@@ -4780,8 +5968,36 @@ class AlchemyFlowPlugin extends Plugin {
             hud.querySelectorAll("[data-preset]").forEach((b) => b.classList.remove("is-active"));
             btn.classList.add("is-active");
             viewContent.setAttribute("data-graph-preset", preset);
+            this._graphColorsDirty = true;
+            this.applyGraphPhysicsPreset(view, preset);
+            this.applyLiveGraphNodeStyling(view, true);
           });
         });
+
+        const colorSel = hud.querySelector('[data-role="color-mode"]');
+        if (colorSel) {
+          colorSel.addEventListener("change", async (e) => {
+            e.stopPropagation();
+            this.settings.graphColorMode = colorSel.value;
+            await this.saveSettings();
+            this._graphColorsDirty = true;
+            this.applyLiveGraphNodeStyling(view, true);
+            if (colorSel.value === "folders") {
+              this.applyBentoGraphColorGroups(false, true);
+            }
+          });
+        }
+
+        const filterSel = hud.querySelector('[data-role="filter-mode"]');
+        if (filterSel) {
+          filterSel.addEventListener("change", async (e) => {
+            e.stopPropagation();
+            this.settings.graphFilterMode = filterSel.value;
+            await this.saveSettings();
+            this._graphColorsDirty = true;
+            this.applyLiveGraphNodeStyling(view, true);
+          });
+        }
 
         hud.querySelector('[data-action="pulse"]')?.addEventListener("click", async (e) => {
           e.stopPropagation();
@@ -4800,16 +6016,6 @@ class AlchemyFlowPlugin extends Plugin {
           this.toggleConstellationWalk(viewContent, view.renderer);
         });
 
-        hud.querySelector('[data-action="colorize"]')?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          this.applyBentoGraphColorGroups(false, false);
-        });
-
-        hud.querySelector('[data-action="toggle-orphans"]')?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          this.applyBentoGraphColorGroups(true, false);
-        });
-
         hud.querySelector('[data-action="snap-png"]')?.addEventListener("click", (e) => {
           e.stopPropagation();
           this.snapBentoGraphPNG(viewContent);
@@ -4823,22 +6029,284 @@ class AlchemyFlowPlugin extends Plugin {
         viewContent.appendChild(hud);
       }
 
-      // Overlay Canvas for Live Graph Effects (Bento Grid, 3D Mind-Palace Halos, Radar Sweep, Neural Photons, Resonance & Tour)
       let fxCanvas = viewContent.querySelector(".artcraft-graph-fx-canvas");
       if (!fxCanvas) {
         fxCanvas = document.createElement("canvas");
         fxCanvas.className = "artcraft-graph-fx-canvas";
         viewContent.appendChild(fxCanvas);
       }
+
+      // Apply live node coloring & physics immediately when graph opens
+      this._graphColorsDirty = true;
+      this.applyGraphPhysicsPreset(view, curPreset);
+      this.applyLiveGraphNodeStyling(view, true);
+      this.wakeVisualLoop();
     });
   }
 
-  // Universal Coordinate Projector for Obsidian 1.0–1.15 Graph Renderer (supports both PixiJS worldTransform & WebGL Worker pan/scale)
-  projectGraphNodeToScreen(n, renderer, cw, ch, glCanvas) {
-    if (!n) return null;
-    const dpr = glCanvas && glCanvas.width > 0 && cw > 0 ? glCanvas.width / cw : (renderer.dpr || window.devicePixelRatio || 1);
+  // Tunes Obsidian's native D3 force engine (view.dataEngine) per preset
+  applyGraphPhysicsPreset(view, preset) {
+    if (!view || !view.dataEngine || typeof view.dataEngine.setOptions !== "function") return;
+    try {
+      const presetForces = {
+        bento: { centerStrength: 0.48, repelStrength: 11.5, linkStrength: 0.85, linkDistance: 65 },
+        mindpalace: { centerStrength: 0.35, repelStrength: 15.0, linkStrength: 0.72, linkDistance: 95 },
+        constellation: { centerStrength: 0.28, repelStrength: 16.5, linkStrength: 0.95, linkDistance: 80 },
+        radar: { centerStrength: 0.62, repelStrength: 10.5, linkStrength: 0.90, linkDistance: 55 },
+      };
+      const f = presetForces[preset] || presetForces.bento;
+      const hideOrphans = this.settings.graphFilterMode === "no_orphans";
+      view.dataEngine.setOptions({
+        centerStrength: f.centerStrength,
+        repelStrength: f.repelStrength,
+        linkStrength: f.linkStrength,
+        linkDistance: f.linkDistance,
+        showOrphans: !hideOrphans,
+      });
+      if (view.renderer && typeof view.renderer.changed === "function") {
+        view.renderer.changed();
+      }
+    } catch (e) {}
+  }
 
-    // 1. Legacy PixiJS sprite worldTransform if populated
+  // Directly colors and filters view.renderer.nodes in memory (Extended Graph / Graph Heatmap / BFS Propagation architecture)
+  applyLiveGraphNodeStyling(view, force = false) {
+    if (!view || !view.renderer || !Array.isArray(view.renderer.nodes) || view.renderer.nodes.length === 0) return;
+    const renderer = view.renderer;
+    const nodes = renderer.nodes;
+    const now = Date.now();
+    if (!force && !this._graphColorsDirty && now - (renderer._artcraftLastColorTs || 0) < 1800 && renderer._artcraftNodeCount === nodes.length) {
+      return;
+    }
+    this._graphColorsDirty = false;
+    renderer._artcraftLastColorTs = now;
+    renderer._artcraftNodeCount = nodes.length;
+
+    const colorMode = this.settings.graphColorMode || "folders";
+    const filterMode = this.settings.graphFilterMode || "all";
+    const paletteRgb = [
+      0x69BD28, // Alchemical Emerald
+      0xD97706, // Warm Amber Gold
+      0x0EA5E9, // Astral Sky
+      0x10B981, // Jade Mint
+      0xF43F5E, // Rose Elixir
+      0x8B5CF6, // Royal Amethyst
+      0xEAB308, // Sun Gold
+      0x14B8A6, // Teal Patina
+    ];
+
+    // 1. Compute degree (link count) for every node & build adjacency list for BFS color propagation
+    const degreeMap = {};
+    const adj = {};
+    nodes.forEach((n) => {
+      if (!n || !n.id) return;
+      const fwd = n.forward ? Object.keys(n.forward).length : 0;
+      const rev = n.reverse ? Object.keys(n.reverse).length : 0;
+      degreeMap[n.id] = fwd + rev;
+      adj[n.id] = [];
+    });
+    if (Array.isArray(renderer.links)) {
+      renderer.links.forEach((l) => {
+        const sid = l && l.source && (l.source.id || l.source);
+        const tid = l && l.target && (l.target.id || l.target);
+        if (sid && tid) {
+          if (degreeMap[sid] === undefined) degreeMap[sid] = 0;
+          if (degreeMap[tid] === undefined) degreeMap[tid] = 0;
+          if (!adj[sid]) adj[sid] = [];
+          if (!adj[tid]) adj[tid] = [];
+          adj[sid].push(tid);
+          adj[tid].push(sid);
+        }
+      });
+    }
+
+    const degreesSorted = Object.values(degreeMap).slice().sort((a, b) => b - a);
+    const maxDeg = Math.max(1, degreesSorted[0] || 1);
+    const hubThreshold = degreesSorted[Math.min(degreesSorted.length - 1, Math.max(0, Math.floor(degreesSorted.length * 0.25)))] || 1;
+
+    // Store top 8 hubs for Constellation bridges & sacred geometry rings
+    this._graphTopHubs = nodes
+      .slice()
+      .sort((a, b) => (degreeMap[b.id] || 0) - (degreeMap[a.id] || 0))
+      .slice(0, 8);
+
+    // 2. Folder mapping + BFS Color Propagation for ungrouped root notes
+    const folderMap = {};
+    let folderCounter = 0;
+    const nodeFolderRgb = {};
+    nodes.forEach((n) => {
+      if (!n || !n.id) return;
+      const idStr = String(n.id);
+      if (idStr.includes("/")) {
+        const topFolder = idStr.split("/")[0];
+        if (folderMap[topFolder] === undefined) {
+          folderMap[topFolder] = paletteRgb[folderCounter % paletteRgb.length];
+          folderCounter++;
+        }
+        nodeFolderRgb[idStr] = folderMap[topFolder];
+      }
+    });
+
+    // Propagate folder colors up to 2 hops to ungrouped root notes (Graph Color Propagation logic)
+    if (colorMode === "folders") {
+      nodes.forEach((n) => {
+        if (!n || !n.id || nodeFolderRgb[n.id] !== undefined) return;
+        const neighbors = adj[n.id] || [];
+        let rSum = 0, gSum = 0, bSum = 0, weightSum = 0;
+        neighbors.forEach((nbId) => {
+          const c = nodeFolderRgb[nbId];
+          if (c !== undefined) {
+            rSum += (c >> 16) & 255;
+            gSum += (c >> 8) & 255;
+            bSum += c & 255;
+            weightSum += 1;
+          } else {
+            (adj[nbId] || []).forEach((nb2Id) => {
+              const c2 = nodeFolderRgb[nb2Id];
+              if (c2 !== undefined) {
+                rSum += ((c2 >> 16) & 255) * 0.45;
+                gSum += ((c2 >> 8) & 255) * 0.45;
+                bSum += (c2 & 255) * 0.45;
+                weightSum += 0.45;
+              }
+            });
+          }
+        });
+        if (weightSum > 0) {
+          const r = Math.round(rSum / weightSum);
+          const g = Math.round(gSum / weightSum);
+          const b = Math.round(bSum / weightSum);
+          nodeFolderRgb[n.id] = (r << 16) | (g << 8) | b;
+        } else {
+          nodeFolderRgb[n.id] = 0x69BD28;
+        }
+      });
+    }
+
+    // Helper to interpolate two RGB integers
+    const lerpRgb = (c1, c2, t) => {
+      const clamped = Math.max(0, Math.min(1, t));
+      const r1 = (c1 >> 16) & 255, g1 = (c1 >> 8) & 255, b1 = c1 & 255;
+      const r2 = (c2 >> 16) & 255, g2 = (c2 >> 8) & 255, b2 = c2 & 255;
+      const r = Math.round(r1 + (r2 - r1) * clamped);
+      const g = Math.round(g1 + (g2 - g1) * clamped);
+      const b = Math.round(b1 + (b2 - b1) * clamped);
+      return (r << 16) | (g << 8) | b;
+    };
+
+    const stamped = this.settings.stampedNotes || {};
+    const bms = this.settings.marginBookmarks || {};
+
+    // 3. Apply color, weight & filter alpha per node directly into PixiJS/WebGL renderer
+    nodes.forEach((n, idx) => {
+      if (!n || !n.id) return;
+      const deg = degreeMap[n.id] || 0;
+      const degNorm = Math.min(1, deg / maxDeg);
+      let rgb = 0x69BD28;
+
+      if (colorMode === "folders") {
+        rgb = nodeFolderRgb[n.id] || paletteRgb[idx % paletteRgb.length];
+      } else if (colorMode === "heatmap") {
+        // 3-stop Alchemical Hub Heatmap: Emerald (0x10B981) -> Amber Gold (0xF59E0B) -> Philosopher Crimson (0xF43F5E)
+        rgb = degNorm < 0.5
+          ? lerpRgb(0x10B981, 0xF59E0B, degNorm * 2)
+          : lerpRgb(0xF59E0B, 0xF43F5E, (degNorm - 0.5) * 2);
+      } else if (colorMode === "recency") {
+        const af = this.app.vault.getAbstractFileByPath(n.id);
+        const mtime = af && af.stat ? af.stat.mtime : 0;
+        const ageDays = mtime ? Math.max(0, (now - mtime) / 86400000) : 30;
+        const fresh = Math.max(0, Math.min(1, 1 - ageDays / 21));
+        rgb = fresh < 0.5
+          ? lerpRgb(0x3B82F6, 0x10B981, fresh * 2)
+          : lerpRgb(0x10B981, 0xF59E0B, (fresh - 0.5) * 2);
+      } else if (colorMode === "nutrients") {
+        const rec = this.getNoteStampRecord(n.id);
+        const list = Array.isArray(bms[n.id]) ? bms[n.id] : [];
+        if (rec && rec.count >= 2) rgb = 0xF59E0B; // Gold Classics
+        else if (rec) rgb = 0x10B981; // Stamped Read
+        else if (list.length > 0) {
+          const firstType = list[0].type || "proteins";
+          const typeRgb = { proteins: 0xDC2626, carbs: 0xEA580C, fats: 0xEAB308, vitamins: 0x16A34A, fiber: 0x2563EB };
+          rgb = typeRgb[firstType] || 0xD97706;
+        } else {
+          rgb = 0x64748B;
+        }
+      }
+
+      // Compute Focus Filter visibility alpha
+      let alpha = 1.0;
+      if (filterMode === "hubs") {
+        alpha = deg >= hubThreshold && deg > 0 ? 1.0 : 0.14;
+      } else if (filterMode === "stamped") {
+        const hasStampOrBm = !!(this.getNoteStampRecord(n.id) || (Array.isArray(bms[n.id]) && bms[n.id].length > 0));
+        alpha = hasStampOrBm ? 1.0 : 0.12;
+      } else if (filterMode === "no_orphans") {
+        alpha = deg > 0 ? 1.0 : 0.05;
+      }
+
+      n._artcraftRgb = rgb;
+      n._artcraftHex = "#" + rgb.toString(16).padStart(6, "0");
+      n._artcraftAlpha = alpha;
+      n._artcraftDegree = deg;
+
+      // Write directly into Obsidian's GraphNode properties
+      n.color = { rgb, a: alpha };
+      if (!n._artcraftOrigGetFillColor && typeof n.getFillColor === "function") {
+        n._artcraftOrigGetFillColor = n.getFillColor.bind(n);
+      }
+      n.getFillColor = () => ({ rgb: n._artcraftRgb ?? rgb, a: n._artcraftAlpha ?? alpha });
+
+      if (n.circle) {
+        try {
+          n.circle.tint = rgb;
+          n.circle.alpha = alpha;
+        } catch (e) {}
+      }
+      if (n.text) {
+        try {
+          n.text.alpha = alpha < 0.25 ? 0.08 : 0.92;
+        } catch (e) {}
+      }
+    });
+
+    if (Array.isArray(renderer.links)) {
+      renderer.links.forEach((lnk) => {
+        if (!lnk || !lnk.line) return;
+        const sAlpha = lnk.source && lnk.source._artcraftAlpha !== undefined ? lnk.source._artcraftAlpha : 1;
+        const tAlpha = lnk.target && lnk.target._artcraftAlpha !== undefined ? lnk.target._artcraftAlpha : 1;
+        try {
+          lnk.line.alpha = Math.min(sAlpha, tAlpha) < 0.25 ? 0.05 : 0.55;
+        } catch (e) {}
+      });
+    }
+
+    if (typeof renderer.changed === "function") {
+      try {
+        renderer.changed();
+      } catch (e) {}
+    }
+  }
+
+  // Accurate Screen Coordinate Projector for Obsidian 1.0–1.16+ Graph Renderer
+  projectGraphNodeToScreen(n, renderer, cw, ch, glCanvas) {
+    if (!n || typeof n.x !== "number" || typeof n.y !== "number" || isNaN(n.x) || isNaN(n.y)) return null;
+    const dpr = renderer.dpr || (glCanvas && glCanvas.width > 0 && cw > 0 ? glCanvas.width / cw : window.devicePixelRatio || 1);
+
+    // 1. Live PixiJS Hanger Container position & scale (most accurate across pan/zoom)
+    if (renderer.hanger && renderer.hanger.scale && typeof renderer.hanger.x === "number") {
+      const sx = renderer.hanger.scale.x || 1;
+      const sy = renderer.hanger.scale.y || sx;
+      const hx = renderer.hanger.x;
+      const hy = renderer.hanger.y;
+      if (hx !== 0 || hy !== 0) {
+        return {
+          x: (n.x * sx + hx) / dpr,
+          y: (n.y * sy + hy) / dpr,
+        };
+      }
+    }
+
+    // 2. PixiJS circle sprite worldTransform
     if (n.circle && n.circle.worldTransform && (n.circle.worldTransform.tx !== 0 || n.circle.worldTransform.ty !== 0)) {
       return {
         x: n.circle.worldTransform.tx / dpr,
@@ -4846,29 +6314,16 @@ class AlchemyFlowPlugin extends Plugin {
       };
     }
 
-    // 2. Modern Obsidian WebGL / Worker Graph Renderer: n.x and n.y are world coordinates
-    if (typeof n.x === "number" && typeof n.y === "number" && !isNaN(n.x) && !isNaN(n.y)) {
-      if (renderer.hanger && renderer.hanger.worldTransform && (renderer.hanger.worldTransform.tx !== 0 || renderer.hanger.worldTransform.a !== 1)) {
-        const wt = renderer.hanger.worldTransform;
-        return {
-          x: (n.x * wt.a + wt.tx) / dpr,
-          y: (n.y * wt.d + wt.ty) / dpr,
-        };
-      }
-      const scale = typeof renderer.scale === "number" && renderer.scale > 0 ? renderer.scale : 1;
-      const panX = typeof renderer.panX === "number" ? renderer.panX : 0;
-      const panY = typeof renderer.panY === "number" ? renderer.panY : 0;
-      const cx = (glCanvas && glCanvas.width ? glCanvas.width : cw * dpr) * 0.5;
-      const cy = (glCanvas && glCanvas.height ? glCanvas.height : ch * dpr) * 0.5;
-      if (renderer._artcraftPanCentered === undefined) {
-        renderer._artcraftPanCentered = Math.abs(panX - cx) < Math.abs(panX) && cx > 100;
-      }
-      if (renderer._artcraftPanCentered) {
-        return { x: (n.x * scale + panX) / dpr, y: (n.y * scale + panY) / dpr };
-      }
-      return { x: cw * 0.5 + (n.x * scale + panX) / dpr, y: ch * 0.5 + (n.y * scale + panY) / dpr };
+    // 3. Fallback to renderer.scale & renderer.panX/panY
+    const scale = typeof renderer.scale === "number" && renderer.scale > 0 ? renderer.scale : 1;
+    const panX = typeof renderer.panX === "number" ? renderer.panX : 0;
+    const panY = typeof renderer.panY === "number" ? renderer.panY : 0;
+    const cx = (glCanvas && glCanvas.width ? glCanvas.width : cw * dpr) * 0.5;
+    const cy = (glCanvas && glCanvas.height ? glCanvas.height : ch * dpr) * 0.5;
+    if (Math.abs(panX - cx) < Math.abs(panX) && cx > 100) {
+      return { x: (n.x * scale + panX) / dpr, y: (n.y * scale + panY) / dpr };
     }
-    return null;
+    return { x: cw * 0.5 + (n.x * scale + panX) / dpr, y: ch * 0.5 + (n.y * scale + panY) / dpr };
   }
 
   renderGraphStudioFX() {
@@ -4895,20 +6350,23 @@ class AlchemyFlowPlugin extends Plugin {
       const renderer = view.renderer;
       if (!renderer || !renderer.nodes || renderer.nodes.length === 0) continue;
 
+      // Ensure live node colors & filters are kept synced with Obsidian's PixiJS renderer
+      this.applyLiveGraphNodeStyling(view, false);
+
       const hovered = renderer.hoveredNode || null;
       const isPulse = this.settings.graphPulseNodes !== false;
       const preset = this.settings.graphPreset || "bento";
 
       const ctx = fxCanvas.getContext("2d");
       ctx.clearRect(0, 0, cw, ch);
-      this.graphPulsePhase = (this.graphPulsePhase || 0) + 0.022;
+      this.graphPulsePhase = (this.graphPulsePhase || 0) + 0.024;
 
       const isDark = document.body.classList.contains("artcraft-dark-craft") || document.body.classList.contains("theme-dark");
-      const paletteHex = ["#2563EB", "#D97706", "#10B981", "#8B5CF6", "#EC4899", "#06B6D4", "#69BD28"];
+      const paletteHex = ["#69BD28", "#D97706", "#0EA5E9", "#10B981", "#F43F5E", "#8B5CF6", "#EAB308"];
       const glCanvas = viewContent.querySelector("canvas:not(.artcraft-graph-fx-canvas)");
       const getScreenPt = (n) => this.projectGraphNodeToScreen(n, renderer, cw, ch, glCanvas);
 
-      // A. Subtle Architectural Grid for Bento & 3D Mind-Palace
+      // A. Architectural Grid for Bento & 3D Mind-Palace
       if (preset === "mindpalace" || preset === "bento") {
         ctx.save();
         ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.028)" : "rgba(120, 113, 108, 0.055)";
@@ -4929,15 +6387,61 @@ class AlchemyFlowPlugin extends Plugin {
         ctx.restore();
       }
 
-      // B. Ambient Neural Photon Flow along Graph Links (Works continuously whenever Flow/Photons is ON!)
+      // B. Constellation Mode: Golden Alchemical Sacred Geometry Bridges & Hub Runes
+      if (preset === "constellation" && Array.isArray(this._graphTopHubs) && this._graphTopHubs.length > 1) {
+        ctx.save();
+        const hubs = this._graphTopHubs;
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 1.25;
+        ctx.strokeStyle = isDark ? "rgba(245, 158, 11, 0.28)" : "rgba(217, 119, 6, 0.24)";
+        for (let i = 0; i < hubs.length - 1; i++) {
+          const p1 = getScreenPt(hubs[i]);
+          const p2 = getScreenPt(hubs[i + 1]);
+          if (!p1 || !p2) continue;
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        hubs.forEach((hNode, idx) => {
+          const pt = getScreenPt(hNode);
+          if (!pt || pt.x < 0 || pt.x > cw || pt.y < 0 || pt.y > ch) return;
+          const r = 12 + (idx === 0 ? 4 : 0) + Math.sin(this.graphPulsePhase * 2 + idx) * 2;
+          ctx.save();
+          ctx.translate(pt.x, pt.y);
+          ctx.rotate(this.graphPulsePhase * 0.4 * (idx % 2 === 0 ? 1 : -1));
+          ctx.strokeStyle = hNode._artcraftHex || "#F59E0B";
+          ctx.globalAlpha = 0.55;
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.arc(0, 0, r, 0, Math.PI * 2);
+          ctx.stroke();
+          // Diamond star points on top 3 hubs
+          if (idx < 3) {
+            ctx.beginPath();
+            for (let k = 0; k < 4; k++) {
+              const a = (k * Math.PI) / 2;
+              ctx.moveTo(Math.cos(a) * (r - 3), Math.sin(a) * (r - 3));
+              ctx.lineTo(Math.cos(a) * (r + 4), Math.sin(a) * (r + 4));
+            }
+            ctx.stroke();
+          }
+          ctx.restore();
+        });
+        ctx.restore();
+      }
+
+      // C. Ambient Neural Photon Flow along Graph Links
       if (isPulse && renderer.links && renderer.links.length > 0) {
         ctx.save();
         const links = renderer.links;
-        const step = Math.max(1, Math.floor(links.length / 36));
+        const step = Math.max(1, Math.floor(links.length / 40));
         let idx = 0;
-        for (let i = 0; i < links.length && idx < 36; i += step, idx++) {
+        for (let i = 0; i < links.length && idx < 40; i += step, idx++) {
           const lnk = links[i];
           if (!lnk || !lnk.source || !lnk.target) continue;
+          if ((lnk.source._artcraftAlpha || 1) < 0.25 || (lnk.target._artcraftAlpha || 1) < 0.25) continue;
           const p1 = getScreenPt(lnk.source);
           const p2 = getScreenPt(lnk.target);
           if (!p1 || !p2) continue;
@@ -4946,80 +6450,76 @@ class AlchemyFlowPlugin extends Plugin {
           const tProg = (this.graphPulsePhase * (0.65 + (idx % 5) * 0.14) + idx * 0.23) % 1;
           const px = p1.x + (p2.x - p1.x) * tProg;
           const py = p1.y + (p2.y - p1.y) * tProg;
-          const col = paletteHex[idx % paletteHex.length];
+          const col = lnk.source._artcraftHex || paletteHex[idx % paletteHex.length];
 
-          // Subtle glowing trail segment
-          const tailT = Math.max(0, tProg - 0.12);
+          const tailT = Math.max(0, tProg - 0.14);
           const tx = p1.x + (p2.x - p1.x) * tailT;
           const ty = p1.y + (p2.y - p1.y) * tailT;
           ctx.beginPath();
           ctx.moveTo(tx, ty);
           ctx.lineTo(px, py);
           ctx.strokeStyle = col;
-          ctx.globalAlpha = 0.45;
-          ctx.lineWidth = 1.6;
+          ctx.globalAlpha = 0.52;
+          ctx.lineWidth = 1.7;
           ctx.stroke();
 
-          // Photon head
           ctx.beginPath();
-          ctx.globalAlpha = 0.88;
-          ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+          ctx.globalAlpha = 0.92;
+          ctx.arc(px, py, 2.7, 0, Math.PI * 2);
           ctx.fillStyle = col;
           ctx.fill();
         }
         ctx.restore();
       }
 
-      // C. 3D Mind-Palace Spatial Elevation Halos & Parallax Shadows
+      // D. 3D Mind-Palace Spatial Elevation Halos & Parallax Shadows
       if (preset === "mindpalace") {
         ctx.save();
         const mx = this.graphMouseX || 0;
         const my = this.graphMouseY || 0;
         const nodes = renderer.nodes;
-        const step = Math.max(1, Math.floor(nodes.length / 45));
+        const step = Math.max(1, Math.floor(nodes.length / 48));
         let count = 0;
-        for (let i = 0; i < nodes.length && count < 45; i += step, count++) {
+        for (let i = 0; i < nodes.length && count < 48; i += step, count++) {
           const n = nodes[i];
+          if ((n._artcraftAlpha || 1) < 0.25) continue;
           const pt = getScreenPt(n);
           if (!pt || pt.x < 10 || pt.x > cw - 10 || pt.y < 10 || pt.y > ch - 10) continue;
 
-          // Soft isometric floor shadow
           ctx.beginPath();
-          ctx.ellipse(pt.x + 5 + mx * 8, pt.y + 9 + my * 8, 7, 4, 0, 0, Math.PI * 2);
-          ctx.fillStyle = isDark ? "rgba(0, 0, 0, 0.42)" : "rgba(92, 60, 28, 0.10)";
+          ctx.ellipse(pt.x + 5 + mx * 8, pt.y + 9 + my * 8, 7.5, 4.2, 0, 0, Math.PI * 2);
+          ctx.fillStyle = isDark ? "rgba(0, 0, 0, 0.45)" : "rgba(92, 60, 28, 0.12)";
           ctx.fill();
 
-          // Warm orbital ring on key nodes
-          if (count % 3 === 0) {
-            const col = paletteHex[count % paletteHex.length];
-            const r = 9 + Math.sin(this.graphPulsePhase * 2 + count) * 2;
+          if ((n._artcraftDegree || 0) >= 2 || count % 3 === 0) {
+            const col = n._artcraftHex || paletteHex[count % paletteHex.length];
+            const r = 9.5 + Math.sin(this.graphPulsePhase * 2 + count) * 2.2;
             ctx.beginPath();
             ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
             ctx.strokeStyle = col;
-            ctx.globalAlpha = 0.42;
-            ctx.lineWidth = 1.25;
+            ctx.globalAlpha = 0.48;
+            ctx.lineWidth = 1.35;
             ctx.stroke();
           }
         }
         ctx.restore();
       }
 
-      // D. Focus Radar Concentric Rings & Rotating Sweep Beam
+      // E. Focus Radar Concentric Rings & Rotating Sweep Beam
       if (preset === "radar") {
         const hovPt = hovered ? getScreenPt(hovered) : null;
         const centerPt = hovPt || this.graphCursorPt || { x: cw / 2, y: ch / 2 };
         ctx.save();
         const rings = [75, 150, 235, 330];
         ctx.setLineDash([4, 6]);
-        ctx.lineWidth = 1.1;
-        ctx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.22)" : "rgba(105, 189, 40, 0.26)";
+        ctx.lineWidth = 1.15;
+        ctx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.24)" : "rgba(105, 189, 40, 0.28)";
         for (let r = 0; r < rings.length; r++) {
           ctx.beginPath();
           ctx.arc(centerPt.x, centerPt.y, rings[r], 0, Math.PI * 2);
           ctx.stroke();
         }
         ctx.setLineDash([]);
-        // Rotating radar sweep line
         const sweepAng = (this.graphPulsePhase * 1.15) % (Math.PI * 2);
         const grad = ctx.createLinearGradient(
           centerPt.x,
@@ -5027,18 +6527,18 @@ class AlchemyFlowPlugin extends Plugin {
           centerPt.x + Math.cos(sweepAng) * 235,
           centerPt.y + Math.sin(sweepAng) * 235
         );
-        grad.addColorStop(0, "rgba(105, 189, 40, 0.45)");
+        grad.addColorStop(0, "rgba(105, 189, 40, 0.48)");
         grad.addColorStop(1, "rgba(105, 189, 40, 0)");
         ctx.beginPath();
         ctx.moveTo(centerPt.x, centerPt.y);
         ctx.lineTo(centerPt.x + Math.cos(sweepAng) * 235, centerPt.y + Math.sin(sweepAng) * 235);
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 2.2;
+        ctx.lineWidth = 2.4;
         ctx.stroke();
         ctx.restore();
       }
 
-      // E. Memory Resonance: Expanding Harmonic Shockwave & Gem Callout Pills
+      // F. Memory Resonance Shockwave & Gem Callout Pills
       if (this.memoryResonanceActive && this.resonanceGems && this.resonanceGems.length > 0) {
         ctx.save();
         const elapsed = (Date.now() - (this.memoryResonanceStart || Date.now())) / 1000;
@@ -5047,7 +6547,7 @@ class AlchemyFlowPlugin extends Plugin {
 
         ctx.beginPath();
         ctx.arc(cw / 2, ch / 2, waveR, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(217, 119, 6, ${waveAlpha * 0.45})`;
+        ctx.strokeStyle = `rgba(217, 119, 6, ${waveAlpha * 0.48})`;
         ctx.lineWidth = 2.5;
         ctx.stroke();
 
@@ -5066,7 +6566,7 @@ class AlchemyFlowPlugin extends Plugin {
           const rawId = String(gem.id || "").replace(/\.md$/i, "");
           const gemName = rawId.split("/").pop() || rawId;
           ctx.font = '600 10.5px "Inter", sans-serif';
-          const cardText = `★ ${gemName.slice(0, 24)}`;
+          const cardText = `★ ${gemName.slice(0, 24)} (${gem._artcraftDegree || 0})`;
           const tw = ctx.measureText(cardText).width + 16;
           const cx = Math.max(8, Math.min(cw - tw - 8, gpt.x - tw / 2));
           const cy = Math.max(10, gpt.y - 30);
@@ -5088,7 +6588,7 @@ class AlchemyFlowPlugin extends Plugin {
         ctx.restore();
       }
 
-      // F. Constellation Walk Tour
+      // G. Constellation Walk Tour
       if (this.constellationWalkActive && this.constellationPath && this.constellationPath.length > 0) {
         ctx.save();
         const nowMs = Date.now();
@@ -5107,7 +6607,7 @@ class AlchemyFlowPlugin extends Plugin {
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = "#6366F1";
+          ctx.strokeStyle = "#D97706";
           ctx.lineWidth = 2.4;
           ctx.stroke();
 
@@ -5117,14 +6617,14 @@ class AlchemyFlowPlugin extends Plugin {
 
           ctx.beginPath();
           ctx.arc(px, py, 5, 0, Math.PI * 2);
-          ctx.fillStyle = "#6366F1";
+          ctx.fillStyle = "#F59E0B";
           ctx.fill();
         }
 
         if (p1) {
           ctx.beginPath();
           ctx.arc(p1.x, p1.y, 15 + Math.sin(this.graphPulsePhase * 4) * 2.5, 0, Math.PI * 2);
-          ctx.strokeStyle = "#6366F1";
+          ctx.strokeStyle = "#F59E0B";
           ctx.lineWidth = 2;
           ctx.stroke();
         }
@@ -5136,23 +6636,23 @@ class AlchemyFlowPlugin extends Plugin {
         const bx = Math.max(16, (cw - msgW) / 2);
         const by = 18;
 
-        ctx.fillStyle = isDark ? "rgba(30, 27, 75, 0.92)" : "rgba(250, 248, 243, 0.95)";
-        ctx.strokeStyle = "#6366F1";
-        ctx.lineWidth = 1.2;
+        ctx.fillStyle = isDark ? "rgba(28, 25, 23, 0.94)" : "rgba(254, 252, 232, 0.96)";
+        ctx.strokeStyle = "#D97706";
+        ctx.lineWidth = 1.3;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(bx, by, msgW, 25, 999);
         else ctx.rect(bx, by, msgW, 25);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = isDark ? "#E0E7FF" : "#3730A3";
+        ctx.fillStyle = isDark ? "#FDE68A" : "#92400E";
         ctx.textBaseline = "middle";
         ctx.textAlign = "center";
         ctx.fillText(tourMsg, bx + msgW / 2, by + 12.5);
         ctx.restore();
       }
 
-      // G. Hovered Node Highlight & Soft Craft Pill
+      // H. Hovered Node Highlight, Connected Edge Photons & Rich Inspector Badge
       if (hovered) {
         const hovPt = getScreenPt(hovered);
         if (hovPt && hovPt.x >= 0 && hovPt.x <= cw && hovPt.y >= 0 && hovPt.y <= ch) {
@@ -5160,7 +6660,7 @@ class AlchemyFlowPlugin extends Plugin {
             this._lastHoveredId = hovered.id;
             this._cachedLinks = [];
             const allLinks = renderer.links || [];
-            for (let i = 0; i < allLinks.length && this._cachedLinks.length < 24; i++) {
+            for (let i = 0; i < allLinks.length && this._cachedLinks.length < 28; i++) {
               const lnk = allLinks[i];
               if (lnk && (lnk.source === hovered || lnk.target === hovered)) {
                 this._cachedLinks.push(lnk);
@@ -5179,28 +6679,53 @@ class AlchemyFlowPlugin extends Plugin {
               ctx.beginPath();
               ctx.moveTo(p1.x, p1.y);
               ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = isDark ? "rgba(105, 189, 40, 0.45)" : "rgba(105, 189, 40, 0.38)";
-              ctx.lineWidth = 1.8;
+              ctx.strokeStyle = hovered._artcraftHex || "#69BD28";
+              ctx.globalAlpha = 0.65;
+              ctx.lineWidth = 2.0;
               ctx.stroke();
 
               const tProg = (this.graphPulsePhase + i * 0.16) % 1;
               const px = p1.x + (p2.x - p1.x) * tProg;
               const py = p1.y + (p2.y - p1.y) * tProg;
               ctx.beginPath();
-              ctx.arc(px, py, 3, 0, Math.PI * 2);
-              ctx.fillStyle = paletteHex[i % paletteHex.length];
+              ctx.globalAlpha = 0.95;
+              ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+              ctx.fillStyle = hovered._artcraftHex || paletteHex[i % paletteHex.length];
               ctx.fill();
             }
             ctx.restore();
           }
 
           ctx.save();
-          const pulseR = 11 + Math.sin(this.graphPulsePhase * 3) * 2.5;
+          const pulseR = 12 + Math.sin(this.graphPulsePhase * 3) * 2.5;
           ctx.beginPath();
           ctx.arc(hovPt.x, hovPt.y, pulseR, 0, Math.PI * 2);
-          ctx.strokeStyle = "#69BD28";
-          ctx.lineWidth = 1.8;
+          ctx.strokeStyle = hovered._artcraftHex || "#69BD28";
+          ctx.lineWidth = 2.0;
           ctx.stroke();
+
+          // Floating Node Metric Badge above hovered node
+          const rawId = String(hovered.id || "").replace(/\.md$/i, "");
+          const folder = rawId.includes("/") ? rawId.split("/")[0] : "Root";
+          const deg = hovered._artcraftDegree || 0;
+          const stampRec = this.getNoteStampRecord(hovered.id);
+          const badgeTxt = `${folder} • ${deg} связей${stampRec ? " • ★" : ""}`;
+          ctx.font = '600 10px "JetBrains Mono", monospace';
+          const bw = ctx.measureText(badgeTxt).width + 14;
+          const bx = Math.max(8, Math.min(cw - bw - 8, hovPt.x - bw / 2));
+          const by = Math.max(8, hovPt.y - 34);
+          ctx.fillStyle = isDark ? "rgba(20, 24, 32, 0.92)" : "rgba(247, 246, 242, 0.95)";
+          ctx.strokeStyle = hovered._artcraftHex || "#69BD28";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(bx, by, bw, 19, 6);
+          else ctx.rect(bx, by, bw, 19);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = isDark ? "#F8FAFC" : "#1C1917";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(badgeTxt, bx + bw / 2, by + 9.5);
           ctx.restore();
         }
       }
@@ -5331,6 +6856,9 @@ class AlchemyFlowPlugin extends Plugin {
     );
   }
 
+  // Colours top-level folders in the graph. It changes only what it owns: the colour groups it added
+  // earlier are replaced, every other group and every other graph setting of the user is left alone.
+  // The "orphans" switch flips showOrphans and nothing else.
   async applyBentoGraphColorGroups(toggleOrphans = false, silent = false) {
     try {
       const adapter = this.app.vault.adapter;
@@ -5338,99 +6866,73 @@ class AlchemyFlowPlugin extends Plugin {
       const graphPath = `${configDir}/graph.json`;
       let graphConfig = {};
       if (await adapter.exists(graphPath)) {
-        const raw = await adapter.read(graphPath);
-        graphConfig = JSON.parse(raw);
+        try {
+          graphConfig = JSON.parse(await adapter.read(graphPath)) || {};
+        } catch (e) {
+          graphConfig = {};
+        }
       }
+      const isRu = (this.settings.uiLanguage || "en") === "ru";
 
-      // 8-Color Vibrant Swiss Bento Palette in Decimal RGB for graph.json
-      const bentoColors = [
-        2450411,  // #2563EB Sapphire Blue
-        16096779, // #F59E0B Amber Gold
-        1096065,  // #10B981 Emerald Green
-        9133302,  // #8B5CF6 Amethyst Purple
-        15485081, // #EC4899 Rose Quartz
-        439972,   // #06B6D4 Cyber Cyan
-        6929704,  // #69BD28 Alchemist Green
-        15358988, // #EA580C Terracotta Orange
-      ];
-
-      // 1. Scan real top-level user folders
-      const rootChildren = (this.app.vault.getRoot() && this.app.vault.getRoot().children) || [];
-      const folders = rootChildren
-        .filter((f) => f && f.children !== undefined && !f.name.startsWith(".") && !f.name.startsWith("_"))
-        .map((f) => f.name)
-        .sort();
-
-      const colorGroups = [];
-      folders.forEach((folderName, idx) => {
-        colorGroups.push({
-          query: `path:"${folderName}"`,
-          color: { a: 1, rgb: bentoColors[idx % bentoColors.length] },
-        });
-      });
-
-      // 2. High-priority tags and project notes
-      colorGroups.push({ query: 'tag:#pro OR tag:#important OR tag:#crypto OR tag:#strategy', color: { a: 1, rgb: 15485081 } });
-      colorGroups.push({ query: 'file:Kaito OR file:Alchemy OR file:Baraka', color: { a: 1, rgb: 6929704 } });
-
-      graphConfig.colorGroups = colorGroups;
-      if (!graphConfig.search) {
-        graphConfig.search = '-path:"node_modules" -path:"dist" -path:".trash"';
-      }
-      graphConfig.showArrow = true;
-      graphConfig.hideUnresolved = false;
       if (toggleOrphans) {
-        graphConfig.showOrphans = graphConfig.showOrphans === false ? true : false;
+        graphConfig.showOrphans = graphConfig.showOrphans === false;
       } else {
-        graphConfig.showOrphans = true;
+        const palette = [2450411, 16096779, 1096065, 9133302, 15485081, 439972, 6929704, 15358988];
+        const rootChildren = (this.app.vault.getRoot() && this.app.vault.getRoot().children) || [];
+        const folders = rootChildren
+          .filter((f) => f && f.children !== undefined && !f.name.startsWith(".") && !f.name.startsWith("_"))
+          .map((f) => f.name)
+          .sort();
+        const owned = new Set(Array.isArray(this.settings.graphOwnedQueries) ? this.settings.graphOwnedQueries : []);
+        const kept = (Array.isArray(graphConfig.colorGroups) ? graphConfig.colorGroups : []).filter((g) => g && !owned.has(g.query));
+        const mine = folders.map((name, idx) => ({
+          query: 'path:"' + name.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '/"',
+          color: { a: 1, rgb: palette[idx % palette.length] },
+        }));
+        graphConfig.colorGroups = kept.concat(mine);
+        this.settings.graphOwnedQueries = mine.map((g) => g.query);
+        await this.saveSettings();
+        this.graphFoldersColored = folders.length;
       }
-      graphConfig.textFadeMultiplier = -1.2;
-      graphConfig.nodeSizeMultiplier = 1.25;
-      graphConfig.lineSizeMultiplier = 1.0;
-      graphConfig.centerStrength = 0.35;
-      graphConfig.repelStrength = 10.0;
-      graphConfig.linkDistance = 140;
 
       await adapter.write(graphPath, JSON.stringify(graphConfig, null, 2));
 
       const graphPlugin = this.app.internalPlugins?.plugins?.graph?.instance;
       if (graphPlugin && graphPlugin.options) {
-        Object.assign(graphPlugin.options, graphConfig);
+        graphPlugin.options.colorGroups = graphConfig.colorGroups;
+        graphPlugin.options.showOrphans = graphConfig.showOrphans;
       }
       const leaves = this.app.workspace.getLeavesOfType("graph").concat(this.app.workspace.getLeavesOfType("localgraph"));
       leaves.forEach((leaf) => {
         const view = leaf.view;
-        if (view) {
-          try {
-            if (view.dataEngine) {
-              if (typeof view.dataEngine.setOptions === "function") {
-                view.dataEngine.setOptions(graphConfig);
-              }
-              if (typeof view.dataEngine.updateColorGroups === "function") {
-                view.dataEngine.updateColorGroups();
-              }
-              if (typeof view.dataEngine.render === "function") {
-                view.dataEngine.render();
-              }
+        if (!view) return;
+        try {
+          if (view.dataEngine) {
+            if (typeof view.dataEngine.setOptions === "function") {
+              view.dataEngine.setOptions({ colorGroups: graphConfig.colorGroups, showOrphans: graphConfig.showOrphans });
             }
-            if (view.renderer) {
-              if (typeof view.renderer.onIframeLoad === "function") {
-                view.renderer.onIframeLoad();
-              }
-              if (typeof view.renderer.changed === "function") {
-                view.renderer.changed();
-              }
-            }
-          } catch (e) {}
-        }
+            if (typeof view.dataEngine.updateColorGroups === "function") view.dataEngine.updateColorGroups();
+            if (typeof view.dataEngine.render === "function") view.dataEngine.render();
+          }
+          this._graphColorsDirty = true;
+          this.applyLiveGraphNodeStyling(view, true);
+          if (view.renderer && typeof view.renderer.changed === "function") view.renderer.changed();
+        } catch (e) {}
       });
 
       if (!silent) {
-        this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
-        new Notice(`Colored ${folders.length} Vault Folders in Graph View & optimized cluster layout!`);
+        new Notice(
+          toggleOrphans
+            ? isRu
+              ? `Заметки без связей: ${graphConfig.showOrphans ? "показаны" : "скрыты"}`
+              : `Unlinked notes: ${graphConfig.showOrphans ? "shown" : "hidden"}`
+            : isRu
+            ? `Папки раскрашены в графе: ${this.graphFoldersColored}. Ваши собственные группы цветов сохранены.`
+            : `Folders coloured in the graph: ${this.graphFoldersColored}. Your own colour groups were kept.`
+        );
       }
     } catch (err) {
-      if (!silent) new Notice("Could not update graph configuration automatically.");
+      if (!silent) new Notice("Could not update the graph configuration.");
     }
   }
 
@@ -5459,7 +6961,7 @@ class AlchemyFlowPlugin extends Plugin {
         } catch (e) {}
       });
 
-      // Draw crisp Swiss Bento watermark pill in top-left of exported PNG
+      // Draw crisp Swiss Craft watermark pill in top-left of exported PNG
       ctx.fillStyle = isDark ? "#1E2025" : "#FFFFFF";
       ctx.strokeStyle = "#111111";
       ctx.lineWidth = 1.5;
@@ -5475,7 +6977,7 @@ class AlchemyFlowPlugin extends Plugin {
       a.download = `alchemy-bento-graph-${new Date().toISOString().slice(0, 10)}.png`;
       a.click();
       this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 45);
-      new Notice((this.settings.uiLanguage || "en") === "ru" ? "Снимок графа сохранен в PNG!" : "Swiss Bento Graph snapshot saved as PNG!");
+      new Notice((this.settings.uiLanguage || "en") === "ru" ? "Снимок графа сохранен в PNG!" : "Swiss Craft Graph snapshot saved as PNG!");
     } catch (err) {
       new Notice("Could not export graph snapshot.");
     }
@@ -5485,7 +6987,7 @@ class AlchemyFlowPlugin extends Plugin {
   getNoteStampRecord(filePath) {
     if (!this.settings.stampedNotes) this.settings.stampedNotes = {};
     const raw = this.settings.stampedNotes[filePath];
-    if (!raw) return null;
+    if (!raw || raw.cleared) return null;
     if (typeof raw === "string") {
       return { dates: [raw], count: 1 };
     }
@@ -5498,7 +7000,7 @@ class AlchemyFlowPlugin extends Plugin {
   async stampNoteReading(filePath, mode = "add") {
     if (!this.settings.stampedNotes) this.settings.stampedNotes = {};
     if (mode === "clear") {
-      delete this.settings.stampedNotes[filePath];
+      this.settings.stampedNotes[filePath] = { cleared: true };
       await this.saveSettings();
       this.updateTaskProgressBar();
       return;
@@ -5552,7 +7054,7 @@ class AlchemyFlowPlugin extends Plugin {
     menu.addSeparator();
     menu.addItem((item) => {
       item
-        .setTitle(isRu ? "+ Прикрепить закладку-нутриент (5 цветов)" : "+ Attach 5-Nutrient Bookmark")
+        .setTitle(isRu ? "+ Прикрепить цветную закладку" : "+ Attach 5-Nutrient Bookmark")
         .setIcon("sicraft-target")
         .onClick(() => this.addMarginBookmarkToActiveNote());
     });
@@ -5623,9 +7125,10 @@ class AlchemyFlowPlugin extends Plugin {
     }
     this.lastTaskPctByFile[filePath] = pct;
 
+    const rawStamp = this.settings.stampedNotes && this.settings.stampedNotes[filePath];
     const stampRec =
       this.getNoteStampRecord(filePath) ||
-      (total > 0 && pct === 100 ? { dates: [new Date().toLocaleDateString()], count: 1 } : null);
+      (total > 0 && pct === 100 && !(rawStamp && rawStamp.cleared) ? { dates: [new Date().toLocaleDateString()], count: 1 } : null);
     const isStamped = !!stampRec;
     const isClassics = stampRec && stampRec.count >= 2;
     const latestDate = stampRec ? stampRec.dates[stampRec.dates.length - 1] : "";
@@ -5677,7 +7180,7 @@ class AlchemyFlowPlugin extends Plugin {
       noteBookmarks.length > 0
         ? `<div class="artcraft-margin-bookmarks-strip">
             <button class="artcraft-bm-digest-chip" data-act="digest" title="${
-              isRu ? "Открыть дайджест книги (Белки и Углеводы)" : "Open Book Nutrient Digest (Proteins & Carbs)"
+              isRu ? "Открыть книжный дайджест" : "Open Book Nutrient Digest (Proteins & Carbs)"
             }">
               ${sicraftIcon('book')}
               <span>${isRu ? `Дайджест · ${noteBookmarks.length}` : `Digest · ${noteBookmarks.length}`}</span>
@@ -5688,16 +7191,16 @@ class AlchemyFlowPlugin extends Plugin {
                 const nutName = isRu ? n.ruName : n.enName;
                 const rawMeaning = bm.meaning || bm.snippet || nutName;
                 const cleanMeaning = cleanBookmarkText(rawMeaning) || nutName;
-                const shortMeaning = cleanMeaning.length > 24 ? cleanMeaning.slice(0, 22) + "…" : cleanMeaning;
+                const shortMeaning = cleanMeaning.length > 60 ? cleanMeaning.slice(0, 58) + "…" : cleanMeaning;
                 const cleanSnippet = cleanBookmarkText(bm.snippet || "");
                 const tooltip = `${nutName} (${isRu ? n.ruRole : n.enRole})\n${bm.meaning ? cleanBookmarkText(bm.meaning) + "\n" : ""}«${cleanSnippet}»`;
                 return `
-                  <div class="artcraft-bm-pill is-nut-${n.id}" data-bm-id="${bm.id}" data-bm-line="${bm.line || 0}" style="--bm-accent:${n.color};--bm-bg:${n.bg};--bm-border:${n.border};" title="${tooltip.replace(/"/g, "&quot;")}">
+                  <div class="artcraft-bm-pill is-nut-${n.id}" data-bm-id="${escHtml(bm.id)}" data-bm-line="${safeNum(bm.line, 0)}" style="--bm-accent:${n.color};--bm-bg:${n.bg};--bm-border:${n.border};" title="${tooltip.replace(/"/g, "&quot;")}">
                     <span class="bm-nut-dot" style="background:${n.color}"></span>
                     <span class="bm-tag-name" style="color:${n.color}">${nutName}</span>
-                    <span class="bm-tag-text">${shortMeaning}</span>
-                    <button class="bm-tag-edit" data-bm-edit="${bm.id}" title="${isRu ? "Изменить закладку" : "Edit sticker"}">${SICRAFT_SVGS.edit}</button>
-                    <button class="bm-tag-del" data-bm-del="${bm.id}" title="${isRu ? "Удалить закладку" : "Delete sticker"}">${sicraftIcon('clear')}</button>
+                    <span class="bm-tag-text">${escHtml(shortMeaning)}</span>
+                    <button class="bm-tag-edit" data-bm-edit="${escHtml(bm.id)}" title="${isRu ? "Изменить закладку" : "Edit sticker"}">${SICRAFT_SVGS.edit}</button>
+                    <button class="bm-tag-del" data-bm-del="${escHtml(bm.id)}" title="${isRu ? "Удалить закладку" : "Delete sticker"}">${sicraftIcon('clear')}</button>
                   </div>
                 `;
               })
@@ -5714,22 +7217,22 @@ class AlchemyFlowPlugin extends Plugin {
         stampBadgeHtml = `
           <span class="artcraft-ink-stamp-badge is-classics${animClass}" data-act="stamp-menu" title="${
             isRu
-              ? `Полка «Классика»! Прочитано ${stampRec.count} раз(а): ${stampRec.dates.join(", ")}. Нажмите для меню.`
-              : `Classics Shelf! Read ${stampRec.count} times: ${stampRec.dates.join(", ")}. Click for menu.`
+              ? `Полка «Классика»! Прочитано ${stampRec.count} раз(а): ${escHtml(stampRec.dates.join(", "))}. Нажмите для меню.`
+              : `Classics Shelf! Read ${stampRec.count} times: ${escHtml(stampRec.dates.join(", "))}. Click for menu.`
           }">
             ${sicraftIcon('stamp')}
-            <span>★ ${isRu ? `КЛАССИКА #${stampRec.count}` : `CLASSICS #${stampRec.count}`} • ${latestDate}</span>
+            <span>★ ${isRu ? `КЛАССИКА #${stampRec.count}` : `CLASSICS #${stampRec.count}`} • ${escHtml(latestDate)}</span>
           </span>
         `;
       } else if (isStamped) {
         stampBadgeHtml = `
           <span class="artcraft-ink-stamp-badge${animClass}" data-act="stamp-menu" title="${
             isRu
-              ? `Изучено: ${latestDate} (Чтение #1). Нажмите, чтобы отметить 2-е прочтение (Полка «Классика») или снять штамп.`
-              : `Approved: ${latestDate} (Read #1). Click to add 2nd read (Classics Shelf) or remove stamp.`
+              ? `Изучено: ${escHtml(latestDate)} (Чтение #1). Нажмите, чтобы отметить 2-е прочтение (Полка «Классика») или снять штамп.`
+              : `Approved: ${escHtml(latestDate)} (Read #1). Click to add 2nd read (Classics Shelf) or remove stamp.`
           }">
             ${sicraftIcon('stamp')}
-            <span>${isRu ? "ИЗУЧЕНО" : "APPROVED"} • ${latestDate}</span>
+            <span>${isRu ? "ИЗУЧЕНО" : "APPROVED"} • ${escHtml(latestDate)}</span>
           </span>
         `;
       } else {
@@ -5771,28 +7274,28 @@ class AlchemyFlowPlugin extends Plugin {
             ${stampBadgeHtml}
             <button class="artcraft-craft-mini-btn" data-act="bookmark" title="${
               isRu
-                ? "Прикрепить крафтовую закладку-нутриент (Белки, Углеводы, Жиры, Витамины, Клетчатка)"
-                : "Attach 5-Nutrient Bookmark (Proteins, Carbs, Fats, Vitamins, Fiber)"
+                ? "Добавить закладку к текущей строке"
+                : "Add a sticker to the current line"
             }">
               ${sicraftIcon('bookmark')}
               <span>+ ${isRu ? "Закладка" : "Sticker"}</span>
             </button>
             <button class="artcraft-craft-mini-btn ${this.settings.bookSpreadMode ? "is-active" : ""}" data-act="spread" title="${
               isRu
-                ? "ЛКМ: 3D Книжный лист в 4 слоя | ПКМ: Открыть 2-страничный разворот рядом"
-                : "LMB: 4-Layer 3D Book Folio | RMB: Open 2-Page Side-by-Side Spread"
+                ? "Клик: вид книжной страницы. Правый клик: разворот из двух страниц"
+                : "Click: book page view. Right-click: two-page spread"
             }">
               ${sicraftIcon('columns')}
               <span>${isRu ? "Книжный лист" : "Book Page"}</span>
             </button>
             <button class="artcraft-craft-mini-btn ${(this.settings.pageWidthMode && this.settings.pageWidthMode !== 'book') ? "is-active" : ""}" data-act="width-cycle" title="${
               i18n({
-                en: "Page Width Preset: click to cycle 760px Book → 1080px Studio Wide → 94% Full Canvas",
-                ru: "Ширина страницы: нажмите для переключения 760px Книга → 1080px Студия → 94% Полный холст",
-                zh: "页面宽度预设：点击切换 760px 书页 → 1080px 宽屏 → 94% 全画布",
-                ja: "ページ幅プリセット：クリックで 760px → 1080px → 94% 全幅を切り替え",
-                es: "Ancho de página: alternar 760px Libro → 1080px Estudio → 94% Lienzo completo",
-                de: "Seitenbreite: umschalten zwischen 760px Buch → 1080px Studio → 94% Vollbild"
+                en: "Page width: 760 px → 1080 px → full",
+                ru: "Ширина страницы: 760 px → 1080 px → вся ширина",
+                zh: "页面宽度：760px → 1080px → 全宽",
+                ja: "ページ幅：760px → 1080px → 全幅",
+                es: "Ancho de página: 760 px → 1080 px → completo",
+                de: "Seitenbreite: 760 px → 1080 px → volle Breite"
               }, this)
             }">
               ${sicraftIcon('ruler')}
@@ -5813,8 +7316,8 @@ class AlchemyFlowPlugin extends Plugin {
             </button>
             <button class="artcraft-craft-mini-btn is-quest-chain-btn" data-act="quest-chain" title="${
               i18n({
-                en: "Life RPG & SHA-256 Quest Chain (365-Day Heatmap & Smart Contract)",
-                ru: "Квесты и Блокчейн SHA-256 (365-карта потока и смарт-контракт)",
+                en: "Life RPG & Quest & Task Journal (365-Day Progress)",
+                ru: "Журнал целей и задач (365-дневный трекер)",
                 zh: "Life RPG 与 SHA-256 任务区块链 (365天热力图与智能合约)",
                 ja: "Life RPG & SHA-256 クエストチェーン (365日ヒートマップ＆スマートコントラクト)",
                 es: "Life RPG y Cadena SHA-256 (Mapa de 365 días y Contrato Inteligente)",
@@ -5822,12 +7325,12 @@ class AlchemyFlowPlugin extends Plugin {
               }, this)
             }">
               ${sicraftIcon('chain')}
-              <span>${i18n({ en: "Quests", ru: "Квесты", zh: "任务链", ja: "クエスト", es: "Misiones", de: "Quests" }, this)} · L${(this.settings.lifeRpg && this.settings.lifeRpg.level) || 1}</span>
+              <span>${i18n({ en: "Quests", ru: "Квесты", zh: "任务链", ja: "クエスト", es: "Misiones", de: "Quests" }, this)} · L${safeNum(this.settings.lifeRpg && this.settings.lifeRpg.level, 1)}</span>
             </button>
             <button class="artcraft-craft-mini-btn is-bio-flow-btn" data-act="bio-flow" title="${
               i18n({
-                en: "Bio-Rhythm & Flow Readiness (Cognitive Energy & Entropy Balance)",
-                ru: "Био-Ритм и Индекс Потока (Энергия и баланс сложности)",
+                en: "Focus Readiness & Cognitive Clarity",
+                ru: "Готовность к фокусу (Энергия и баланс)",
                 zh: "生物节律与心流指数 (认知能量与挑战平衡)",
                 ja: "バイオリズム＆フロー準備度 (認知エネルギーと難易度バランス)",
                 es: "Bio-Ritmo e Índice de Flujo (Energía cognitiva y equilibrio)",
@@ -5835,16 +7338,16 @@ class AlchemyFlowPlugin extends Plugin {
               }, this)
             }">
               ${sicraftIcon('pulse')}
-              <span>${i18n({ en: "Flow", ru: "Поток", zh: "心流", ja: "フロー", es: "Flujo", de: "Flow" }, this)} · ${(this.settings.bioFlow && this.settings.bioFlow.energy) || 82}%</span>
+              <span>${i18n({ en: "Flow", ru: "Поток", zh: "心流", ja: "フロー", es: "Flujo", de: "Flow" }, this)} · ${safeNum(this.settings.bioFlow && this.settings.bioFlow.energy, 82)}%</span>
             </button>
             <button class="artcraft-craft-mini-btn is-neural-brief-btn" data-act="neural-brief" title="${
               i18n({
-                en: "Human × AI Dual-Cognition Studio: Instant Executive TL;DR, AI Agent Capsule (llms.txt / MCP XML) & WASM Semantic Radar",
-                ru: "Нейро-Бриф (Человек × ИИ): Мгновенная выжимка заметки, экспорт llms.txt / MCP для ИИ-агентов и WASM-радар связей",
-                zh: "人机双认知工坊：速读摘要、AI 代理胶囊 (llms.txt / MCP) 与 WASM 语义雷达",
-                ja: "人間×AI デュアル認知スタジオ：要約ブリーフ、llms.txt / MCP 出力、WASM 意味レーダー",
-                es: "Estudio Cognitivo Humano × IA: Resumen Ejecutivo, Cápsula llms.txt / MCP y Radar WASM",
-                de: "Mensch × KI Dual-Kognitions-Studio: Executive Brief, llms.txt / MCP & WASM Semantik-Radar"
+                en: "Note summary, capsule for AI tools and similar notes",
+                ru: "Сводка заметки, капсула для ИИ и похожие заметки",
+                zh: "笔记摘要、AI 胶囊与相似笔记",
+                ja: "ノート要約・AI 用カプセル・類似ノート",
+                es: "Resumen de la nota, cápsula para IA y notas similares",
+                de: "Notiz-Zusammenfassung, KI-Kapsel und ähnliche Notizen"
               }, this)
             }">
               ${sicraftIcon('sparkle')}
@@ -5852,12 +7355,12 @@ class AlchemyFlowPlugin extends Plugin {
             </button>
             <button class="artcraft-craft-mini-btn is-kanban-quick-btn" data-act="kanban-board" title="${
               i18n({
-                en: "Open Clipy-Style 4-Column Kanban & Flow Board (Drag & Drop + Note Task Sync)",
-                ru: "Открыть 4-колоночный Канбан и Поток Задач (Drag & Drop + синхронизация с заметкой)",
-                zh: "打开四列任务看板与心流漏斗（拖拽与笔记同步）",
-                ja: "4列カンバン＆フローボードを開く（ドラッグ＆ドロップ対応）",
-                es: "Abrir Tablero Kanban de 4 Columnas y Flujo",
-                de: "4-Spalten Kanban- & Flow-Board öffnen"
+                en: "Open the task board of this note",
+                ru: "Открыть доску задач этой заметки",
+                zh: "打开此笔记的任务看板",
+                ja: "このノートのタスクボードを開く",
+                es: "Abrir el tablero de tareas de esta nota",
+                de: "Aufgaben-Board dieser Notiz öffnen"
               }, this)
             }">
               ${sicraftIcon('columns')}
@@ -5865,8 +7368,8 @@ class AlchemyFlowPlugin extends Plugin {
             </button>
             <button class="artcraft-craft-mini-btn ${(this.settings.paperGrain || 0) > 0 ? "is-active" : ""}" data-act="grain-cycle" title="${
               i18n({
-                en: "Archival Paper Grain & Tactile Shimmer: click to cycle Off → 35% Soft → 65% Book → 100% Craft",
-                ru: "Шуршавость и зернистость книжной бумаги: клик для переключения Выкл → 35% Мягкая → 65% Книжная → 100% Крафт",
+                en: "Paper grain: off → 35% → 65% → 100%",
+                ru: "Зерно бумаги: выкл → 35% → 65% → 100%",
                 zh: "纸张颗粒质感：点击切换 0% → 35% → 65% → 100%",
                 ja: "紙の粒子テクスチャ：0% → 35% → 65% → 100% 切り替え",
                 es: "Textura de grano de papel: alternar 0% → 35% → 65% → 100%",
@@ -5874,7 +7377,7 @@ class AlchemyFlowPlugin extends Plugin {
               }, this)
             }">
               ${sicraftIcon('sparkle')}
-              <span>${i18n({ en: "Grain", ru: "Зерно", zh: "纸纹", ja: "紙粒", es: "Grano", de: "Korn" }, this)} ${this.settings.paperGrain || 0}%</span>
+              <span>${i18n({ en: "Grain", ru: "Зерно", zh: "纸纹", ja: "紙粒", es: "Grano", de: "Korn" }, this)} ${safeNum(this.settings.paperGrain, 0)}%</span>
             </button>
             <button class="artcraft-craft-mini-btn is-creator-os-btn" data-act="creator-os" title="${
               i18n({
@@ -5957,8 +7460,8 @@ class AlchemyFlowPlugin extends Plugin {
       const curG = Number(this.settings.paperGrain || 0);
       const nextG = curG === 0 ? 35 : curG <= 35 ? 65 : curG <= 65 ? 100 : 0;
       this.settings.paperGrain = nextG;
-      if (nextG > 0 && this.settings.pageSurface === "white") {
-        this.settings.pageSurface = "grain";
+      if (nextG > 0 && this.settings.surfaceMode === "white") {
+        this.settings.surfaceMode = "grain";
       }
       await this.saveSettings();
       this.applyBodyClasses();
@@ -5966,8 +7469,8 @@ class AlchemyFlowPlugin extends Plugin {
       this.updateTaskProgressBar();
       new obsidian.Notice(
         isRu
-          ? `🌾 Архивная зернистость и шуршавость листа: ${nextG}%`
-          : `🌾 Archival Paper Grain texture: ${nextG}%`
+          ? `Архивная зернистость и шуршавость листа: ${nextG}%`
+          : `Archival Paper Grain texture: ${nextG}%`
       );
     });
 
@@ -6009,7 +7512,7 @@ class AlchemyFlowPlugin extends Plugin {
       });
     }
 
-    // Wire up 5-Nutrient Bookmark pills (Click to jump, ✎ to edit, × to delete)
+    // Wire up 5-Nutrient Bookmark pills (Click to jump, to edit, × to delete)
     wrap.querySelectorAll(".artcraft-bm-pill").forEach((pillEl) => {
       const bmId = pillEl.getAttribute("data-bm-id");
       const bmObj = noteBookmarks.find((x) => x.id === bmId);
@@ -6127,7 +7630,7 @@ class AlchemyFlowPlugin extends Plugin {
     new ClassicsBookshelfModal(this.app, this).open();
   }
 
-  // --- 🕯️ TIME CAPSULE (WAX SEAL): SEAL A NOTE UNTIL A DATE, RECALL IT, THEN CRACK THE SEAL ---
+  // --- TIME CAPSULE (WAX SEAL): SEAL A NOTE UNTIL A DATE, RECALL IT, THEN CRACK THE SEAL ---
   // How it works:
   //  1) "Seal" opens a modal: pick an unlock date + optional recall question / letter to your future self.
   //  2) Until that date the note is covered by a wax-sealed veil (the file itself is NOT modified or encrypted).
@@ -6194,12 +7697,12 @@ class AlchemyFlowPlugin extends Plugin {
         this.renderNoteWaxSealOverlay();
         new Notice(
           i18n({
-            en: `🕯️ Capsule unlocks in ${this.formatCapsuleRemaining(info.remainingMs, loc)}. To open early, press & hold the seal for 2 seconds.`,
-            ru: `🕯️ Капсула откроется через ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Чтобы вскрыть досрочно — удерживайте печать 2 секунды.`,
-            zh: `🕯️ 胶囊将在 ${this.formatCapsuleRemaining(info.remainingMs, loc)} 后解锁。提前开封：长按印章2秒。`,
-            ja: `🕯️ カプセルはあと ${this.formatCapsuleRemaining(info.remainingMs, loc)} で開封できます。早期開封：印を2秒長押し。`,
-            es: `🕯️ La cápsula se desbloquea en ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Para abrir antes, mantén el sello 2 s.`,
-            de: `🕯️ Die Kapsel öffnet in ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Zum vorzeitigen Öffnen das Siegel 2 Sek. halten.`,
+            en: `Capsule unlocks in ${this.formatCapsuleRemaining(info.remainingMs, loc)}. To open early, press & hold the seal for 1.5 seconds.`,
+            ru: `Капсула откроется через ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Чтобы вскрыть досрочно — удерживайте печать 1,5 секунды.`,
+            zh: `胶囊将在 ${this.formatCapsuleRemaining(info.remainingMs, loc)} 后解锁。提前开封：长按印章1.5秒。`,
+            ja: `カプセルはあと ${this.formatCapsuleRemaining(info.remainingMs, loc)} で開封できます。早期開封：印を1.5秒長押し。`,
+            es: `La cápsula se desbloquea en ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Para abrir antes, mantén el sello 1,5 s.`,
+            de: `Die Kapsel öffnet in ${this.formatCapsuleRemaining(info.remainingMs, loc)}. Zum vorzeitigen Öffnen das Siegel 1,5 Sek. halten.`,
           }, this)
         );
       }
@@ -6391,6 +7894,17 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   renderNoteWaxSealOverlay(justSealed = false) {
+    // A veil that already shows this note in this state stays. Rebuilding it on every refresh restarted
+    // its animations and let an interrupted "hold to open" finish on a removed element.
+    const sealView = this.app.workspace.getActiveViewOfType(require("obsidian").MarkdownView);
+    const sealPath = sealView && sealView.file ? sealView.file.path : "";
+    const sealRec = sealPath && this.settings.waxSealNotes ? this.settings.waxSealNotes[sealPath] : null;
+    const sealInfo = sealRec ? this.getTimeCapsuleInfo(sealRec) : null;
+    const sealSig = sealInfo
+      ? sealPath + "|" + JSON.stringify(sealRec) + "|" + (sealInfo.ready ? "ready" : "locked") + "|" + (this.tempPeekNotes && this.tempPeekNotes[sealPath] ? "peek" : "")
+      : "";
+    const liveVeil = sealView ? sealView.containerEl.querySelector(".artcraft-wax-seal-veil") : null;
+    if (!justSealed && sealSig && liveVeil && liveVeil.dataset.sealSig === sealSig) return;
     document.querySelectorAll(".artcraft-wax-seal-veil").forEach((el) => el.remove());
     if (this.waxSealTicker) {
       window.clearInterval(this.waxSealTicker);
@@ -6488,7 +8002,7 @@ class AlchemyFlowPlugin extends Plugin {
               <button class="wax-seal-emblem" style="--hold:0" title="${
                 info.ready
                   ? i18n({ en: "Click to break the wax seal", ru: "Нажмите, чтобы сломать печать и открыть конверт", zh: "点击破印开启信封", ja: "クリックして封蝋を割る", es: "Haz clic para abrir el sobre", de: "Klicken zum Öffnen des Umschlags" }, this)
-                  : i18n({ en: "Hold for 1.5s to break seal early", ru: "Удерживайте 1.5 сек (или нажмите «Вскрыть печать» ниже)", zh: "长按1.5秒提前开封", ja: "1.5秒長押しで早期開封", es: "Mantén 1.5s para abrir", de: "1.5s gedrückt halten zum Öffnen" }, this)
+                  : i18n({ en: "Hold for 1.5 s to open early", ru: "Удерживайте 1.5 сек (или нажмите «Вскрыть печать» ниже)", zh: "长按1.5秒提前开封", ja: "1.5秒長押しで早期開封", es: "Mantén 1.5s para abrir", de: "1.5s gedrückt halten zum Öffnen" }, this)
               }">
                 <span class="wax-seal-hold-ring" aria-hidden="true"></span>
                 ${singleWaxSealSvg}
@@ -6569,7 +8083,7 @@ class AlchemyFlowPlugin extends Plugin {
     } else if (emblem) {
       let raf = null;
       let start = 0;
-      const HOLD_MS = 1400;
+      const HOLD_MS = 1500;
       const reset = () => {
         if (raf) cancelAnimationFrame(raf);
         raf = null;
@@ -6578,6 +8092,10 @@ class AlchemyFlowPlugin extends Plugin {
       };
       const step = (ts) => {
         if (!start) start = ts;
+        if (!emblem.isConnected) {
+          raf = null; // the veil was removed while the seal was held: nothing to open
+          return;
+        }
         const p = Math.min(1, (ts - start) / HOLD_MS);
         emblem.style.setProperty("--hold", p.toFixed(3));
         if (p >= 1) {
@@ -6599,6 +8117,7 @@ class AlchemyFlowPlugin extends Plugin {
       emblem.addEventListener("pointercancel", reset);
     }
 
+    veil.dataset.sealSig = sealSig;
     viewContent.appendChild(veil);
 
     if (!info.ready) {
@@ -6630,7 +8149,7 @@ class AlchemyFlowPlugin extends Plugin {
       if (!file) continue;
       const frag = document.createDocumentFragment();
       const txt = document.createElement("div");
-      txt.textContent = isRu ? `📜 Капсула времени созрела: «${file.basename}»` : `📜 Time Capsule ready: “${file.basename}”`;
+      txt.textContent = isRu ? `Капсула времени созрела: «${file.basename}»` : `Time Capsule ready: “${file.basename}”`;
       const btn = document.createElement("button");
       btn.className = "mod-cta artcraft-notice-btn";
       btn.textContent = isRu ? "Открыть заметку" : "Open note";
@@ -6644,7 +8163,7 @@ class AlchemyFlowPlugin extends Plugin {
     if (changed) await this.saveSettings();
   }
 
-  // --- ✨ INTERACTIVE TOUR NOTE (REAL VAULT FILE WITH LIVE EXAMPLES OF EVERY FEATURE) ---
+  // --- INTERACTIVE TOUR NOTE (REAL VAULT FILE WITH LIVE EXAMPLES OF EVERY FEATURE) ---
   async offerInteractiveTourOnce() {
     if (this.settings.tourOffered) return;
     this.settings.tourOffered = true;
@@ -6653,8 +8172,8 @@ class AlchemyFlowPlugin extends Plugin {
     const frag = document.createDocumentFragment();
     const txt = document.createElement("div");
     txt.textContent = isRu
-      ? "⚗️ Alchemy Craft установлен. Откройте интерактивный тур — заметку с живыми примерами всех фишек."
-      : "⚗️ Alchemy Craft is installed. Open the Interactive Tour — a note with live examples of every feature.";
+      ? "Alchemy Craft установлен. Откройте интерактивный тур — заметку с живыми примерами всех фишек."
+      : "Alchemy Craft is installed. Open the Interactive Tour — a note with live examples of every feature.";
     const btn = document.createElement("button");
     btn.className = "mod-cta artcraft-notice-btn";
     btn.textContent = isRu ? "Открыть тур" : "Open tour";
@@ -6696,8 +8215,8 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
-  // --- 🖼 NEW IDEA 3: EX-LIBRIS BOOK CARD PNG EXPORTER (ГЕНЕРАТОР КАРТОЧКИ ЭКСЛИБРИСА В PNG) ---
-  // --- 🎻 NEW IDEA 1: CHAPTER COMPLETION HARP & CELLO CHORD (АКУСТИЧЕСКИЙ АККОРД ЗАВЕРШЕНИЯ ГЛАВЫ) ---
+  // --- NEW IDEA 3: EX-LIBRIS BOOK CARD PNG EXPORTER (ГЕНЕРАТОР КАРТОЧКИ ЭКСЛИБРИСА В PNG) ---
+  // --- NEW IDEA 1: CHAPTER COMPLETION HARP & CELLO CHORD (АКУСТИЧЕСКИЙ АККОРД ЗАВЕРШЕНИЯ ГЛАВЫ) ---
   playChapterCompletionChord() {
     if (this.settings.chapterChord === false) return;
     try {
@@ -6742,7 +8261,7 @@ class AlchemyFlowPlugin extends Plugin {
     } catch (e) {}
   }
 
-  // --- 🖋 NEW IDEA 2: CHRONO-INK AGING & BOOKBINDER SPINE SELECTOR ---
+  // --- NEW IDEA 2: CHRONO-INK AGING & BOOKBINDER SPINE SELECTOR ---
   applyChronoInkToActiveNote() {
     if (this.settings.chronoInkAging === false) {
       document.body.removeAttribute("data-chrono-age");
@@ -6809,10 +8328,12 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.font = '800 13px "JetBrains Mono", monospace';
       ctx.fillText(`EX-LIBRIS // ${folder.toUpperCase().slice(0, 22)}`, bx + 62, by + 59);
 
-      // Stamp Box in Top-Right
+      // Stamp Box in Top-Right (reflects actual stamp state of the note)
       const stampTxt = stampRec && stampRec.count >= 2
         ? `★ CLASSICS #${stampRec.count} • ${stampRec.dates[stampRec.dates.length - 1]}`
-        : `✓ APPROVED • ${new Date().toLocaleDateString()}`;
+        : stampRec
+        ? `✓ APPROVED • ${stampRec.dates[stampRec.dates.length - 1]}`
+        : `FOLIO • ${new Date().toLocaleDateString()}`;
       ctx.fillStyle = stampRec && stampRec.count >= 2 ? "#FEF3C7" : "#DCFCE7";
       ctx.strokeStyle = stampRec && stampRec.count >= 2 ? "#D97706" : "#16A34A";
       ctx.lineWidth = 2.5;
@@ -6837,11 +8358,18 @@ class AlchemyFlowPlugin extends Plugin {
       ctx.lineTo(bx + bw - 40, by + 148);
       ctx.stroke();
 
-      // 6. Render up to 4 Nutrient Stickers
-      const displayBms = bookmarks.length > 0 ? bookmarks.slice(0, 4) : [
-        { type: "proteins", label: isRu ? "Белки" : "Proteins", meaning: isRu ? "Главный практический вывод из заметки" : "Key actionable takeaway from this note", snippet: title },
-        { type: "carbs", label: isRu ? "Углеводы" : "Carbs", meaning: isRu ? "Глубокая мысль для размышления" : "Core mental model to ponder", snippet: folder }
-      ];
+      // 6. Render up to 4 Nutrient Stickers (or real extracted thesis lines from the note if no stickers yet)
+      let displayBms = bookmarks.slice(0, 4);
+      if (displayBms.length === 0) {
+        const rawNote = view && view.editor ? view.editor.getValue() : (view && view.data ? view.data : "");
+        const parsed = this.analyzeNoteDualCognition(rawNote, title, fp);
+        displayBms = (parsed.thesisList || []).slice(0, 3).map((line, i) => ({
+          type: i === 0 ? "proteins" : i === 1 ? "carbs" : "vitamins",
+          label: i === 0 ? (isRu ? "Тезис 01" : "Thesis 01") : i === 1 ? (isRu ? "Тезис 02" : "Thesis 02") : (isRu ? "Тезис 03" : "Thesis 03"),
+          meaning: line,
+          snippet: title
+        }));
+      }
 
       let curY = by + 178;
       displayBms.forEach((bm) => {
@@ -6870,7 +8398,7 @@ class AlchemyFlowPlugin extends Plugin {
       // 7. Footer Signature
       ctx.fillStyle = "#78716C";
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText("ALCHEMY CRAFT v4.6.6 // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy", bx + 46, by + bh - 24);
+      ctx.fillText(`ALCHEMY CRAFT v${this.manifest.version} // 5-NUTRIENT BOOK FOLIO SYSTEM • @StratAlchemy`, bx + 46, by + bh - 24);
 
       const url = cv.toDataURL("image/png");
       const a = document.createElement("a");
@@ -6878,7 +8406,7 @@ class AlchemyFlowPlugin extends Plugin {
       a.download = `ex-libris-${title.toLowerCase().replace(/[^a-z0-9а-яё]+/gi, "-").slice(0, 28)}.png`;
       a.click();
       this.burstParticles(window.innerWidth / 2, window.innerHeight / 3, 50);
-      new Notice(isRu ? "🖼 Карточка Экслибриса сохранена в PNG!" : "🖼 Ex-Libris Book Card exported as PNG!");
+      new Notice(isRu ? "Карточка Экслибриса сохранена в PNG!" : "Ex-Libris Book Card exported as PNG!");
     } catch (e) {
       new Notice("Could not export Ex-Libris PNG.");
     }
@@ -6924,17 +8452,172 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
-  toggleFocusSubmenuPopover(anchorBtn) {
-    if (this.focusPopoverEl) {
-      this.focusPopoverEl.remove();
-      this.focusPopoverEl = null;
+  togglePomodoroPopover(anchorBtn) {
+    if (this.pomoPopoverEl) {
+      this.closeAllDockPopovers();
       return;
     }
+    this.closeAllDockPopovers("pomo");
+
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const pop = document.createElement("div");
+    pop.className = "artcraft-pomodoro-popover";
+    pop.addEventListener("pointerdown", (e) => e.stopPropagation());
+    pop.addEventListener("click", (e) => e.stopPropagation());
+    this.pomoPopoverEl = pop;
+
+    const renderPomoContent = () => {
+      const isRunning = this.timerRunning;
+      const isBreak = this.timerState === "break";
+      const mins = Math.floor(this.timerSeconds / 60);
+      const secs = this.timerSeconds % 60;
+      const timeStr = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+      const curPreset = this.settings.pomodoroMinutes || 25;
+
+      pop.innerHTML = `
+        <div class="pomo-pop-head">
+          <div class="pomo-pop-time-wrap">
+            <span class="pomo-pop-big-digits">${timeStr}</span>
+            <span class="pomo-pop-status-badge ${isBreak ? "is-break" : ""}">${isBreak ? (isRu ? "Перерыв" : "Break") : (isRu ? "Фокус" : "Focus")}</span>
+          </div>
+          <div class="pomo-pop-actions">
+            <button class="pomo-pop-btn" id="pomo-toggle-btn">
+              ${isRunning ? (isRu ? "Пауза" : "Pause") : (isRu ? "Старт" : "Start")}
+            </button>
+            <button class="pomo-pop-btn is-secondary" id="pomo-reset-btn" title="${isRu ? "Сбросить таймер" : "Reset timer"}">
+              ↺
+            </button>
+          </div>
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Длительность спринта" : "Sprint Duration"}</div>
+        <div class="pomo-pop-chips-grid">
+          ${[15, 25, 45, 60, 90].map(m => `
+            <div class="pomo-pop-chip ${!isBreak && curPreset === m ? "is-active" : ""}" data-pomo-min="${m}">
+              ${m} ${isRu ? "мин" : "min"}
+            </div>
+          `).join("")}
+          <div class="pomo-pop-chip ${this.settings.timerMode === "stopwatch" ? "is-active" : ""}" data-pomo-act="stopwatch">
+            ${isRu ? "Секундомер" : "Stopwatch"}
+          </div>
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Перерыв" : "Rest & Break"}</div>
+        <div class="pomo-pop-chips-grid">
+          <div class="pomo-pop-chip ${isBreak && this.timerSeconds <= 300 ? "is-active" : ""}" data-break-min="5">
+            5 ${isRu ? "мин" : "min"}
+          </div>
+          <div class="pomo-pop-chip ${isBreak && this.timerSeconds > 300 ? "is-active" : ""}" data-break-min="15">
+            15 ${isRu ? "мин" : "min"}
+          </div>
+          <div class="pomo-pop-chip" data-pomo-act="custom">
+            ${isRu ? "Своё..." : "Custom..."}
+          </div>
+        </div>
+
+        <div class="pomo-pop-section-title">${isRu ? "Фоновый звук" : "Ambient Audio"}</div>
+        <div class="pomo-pop-chips-grid">
+          ${[
+            { id: "off", ru: "Выкл", en: "Off" },
+            { id: "rain", ru: "Дождь", en: "Rain" },
+            { id: "brown", ru: "Шум", en: "Brown" },
+            { id: "gamma40", ru: "40 Гц", en: "40 Hz" },
+            { id: "ocean", ru: "Прибой", en: "Ocean" },
+            { id: "fire", ru: "Камин", en: "Fire" }
+          ].map(s => `
+            <div class="pomo-pop-chip ${(this.settings.ambientSound || "off") === s.id ? "is-active" : ""}" data-snd-id="${s.id}">
+              ${isRu ? s.ru : s.en}
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      pop.querySelector("#pomo-toggle-btn")?.addEventListener("click", () => {
+        this.toggleTimer();
+        renderPomoContent();
+      });
+
+      pop.querySelector("#pomo-reset-btn")?.addEventListener("click", () => {
+        this.resetTimer();
+        renderPomoContent();
+      });
+
+      pop.querySelectorAll("[data-pomo-min]").forEach(el => {
+        el.addEventListener("click", async () => {
+          const m = parseInt(el.getAttribute("data-pomo-min"), 10);
+          this.setPomodoroDuration(m);
+          this.startTimer();
+          renderPomoContent();
+        });
+      });
+
+      pop.querySelectorAll("[data-break-min]").forEach(el => {
+        el.addEventListener("click", async () => {
+          const m = parseInt(el.getAttribute("data-break-min"), 10);
+          this.startBreak(m);
+          renderPomoContent();
+        });
+      });
+
+      pop.querySelectorAll("[data-snd-id]").forEach(el => {
+        el.addEventListener("click", async () => {
+          const sid = el.getAttribute("data-snd-id");
+          await this.setAmbientSound(sid);
+          renderPomoContent();
+        });
+      });
+
+      pop.querySelector('[data-pomo-act="stopwatch"]')?.addEventListener("click", async () => {
+        this.settings.timerMode = "stopwatch";
+        await this.saveSettings();
+        this.resetTimer();
+        renderPomoContent();
+      });
+
+      pop.querySelector('[data-pomo-act="custom"]')?.addEventListener("click", () => {
+        new CustomPomodoroModal(this.app, this, this.settings.pomodoroMinutes || 25, (mins) => {
+          this.setPomodoroDuration(mins);
+          this.startTimer();
+          renderPomoContent();
+        }).open();
+      });
+    };
+
+    renderPomoContent();
+    document.body.appendChild(pop);
+    this.positionDockPopover(pop, anchorBtn, 320);
+
+    const closeHandler = (e) => {
+      if (!e.target || !e.target.isConnected) return;
+      if (e.target.closest && e.target.closest(".modal-container, .modal, .menu, .notice-container")) return;
+      if (this.pomoPopoverEl && !this.pomoPopoverEl.contains(e.target) && (!anchorBtn || !anchorBtn.contains(e.target))) {
+        this.closeAllDockPopovers();
+      }
+    };
+    this.pomoPopoverCloseHandler = closeHandler;
+    setTimeout(() => {
+      if (this.pomoPopoverCloseHandler === closeHandler) {
+        document.addEventListener("pointerdown", closeHandler);
+      }
+    }, 40);
+  }
+
+  toggleFocusSubmenuPopover(anchorBtn) {
+    if (this.focusPopoverEl) {
+      this.closeAllDockPopovers();
+      return;
+    }
+    this.closeAllDockPopovers("focus");
+
+    if (!this._activeFocusTab) this._activeFocusTab = "canvas";
 
     const loc = getLocale(this);
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
     const pop = document.createElement("div");
     pop.className = "artcraft-focus-popover";
     pop.setAttribute("lang", LOCALE_TAGS[loc] || "en-US");
+    pop.addEventListener("pointerdown", (e) => e.stopPropagation());
+    pop.addEventListener("click", (e) => e.stopPropagation());
 
     const renderPopoverContent = () => {
       const obsidian = require("obsidian");
@@ -6942,362 +8625,255 @@ class AlchemyFlowPlugin extends Plugin {
       const fp = activeView && activeView.file ? activeView.file.path : "";
       const isStamped = fp ? !!this.getNoteStampRecord(fp) : false;
       const isRulerOn = !!(this.settings.magicLamp && this.settings.lampShape === "ruler");
-      const showMeta = this.settings.showReadingStats !== false || this.settings.showTaskProgress !== false;
+      const showMeta = this.settings.showReadingStats !== false;
+      const curSurface = this.settings.surfaceMode || "white";
+      const curWidth = this.settings.pageWidthMode || "book";
+      const curSpine = this.settings.spineMaterial || "cognac";
+      const curTab = this._activeFocusTab || "canvas";
 
-      const items = [
+      // 1. Canvas options
+      const canvasItems = [
         {
-          id: "editorial",
-          checked: this.settings.editorialCleanMode !== false,
-          icon: SICRAFT_SVGS.card,
-          title: i18n({
-            en: "Swiss Editorial Block Isolation",
-            ru: "Швейцарское модульное разделение блоков",
-            zh: "瑞士柔和段落卡片分隔",
-            ja: "スイススタイルのブロック分離",
-            es: "Separación editorial de bloques estilo Suizo",
-            de: "Schweizer Editoriale Block-Isolierung",
-          }, this),
-          sub: i18n({
-            en: "Every paragraph & section stands out cleanly without harsh black borders",
-            ru: "Каждый абзац и шаг выделен воздухом и мягкой рамкой без стены текста",
-            zh: "消除文字墙，柔和突出每个段落与步骤",
-            ja: "黒い太枠なしで各段落を美しく際立たせます",
-            es: "Cada párrafo destaca suavemente sin bordes negros pesados",
-            de: "Jeder Absatz hebt sich sanft ohne harte schwarze Ränder ab",
-          }, this),
-        },
-        {
-          id: "sentence",
-          checked: !!this.settings.sentenceFocus,
-          icon: SICRAFT_SVGS.focus,
-          title: i18n({
-            en: "Active Sentence Focus & 01–04 Badges",
-            ru: "Фокус на предложении и бейджи 01–04",
-            zh: "活动句子聚焦与01–04编号徽标",
-            ja: "文フォーカス＆01–04バッジ",
-            es: "Foco en frase activa y placas 01–04",
-            de: "Aktiver Satz-Fokus & 01–04 Badges",
-          }, this),
-          sub: i18n({
-            en: "Highlight clicked sentences & step badges",
-            ru: "Подсветка кликнутых предложений и нумерации",
-            zh: "高亮被点击的句子与段落步骤编号",
-            ja: "クリックされた文章とステップ番号のハイライト",
-            es: "Resalta frases pulsadas y distintivos numerados",
-            de: "Hervorhebung angeklickter Sätze & Schritt-Badges",
-          }, this),
-        },
-        {
-          id: "spotlight",
-          checked: !!this.settings.spotlightFocus,
-          icon: SICRAFT_SVGS.zen,
-          title: i18n({
-            en: "Spotlight Paragraph Dimmer",
-            ru: "Затемнение неактивных абзацев (Spotlight)",
-            zh: "聚光灯非焦点段落弱化",
-            ja: "非アクティブ段落の減光 (スポットライト)",
-            es: "Atenuación de párrafos circundantes",
-            de: "Spotlight-Abdunklung umgebender Absätze",
-          }, this),
-          sub: i18n({
-            en: "Softly dims surrounding paragraphs while reading",
-            ru: "Мягко приглушает все абзацы, кроме текущего",
-            zh: "阅读时柔和虚化除当前段落之外的内容",
-            ja: "読書中、現在のアクティブ段落以外を穏やかに薄暗くします",
-            es: "Atenúa suavemente los párrafos no leídos",
-            de: "Dunkelt umgebende Absätze beim Lesen sanft ab",
-          }, this),
-        },
-        {
-          id: "ruler",
-          checked: isRulerOn,
-          icon: SICRAFT_SVGS.lamp,
-          title: i18n({
-            en: "Lumina Reading Ruler",
-            ru: "Световая линейка для чтения (Reading Ruler)",
-            zh: "温润光带阅读指引尺",
-            ja: "読書用ライトルーラー",
-            es: "Regla luminosa de lectura",
-            de: "Lumina-Leselineal",
-          }, this),
-          sub: i18n({
-            en: "Horizontal warm reading beam across active line",
-            ru: "Горизонтальная полоса света по строке курсора",
-            zh: "沿光标所在行展开水平柔光导读条",
-            ja: "カーソル行に沿った水平の温かいライトビーム",
-            es: "Haz de luz horizontal en la línea activa",
-            de: "Horizontaler warmer Lichtstrahl auf aktiver Zeile",
-          }, this),
+          id: "cards",
+          checked: this.settings.pageCards === true,
+          icon: SICRAFT_SVGS.bolt,
+          title: isRu ? "Декоративные карточки заголовков" : "Decorated Heading Cards",
+          sub: isRu ? "Элегантное модульное оформление H1–H4 с мягкими акцентами" : "Refined Swiss Craft heading cards with subtle accents"
         },
         {
           id: "bookfolio",
           checked: !!this.settings.bookSpreadMode,
           icon: SICRAFT_SVGS.columns,
-          title: i18n({
-            en: "3D Multi-Sheet Book Folio (4 Stacked Sheets)",
-            ru: "3D Книжный фолиант (4 слоя страниц)",
-            zh: "3D多层实体书页册（4层页纸叠放）",
-            ja: "3D多層ブックフォリオ (4枚重ねの用紙)",
-            es: "Folio de libro 3D multicapa (4 hojas apiladas)",
-            de: "3D-Buchfolio (4 geschichtete Seiten)",
-          }, this),
-          sub: i18n({
-            en: "Tactile book sheet with leather spine & stacked pages",
-            ru: "Книжный лист с кожаным корешком и стопкой страниц",
-            zh: "带有皮革书脊与立体层叠纸边的实体书卷感",
-            ja: "革製背表紙と立体的な重ね紙を持つ触覚的ブックシート",
-            es: "Hoja de libro táctil con lomo de cuero y páginas apiladas",
-            de: "Taktile Buchseite mit Lederrücken und geschichteten Blättern",
-          }, this),
+          title: isRu ? "Книжный разворот и страницы" : "Book Folio & Page Spread",
+          sub: isRu ? "Тактильный кожаный корешок и эффект сложенных страниц" : "Tactile leather spine and stacked sheets effect"
+        },
+        {
+          id: "kin",
+          checked: this.settings.windChainFooter !== false,
+          icon: SICRAFT_SVGS.bolt,
+          title: isRu ? "Связанные заметки на нитях" : "Related Notes on Threads",
+          sub: isRu ? "Парящие карточки под заметкой с физикой ветра" : "Wind-tethered floating note cards under active note"
+        },
+        {
+          id: "editorial",
+          checked: this.settings.editorialCleanMode !== false,
+          icon: SICRAFT_SVGS.book,
+          title: isRu ? "Воздушные отступы блоков" : "Editorial Air & Spacing",
+          sub: isRu ? "Просторная швейцарская типографика без сплошного текста" : "Generous typography spacing without walls of text"
+        }
+      ];
+
+      // 2. Focus options
+      const focusItems = [
+        {
+          id: "sentence",
+          checked: !!this.settings.sentenceFocus,
+          icon: SICRAFT_SVGS.focus,
+          title: isRu ? "Фокус на предложении" : "Sentence Focus & Steps",
+          sub: isRu ? "Мягкая подсветка активного предложения при чтении" : "Highlight active clicked sentence while reading"
+        },
+        {
+          id: "ruler",
+          checked: isRulerOn,
+          icon: SICRAFT_SVGS.lamp,
+          title: isRu ? "Линейка для чтения" : "Reading Ruler Beam",
+          sub: isRu ? "Горизонтальный луч мягкого света вдоль строки курсора" : "Horizontal warm reading beam across active line"
+        },
+        {
+          id: "spotlight",
+          checked: !!this.settings.spotlightFocus,
+          icon: SICRAFT_SVGS.zen,
+          title: isRu ? "Затемнение соседних абзацев" : "Spotlight Paragraph Dimmer",
+          sub: isRu ? "Мягкое приглушение всего текста, кроме текущего" : "Dims surrounding paragraphs to reduce visual noise"
         },
         {
           id: "breathspine",
           checked: !!this.settings.breathingSpine,
           icon: SICRAFT_SVGS.lung,
-          title: i18n({
-            en: "Coherent 6-BPM Breathing Book Spine",
-            ru: "Дыхание корешка книги (5.5с Вдох / 5.5с Выдох)",
-            zh: "6-BPM共振呼吸书脊（5.5秒吸气 / 5.5秒呼气）",
-            ja: "6-BPM共鳴呼吸ブック背表紙 (5.5秒吸気/5.5秒呼気)",
-            es: "Lomo con respiración coherente 6-BPM (5.5s insp / 5.5s esp)",
-            de: "6-BPM Kohärente Atmung am Buchrücken (5.5s Ein / 5.5s Aus)",
-          }, this),
-          sub: i18n({
-            en: "Warm 11s coherent breathing glow along the book spine",
-            ru: "Мягкая волна света по корешку для глубокого покоя",
-            zh: "书脊沿线11秒柔和光晕律动，调节心率变异性",
-            ja: "心身の深い安らぎをもたらす11秒周期の柔らかな光波",
-            es: "Suave resplandor de 11s en el lomo para máxima serenidad",
-            de: "Sanfte 11-Sekunden-Lichtwelle am Buchrücken для tiefe Ruhe",
-          }, this),
+          title: isRu ? "Дыхание корешка (6 BPM)" : "Breathing Book Spine",
+          sub: isRu ? "Световой ритм 5.5 сек вдох / 5.5 сек выдох для спокойствия" : "Coherent 5.5s inhale / 5.5s exhale glow along spine"
         },
         {
           id: "meta",
           checked: showMeta,
           icon: SICRAFT_SVGS.book,
-          title: i18n({
-            en: "Quiet Reading Time & Tasks Sub-Header",
-            ru: "Строка времени чтения и задач под заголовком",
-            zh: "标题下方静音阅读时间与任务进度",
-            ja: "見出し下の読書時間＆タスク進捗バー",
-            es: "Subcabecera con tiempo de lectura y tareas",
-            de: "Lesezeit & Aufgaben-Fortschritt unter Überschrift",
-          }, this),
-          sub: i18n({
-            en: "Show/hide reading time & task progress line",
-            ru: "Показать/скрыть ~мин чтения и прогресс задач",
-            zh: "显示/隐藏约分钟阅读时间与任务百分比",
-            ja: "読書時間とタスク進捗率の表示/非表示を切り替え",
-            es: "Mostrar/ocultar tiempo estimado y progreso",
-            de: "Lesezeit & Aufgaben-Fortschritt ein-/ausblenden",
-          }, this),
+          title: isRu ? "Время чтения и задачи" : "Reading Time & Tasks",
+          sub: isRu ? "Строка прогресса задач и хронометраж под заголовком" : "Show reading time estimate and task progress bar"
+        },
+        {
+          id: "keymark",
+          checked: this.settings.keySentenceMarker !== false,
+          icon: SICRAFT_SVGS.bolt,
+          title: isRu ? "Маркер ключевой мысли" : "Key Sentence Marker",
+          sub: isRu ? "Подчёркивает предложения, несущие главный смысл" : "Underlines sentences that carry the core thesis"
         },
         {
           id: "bionic",
           checked: !!this.settings.bionicAnchors,
           icon: SICRAFT_SVGS.bolt,
-          title: i18n({
-            en: "Bionic Saccadic Word-Root Fixation Anchors",
-            ru: "Бионический фокус корней слов (быстрое чтение)",
-            zh: "仿生眼跳词根锚点（快速扫读）",
-            ja: "バイオニック語幹アンカー（高速リーディング）",
-            es: "Anclajes de lectura biónica (fijación ocular)",
-            de: "Bionische Wortstamm-Fixierung (Schnelllesen)",
-          }, this),
-          sub: i18n({
-            en: "Highlights the root of long words so eyes glide across text without walls",
-            ru: "Выделяет опорную часть длинных слов, чтобы взгляд скользил по абзацам без стены текста",
-            zh: "高亮长词词根，让视线顺滑扫过段落",
-            ja: "単語の前半を強調し、視線が滑らかに移動します",
-            es: "Resalta la raíz de las palabras para guiar la vista sin fatiga",
-            de: "Hebt Wortanfänge hervor für müheloses Text-Scanning",
-          }, this),
+          title: isRu ? "Фокус начала слов" : "Bionic Word-Root Anchors",
+          sub: isRu ? "Опорные точки начала слов для беглого чтения" : "Highlights word beginnings for rapid eye gliding"
         },
         {
           id: "stamp",
           checked: this.settings.showCornerStamp !== false,
           icon: SICRAFT_SVGS.stamp,
-          title: i18n({
-            en: "Top-Right Ex-Libris Stamp & Classics Seal",
-            ru: "Штамп «Изучено / Классика» вверху заметки",
-            zh: "笔记右上角藏书票印章与经典封印",
-            ja: "ノート右上の蔵書印＆名著クラシック封印",
-            es: "Sello Ex-Libris y distinción de clásicos",
-            de: "Ex-Libris-Stempel & Klassiker-Siegel",
-          }, this),
-          sub: isStamped
-            ? i18n({
-                en: "Current note is stamped",
-                ru: "Штамп проставлен на этой заметке",
-                zh: "当前笔记已加盖印章",
-                ja: "このノートには印章が押されています",
-                es: "Nota actual ya sellada",
-                de: "Aktuelle Notiz ist abgestempelt",
-              }, this)
-            : i18n({
-                en: "Show Ex-Libris stamp in clean upper-right corner",
-                ru: "Показывать экслибрис-печать в правом верхнем углу",
-                zh: "在右上角展示精致典雅的藏书票盖印",
-                ja: "右上に洗練された蔵書票スタンプを表示",
-                es: "Mostrar sello en la esquina superior derecha",
-                de: "Ex-Libris-Stempel oben rechts anzeigen",
-              }, this),
-        },
+          title: isRu ? "Печать Экслибрис" : "Ex-Libris Corner Stamp",
+          sub: isStamped ? (isRu ? "Штамп проставлен на этой заметке" : "Note is stamped") : (isRu ? "Штамп в правом верхнем углу заметки" : "Stamp in upper right corner")
+        }
       ];
 
-      const curSurface = this.settings.surfaceMode || "white";
+      // 3. Tools actions
+      const toolActions = [
+        { act: "add-sticker", icon: "bookmark", title: isRu ? "Прикрепить закладку" : "Attach Bookmark" },
+        { act: "digest", icon: "book", title: isRu ? "Дайджест книги" : "Book Digest" },
+        { act: "bookshelf", icon: "shelf", title: isRu ? "Книжная полка" : "Classics Bookshelf" },
+        { act: "exlibris-png", icon: "camera", title: isRu ? "Экспорт Экслибриса (PNG)" : "Export Ex-Libris PNG" },
+        { act: "wax-seal", icon: "stamp", title: isRu ? "Капсула времени (Сургуч)" : "Time Capsule Seal" },
+        { act: "two-page", icon: "columns", title: isRu ? "Разворот на 2 страницы" : "2-Page Side-by-Side" },
+        { act: "quest-chain", icon: "chain", title: isRu ? "Журнал задач и целей" : "Task & Quest Journal" },
+        { act: "bio-flow", icon: "pulse", title: isRu ? "Готовность к фокусу" : "Focus Readiness" },
+        { act: "sketchpad", icon: "palette", title: isRu ? "Рисование на полях" : "Margin Sketchpad" },
+        { act: "creator-os", icon: "bolt", title: isRu ? "Creator Studio & Канбан" : "Creator Studio & Kanban" },
+        { act: "autopilot-bell", icon: "timer", title: isRu ? "Напоминание о фокусе" : "Mindful Check-In" },
+        { act: "pro-test-drive", icon: "diamond", title: isRu ? "Тест-Драйв Pro (60 сек)" : "Pro Test-Drive (60s)" }
+      ];
+
+      let tabBodyHtml = "";
+
+      if (curTab === "canvas") {
+        tabBodyHtml = `
+          <div class="focus-pop-divider">${isRu ? "ФОН СТРАНИЦЫ" : "PAGE SURFACE"}</div>
+          <div class="artcraft-surface-picker-row">
+            <button class="surface-mat-chip ${curSurface === "white" ? "is-active" : ""}" data-surface="white">
+              <span class="surface-swatch" style="background:#FFFFFF;border:1px solid #CBD5E1"></span><span>${isRu ? "Чистый Белый" : "Pure White"}</span>
+            </button>
+            <button class="surface-mat-chip ${curSurface === "book" ? "is-active" : ""}" data-surface="book">
+              <span class="surface-swatch" style="background:#FAF8F3;border:1px solid #DFD9CA"></span><span>${isRu ? "Книжный" : "Warm Book"}</span>
+            </button>
+            <button class="surface-mat-chip ${curSurface === "grain" ? "is-active" : ""}" data-surface="grain">
+              <span class="surface-swatch" style="background:#F5F2EB;border:1px solid #D5CEBE"></span><span>${isRu ? "Зернистый" : "Archival Grain"}</span>
+            </button>
+          </div>
+
+          <div class="focus-pop-divider">${isRu ? "ШИРИНА ХОЛСТА" : "CANVAS WIDTH"}</div>
+          <div class="artcraft-width-picker-row">
+            <button class="width-mat-chip ${curWidth === "book" ? "is-active" : ""}" data-width-mode="book">
+              <span>760px ${isRu ? "Книга" : "Book"}</span>
+            </button>
+            <button class="width-mat-chip ${curWidth === "wide" ? "is-active" : ""}" data-width-mode="wide">
+              <span>1080px ${isRu ? "Широкий" : "Wide"}</span>
+            </button>
+            <button class="width-mat-chip ${curWidth === "full" ? "is-active" : ""}" data-width-mode="full">
+              <span>${isRu ? "Полный холст" : "Full Canvas"}</span>
+            </button>
+          </div>
+
+          <div class="focus-pop-divider">${isRu ? "МАТЕРИАЛ КОРЕШКА" : "SPINE MATERIAL"}</div>
+          <div class="artcraft-spine-picker-row">
+            <button class="spine-mat-chip ${curSpine === "cognac" ? "is-active" : ""}" data-spine="cognac">
+              <span class="spine-swatch" style="background:#8C5828"></span><span>${isRu ? "Коньяк" : "Cognac"}</span>
+            </button>
+            <button class="spine-mat-chip ${curSpine === "emerald" ? "is-active" : ""}" data-spine="emerald">
+              <span class="spine-swatch" style="background:#14532D"></span><span>${isRu ? "Сафьян" : "Emerald"}</span>
+            </button>
+            <button class="spine-mat-chip ${curSpine === "crimson" ? "is-active" : ""}" data-spine="crimson">
+              <span class="spine-swatch" style="background:#7F1D1D"></span><span>${isRu ? "Бархат" : "Crimson"}</span>
+            </button>
+            <button class="spine-mat-chip ${curSpine === "linen" ? "is-active" : ""}" data-spine="linen">
+              <span class="spine-swatch" style="background:#334155"></span><span>${isRu ? "Лён" : "Linen"}</span>
+            </button>
+          </div>
+
+          <div class="focus-pop-divider">${isRu ? "ОФОРМЛЕНИЕ СТРАНИЦЫ" : "PAGE LAYERS"}</div>
+          <div class="focus-pop-list">
+            ${canvasItems.map(it => `
+              <label class="focus-pop-row ${it.checked ? "is-checked" : ""}" data-focus-opt="${it.id}">
+                <span class="focus-pop-checkbox">${it.checked ? "✓" : ""}</span>
+                <span class="focus-pop-icon">${it.icon}</span>
+                <span class="focus-pop-txt">
+                  <strong>${it.title}</strong>
+                  <small>${it.sub}</small>
+                </span>
+              </label>
+              ${it.id === "keymark" && it.checked ? `
+                <div class="artcraft-marker-colors-row">
+                  ${[
+                    { id: "lime", color: "#84CC16", label: isRu ? "Лайм" : "Lime" },
+                    { id: "amber", color: "#F59E0B", label: isRu ? "Янтарь" : "Amber" },
+                    { id: "rose", color: "#F43F5E", label: isRu ? "Коралл" : "Rose" },
+                    { id: "sky", color: "#0EA5E9", label: isRu ? "Небо" : "Sky" },
+                    { id: "lavender", color: "#A855F7", label: isRu ? "Лаванда" : "Lavender" }
+                  ].map(c => `
+                    <span class="artcraft-marker-color-dot ${(this.settings.keyMarkerColor || "lime") === c.id ? "is-active" : ""}" data-marker-color="${c.id}" style="background-color: ${c.color}" title="${c.label}"></span>
+                  `).join("")}
+                </div>
+              ` : ""}
+            `).join("")}
+          </div>
+        `;
+      } else if (curTab === "focus") {
+        tabBodyHtml = `
+          <div class="focus-pop-list">
+            ${focusItems.map(it => `
+              <label class="focus-pop-row ${it.checked ? "is-checked" : ""}" data-focus-opt="${it.id}">
+                <span class="focus-pop-checkbox">${it.checked ? "✓" : ""}</span>
+                <span class="focus-pop-icon">${it.icon}</span>
+                <span class="focus-pop-txt">
+                  <strong>${it.title}</strong>
+                  <small>${it.sub}</small>
+                </span>
+              </label>
+            `).join("")}
+          </div>
+        `;
+      } else {
+        // tools tab
+        tabBodyHtml = `
+          <div class="focus-pop-tools-grid">
+            ${toolActions.map(it => `
+              <button class="focus-pop-act-btn" data-pop-act="${it.act}">
+                ${sicraftIcon(it.icon)} <span>${it.title}</span>
+              </button>
+            `).join("")}
+          </div>
+        `;
+      }
+
       pop.innerHTML = `
         <div class="focus-pop-head">
-          <span class="focus-pop-badge">${sicraftIcon('focus')} <span>${
-        i18n({
-          en: "FOCUS & BOOK READING STUDIO",
-          ru: "РЕЖИМЫ ФОКУСА И КНИЖНОЙ СТУДИИ",
-          zh: "专注模式与阅读工坊",
-          ja: "フォーカス＆読書スタジオ",
-          es: "ESTUDIO DE FOCO Y LECTURA",
-          de: "FOKUS- & LESE-STUDIO",
-        }, this)
-      }</span></span>
+          <span class="focus-pop-badge">${sicraftIcon('focus')} <span>${isRu ? "СТУДИЯ ЧТЕНИЯ И ФОКУСА" : "READING & FOCUS STUDIO"}</span></span>
           <button class="focus-pop-close" title="Close">×</button>
         </div>
 
-        <div class="focus-pop-divider" style="margin-top:2px;">${i18n({
-          en: "PAGE SURFACE & READING CANVAS",
-          ru: "ФОН СТРАНИЦЫ И МАТЕРИАЛ ХОЛСТА",
-          zh: "页面底色与阅读画布",
-          ja: "ページ背景＆読書キャンバス",
-          es: "SUPERFICIE DE PÁGINA Y LIENZO",
-          de: "SEITENHINTERGRUND & LEINWAND",
-        }, this)}</div>
-        <div class="artcraft-surface-picker-row">
-          <button class="surface-mat-chip ${curSurface === "white" ? "is-active" : ""}" data-surface="white">
-            <span class="surface-swatch" style="background:#FFFFFF;border:1px solid #CBD5E1"></span><span>${i18n({ en: "Pure White", ru: "Чистый Белый", zh: "纯净白", ja: "純白", es: "Blanco Puro", de: "Reinweiß" }, this)}</span>
+        <div class="focus-pop-tabs">
+          <button class="focus-tab-btn ${curTab === "canvas" ? "is-active" : ""}" data-tab="canvas">
+            <span>📖</span> <span>${isRu ? "Холст" : "Canvas"}</span>
           </button>
-          <button class="surface-mat-chip ${curSurface === "book" ? "is-active" : ""}" data-surface="book">
-            <span class="surface-swatch" style="background:#FAF8F3;border:1px solid #DFD9CA"></span><span>${i18n({ en: "Warm Book", ru: "Книжный", zh: "温暖书页", ja: "書籍紙", es: "Libro Cálido", de: "Buchpapier" }, this)}</span>
+          <button class="focus-tab-btn ${curTab === "focus" ? "is-active" : ""}" data-tab="focus">
+            <span>🎯</span> <span>${isRu ? "Фокус" : "Focus"}</span>
           </button>
-          <button class="surface-mat-chip ${curSurface === "grain" ? "is-active" : ""}" data-surface="grain">
-            <span class="surface-swatch" style="background:#F5F2EB;border:1px solid #D5CEBE"></span><span>${i18n({ en: "Archival Grain", ru: "Зернистый", zh: "微纹理纸", ja: "粒子紙", es: "Papel Grano", de: "Körnung" }, this)}</span>
+          <button class="focus-tab-btn ${curTab === "tools" ? "is-active" : ""}" data-tab="tools">
+            <span>🛠️</span> <span>${isRu ? "Инструменты" : "Tools"}</span>
           </button>
         </div>
 
-        <div class="focus-pop-divider" style="margin-top:4px;">${i18n({
-          en: "PAGE WIDTH & ULTRAWIDE CANVAS",
-          ru: "ШИРИНА СТРАНИЦЫ И УЛЬТРАШИРОКИЙ ХОЛСТ",
-          zh: "页面宽度与超宽画布",
-          ja: "ページ幅＆ウルトラワイドキャンバス",
-          es: "ANCHO DE PÁGINA Y LIENZO ULTRAANCHO",
-          de: "SEITENBREITE & ULTRAWIDE-LEINWAND",
-        }, this)}</div>
-        <div class="artcraft-width-picker-row">
-          <button class="width-mat-chip ${(this.settings.pageWidthMode || "book") === "book" ? "is-active" : ""}" data-width-mode="book">
-            <span>📖 ${i18n({ en: "760px Book", ru: "760px Книга", zh: "760px 书页", ja: "760px 書籍", es: "760px Libro", de: "760px Buch" }, this)}</span>
-          </button>
-          <button class="width-mat-chip ${this.settings.pageWidthMode === "wide" ? "is-active" : ""}" data-width-mode="wide">
-            <span>🖥️ ${i18n({ en: "1080px Wide", ru: "1080px Широкий", zh: "1080px 宽屏", ja: "1080px ワイド", es: "1080px Ancho", de: "1080px Breit" }, this)}</span>
-          </button>
-          <button class="width-mat-chip ${this.settings.pageWidthMode === "full" ? "is-active" : ""}" data-width-mode="full">
-            <span>🌌 ${i18n({ en: "Full Canvas", ru: "Полный холст", zh: "全宽画布", ja: "フルキャンバス", es: "Lienzo Total", de: "Vollbild" }, this)}</span>
-          </button>
-        </div>
-
-        <div class="focus-pop-divider">${i18n({
-          en: "TACTILE EDITORIAL & FOCUS LAYERS",
-          ru: "СЛОИ ФОКУСА И ШВЕЙЦАРСКОЙ ВЁРСТКИ",
-          zh: "触觉版面与专注图层",
-          ja: "フォーカス＆タイポグラフィレイヤー",
-          es: "CAPAS DE FOCO Y DISEÑO EDITORIAL",
-          de: "FOKUS- & LAYOUT-EBENEN",
-        }, this)}</div>
-        <div class="focus-pop-list">
-          ${items
-            .map(
-              (it) => `
-            <label class="focus-pop-row ${it.checked ? "is-checked" : ""}" data-focus-opt="${it.id}">
-              <span class="focus-pop-checkbox">${it.checked ? "✓" : ""}</span>
-              <span class="focus-pop-icon">${it.icon}</span>
-              <span class="focus-pop-txt">
-                <strong>${it.title}</strong>
-                <small>${it.sub}</small>
-              </span>
-            </label>
-          `
-            )
-            .join("")}
-        </div>
-        <div class="focus-pop-divider">${i18n({
-          en: "BOOKBINDER'S SPINE MATERIAL & TEXTURE",
-          ru: "ПЕРЕПЛЁТНАЯ МАСТЕРСКАЯ (МАТЕРИАЛ КОРЕШКА И ЛИСТА)",
-          zh: "装订工坊（书脊皮质与纸张纹理）",
-          ja: "製本工房 (背表紙の革素材と質感)",
-          es: "TALLER DE ENCUADERNACIÓN (MATERIAL DEL LOMO)",
-          de: "BUCHBINDEREI (RÜCKENMATERIAL & TEXTUR)",
-        }, this)}</div>
-        <div class="artcraft-spine-picker-row">
-          <button class="spine-mat-chip ${(this.settings.spineMaterial || "cognac") === "cognac" ? "is-active" : ""}" data-spine="cognac">
-            <span class="spine-swatch" style="background:#8C5828"></span><span>${i18n({ en: "Cognac", ru: "Коньяк", zh: "干邑棕", ja: "コニャック", es: "Coñac", de: "Cognac" }, this)}</span>
-          </button>
-          <button class="spine-mat-chip ${this.settings.spineMaterial === "emerald" ? "is-active" : ""}" data-spine="emerald">
-            <span class="spine-swatch" style="background:#14532D"></span><span>${i18n({ en: "Emerald", ru: "Сафьян", zh: "祖母绿", ja: "エメラルド", es: "Esmeralda", de: "Saffian" }, this)}</span>
-          </button>
-          <button class="spine-mat-chip ${this.settings.spineMaterial === "crimson" ? "is-active" : ""}" data-spine="crimson">
-            <span class="spine-swatch" style="background:#7F1D1D"></span><span>${i18n({ en: "Crimson", ru: "Бархат", zh: "绯红丝绒", ja: "深紅ベルベット", es: "Carmesí", de: "Samtrot" }, this)}</span>
-          </button>
-          <button class="spine-mat-chip ${this.settings.spineMaterial === "linen" ? "is-active" : ""}" data-spine="linen">
-            <span class="spine-swatch" style="background:#334155"></span><span>${i18n({ en: "Linen", ru: "Лён", zh: "北欧麻布", ja: "リネン", es: "Lino", de: "Leinen" }, this)}</span>
-          </button>
-        </div>
-        <div class="focus-pop-divider">${i18n({
-          en: "5-NUTRIENT BOOK STICKER TOOLS",
-          ru: "КНИЖНАЯ МЕТОДИКА: 5 ЗАКЛАДОК-НУТРИЕНТОВ",
-          zh: "阅读方法论：5大养分书签工具",
-          ja: "読書メソッド：5大栄養素付箋ツール",
-          es: "MÉTODO DE LECTURA: 5 NUTRIENTES",
-          de: "LESEMETHODIK: 5 NÄHRSTOFF-LESEZEICHEN",
-        }, this)}</div>
-        <div class="focus-pop-actions">
-          <button class="focus-pop-act-btn is-primary" data-pop-act="add-sticker">
-            ${sicraftIcon('bookmark')} <span>${i18n({ en: "+ Attach 5-Nutrient Sticker", ru: "+ Закладка-Нутриент со смыслом", zh: "+ 附着有深度的养分书签", ja: "+ 意味ある栄養素付箋を貼る", es: "+ Adjuntar pegatina de nutrientes", de: "+ Nährstoff-Lesezeichen anbringen" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="digest">
-            ${sicraftIcon('book')} <span>${i18n({ en: "Book Digest (Proteins & Carbs)", ru: "Дайджест книги (Белки и Углеводы)", zh: "书籍摘要（蛋白质与碳水）", ja: "読書ダイジェスト (実践＆思考)", es: "Resumen del libro (Proteínas y Carbohidratos)", de: "Buch-Auszug (Proteine & Kohlenhydrate)" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="bookshelf">
-            ${sicraftIcon('shelf')} <span>${i18n({ en: "Open Classics Bookshelf (All Books)", ru: "Открыть «Полку Классики» (Все книги базы)", zh: "打开「经典书架」（全库图书）", ja: "「古典の本棚」を開く (全ノート)", es: "Abrir estantería de clásicos (Toda la bóveda)", de: "Klassiker-Regal öffnen (Alle Bücher)" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="exlibris-png">
-            ${sicraftIcon('camera')} <span>${i18n({ en: "Export Ex-Libris Book Card as PNG", ru: "Сохранить Карточку Экслибриса в PNG", zh: "导出藏书票书卡为 PNG", ja: "蔵書票カードをPNGで保存", es: "Exportar tarjeta Ex-Libris en PNG", de: "Ex-Libris-Buchkarte als PNG exportieren" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="wax-seal">
-            ${sicraftIcon('stamp')} <span>${i18n({ en: "Time Capsule: seal this note until a date", ru: "Капсула времени: запечатать заметку до даты", zh: "时间胶囊：封存此笔记至指定日期", ja: "タイムカプセル：指定日までノートを封印", es: "Cápsula del tiempo: sellar hasta una fecha", de: "Zeitkapsel: Notiz bis zu einem Datum versiegeln" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="tour">
-            ${sicraftIcon('spark')} <span>${i18n({ en: "Open Interactive Tour (every feature)", ru: "Открыть интерактивный тур (все фишки)", zh: "打开交互式新手漫游（全功能指引）", ja: "インタラクティブツアーを開く (全機能ガイド)", es: "Abrir tour interactivo (todas las funciones)", de: "Interaktive Tour öffnen (alle Funktionen)" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="two-page">
-            ${sicraftIcon('columns')} <span>${i18n({ en: "Open 2-Page Side-by-Side Spread", ru: "Открыть 2-страничный разворот рядом", zh: "开启双页并排展开阅读", ja: "2ページ見開き表示を開く", es: "Abrir doble página en paralelo", de: "2-Seiten-Nebeneinander-Ansicht öffnen" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="quest-chain">
-            ${sicraftIcon('chain')} <span>${i18n({ en: "Life RPG & SHA-256 Quest Blockchain", ru: "Life RPG и Блокчейн-Цепочка Квестов (SHA-256)", zh: "Life RPG 与区块链任务链", ja: "Life RPG & SHA-256 クエストチェーン", es: "Life RPG y Cadena de Misiones SHA-256", de: "Life RPG & SHA-256 Quest-Blockchain" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="bio-flow">
-            ${sicraftIcon('pulse')} <span>${i18n({ en: "Bio-Rhythm & Cognitive Flow Readiness", ru: "Био-Ритм и Энергия Потока", zh: "生物节律与心流准备度", ja: "バイオリズム＆フロー準備度", es: "Bio-Ritmo y Estado de Flujo", de: "Bio-Rhythmus & Flow-Bereitschaft" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="sketchpad">
-            ${sicraftIcon('palette')} <span>${i18n({ en: "Creative Margin Sketchpad (Draw in Note)", ru: "Творческий Скетчбук (Рисование в заметке)", zh: "创意手绘草图板", ja: "クリエイティブ・スケッチパッド", es: "Cuaderno de Bocetos en Nota", de: "Kreatives Skizzenbuch in Notiz" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="creator-os">
-            ${sicraftIcon('bolt')} <span>${i18n({ en: "Creator OS: @brand AI Compiler, APAG & Kanban", ru: "Creator OS: @brand для ИИ, APAG и Канбан задач", zh: "Creator OS：AI品牌上下文与APAG引擎", ja: "Creator OS：@brand AIコンパイラ＆APAG", es: "Creator OS: @brand IA, APAG y Kanban", de: "Creator OS: @brand KI, APAG & Kanban" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="autopilot-bell">
-            ${sicraftIcon('timer')} <span>${i18n({ en: "Mindful Focus Calibration Check-In (+30 XP)", ru: "Осознанная калибровка фокуса (+30 XP)", zh: "专注力校准与反思 (+30 XP)", ja: "マインドフル・フォーカス確認 (+30 XP)", es: "Calibración Consciente de Enfoque (+30 XP)", de: "Achtsame Fokus-Kalibrierung (+30 XP)" }, this)}</span>
-          </button>
-          <button class="focus-pop-act-btn" data-pop-act="pro-test-drive">
-            ${sicraftIcon('diamond')} <span>${i18n({ en: "✨ 60-Second Free Pro Test-Drive (All Colors & 16 Soundscapes)", ru: "✨ 60-сек Тест-Драйв Pro (Все 8 цветов и 16 саундскейпов)", zh: "✨ 60秒免费体验 Pro 全部功能", ja: "✨ 60秒間 Pro モード無料テストドライブ", es: "✨ Prueba Pro de 60 segundos gratis", de: "✨ 60-Sekunden Pro-Testfahrt starten" }, this)}</span>
-          </button>
+        <div class="focus-pop-body">
+          ${tabBodyHtml}
         </div>
       `;
 
+      // Handlers for tabs
+      pop.querySelectorAll(".focus-tab-btn").forEach(btn => {
+        btn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          this._activeFocusTab = btn.getAttribute("data-tab") || "canvas";
+          this.playTactileMicroFeedback("tap");
+          renderPopoverContent();
+        });
+      });
+
+      // Handlers for chips
       pop.querySelectorAll(".surface-mat-chip").forEach((chip) => {
         chip.addEventListener("click", async (ev) => {
           ev.stopPropagation();
@@ -7316,6 +8892,18 @@ class AlchemyFlowPlugin extends Plugin {
           await this.saveSettings();
           this.applyBodyClasses();
           this.updateTaskProgressBar();
+          this.playTactileMicroFeedback("tap");
+          renderPopoverContent();
+        });
+      });
+
+      pop.querySelectorAll(".artcraft-marker-color-dot").forEach((dot) => {
+        dot.addEventListener("click", async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.settings.keyMarkerColor = dot.getAttribute("data-marker-color") || "lime";
+          await this.saveSettings();
+          this.applyBodyClasses();
           this.playTactileMicroFeedback("tap");
           renderPopoverContent();
         });
@@ -7343,11 +8931,8 @@ class AlchemyFlowPlugin extends Plugin {
           ev.preventDefault();
           ev.stopPropagation();
           const opt = row.getAttribute("data-focus-opt");
-          if (opt === "surface-cycle") {
-            const cur = this.settings.surfaceMode || "white";
-            this.settings.surfaceMode = cur === "white" ? "book" : cur === "book" ? "grain" : "white";
-          } else if (opt === "editorial") {
-            this.settings.editorialCleanMode = !this.settings.editorialCleanMode;
+          if (opt === "editorial") {
+            this.settings.editorialCleanMode = this.settings.editorialCleanMode === false;
           } else if (opt === "sentence") {
             this.settings.sentenceFocus = !this.settings.sentenceFocus;
           } else if (opt === "spotlight") {
@@ -7364,19 +8949,24 @@ class AlchemyFlowPlugin extends Plugin {
             this.settings.bookSpreadMode = !this.settings.bookSpreadMode;
           } else if (opt === "breathspine") {
             this.settings.breathingSpine = !this.settings.breathingSpine;
-          } else if (opt === "pacer") {
-            this.settings.readingPacer = !this.settings.readingPacer;
-            this.updateReadingPacerState();
           } else if (opt === "meta") {
             const curState = this.settings.showReadingStats !== false;
             this.settings.showReadingStats = !curState;
             this.settings.showTaskProgress = !curState;
             this.updateTaskProgressBar();
+          } else if (opt === "cards") {
+            this.settings.pageCards = this.settings.pageCards !== true;
+          } else if (opt === "kin") {
+            this.settings.windChainFooter = this.settings.windChainFooter === false;
+            setTimeout(() => this.updateTaskProgressBar(), 0);
+          } else if (opt === "keymark") {
+            this.settings.keySentenceMarker = this.settings.keySentenceMarker === false;
+            this.rerenderReadingViews();
           } else if (opt === "bionic") {
             this.settings.bionicAnchors = !this.settings.bionicAnchors;
             this.refreshBionicAnchorsInDOM();
           } else if (opt === "stamp") {
-            this.settings.showCornerStamp = !this.settings.showCornerStamp;
+            this.settings.showCornerStamp = this.settings.showCornerStamp === false;
             this.updateTaskProgressBar();
           }
           await this.saveSettings();
@@ -7387,10 +8977,10 @@ class AlchemyFlowPlugin extends Plugin {
 
       pop.querySelectorAll("[data-pop-act]").forEach((btn) => {
         btn.addEventListener("click", (ev) => {
+          ev.preventDefault();
           ev.stopPropagation();
           const act = btn.getAttribute("data-pop-act");
-          pop.remove();
-          this.focusPopoverEl = null;
+          this.playTactileMicroFeedback("tap");
           if (act === "add-sticker") {
             this.addMarginBookmarkToActiveNote();
           } else if (act === "digest") {
@@ -7420,6 +9010,8 @@ class AlchemyFlowPlugin extends Plugin {
           } else if (act === "two-page") {
             this.openTrueTwoPageBookSpread();
           }
+          // Keep the Tools popover open so the user can select or toggle multiple tools without reopening Focus -> Tools
+          renderPopoverContent();
         });
       });
     };
@@ -7427,78 +9019,116 @@ class AlchemyFlowPlugin extends Plugin {
     renderPopoverContent();
     document.body.appendChild(pop);
     this.focusPopoverEl = pop;
-
-    const rect = anchorBtn.getBoundingClientRect();
-    const popW = 380;
-    let left = rect.left + rect.width / 2 - popW / 2;
-    if (left < 16) left = 16;
-    if (left + popW > window.innerWidth - 16) left = window.innerWidth - popW - 16;
-    pop.style.left = left + "px";
-    pop.style.bottom = (window.innerHeight - rect.top + 10) + "px";
+    this.positionDockPopover(pop, anchorBtn, 380);
 
     const closeHandler = (ev) => {
-      if (!pop.contains(ev.target) && ev.target !== anchorBtn && !anchorBtn.contains(ev.target)) {
-        pop.remove();
-        this.focusPopoverEl = null;
-        document.removeEventListener("pointerdown", closeHandler);
+      if (!ev.target || !ev.target.isConnected) return;
+      if (ev.target.closest && ev.target.closest(".modal-container, .modal, .menu, .notice-container")) return;
+      if (!pop.contains(ev.target) && ev.target !== anchorBtn && (!anchorBtn || !anchorBtn.contains(ev.target))) {
+        this.closeAllDockPopovers();
       }
     };
+    this.focusPopoverCloseHandler = closeHandler;
     setTimeout(() => {
-      document.addEventListener("pointerdown", closeHandler);
-    }, 50);
+      if (this.focusPopoverCloseHandler === closeHandler) document.addEventListener("pointerdown", closeHandler);
+    }, 40);
   }
 
-  jumpToMarginBookmark(lineNum, snippetText) {
+  jumpToMarginBookmark(lineNum, snippetText, bookmark) {
     const obsidian = require("obsidian");
     const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-    if (!view) return;
-    if (view.editor) {
-      view.editor.setCursor({ line: lineNum, ch: 0 });
-      view.editor.scrollIntoView({ from: { line: Math.max(0, lineNum - 2), ch: 0 }, to: { line: lineNum + 2, ch: 0 } }, true);
-    }
-    const cleanNeedle = (snippetText || "").replace(/…$/, "").trim().slice(0, 24);
-    if (cleanNeedle) {
-      const blocks = view.contentEl.querySelectorAll(".cm-line, p, h1, h2, h3, h4, li, blockquote");
-      for (const b of blocks) {
-        if (b.textContent && b.textContent.includes(cleanNeedle)) {
-          b.scrollIntoView({ behavior: "smooth", block: "center" });
-          b.classList.add("artcraft-bm-flash-highlight");
-          setTimeout(() => b.classList.remove("artcraft-bm-flash-highlight"), 1600);
+    if (!view) return -1;
+    const text = view.editor ? view.editor.getValue() : view.data || "";
+    const lines = text.split("\n");
+    const saved = Math.max(0, Math.min(lines.length - 1, Number(lineNum) || 0));
+    const needle = String(snippetText || "").replace(/…$/, "").replace(/\s+/g, " ").trim();
+    let target = saved;
+    if (needle) {
+      const flat = lines.map((l) => l.replace(/\s+/g, " "));
+      for (const size of [48, 24, 12]) {
+        if (needle.length < Math.min(size, 6)) continue;
+        const probe = needle.slice(0, size);
+        let best = -1;
+        for (let i = 0; i < flat.length; i++) {
+          if (flat[i].includes(probe) && (best === -1 || Math.abs(i - saved) < Math.abs(best - saved))) best = i;
+        }
+        if (best !== -1) {
+          target = best;
           break;
         }
       }
     }
+    if (bookmark && typeof bookmark === "object" && bookmark.line !== target) {
+      bookmark.line = target;
+      this.saveSettings();
+    }
+
+    const reading = typeof view.getMode === "function" && view.getMode() === "preview";
+    if (reading) {
+      if (view.previewMode && typeof view.previewMode.applyScroll === "function") view.previewMode.applyScroll(target);
+    } else if (view.editor) {
+      view.editor.setCursor({ line: target, ch: 0 });
+      view.editor.scrollIntoView({ from: { line: Math.max(0, target - 2), ch: 0 }, to: { line: target + 2, ch: 0 } }, true);
+    }
+
+    // Flash the block once it is on screen. Only the visible half of the view is searched: the other
+    // half (the hidden editor in reading view and the other way round) holds the same text.
+    const probe = needle.slice(0, 24);
+    if (probe) {
+      setTimeout(() => {
+        const root = view.contentEl.querySelector(reading ? ".markdown-reading-view" : ".markdown-source-view");
+        if (!root) return;
+        const blocks = root.querySelectorAll(".cm-line, p, h1, h2, h3, h4, li, blockquote");
+        for (const b of blocks) {
+          if (b.textContent && b.textContent.replace(/\s+/g, " ").includes(probe)) {
+            if (reading) b.scrollIntoView({ behavior: "smooth", block: "center" });
+            b.classList.add("artcraft-bm-flash-highlight");
+            setTimeout(() => b.classList.remove("artcraft-bm-flash-highlight"), 1600);
+            break;
+          }
+        }
+      }, 260);
+    }
+    return target;
   }
 
+  // Removes invisible characters that pasted text sometimes carries: zero-width spaces, word joiners,
+  // soft hyphens and byte-order marks. It does not touch what is part of real writing: direction marks,
+  // the joiners inside emoji and inside Persian, Arabic or Indic words stay, and so do typographic
+  // quotes and non-breaking spaces. Only the affected characters are replaced, so the cursor, the
+  // scroll position and the undo history stay intact. Nothing is copied to the clipboard.
   cleanCurrentNoteAIWatermarks() {
     const view = this.app.workspace.getActiveViewOfType(require("obsidian").MarkdownView);
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
     if (!view || !view.editor) {
-      new Notice("Please open a markdown note to clean AI markers.");
+      new Notice(isRu ? "Откройте заметку в режиме редактирования." : "Open a note in editing mode first.");
       return;
     }
     const editor = view.editor;
     const hasSelection = editor.somethingSelected();
     const raw = hasSelection ? editor.getSelection() : editor.getValue();
+    const base = hasSelection ? editor.posToOffset(editor.getCursor("from")) : 0;
 
-    const invisibleRegex = /[\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff\u00ad]/g;
-    const matches = raw.match(invisibleRegex);
-    const count = matches ? matches.length : 0;
-
-    const cleaned = raw
-      .replace(invisibleRegex, "")
-      .replace(/[\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000]/g, " ")
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'");
-
-    if (cleaned !== raw) {
-      if (hasSelection) {
-        editor.replaceSelection(cleaned);
-      } else {
-        editor.setValue(cleaned);
+    // ZWJ (200D) and ZWNJ (200C) are kept when they sit between two letters or emoji, where they change the text.
+    const meaningful = /[\p{L}\p{M}\p{Extended_Pictographic}\uFE0F]/u;
+    const changes = [];
+    const re = /[\u200b-\u200d\u2060-\u2064\ufeff\u00ad]/g;
+    let m;
+    while ((m = re.exec(raw)) !== null) {
+      const code = m[0].charCodeAt(0);
+      if (code === 0x200c || code === 0x200d) {
+        const before = Array.from(raw.slice(Math.max(0, m.index - 2), m.index)).pop() || "";
+        const after = Array.from(raw.slice(m.index + 1, m.index + 3))[0] || "";
+        if (meaningful.test(before) && meaningful.test(after)) continue;
       }
+      changes.push({ from: editor.offsetToPos(base + m.index), to: editor.offsetToPos(base + m.index + 1), text: "" });
     }
-    navigator.clipboard.writeText(cleaned);
-    new Notice(`✓ Cleaned ${count} invisible AI marker(s) & copied to clipboard!`);
+    if (changes.length === 0) {
+      new Notice(isRu ? "Невидимых символов не найдено." : "No invisible characters found.");
+      return;
+    }
+    editor.transaction({ changes });
+    new Notice(isRu ? `Удалено невидимых символов: ${changes.length}` : `Invisible characters removed: ${changes.length}`);
   }
 
   setupLivePreviewObserver() {
@@ -7583,7 +9213,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   // =========================================================================
-  // 🧠 v5.2.0: HUMAN × AI DUAL-COGNITION ENGINE, llms.txt COMPILER & WASM SIMHASH RADAR
+  // v5.2.0: HUMAN × AI DUAL-COGNITION ENGINE, llms.txt COMPILER & WASM SIMHASH RADAR
   // =========================================================================
   openDualCognitionModal(initialTab = "human") {
     new DualCognitionNeuralStudioModal(this.app, this, initialTab).open();
@@ -7711,13 +9341,14 @@ class AlchemyFlowPlugin extends Plugin {
     const rawTokens = Math.max(1, Math.ceil(raw.length / 3.8));
 
     // Calculate Human Structural Readability Index (0..100)
-    let structureScore = 58;
-    if (headings.length >= 2) structureScore += 12;
-    if (headings.length >= 5) structureScore += 6;
-    if (steps.length > 0 || tasks.length > 0) structureScore += 10;
-    if (callouts.length > 0 || metricsList.length > 0) structureScore += 8;
-    if (wikilinks.length > 0) structureScore += 6;
-    structureScore = Math.min(99, Math.max(35, structureScore));
+    // How much structure the note has, 0 to 100. It counts what is there (headings, steps or tasks,
+    // callouts or figures, links); it does not measure how readable the prose is.
+    let structureScore = 0;
+    if (headings.length >= 2) structureScore += 30;
+    if (headings.length >= 5) structureScore += 15;
+    if (steps.length > 0 || tasks.length > 0) structureScore += 20;
+    if (callouts.length > 0 || metricsList.length > 0) structureScore += 15;
+    if (wikilinks.length > 0) structureScore += 20;
 
     const hashHex = this.wasmFastHashHex(body || noteTitle);
 
@@ -7742,12 +9373,12 @@ class AlchemyFlowPlugin extends Plugin {
 
   buildAiSemanticCapsule(analysis, format = "mcp") {
     const a = analysis;
-    const nowIso = new Date().toISOString().slice(0, 10);
+    const nowIso = localDayKey();
 
     if (format === "llms") {
       const lines = [
         `# ${a.title}`,
-        `> Alchemy Craft Dual-Cognition Capsule | SHA-256/FNV: 0x${a.hashHex} | Readability: ${a.structureScore}% | Words: ${a.wordCount}`,
+        `> Alchemy Craft Dual-Cognition Capsule | Hash (FNV-1a, 32-bit): 0x${a.hashHex} | Structure: ${a.structureScore}% | Words: ${a.wordCount}`,
         ``,
         `## Core Thesis & Executive Summary`,
         ...(a.thesisList.length > 0 ? a.thesisList.map((t, i) => `${i + 1}. ${t}`) : [`1. Primary knowledge node: ${a.title}`]),
@@ -7782,7 +9413,7 @@ class AlchemyFlowPlugin extends Plugin {
         dateModified: nowIso,
         version: "5.2.0",
         integrityHash: `0x${a.hashHex}`,
-        humanReadabilityScore: a.structureScore,
+        structureScore: a.structureScore,
         wordCount: a.wordCount,
         abstract: a.thesisList.join(" "),
         keywords: a.tags,
@@ -7798,26 +9429,33 @@ class AlchemyFlowPlugin extends Plugin {
     }
 
     // Default: "mcp" — Model Context Protocol / Claude XML Knowledge Capsule
+    // Note text goes into XML: "&", "<", ">" and quotes must be escaped or the capsule stops being well-formed.
+    const xml = (value) =>
+      String(value === null || value === undefined ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
     const xmlLines = [
-      `<knowledge_capsule title="${a.title.replace(/"/g, "&quot;")}" path="${(a.filePath || "").replace(/"/g, "&quot;")}" hash="0x${a.hashHex}" readability="${a.structureScore}%" words="${a.wordCount}">`,
+      `<knowledge_capsule title="${xml(a.title)}" path="${xml(a.filePath || "")}" hash="0x${a.hashHex}" structure="${a.structureScore}%" words="${a.wordCount}">`,
       `  <executive_thesis>`,
       ...(a.thesisList.length > 0
-        ? a.thesisList.map((t, i) => `    <point index="${i + 1}">${t}</point>`)
-        : [`    <point index="1">${a.title}</point>`]),
+        ? a.thesisList.map((t, i) => `    <point index="${i + 1}">${xml(t)}</point>`)
+        : [`    <point index="1">${xml(a.title)}</point>`]),
       `  </executive_thesis>`,
       `  <quantitative_anchors count="${a.metricsList.length}">`,
-      ...a.metricsList.slice(0, 10).map((m) => `    <metric value="${m.value.replace(/"/g, "&quot;")}">${m.context}</metric>`),
+      ...a.metricsList.slice(0, 10).map((m) => `    <metric value="${xml(m.value)}">${xml(m.context)}</metric>`),
       `  </quantitative_anchors>`,
       `  <section_outline count="${a.headings.length}">`,
-      ...a.headings.slice(0, 14).map((h) => `    <section level="H${h.level}" line="${h.line}">${h.text}</section>`),
+      ...a.headings.slice(0, 14).map((h) => `    <section level="H${h.level}" line="${h.line}">${xml(h.text)}</section>`),
       `  </section_outline>`,
       `  <action_vectors tasks_done="${a.tasks.filter((t) => t.done).length}" tasks_total="${a.tasks.length}">`,
-      ...a.steps.slice(0, 8).map((s) => `    <step num="${s.num}">${s.text}</step>`),
-      ...a.tasks.slice(0, 10).map((t) => `    <task status="${t.done ? "done" : "todo"}">${t.text}</task>`),
+      ...a.steps.slice(0, 8).map((s) => `    <step num="${xml(s.num)}">${xml(s.text)}</step>`),
+      ...a.tasks.slice(0, 10).map((t) => `    <task status="${t.done ? "done" : "todo"}">${xml(t.text)}</task>`),
       `  </action_vectors>`,
       `  <knowledge_graph_edges>`,
-      `    <wikilinks>${a.wikilinks.join(", ")}</wikilinks>`,
-      `    <tags>${a.tags.map((t) => "#" + t).join(" ")}</tags>`,
+      `    <wikilinks>${xml(a.wikilinks.join(", "))}</wikilinks>`,
+      `    <tags>${xml(a.tags.map((t) => "#" + t).join(" "))}</tags>`,
       `  </knowledge_graph_edges>`,
       `</knowledge_capsule>`,
     ];
@@ -7866,64 +9504,81 @@ class AlchemyFlowPlugin extends Plugin {
     return [hi >>> 0, lo >>> 0, new Set(tokens.slice(0, 120))];
   }
 
+  // Finds notes that use the same vocabulary as the active one. The score is the cosine similarity of
+  // the two notes' term vectors (see kinVector): stop-words removed, word endings folded, every script
+  // treated alike. Up to 400 most recently changed notes are compared; the count returned is the real one.
   async scanVaultWasmSemanticRadar(activeFile, activeRawText) {
     const t0 = performance.now();
-    const [targetHi, targetLo, targetTokens] = this.computeWasmSimHash64(activeRawText);
-    const files = this.app.vault.getMarkdownFiles().filter((f) => !activeFile || f.path !== activeFile.path);
-    const scanned = files.slice(0, 120);
-
-    const popcount32 = (x) => {
-      x = x - ((x >>> 1) & 0x55555555);
-      x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
-      return (((x + (x >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
-    };
-
     const existingLinks = new Set();
     const wlRegex = /\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]/g;
     let m;
-    while ((m = wlRegex.exec(activeRawText)) !== null) {
+    while ((m = wlRegex.exec(activeRawText || "")) !== null) {
       existingLinks.add(m[1].trim().toLowerCase());
     }
 
+    // term vector of the text on screen (it may hold unsaved edits)
+    const tf = new Map();
+    const stemWord = new Map();
+    keyWords(
+      String(activeRawText || "")
+        .replace(/\r\n/g, "\n")
+        .replace(/^---\n[\s\S]*?\n---\n/, "")
+        .replace(/```[\s\S]*?```/g, " ") + (activeFile ? " " + activeFile.basename : "")
+    ).forEach((w) => {
+      const st = keyStem(w);
+      tf.set(st, (tf.get(st) || 0) + 1);
+      if (!stemWord.has(st)) stemWord.set(st, w); // shown to the reader as a whole word, not a stem
+    });
+    let norm = 0;
+    tf.forEach((count, st) => {
+      const weight = 1 + Math.log(count);
+      tf.set(st, weight);
+      norm += weight * weight;
+    });
+    const me = { tf, norm: Math.sqrt(norm) || 1, size: tf.size };
+
+    let files = this.app.vault.getMarkdownFiles().filter((f) => !activeFile || f.path !== activeFile.path);
+    if (files.length > 400) files = files.slice().sort((a, b) => b.stat.mtime - a.stat.mtime).slice(0, 400);
+
     const results = [];
-    for (const file of scanned) {
-      try {
-        const content = await this.app.vault.cachedRead(file);
-        const [hi, lo, fileTokens] = this.computeWasmSimHash64(content);
-        const hamming = popcount32(targetHi ^ hi) + popcount32(targetLo ^ lo);
-        const simHashScore = Math.max(0, Math.round(((64 - hamming) / 64) * 100));
-
-        // Shared keyword overlap boost
-        const sharedKeywords = [];
-        for (const tk of targetTokens) {
-          if (fileTokens.has(tk) && sharedKeywords.length < 5) {
-            sharedKeywords.push(tk);
-          }
+    let scannedCount = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const other = await this.kinVector(file);
+      if (!other) continue;
+      scannedCount++;
+      if (me.size < 4 || other.size < 4) continue;
+      const small = me.size <= other.size ? me : other;
+      const large = small === me ? other : me;
+      let dot = 0;
+      const shared = [];
+      small.tf.forEach((w, st) => {
+        const w2 = large.tf.get(st);
+        if (w2) {
+          dot += w * w2;
+          shared.push([st, w * w2]);
         }
-        const overlapBoost = Math.min(24, sharedKeywords.length * 5);
-        const similarity = Math.min(99, Math.round(simHashScore * 0.78 + overlapBoost));
-        const isAlreadyLinked =
-          existingLinks.has(file.basename.toLowerCase()) ||
-          existingLinks.has(file.path.replace(/\.md$/i, "").toLowerCase());
-
-        results.push({
-          file,
-          title: file.basename,
-          path: file.path,
-          similarity,
-          sharedKeywords,
-          isAlreadyLinked,
-          sigHex: ((hi >>> 0).toString(16).padStart(8, "0") + (lo >>> 0).toString(16).padStart(8, "0")).toUpperCase(),
-        });
-      } catch (e) {}
+      });
+      const similarity = Math.round((dot / (me.norm * other.norm)) * 100);
+      if (similarity < 8) continue;
+      shared.sort((a, b) => b[1] - a[1]);
+      results.push({
+        file,
+        title: file.basename,
+        path: file.path,
+        similarity,
+        sharedKeywords: shared.slice(0, 5).map((s) => stemWord.get(s[0]) || s[0]),
+        isAlreadyLinked:
+          existingLinks.has(file.basename.toLowerCase()) || existingLinks.has(file.path.replace(/\.md$/i, "").toLowerCase()),
+      });
+      if (i % 40 === 39) await new Promise((resolve) => setTimeout(resolve, 0));
     }
 
     results.sort((a, b) => b.similarity - a.similarity);
-    const elapsedMs = Math.max(0.4, +(performance.now() - t0).toFixed(2));
     return {
-      elapsedMs,
-      scannedCount: scanned.length,
-      wasmActive: !!(this.wasmReady && this.wasmExports),
+      elapsedMs: +(performance.now() - t0).toFixed(1),
+      scannedCount,
+      wasmActive: false,
       matches: results.slice(0, 8),
     };
   }
@@ -7941,45 +9596,67 @@ class AlchemyFlowPlugin extends Plugin {
       return false;
     }
 
-    const raw = await this.app.vault.read(activeView.file);
-    const a = passedAnalysis || this.analyzeNoteDualCognition(raw, activeView.file.basename, activeView.file.path);
+    const file = activeView.file;
     const isRu = (this.settings.uiLanguage || "en") === "ru";
 
-    const thesisBullets =
-      a.thesisList.length > 0
-        ? a.thesisList.slice(0, 3).map((t, idx) => `> **0${idx + 1} //** ${t}`).join("\n")
-        : `> **01 //** ${a.title}`;
+    // Splits the note at the place where the summary goes. A summary that is already there is cut out,
+    // so a second run replaces it instead of stacking another one, and the analysis below never reads
+    // the old summary as note text.
+    const briefHead = /^> \[!abstract\][+-]? .*\(`(?:structure \d+%|\d+% Clarity)` · `0x[0-9a-fA-F]+`\)\s*$/;
+    const splitAtBrief = (text) => {
+      const lines = text.split("\n");
+      let start = -1;
+      for (let i = 0; i < lines.length; i++) {
+        if (briefHead.test(lines[i].replace(/\r$/, ""))) {
+          start = i;
+          break;
+        }
+      }
+      if (start !== -1) {
+        let end = start + 1;
+        while (end < lines.length && lines[end].startsWith(">")) end++;
+        if (end < lines.length && lines[end].trim() === "") end++;
+        const before = lines.slice(0, start).join("\n");
+        return { before: before ? before + "\n" : "", after: lines.slice(end).join("\n") };
+      }
+      const fm = text.match(/^---[\s\S]*?---\r?\n/);
+      if (fm) return { before: fm[0] + "\n", after: text.slice(fm[0].length) };
+      return { before: "", after: text };
+    };
 
-    const metricsLine =
-      a.metricsList.length > 0
-        ? `> - **${isRu ? "Ключевые цифры и метрики" : "Key Metrics & Numbers"}:** ${a.metricsList
-            .slice(0, 6)
-            .map((m) => "`" + m.value + "`")
-            .join(" · ")}\n`
-        : "";
+    const build = (cur) => {
+      const parts = splitAtBrief(cur);
+      const a = passedAnalysis || this.analyzeNoteDualCognition(parts.before + parts.after, file.basename, file.path);
 
-    const calloutBlock = [
-      `> [!abstract]+ 🧠 ${isRu ? "НЕЙРО-БРИФ // ВЫЖИМКА ДЛЯ ЧЕЛОВЕКА И ИИ" : "EXECUTIVE BRIEF // HUMAN × AI SUMMARY"} (\`${a.structureScore}% Clarity\` · \`0x${a.hashHex}\`)`,
-      thesisBullets,
-      metricsLine ? metricsLine.trimEnd() : `> - **${isRu ? "Объём" : "Scope"}:** ~${a.readMinutes} ${isRu ? "мин чтения" : "min read"} (${a.wordCount} ${isRu ? "слов" : "words"})`,
-      ``,
-    ].join("\n");
+      const thesisBullets =
+        a.thesisList.length > 0
+          ? a.thesisList.slice(0, 3).map((t, idx) => `> **0${idx + 1} //** ${t}`).join("\n")
+          : `> **01 //** ${a.title}`;
 
-    let updated = raw;
-    const fmMatch = raw.match(/^---[\s\S]*?---\r?\n/);
-    if (fmMatch) {
-      const prefix = fmMatch[0];
-      const rest = raw.slice(prefix.length);
-      updated = `${prefix}\n${calloutBlock}\n${rest}`;
-    } else {
-      updated = `${calloutBlock}\n${raw}`;
-    }
+      const metricsLine =
+        a.metricsList.length > 0
+          ? `> - **${isRu ? "Ключевые цифры и метрики" : "Key Metrics & Numbers"}:** ${a.metricsList
+              .slice(0, 6)
+              .map((m) => "`" + m.value + "`")
+              .join(" · ")}\n`
+          : "";
 
-    await this.app.vault.modify(activeView.file, updated);
+      const calloutBlock = [
+        `> [!abstract]+ ${isRu ? "Сводка заметки" : "Note summary"} (\`structure ${a.structureScore}%\` · \`0x${a.hashHex}\`)`,
+        thesisBullets,
+        metricsLine ? metricsLine.trimEnd() : `> - **${isRu ? "Объём" : "Scope"}:** ~${a.readMinutes} ${isRu ? "мин чтения" : "min read"} (${a.wordCount} ${isRu ? "слов" : "words"})`,
+        ``,
+      ].join("\n");
+
+      return `${parts.before}${calloutBlock}\n${parts.after}`;
+    };
+
+    // Through the open editor when the note is being edited, so unsaved typing is not overwritten.
+    await this.editNote(file, build);
     new obsidian.Notice(
       i18n({
-        en: "🧠 Executive Brief callout inserted at the top of your note!",
-        ru: "🧠 Нейро-Бриф (Callout) вставлен в начало вашей заметки!",
+        en: "Executive Brief callout inserted at the top of your note!",
+        ru: "Нейро-Бриф (Callout) вставлен в начало вашей заметки!",
       }, this)
     );
     return true;
@@ -7995,7 +9672,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     const header = [
-      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.2.0)`,
+      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.0)`,
       `> Dual-Cognition Knowledge Index for Human Readers & AI Agents (Cursor, Claude Code, MCP, Windsurf).`,
       `> Generated: ${new Date().toISOString()} | Indexed Notes: ${files.length}`,
       ``,
@@ -8016,7 +9693,7 @@ class AlchemyFlowPlugin extends Plugin {
         const secList = a.headings.slice(0, 5).map((h) => h.text).join(" → ");
         const block = [
           `### [${file.basename}](${file.path})`,
-          `- **Hash**: \`0x${a.hashHex}\` | **Clarity**: ${a.structureScore}% | **Words**: ${a.wordCount}`,
+          `- **Hash**: \`0x${a.hashHex}\` | **Structure**: ${a.structureScore}% | **Words**: ${a.wordCount}`,
           `- **Core Thesis**: ${thesis}`,
           ...(metrics ? [`- **Metrics**: ${metrics}`] : []),
           ...(secList ? [`- **Sections**: ${secList}`] : []),
@@ -8027,11 +9704,14 @@ class AlchemyFlowPlugin extends Plugin {
       } catch (e) {}
     }
 
-    const savedPct = totalRawTokens > 0 ? Math.max(15, Math.min(92, Math.round((1 - totalCompressedTokens / totalRawTokens) * 100))) : 64;
+    // Sizes are estimates (3.8 characters per token). The ratio is reported as it is, not clamped.
+    const savedPct = totalRawTokens > 0 ? Math.round((1 - totalCompressedTokens / totalRawTokens) * 100) : 0;
+    const sizeNote = savedPct >= 0 ? savedPct + "% smaller" : Math.abs(savedPct) + "% larger";
+    const sizeNoteRu = savedPct >= 0 ? "на " + savedPct + "% меньше" : "на " + Math.abs(savedPct) + "% больше";
     header.splice(
       3,
       0,
-      `> Token Optimization: ${totalCompressedTokens} capsule tokens vs ${totalRawTokens} raw tokens (~${savedPct}% context window saved).`
+      `> Size estimate: about ${totalCompressedTokens} tokens here vs about ${totalRawTokens} in the source notes (${sizeNote}; 3.8 characters per token).`
     );
 
     const finalContent = header.join("\n");
@@ -8045,40 +9725,161 @@ class AlchemyFlowPlugin extends Plugin {
 
     new obsidian.Notice(
       isRu
-        ? `🤖 Файл llms.txt собран в корне хранилища (${files.length} заметок, экономия ~${savedPct}% токенов для ИИ)!`
-        : `🤖 Vault llms.txt compiled in vault root (${files.length} notes, ~${savedPct}% AI tokens saved)!`
+        ? `llms.txt собран в корне хранилища: ${files.length} заметок, по оценке ${sizeNoteRu} исходного текста.`
+        : `llms.txt written to the vault root: ${files.length} notes, an estimated ${sizeNote} than the source text.`
     );
     return { count: files.length, savedPct, path: targetPath };
   }
 
 
   // =========================================================================
-  // 🌾 v5.3.0: VISIBLE TACTILE ARCHIVAL PAPER FIBER & GRAIN OVERLAY
+  // v5.3.0: VISIBLE TACTILE ARCHIVAL PAPER FIBER & GRAIN OVERLAY
   // =========================================================================
+  // --- PAPER SURFACE ---
+  // The page carries a real paper texture: fine grain, soft cloudiness and scattered fibres. It is drawn
+  // once into a seamless tile and laid as a background that scrolls with the text, while a soft pool of
+  // light stays fixed to the pane. Moving the page under still light is what makes paper look like paper.
   ensureTactilePaperGrainOverlay(activeView) {
-    try {
-      if (!activeView || !activeView.containerEl) return;
-      const grainPct = Math.max(0, Math.min(100, Number(this.settings.paperGrain !== undefined ? this.settings.paperGrain : 42)));
-      const sizers = activeView.containerEl.querySelectorAll(".cm-sizer, .markdown-preview-sizer");
-      sizers.forEach((sizer) => {
-        let layer = sizer.querySelector(":scope > .artcraft-paper-grain-layer");
-        if (grainPct <= 0) {
-          if (layer) layer.remove();
-          return;
+    this.applyPaperTexture();
+    // layers left by versions before 5.5
+    if (activeView && activeView.containerEl) {
+      activeView.containerEl.querySelectorAll(".artcraft-paper-grain-layer").forEach((el) => el.remove());
+    }
+  }
+
+  applyPaperTexture() {
+    const raw = this.settings.paperGrain !== undefined ? Number(this.settings.paperGrain) : 42;
+    const grainPct = Math.max(0, Math.min(100, Number.isFinite(raw) ? raw : 42));
+    const surface = this.isDarkPage() ? "dark" : (this.settings.surfaceMode || "white");
+    const key = grainPct > 0 ? surface + ":" + grainPct : "off";
+    if (this.paperTileKey === key) return;
+    this.paperTileKey = key;
+    if (key === "off" || grainPct <= 0) {
+      this.releasePaperTexture();
+      return;
+    }
+    const canvas = this.buildPaperTile(surface, grainPct / 100);
+    canvas.toBlob((blob) => {
+      if (!blob || this._unloaded || this.paperTileKey !== key) return;
+      const url = URL.createObjectURL(blob);
+      const old = this.paperTileUrl;
+      this.paperTileUrl = url;
+      document.body.style.setProperty("--artcraft-paper-tile", 'url("' + url + '")');
+      document.body.classList.add("artcraft-paper-on");
+      if (old) URL.revokeObjectURL(old);
+    }, "image/png");
+  }
+
+  releasePaperTexture() {
+    document.body.classList.remove("artcraft-paper-on");
+    document.body.style.removeProperty("--artcraft-paper-tile");
+    if (this.paperTileUrl) {
+      URL.revokeObjectURL(this.paperTileUrl);
+      this.paperTileUrl = null;
+    }
+  }
+
+  buildPaperTile(surface, strength) {
+    const S = 512;
+    const canvas = document.createElement("canvas");
+    canvas.width = S;
+    canvas.height = S;
+    const ctx = canvas.getContext("2d");
+    const img = ctx.createImageData(S, S);
+    const d = img.data;
+
+    // Fixed seed: the same sheet every session, so the page does not "change paper" between launches.
+    let seed = 0x9e3779b9;
+    const rnd = () => {
+      seed ^= seed << 13;
+      seed ^= seed >>> 17;
+      seed ^= seed << 5;
+      return (seed >>> 0) / 4294967296;
+    };
+
+    // Periodic value noise: the lattice wraps around, so the tile has no visible seam.
+    const lattice = (n) => {
+      const g = new Float32Array(n * n);
+      for (let i = 0; i < g.length; i++) g[i] = rnd() * 2 - 1;
+      return (x, y) => {
+        const fx = (x / S) * n;
+        const fy = (y / S) * n;
+        const x0 = Math.floor(fx) % n;
+        const y0 = Math.floor(fy) % n;
+        const x1 = (x0 + 1) % n;
+        const y1 = (y0 + 1) % n;
+        let tx = fx - Math.floor(fx);
+        let ty = fy - Math.floor(fy);
+        tx = tx * tx * (3 - 2 * tx);
+        ty = ty * ty * (3 - 2 * ty);
+        const top = g[y0 * n + x0] + (g[y0 * n + x1] - g[y0 * n + x0]) * tx;
+        const bottom = g[y1 * n + x0] + (g[y1 * n + x1] - g[y1 * n + x0]) * tx;
+        return top + (bottom - top) * ty;
+      };
+    };
+    const cloudWide = lattice(5); // uneven density of the pulp
+    const cloudFine = lattice(19);
+    const tooth = lattice(110); // the "tooth" a pencil would catch on
+
+    // On the dark sheet the specks are black and a warm off-white; light specks show far more on dark, so they are thinned.
+    const dark = surface === "dark";
+    const ink = dark ? [0, 0, 0] : surface === "white" ? [72, 74, 82] : [108, 82, 48];
+    const pale = dark ? [232, 222, 202] : [255, 255, 255];
+    const paleGain = dark ? 0.2 : 1;
+    const inkGain = dark ? 1.5 : 1;
+    const amp = 0.05 + strength * 0.2;
+    for (let y = 0; y < S; y++) {
+      for (let x = 0; x < S; x++) {
+        const grain = (rnd() + rnd() + rnd()) / 1.5 - 1;
+        const v = cloudWide(x, y) * 0.16 + cloudFine(x, y) * 0.2 + tooth(x, y) * 0.3 + grain * 0.46;
+        const i = (y * S + x) * 4;
+        if (v < 0) {
+          d[i] = ink[0];
+          d[i + 1] = ink[1];
+          d[i + 2] = ink[2];
+          d[i + 3] = Math.min(255, -v * amp * 255 * inkGain);
+        } else {
+          d[i] = pale[0];
+          d[i + 1] = pale[1];
+          d[i + 2] = pale[2];
+          d[i + 3] = Math.min(255, v * amp * 216 * paleGain);
         }
-        if (!layer) {
-          layer = document.createElement("div");
-          layer.className = "artcraft-paper-grain-layer";
-          sizer.insertBefore(layer, sizer.firstChild);
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+
+    // Fibres: short curved hairs, some darker than the sheet and some lighter. Each is drawn nine times
+    // with a tile-sized offset so a fibre that crosses an edge continues on the other side.
+    const fibres = Math.round(50 + strength * 230);
+    ctx.lineCap = "round";
+    for (let k = 0; k < fibres; k++) {
+      const x = rnd() * S;
+      const y = rnd() * S;
+      const len = 5 + rnd() * 22;
+      const ang = rnd() * Math.PI * 2;
+      const bend = (rnd() - 0.5) * 9;
+      const light = rnd() < 0.35;
+      const alpha = light ? (0.22 + rnd() * 0.38) * paleGain : (0.05 + rnd() * 0.13) * (0.5 + strength) * inkGain;
+      ctx.strokeStyle = light
+        ? "rgba(" + pale[0] + "," + pale[1] + "," + pale[2] + "," + alpha.toFixed(3) + ")"
+        : "rgba(" + ink[0] + "," + ink[1] + "," + ink[2] + "," + alpha.toFixed(3) + ")";
+      ctx.lineWidth = 0.45 + rnd() * 0.6;
+      const ex = Math.cos(ang) * len;
+      const ey = Math.sin(ang) * len;
+      for (let ox = -S; ox <= S; ox += S) {
+        for (let oy = -S; oy <= S; oy += S) {
+          ctx.beginPath();
+          ctx.moveTo(x + ox, y + oy);
+          ctx.quadraticCurveTo(x + ox + ex / 2 + bend, y + oy + ey / 2 - bend, x + ox + ex, y + oy + ey);
+          ctx.stroke();
         }
-        const alpha = (0.04 + (grainPct / 100) * 0.14).toFixed(3);
-        layer.style.opacity = alpha;
-      });
-    } catch (e) {}
+      }
+    }
+    return canvas;
   }
 
   // =========================================================================
-  // 🎨 v5.3.0: IDE POLY-CHROMATIC CODE STUDIO (5 PALETTES + TOKENIZER + COPY)
+  // v5.3.0: IDE POLY-CHROMATIC CODE STUDIO (5 PALETTES + TOKENIZER + COPY)
   // =========================================================================
   tokenizeCodeToColorfulHtml(rawCode = "", lang = "js") {
     const lines = String(rawCode || "").replace(/\r\n/g, "\n").split("\n");
@@ -8090,9 +9891,55 @@ class AlchemyFlowPlugin extends Plugin {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
+    // Which marker starts a comment depends on the language: "#include" in C and "--flag" in a shell are code.
+    const langId = String(lang || "").toLowerCase();
+    const usesHash = /^(py|python|rb|ruby|sh|bash|zsh|fish|shell|console|yaml|yml|toml|ini|conf|cfg|r|perl|pl|ps1|powershell|dockerfile|docker|makefile|make|nginx|elixir|ex|exs|julia|jl|nim|tcl|env|properties|gitignore|graphql|gql|coffee|crystal|awk|cmake|tf|hcl|terraform|php)$/.test(langId);
+    const usesDash = /^(sql|mysql|pgsql|postgres|postgresql|plsql|tsql|sqlite|lua|haskell|hs|elm|ada|vhdl|applescript)$/.test(langId);
+    const usesSlash = /^(js|javascript|jsx|mjs|cjs|ts|typescript|tsx|java|c|h|cpp|c\+\+|cc|hpp|cs|csharp|go|golang|rust|rs|swift|kotlin|kt|php|scala|dart|json5|jsonc|scss|sass|less|glsl|objc|objective-c|zig|groovy|gradle|proto|protobuf|solidity|sol)$/.test(langId);
+    const plainText = /^(html|xml|svg|css|json|md|markdown|text|txt|plain|csv|diff|log)$/.test(langId);
+    const unknownLang = !usesHash && !usesDash && !usesSlash && !plainText;
+    const noSlashComments = (usesHash || usesDash || plainText) && !usesSlash;
+
+    // Index where a "#" or "--" comment starts on the line, or -1. Markers inside quotes do not count.
+    const commentStart = (line) => {
+      let quote = "";
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (quote) {
+          if (ch === "\\") i++;
+          else if (ch === quote) quote = "";
+          continue;
+        }
+        if (ch === '"' || ch === "'" || ch === "`") {
+          quote = ch;
+          continue;
+        }
+        const lead = i === 0 || /\s/.test(line[i - 1]);
+        if (!lead) continue;
+        const atLineStart = line.slice(0, i).trim() === "";
+        if (ch === "#") {
+          if (usesHash) return i;
+          // language not named: "# text" and "#!shebang" read as comments, "#include" and "#define" stay code
+          const next = line[i + 1];
+          if (unknownLang && atLineStart && (next === " " || next === "!" || next === undefined)) return i;
+        } else if (ch === "-" && line[i + 1] === "-") {
+          if (usesDash) return i;
+          if (unknownLang && atLineStart && line[i + 2] === " ") return i;
+        }
+      }
+      return -1;
+    };
+
     const tokenizeLine = (line) => {
+      const cut = commentStart(line);
+      if (cut === 0) return `<span class="ide-tok-comment">${esc(line)}</span>`;
+      if (cut > 0) return tokenizeCode(line.slice(0, cut)) + `<span class="ide-tok-comment">${esc(line.slice(cut))}</span>`;
+      return tokenizeCode(line);
+    };
+
+    const tokenizeCode = (line) => {
       const trimmed = line.trim();
-      if (trimmed.startsWith("//") || trimmed.startsWith("#") || trimmed.startsWith("--")) {
+      if (trimmed.startsWith("//") && !noSlashComments) {
         return `<span class="ide-tok-comment">${esc(line)}</span>`;
       }
 
@@ -8108,7 +9955,16 @@ class AlchemyFlowPlugin extends Plugin {
         }
         const [full, strTok, comTok, kwTok, builtinTok, numTok, fnTok, propTok, brkTok] = m;
         if (strTok) out += `<span class="ide-tok-string">${esc(full)}</span>`;
-        else if (comTok) out += `<span class="ide-tok-comment">${esc(full)}</span>`;
+        else if (comTok) {
+          // "//" inside an unquoted URL, or in a language where it is not a comment marker
+          if (noSlashComments || (m.index > 0 && line[m.index - 1] === ":")) {
+            out += esc("//");
+            lastIdx = m.index + 2;
+            tokenRegex.lastIndex = lastIdx;
+            continue;
+          }
+          out += `<span class="ide-tok-comment">${esc(full)}</span>`;
+        }
         else if (kwTok) out += `<span class="ide-tok-keyword">${esc(full)}</span>`;
         else if (builtinTok) out += `<span class="ide-tok-type">${esc(full)}</span>`;
         else if (numTok) out += `<span class="ide-tok-number">${esc(full)}</span>`;
@@ -8159,8 +10015,14 @@ class AlchemyFlowPlugin extends Plugin {
       const lang = (langCls.replace("language-", "") || "code").toUpperCase();
       const lineCount = Math.max(1, rawCode.replace(/\r\n/g, "\n").trimEnd().split("\n").length);
 
-      // Build colorful tokenized lines inside codeEl
-      codeEl.innerHTML = this.tokenizeCodeToColorfulHtml(rawCode, lang);
+      // Obsidian's own highlighter rewrites <code class="language-*"> after post-processors have run, which
+      // used to flatten the numbered lines into one run of text. The numbered view therefore lives in
+      // its own element and the original <code> stays untouched (hidden).
+      const numbered = document.createElement("code");
+      numbered.className = "artcraft-ide-code-body";
+      numbered.innerHTML = this.tokenizeCodeToColorfulHtml(rawCode, lang);
+      codeEl.classList.add("artcraft-ide-code-source");
+      codeEl.after(numbered);
 
       // Build IDE Window Header Bar
       const header = document.createElement("div");
@@ -8170,7 +10032,7 @@ class AlchemyFlowPlugin extends Plugin {
           <span class="ide-dot is-red"></span>
           <span class="ide-dot is-yellow"></span>
           <span class="ide-dot is-green"></span>
-          <span class="ide-lang-pill">${lang}</span>
+          <span class="ide-lang-pill">${escHtml(lang)}</span>
           <span class="ide-lines-meta">${lineCount} ${isRu ? "стр." : "lines"}</span>
         </div>
         <div class="ide-win-right">
@@ -8178,12 +10040,12 @@ class AlchemyFlowPlugin extends Plugin {
             ${palettes
               .map(
                 (p) =>
-                  `<option value="${p.id}" ${p.id === currentPalette ? "selected" : ""}>🎨 ${p.label}</option>`
+                  `<option value="${p.id}" ${p.id === currentPalette ? "selected" : ""}>${p.label}</option>`
               )
               .join("")}
           </select>
           <button type="button" class="ide-copy-btn">
-            <span>📋 ${isRu ? "Копировать" : "Copy"}</span>
+            <span>${isRu ? "Копировать" : "Copy"}</span>
           </button>
         </div>
       `;
@@ -8214,7 +10076,7 @@ class AlchemyFlowPlugin extends Plugin {
           copyBtn.innerHTML = `<span>✓ ${isRu ? "Скопировано!" : "Copied!"}</span>`;
           copyBtn.classList.add("is-copied");
           setTimeout(() => {
-            copyBtn.innerHTML = `<span>📋 ${isRu ? "Копировать" : "Copy"}</span>`;
+            copyBtn.innerHTML = `<span>${isRu ? "Копировать" : "Copy"}</span>`;
             copyBtn.classList.remove("is-copied");
           }, 1600);
         } catch (err) {}
@@ -8223,49 +10085,64 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   // =========================================================================
-  // 🗂️ v5.3.0: BESPOKE DUOTONE SQUIRCLE FOLDER & NOTE ICON PACK (FULCRUM STYLE)
+  // v5.3.0: BESPOKE DUOTONE SQUIRCLE FOLDER & NOTE ICON PACK (FULCRUM STYLE)
   // =========================================================================
+  // --- FILE EXPLORER ICONS ---
+  // One thin outline per item, drawn in the text colour at low contrast: the icon tells folders and
+  // notes apart at a glance and then gets out of the way of the name.
   getBespokeSidebarIconSvg(name = "", isFolder = true) {
     const lower = String(name || "").toLowerCase();
-    let palette = { bg: "#EFF6FF", border: "#93C5FD", fg: "#2563EB", glyph: "folder" };
-
-    if (/00|inbox|входящ|capture/.test(lower)) {
-      palette = { bg: "#EFF6FF", border: "#93C5FD", fg: "#2563EB", glyph: "inbox" };
-    } else if (/01|fleeting|быстр|мысл|инвест|трейд|soros|сорос|market|рынк/.test(lower)) {
-      palette = { bg: "#FEF3C7", border: "#FCD34D", fg: "#D97706", glyph: "bolt" };
-    } else if (/02|lit|книг|библиот|титан|бизнес|рокфеллер|баффет|далио/.test(lower)) {
-      palette = { bg: "#ECFDF5", border: "#6EE7B7", fg: "#059669", glyph: "book" };
-    } else if (/03|kaizen|кайдзен|project|проект|строй|код|dev/.test(lower)) {
-      palette = { bg: "#F5F3FF", border: "#C4B5FD", fg: "#7C3AED", glyph: "rocket" };
-    } else if (/04|moc|карт|граф|навигатор|index|индекс|систем/.test(lower)) {
-      palette = { bg: "#ECFEFF", border: "#67E8F9", fg: "#0891B2", glyph: "compass" };
-    } else if (/05|психолог|мозг|нейро|фокус|ум|мышлен/.test(lower)) {
-      palette = { bg: "#FDF2F8", border: "#F9A8D4", fg: "#DB2777", glyph: "brain" };
-    } else if (/06|медиа|блог|бренд|контент|автор/.test(lower)) {
-      palette = { bg: "#FFF7ED", border: "#FDBA74", fg: "#EA580C", glyph: "flame" };
-    } else if (/07|био|тело|медитац|здоров|энерг|сон/.test(lower)) {
-      palette = { bg: "#F0FDF4", border: "#86EFAC", fg: "#16A34A", glyph: "heart" };
-    } else if (/08|духовн|философ|жизн|квест|алхим|tour|тур/.test(lower)) {
-      palette = { bg: "#FEFCE8", border: "#FDE047", fg: "#CA8A04", glyph: "star" };
-    } else if (!isFolder) {
-      palette = { bg: "#F4F8EC", border: "#BAE67E", fg: "#58A618", glyph: "doc" };
+    let glyph = isFolder ? "folder" : "doc";
+    if (isFolder) {
+      if (/inbox|входящ|capture/.test(lower)) glyph = "inbox";
+      else if (/book|книг|библиот|read|чтени|lit/.test(lower)) glyph = "book";
+      else if (/project|проект|work|работ/.test(lower)) glyph = "project";
+      else if (/archiv|архив/.test(lower)) glyph = "archive";
+      else if (/daily|journal|дневник|ежеднев/.test(lower)) glyph = "day";
+      else if (/templat|шаблон/.test(lower)) glyph = "template";
+      else if (/moc|map|карт|index|индекс/.test(lower)) glyph = "map";
     }
-
     const glyphs = {
-      inbox: `<path d="M3 9l2-5h6l2 5v4H3V9z" stroke="${palette.fg}" stroke-width="1.5" fill="${palette.fg}" fill-opacity="0.18"/><path d="M3 9h3l1 1.5h2L10 9h3" stroke="${palette.fg}" stroke-width="1.4"/>`,
-      bolt: `<polygon points="8.8,2.2 3.8,8.8 7.5,8.8 6.8,13.8 12.2,7.2 8.5,7.2" fill="${palette.fg}" fill-opacity="0.25" stroke="${palette.fg}" stroke-width="1.4" stroke-linejoin="round"/>`,
-      book: `<path d="M3.5 3.5h4a1.5 1.5 0 0 1 1.5 1.5v7.5a1.2 1.2 0 0 0-1.2-1.2H3.5V3.5zM12.5 3.5h-4A1.5 1.5 0 0 0 7 5v7.5a1.2 1.2 0 0 1 1.2-1.2h4.3V3.5z" fill="${palette.fg}" fill-opacity="0.18" stroke="${palette.fg}" stroke-width="1.35"/>`,
-      rocket: `<path d="M8 2.5c2.5 0 4.5 2 4.5 5.5 0 2-1 3.5-2 4.5L8 11 5.5 12.5c-1-1-2-2.5-2-4.5 0-3.5 2-5.5 4.5-5.5z" fill="${palette.fg}" fill-opacity="0.22" stroke="${palette.fg}" stroke-width="1.4"/><circle cx="8" cy="7" r="1.3" fill="${palette.fg}"/>`,
-      compass: `<circle cx="8" cy="8" r="5.2" stroke="${palette.fg}" stroke-width="1.4" fill="${palette.fg}" fill-opacity="0.14"/><polygon points="9.8,6.2 8.7,8.7 6.2,9.8 7.3,7.3" fill="${palette.fg}"/>`,
-      brain: `<circle cx="6.2" cy="7.5" r="2.8" fill="${palette.fg}" fill-opacity="0.2" stroke="${palette.fg}" stroke-width="1.35"/><circle cx="9.8" cy="7.5" r="2.8" fill="${palette.fg}" fill-opacity="0.2" stroke="${palette.fg}" stroke-width="1.35"/><path d="M8 4.8v6.5" stroke="${palette.fg}" stroke-width="1.35"/>`,
-      flame: `<path d="M8 2.4c1.8 2.2 3.6 3.9 3.6 6.4A3.6 3.6 0 0 1 4.4 8.8C4.4 6.3 6.2 4.6 8 2.4z" fill="${palette.fg}" fill-opacity="0.24" stroke="${palette.fg}" stroke-width="1.4"/>`,
-      heart: `<path d="M8 12.6s-4.5-2.7-4.5-5.8a2.5 2.5 0 0 1 4.5-1.5 2.5 2.5 0 0 1 4.5 1.5c0 3.1-4.5 5.8-4.5 5.8z" fill="${palette.fg}" fill-opacity="0.24" stroke="${palette.fg}" stroke-width="1.4"/>`,
-      star: `<polygon points="8,2.3 9.6,5.8 13.4,6.2 10.6,8.8 11.4,12.6 8,10.7 4.6,12.6 5.4,8.8 2.6,6.2 6.4,5.8" fill="${palette.fg}" fill-opacity="0.25" stroke="${palette.fg}" stroke-width="1.35"/>`,
-      doc: `<rect x="4" y="2.8" width="8" height="10.4" rx="1.8" fill="${palette.fg}" fill-opacity="0.16" stroke="${palette.fg}" stroke-width="1.35"/><line x1="6" y1="6" x2="10" y2="6" stroke="${palette.fg}" stroke-width="1.3"/><line x1="6" y1="8.5" x2="9" y2="8.5" stroke="${palette.fg}" stroke-width="1.3"/>`,
-      folder: `<path d="M2.8 4.8a1.2 1.2 0 0 1 1.2-1.2h2.6l1.3 1.4h4.1a1.2 1.2 0 0 1 1.2 1.2v5a1.2 1.2 0 0 1-1.2 1.2H4a1.2 1.2 0 0 1-1.2-1.2V4.8z" fill="${palette.fg}" fill-opacity="0.22" stroke="${palette.fg}" stroke-width="1.35"/>`,
+      folder: '<path d="M2.5 5a1.5 1.5 0 0 1 1.5-1.5h2.4l1.4 1.5H12A1.5 1.5 0 0 1 13.5 6.5v4.5A1.5 1.5 0 0 1 12 12.5H4A1.5 1.5 0 0 1 2.5 11V5z"/>',
+      doc: '<path d="M4.5 2.5h4.8l2.2 2.3v8.7h-7z"/><path d="M6.5 7.5h3M6.5 9.8h3"/>',
+      inbox: '<path d="M2.5 9.5l1.8-5h7.4l1.8 5v3h-11z"/><path d="M2.5 9.5h3l.8 1.3h3.4l.8-1.3h3"/>',
+      book: '<path d="M8 4.3C6.8 3.4 5.2 3.2 3 3.4v8.4c2.2-.2 3.8 0 5 .9 1.2-.9 2.8-1.1 5-.9V3.4c-2.2-.2-3.8 0-5 .9z"/><path d="M8 4.3v8.4"/>',
+      project: '<path d="M3 12.5h10"/><path d="M4.5 12.5v-4M8 12.5v-8M11.5 12.5v-6"/>',
+      archive: '<path d="M2.5 3.5h11v2.6h-11z"/><path d="M3.5 6.1v6.4h9V6.1"/><path d="M6.5 8.6h3"/>',
+      day: '<path d="M3 4.5h10v8H3z"/><path d="M3 7h10M5.5 3v2.4M10.5 3v2.4"/>',
+      template: '<path d="M3 3.5h10v9H3z"/><path d="M3 6.5h10M7 6.5v6"/>',
+      map: '<circle cx="8" cy="8" r="5"/><path d="M9.9 6.1L8.8 8.8 6.1 9.9l1.1-2.7z"/>',
     };
+    return (
+      '<span class="artcraft-bespoke-squircle" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' +
+      (glyphs[glyph] || glyphs.folder) +
+      "</svg></span>"
+    );
+  }
 
-    return `<span class="artcraft-bespoke-squircle" style="background:${palette.bg};border-color:${palette.border};color:${palette.fg}"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" xmlns="http://www.w3.org/2000/svg">${glyphs[palette.glyph] || glyphs.folder}</svg></span>`;
+  setupSidebarObserver() {
+    if (this._sidebarObserver) return;
+    try {
+      const findAndObserve = () => {
+        const container = document.querySelector(".nav-files-container");
+        if (!container) return false;
+        let timer = null;
+        this._sidebarObserver = new MutationObserver(() => {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => {
+            if (!this._unloaded) this.decorateSidebarFileExplorer();
+          }, 80);
+        });
+        this._sidebarObserver.observe(container, { childList: true, subtree: true });
+        return true;
+      };
+      if (!findAndObserve()) {
+        setTimeout(findAndObserve, 800);
+      }
+    } catch (e) {
+      console.error("[Alchemy Craft] observer error:", e);
+    }
   }
 
   decorateSidebarFileExplorer() {
@@ -8278,14 +10155,19 @@ class AlchemyFlowPlugin extends Plugin {
         const name = (contentEl.textContent || "").trim();
         if (!name || name === "/") return;
 
-        if (!ft.querySelector(".artcraft-bespoke-squircle")) {
-          const iconWrap = document.createElement("span");
+        let iconWrap = ft.querySelector(".artcraft-sidebar-icon-slot");
+        if (!iconWrap) {
+          iconWrap = document.createElement("span");
           iconWrap.className = "artcraft-sidebar-icon-slot";
+          iconWrap.dataset.folderName = name;
           iconWrap.innerHTML = this.getBespokeSidebarIconSvg(name, true);
           ft.insertBefore(iconWrap, contentEl);
+        } else if (iconWrap.dataset.folderName !== name) {
+          iconWrap.dataset.folderName = name;
+          iconWrap.innerHTML = this.getBespokeSidebarIconSvg(name, true);
         }
 
-        // Count children items like Fulcrum / Fintrack sidebar
+        // Number of items directly inside the folder
         const folderEl = ft.parentElement;
         const childrenWrap = folderEl ? folderEl.querySelector(":scope > .nav-folder-children") : null;
         if (childrenWrap) {
@@ -8297,7 +10179,10 @@ class AlchemyFlowPlugin extends Plugin {
               countBadge.className = "artcraft-folder-count-pill";
               ft.appendChild(countBadge);
             }
-            countBadge.textContent = String(count);
+            const label = String(count);
+            if (countBadge.textContent !== label) countBadge.textContent = label;
+          } else if (countBadge) {
+            countBadge.remove();
           }
         }
       });
@@ -8306,11 +10191,10 @@ class AlchemyFlowPlugin extends Plugin {
       fileTitles.forEach((flt) => {
         const contentEl = flt.querySelector(".nav-file-title-content");
         if (!contentEl) return;
-        const name = (contentEl.textContent || "").trim();
         if (!flt.querySelector(".artcraft-bespoke-squircle")) {
           const iconWrap = document.createElement("span");
           iconWrap.className = "artcraft-sidebar-icon-slot";
-          iconWrap.innerHTML = this.getBespokeSidebarIconSvg(name, false);
+          iconWrap.innerHTML = this.getBespokeSidebarIconSvg("", false);
           flt.insertBefore(iconWrap, contentEl);
         }
       });
@@ -8318,221 +10202,817 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   // =========================================================================
-  // 🍃 v5.3.0: WIND-TETHERED BLURRED BACKLINKS & IMMUTABLE NOTE BLOCKCHAIN
+  // RELATED NOTES ("kin") — slips of paper hanging on threads under the note
   // =========================================================================
+  // Every related note is a small slip tied by a thread to the current note. The slips are simulated:
+  // each one is a mass on a spring with a pendulum lean, pushed by a slow wind with occasional gusts
+  // that travel left to right, by the air the cursor moves, and by the inertia of scrolling. The title
+  // stays sharp, the text stays blurred until the slip is opened. Threads are arrows: they point the
+  // way the link points.
+  //
+  // Rendering: the simulation is not stepped once per frame. It is run a few seconds ahead and the
+  // resulting trajectory is handed to the compositor as transform keyframes (kinBake). Between
+  // interactions the main thread does nothing at all; a push, a hover or a scroll re-bakes from the
+  // exact state the slips are in at that moment.
   async renderWindTetheredNoteChainFooter(activeView) {
     try {
-      if (this.settings.windChainFooter === false || !activeView || !activeView.file) return;
+      if (!activeView || !activeView.file || !activeView.containerEl) return;
+      const container = activeView.containerEl;
+      if (this.settings.windChainFooter === false) {
+        this.kinDestroyIn(container);
+        return;
+      }
       const file = activeView.file;
-      const isRu = (this.settings.uiLanguage || "en") === "ru";
-      const rawText = activeView.editor ? activeView.editor.getValue() : (activeView.data || await this.app.vault.cachedRead(file));
-      const curHash = this.wasmFastHashHex(rawText || file.basename);
+      const mode = activeView.getMode ? activeView.getMode() : "source";
+      // Right after the last line of the note. Obsidian keeps its own footer element (.mod-footer, the home
+      // of "backlinks in document") across re-renders, and removes anything else added to the sizer.
+      const host =
+        mode === "preview"
+          ? container.querySelector(".markdown-preview-sizer > .mod-footer") || container.querySelector(".markdown-preview-view")
+          : container.querySelector(".cm-sizer > .mod-footer") || container.querySelector(".cm-sizer");
+      if (!host) return;
 
-      // Gather linked + semantically related notes
-      const radar = await this.scanVaultWasmSemanticRadar(file, rawText);
-      const related = radar.matches.slice(0, 4);
+      const related = await this.kinCollect(file);
+      if (this._unloaded || activeView.file !== file) return; // the view moved on while we were reading
 
-      if (!Array.isArray(this.settings.noteBlockchain)) {
-        this.settings.noteBlockchain = [];
-      }
-      const chain = this.settings.noteBlockchain;
-      const myChainIdx = chain.findIndex((b) => b.path === file.path);
-      const isChained = myChainIdx !== -1;
+      const signature = file.path + "|" + mode + "|" + related.map((r) => r.path + ":" + r.kind + ":" + r.score).join(",");
+      const existing = container.querySelector(".artcraft-kin");
+      if (existing && existing.dataset.sig === signature && existing.parentElement === host) return;
+      this.kinDestroyIn(container);
+      if (related.length === 0) return;
+      this.kinBuild(host, file, related, signature, mode);
+    } catch (e) {
+      console.error("[Alchemy Craft] related notes", e);
+    }
+  }
 
-      // Read short preview snippet for each related note
-      const cardsData = [];
-      for (let i = 0; i < related.length; i++) {
-        const item = related[i];
-        let snippet = "";
+  // Outgoing links, backlinks and notes with similar wording, strongest first, six at most.
+  async kinCollect(file) {
+    const cache = this.app.metadataCache;
+    const resolved = cache.resolvedLinks || {};
+    const byPath = new Map();
+    const add = (path, kind) => {
+      if (path === file.path || !path.endsWith(".md")) return;
+      const prev = byPath.get(path);
+      if (!prev) byPath.set(path, { path, kind, score: 0 });
+      else if (prev.kind !== kind) prev.kind = "both";
+    };
+    Object.keys(resolved[file.path] || {}).forEach((p) => add(p, "out"));
+    Object.keys(resolved).forEach((src) => {
+      if (resolved[src] && resolved[src][file.path]) add(src, "in");
+    });
+    const similar = await this.kinSimilar(file, byPath);
+    similar.forEach((s) => {
+      if (!byPath.has(s.path)) byPath.set(s.path, { path: s.path, kind: "sim", score: s.score });
+    });
+
+    const order = { both: 0, out: 1, in: 2, sim: 3 };
+    const list = Array.from(byPath.values())
+      .sort((a, b) => order[a.kind] - order[b.kind] || b.score - a.score || a.path.localeCompare(b.path))
+      .slice(0, 6);
+
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      const f = this.app.vault.getAbstractFileByPath(item.path);
+      item.file = f;
+      item.title = f && f.basename ? f.basename : item.path;
+      item.excerpt = "";
+      if (f && f.stat) {
         try {
-          const txt = await this.app.vault.cachedRead(item.file);
-          snippet = txt
-            .replace(/^---[\s\S]*?---\n?/, "")
-            .replace(/[#*_`>\[\]]/g, "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, 170);
+          const raw = await this.app.vault.cachedRead(f);
+          item.excerpt = kinExcerpt(raw, 230);
         } catch (e) {}
-        cardsData.push({
-          ...item,
-          snippet: snippet || (isRu ? "Связанный конспект в вашей базе знаний Obsidian..." : "Connected knowledge note in your Obsidian vault..."),
-          phaseDelay: (i * 0.85).toFixed(2),
-        });
       }
+    }
+    return list.filter((item) => item.file);
+  }
 
-      // Mount footer inside both Reading View (.markdown-preview-sizer) and Live Preview (.view-content)
-      const viewContent = activeView.containerEl.querySelector(".view-content");
-      if (!viewContent) return;
+  // Lexical similarity: cosine between term vectors of the two notes (stop-words removed, word endings
+  // folded). Works the same for Cyrillic and Latin text. Results are cached per file version.
+  async kinVector(f) {
+    if (!this.kinVectors) this.kinVectors = new Map();
+    const hit = this.kinVectors.get(f.path);
+    if (hit && hit.mtime === f.stat.mtime) return hit.vec;
+    let raw = "";
+    try {
+      raw = await this.app.vault.cachedRead(f);
+    } catch (e) {
+      return null;
+    }
+    const body = raw
+      .replace(/\r\n/g, "\n")
+      .replace(/^---\n[\s\S]*?\n---\n/, "")
+      .replace(/```[\s\S]*?```/g, " ");
+    const tf = new Map();
+    keyWords(body + " " + f.basename).forEach((w) => {
+      const st = keyStem(w);
+      tf.set(st, (tf.get(st) || 0) + 1);
+    });
+    let norm = 0;
+    tf.forEach((count, st) => {
+      const weight = 1 + Math.log(count);
+      tf.set(st, weight);
+      norm += weight * weight;
+    });
+    const vec = { tf, norm: Math.sqrt(norm) || 1, size: tf.size };
+    if (this.kinVectors.size > 900) this.kinVectors.clear();
+    this.kinVectors.set(f.path, { mtime: f.stat.mtime, vec });
+    return vec;
+  }
 
-      let footer = viewContent.querySelector(":scope > .artcraft-wind-chain-footer");
-      if (!footer) {
-        footer = document.createElement("div");
-        footer.className = "artcraft-wind-chain-footer";
-        viewContent.appendChild(footer);
-      }
+  async kinSimilar(file, linked) {
+    if (!this.kinSimCache) this.kinSimCache = new Map();
+    const cached = this.kinSimCache.get(file.path);
+    if (cached && cached.mtime === file.stat.mtime && Date.now() - cached.at < 120000) return cached.list;
+    const me = await this.kinVector(file);
+    if (!me || me.size < 8) return [];
+    let files = this.app.vault.getMarkdownFiles();
+    if (files.length > 400) files = files.slice().sort((a, b) => b.stat.mtime - a.stat.mtime).slice(0, 400);
+    const out = [];
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      if (f.path === file.path || linked.has(f.path)) continue;
+      const other = await this.kinVector(f);
+      if (!other || other.size < 8) continue;
+      const small = me.size <= other.size ? me : other;
+      const large = small === me ? other : me;
+      let dot = 0;
+      small.tf.forEach((w, st) => {
+        const w2 = large.tf.get(st);
+        if (w2) dot += w * w2;
+      });
+      const score = dot / (me.norm * other.norm);
+      if (score >= 0.2) out.push({ path: f.path, score: Math.round(score * 100) });
+      if (i % 40 === 39) await new Promise((resolve) => setTimeout(resolve, 0)); // keep typing smooth on big vaults
+      if (this._unloaded) return [];
+    }
+    out.sort((a, b) => b.score - a.score);
+    const list = out.slice(0, 3);
+    if (this.kinSimCache.size > 40) this.kinSimCache.clear();
+    this.kinSimCache.set(file.path, { mtime: file.stat.mtime, at: Date.now(), list });
+    return list;
+  }
 
-      const chainTrailHtml =
-        chain.length > 0
-          ? `<div class="wind-blockchain-ribbon">
-              ${chain
-                .slice(-5)
-                .map(
-                  (node, idx) => `
-                  <div class="chain-node-pill ${node.path === file.path ? "is-current" : ""}" data-open-chain-path="${node.path.replace(/"/g, "&quot;")}" title="Prev: 0x${node.prevHash} → Hash: 0x${node.hash}">
-                    <span class="chain-idx">#0${idx + 1}</span>
-                    <strong>${node.title.slice(0, 22)}${node.title.length > 22 ? "…" : ""}</strong>
-                    <code>0x${node.hash.slice(0, 6)}</code>
-                  </div>
-                  ${idx < Math.min(chain.length, 5) - 1 ? `<span class="chain-arrow-sep">⛓️→</span>` : ""}`
-                )
-                .join("")}
-            </div>`
-          : "";
+  kinBuild(host, file, related, signature, mode) {
+    const L = (dict) => i18n(dict, this);
+    const kindInfo = {
+      out: { glyph: "→", label: L({ en: "links to", ru: "ссылка", zh: "链接", ja: "リンク", es: "enlace", de: "Link" }) },
+      in: { glyph: "←", label: L({ en: "links here", ru: "ссылается сюда", zh: "反向链接", ja: "バックリンク", es: "enlaza aquí", de: "Rücklink" }) },
+      both: { glyph: "↔", label: L({ en: "two-way", ru: "взаимная", zh: "双向", ja: "相互", es: "mutuo", de: "beidseitig" }) },
+      sim: { glyph: "≈", label: L({ en: "similar", ru: "похожая", zh: "相似", ja: "類似", es: "similar", de: "ähnlich" }) },
+    };
 
-      footer.innerHTML = `
-        <div class="wind-chain-inner">
-          <div class="wind-chain-top-bar">
-            <div class="wind-chain-title-group">
-              <span class="wind-chain-badge">⛓️ ${isRu ? "НЕРАЗРЫВНАЯ ЦЕПЬ И ВЕТРОВОЙ ЭФИР СВЯЗЕЙ" : "IMMUTABLE NOTE CHAIN & WIND TETHER"}</span>
-              <span class="wind-chain-hash">Block 0x${curHash}</span>
-            </div>
-            <div class="wind-chain-actions">
-              <button type="button" class="artcraft-pay-action-btn is-green wind-lock-chain-btn" data-act="lock-note-chain">
-                <span>⛓️ ${
-                  isChained
-                    ? isRu
-                      ? `В цепи (#0${myChainIdx + 1}) · Обновить блок`
-                      : `Chained (#0${myChainIdx + 1}) · Refresh Block`
-                    : isRu
-                    ? "Приковать заметку в неразрывную цепь"
-                    : "Seal Note into Unbreakable Chain"
-                }</span>
-              </button>
-            </div>
-          </div>
+    const footer = document.createElement("div");
+    footer.className = "artcraft-kin";
+    footer.dataset.sig = signature;
+    footer.dataset.mode = mode;
+    footer.contentEditable = "false";
 
-          ${chainTrailHtml}
+    const head = footer.createDiv({ cls: "kin-head" });
+    head.createSpan({ cls: "kin-head-title", text: L({ en: "Related notes", ru: "Связанные заметки", zh: "相关笔记", ja: "関連ノート", es: "Notas relacionadas", de: "Verwandte Notizen" }) });
+    head.createSpan({ cls: "kin-head-count", text: String(related.length) });
 
-          <div class="wind-bezier-canopy">
-            <svg viewBox="0 0 800 58" preserveAspectRatio="none" class="wind-bezier-svg">
-              <defs>
-                <linearGradient id="windArrowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#65B71E" stop-opacity="0.85"/>
-                  <stop offset="100%" stop-color="#2563EB" stop-opacity="0.75"/>
-                </linearGradient>
-                <marker id="windArrowHead" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
-                  <polygon points="0,0 7,3.5 0,7" fill="#2563EB"/>
-                </marker>
-              </defs>
-              <path d="M400,2 C400,28 110,24 110,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
-              <path d="M400,2 C400,28 300,24 300,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
-              <path d="M400,2 C400,28 500,24 500,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
-              <path d="M400,2 C400,28 690,24 690,52" stroke="url(#windArrowGrad)" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#windArrowHead)" class="wind-arrow-path"/>
-              <circle cx="400" cy="4" r="4.5" fill="#65B71E"/>
-            </svg>
-          </div>
+    const stage = footer.createDiv({ cls: "kin-stage" });
+    const NS = "http://www.w3.org/2000/svg";
+    const uid = "kin" + Math.random().toString(36).slice(2, 8);
+    // one shared arrowhead definition
+    const defsSvg = document.createElementNS(NS, "svg");
+    defsSvg.setAttribute("class", "kin-defs");
+    defsSvg.setAttribute("aria-hidden", "true");
+    const defs = document.createElementNS(NS, "defs");
+    const marker = document.createElementNS(NS, "marker");
+    marker.setAttribute("id", uid);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8.5");
+    marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7");
+    marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const arrow = document.createElementNS(NS, "path");
+    arrow.setAttribute("d", "M1.5 1.5 L8.5 5 L1.5 8.5");
+    arrow.setAttribute("class", "kin-arrowhead");
+    marker.appendChild(arrow);
+    defs.appendChild(marker);
+    defsSvg.appendChild(defs);
+    stage.appendChild(defsSvg);
 
-          <div class="wind-leaves-grid">
-            ${
-              cardsData.length > 0
-                ? cardsData
-                    .map(
-                      (c, idx) => `
-                      <div class="wind-leaf-card" style="--wind-delay:${c.phaseDelay}s" data-leaf-path="${c.path.replace(/"/g, "&quot;")}" data-leaf-title="${c.title.replace(/"/g, "&quot;")}">
-                        <div class="wind-leaf-header">
-                          <span class="wind-leaf-idx">0${idx + 1} // ${c.similarity}%</span>
-                          <span class="wind-leaf-type">${c.isAlreadyLinked ? "🔗 Linked" : "✨ SimHash"}</span>
-                        </div>
-                        <h4 class="wind-leaf-title">${c.title}</h4>
-                        <div class="wind-leaf-blurred-body">
-                          <p>${c.snippet}</p>
-                        </div>
-                        <div class="wind-leaf-footer">
-                          <span class="wind-leaf-hint">${
-                            isRu ? "🍃 Нажмите, чтобы развеять туман" : "🍃 Click to lift the mist"
-                          }</span>
-                          <button type="button" class="wind-leaf-open-btn" data-open-now="${c.path.replace(/"/g, "&quot;")}">
-                            ${isRu ? "Открыть ↗" : "Open ↗"}
-                          </button>
-                        </div>
-                      </div>`
-                    )
-                    .join("")
-                : `<div class="wind-empty-note">${
-                    isRu
-                      ? "Создайте ещё несколько заметок в хранилище — здесь появятся парящие на ветру связанные листы со стрелками."
-                      : "Create more notes in your vault to see wind-floating connected note leaves here."
-                  }</div>`
-            }
-          </div>
-        </div>
-      `;
+    const root = stage.createDiv({ cls: "kin-root" });
+    root.createSpan({ cls: "kin-root-dot" });
+    root.createSpan({ cls: "kin-root-title", text: file.basename });
 
-      // Lock active note into the immutable note blockchain
-      footer.querySelector('[data-act="lock-note-chain"]')?.addEventListener("click", async (e) => {
+    const canopy = {
+      footer,
+      stage,
+      root,
+      leaves: [],
+      W: 0,
+      H: 0,
+      baseH: 0,
+      rootX: 0,
+      rootY: 0,
+      inView: false,
+      reader: null,
+      seg: null,
+      rebakeTimer: null,
+      pushTimer: null,
+      pointer: { x: -9999, y: -9999, t: 0 },
+      scroller: host.closest(".markdown-preview-view, .cm-scroller"),
+      lastScrollTop: 0,
+      reduced: !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
+    };
+
+    related.forEach((item, idx) => {
+      const info = kindInfo[item.kind] || kindInfo.sim;
+
+      // each thread is its own tiny SVG element, so the compositor can move it without repainting
+      const threadSvg = document.createElementNS(NS, "svg");
+      threadSvg.setAttribute("class", "kin-thread-svg");
+      threadSvg.setAttribute("aria-hidden", "true");
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("class", "kin-thread kin-kind-" + item.kind);
+      if (item.kind === "out" || item.kind === "both") path.setAttribute("marker-end", "url(#" + uid + ")");
+      if (item.kind === "in" || item.kind === "both") path.setAttribute("marker-start", "url(#" + uid + ")");
+      threadSvg.appendChild(path);
+      stage.insertBefore(threadSvg, root);
+
+      const el = stage.createEl("button", { cls: "kin-leaf kin-kind-" + item.kind });
+      el.type = "button";
+      const meta = el.createSpan({ cls: "kin-leaf-meta" });
+      meta.createSpan({ cls: "kin-leaf-glyph", text: info.glyph });
+      meta.createSpan({ cls: "kin-leaf-kind", text: item.kind === "sim" && item.score ? info.label + " " + item.score + "%" : info.label });
+      el.createSpan({ cls: "kin-leaf-title", text: item.title });
+      el.createSpan({ cls: "kin-leaf-body", text: item.excerpt });
+
+      const leaf = {
+        el, threadSvg, path, data: item,
+        ax: 0, ay: 0, x: 0, y: 0, vx: 0, vy: 0, a: 0, va: 0, w: 0, h: 0,
+        hover: false, open: false, phase: idx * 1.37 + 0.4, anim: null, threadAnim: null,
+      };
+      el.addEventListener("pointerenter", () => {
+        leaf.hover = true;
+        this.kinBake(canopy);
+      });
+      el.addEventListener("pointerleave", () => {
+        leaf.hover = false;
+        this.kinBake(canopy);
+      });
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        const prevBlock = chain.length > 0 ? chain[chain.length - 1] : null;
-        const prevHash = prevBlock ? prevBlock.hash : "00000000";
-        const combinedHash = this.wasmFastHashHex(`${prevHash}:${file.path}:${curHash}`);
+        if (e.ctrlKey || e.metaKey) this.kinOpenNote(item, true);
+        else this.kinOpenLeaf(canopy, leaf);
+      });
+      canopy.leaves.push(leaf);
+    });
 
-        if (myChainIdx !== -1) {
-          chain[myChainIdx].hash = combinedHash;
-          chain[myChainIdx].ts = new Date().toISOString();
-        } else {
-          chain.push({
-            path: file.path,
-            title: file.basename,
-            prevHash,
-            hash: combinedHash,
-            ts: new Date().toISOString(),
+    // The cursor moves air: slips near a fast pointer get pushed. Pushes are collected and applied in
+    // one re-bake at most every 90 ms.
+    canopy.onPointer = (e) => {
+      const rect = stage.getBoundingClientRect();
+      const now = performance.now();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+      const p = canopy.pointer;
+      if (p.t && now - p.t < 120) {
+        const dt = Math.max(8, now - p.t) / 1000;
+        const vx = Math.max(-1400, Math.min(1400, (px - p.x) / dt));
+        const vy = Math.max(-1400, Math.min(1400, (py - p.y) / dt));
+        if (Math.abs(vx) + Math.abs(vy) > 160) {
+          this.kinPush(canopy, (leaf, s) => {
+            if (leaf.hover || leaf.open) return;
+            const dx = s.x - px;
+            const dy = s.y + leaf.h / 2 - py;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 170) return;
+            const fall = 1 - dist / 170;
+            s.vx += vx * 0.11 * fall;
+            s.vy += vy * 0.07 * fall;
           });
         }
-        await this.saveSettings();
-        this.playChapterCompletionChord();
-        new (require("obsidian").Notice)(
-          isRu
-            ? `⛓️ Заметка «${file.basename}» прикована в неразрывную блокчейн-цепь (0x${combinedHash})!`
-            : `⛓️ Note "${file.basename}" sealed into Immutable Note Chain (0x${combinedHash})!`
-        );
-        this.renderWindTetheredNoteChainFooter(activeView);
-      });
+      }
+      p.x = px;
+      p.y = py;
+      p.t = now;
+    };
+    stage.addEventListener("pointermove", canopy.onPointer, { passive: true });
 
-      // Open note from blockchain ribbon
-      footer.querySelectorAll("[data-open-chain-path]").forEach((pill) => {
-        pill.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const p = pill.getAttribute("data-open-chain-path");
-          const target = this.app.vault.getAbstractFileByPath(p);
-          if (target) await this.app.workspace.getLeaf(false).openFile(target);
+    // Scrolling the page drags the threads; the slips lag behind and swing back.
+    if (canopy.scroller) {
+      canopy.lastScrollTop = canopy.scroller.scrollTop;
+      canopy.onScroll = () => {
+        const top = canopy.scroller.scrollTop;
+        const delta = top - canopy.lastScrollTop;
+        canopy.lastScrollTop = top;
+        if (!canopy.inView || !delta) return;
+        const kick = Math.max(-150, Math.min(150, delta * 1.1));
+        this.kinPush(canopy, (leaf, s) => {
+          if (leaf.open) return;
+          s.vy += kick;
+          s.va += kick * 0.003 * (leaf.ax < canopy.rootX ? -1 : 1);
+        });
+      };
+      canopy.scroller.addEventListener("scroll", canopy.onScroll, { passive: true });
+    }
+
+    canopy.onKey = (e) => {
+      if (e.key === "Escape" && canopy.reader) {
+        e.stopPropagation();
+        this.kinCloseReader(canopy);
+      }
+    };
+    footer.addEventListener("keydown", canopy.onKey);
+    stage.addEventListener("click", (e) => {
+      if (canopy.reader && !e.target.closest(".kin-reader")) this.kinCloseReader(canopy);
+    });
+
+    host.appendChild(footer);
+    if (!this.kinCanopies) this.kinCanopies = new Map();
+    this.kinCanopies.set(footer, canopy);
+
+    this.kinLayout(canopy);
+    if (typeof ResizeObserver !== "undefined") {
+      canopy.ro = new ResizeObserver(() => {
+        if (Math.abs(stage.clientWidth - canopy.W) <= 2 || canopy.layoutFrame) return;
+        // layout changes the stage height; doing it in the next frame keeps the observer from re-firing in a loop
+        canopy.layoutFrame = requestAnimationFrame(() => {
+          canopy.layoutFrame = null;
+          if (canopy.footer.isConnected) this.kinLayout(canopy);
         });
       });
-
-      // 2-stage interaction on floating blurred leaf cards:
-      // Click 1 -> Cinematic unblur & 3D unfold (.is-unveiled)
-      // Click 2 (or click "Open ↗") -> Smoothly open the note
-      footer.querySelectorAll(".wind-leaf-card").forEach((card) => {
-        card.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const path = card.getAttribute("data-leaf-path");
-          if (e.target && e.target.closest("[data-open-now]")) {
-            const f = this.app.vault.getAbstractFileByPath(path);
-            if (f) await this.app.workspace.getLeaf(false).openFile(f);
-            return;
-          }
-          if (!card.classList.contains("is-unveiled")) {
-            card.classList.add("is-unveiled");
-            this.playTactileMicroFeedback("tap");
-            const hint = card.querySelector(".wind-leaf-hint");
-            if (hint) {
-              hint.textContent = isRu ? "✨ Туман рассеян · Нажмите ещё раз для перехода" : "✨ Unveiled · Click again to open";
-            }
-          } else {
-            const f = this.app.vault.getAbstractFileByPath(path);
-            if (f) await this.app.workspace.getLeaf(false).openFile(f);
-          }
-        });
+      canopy.ro.observe(stage);
+    }
+    if (typeof IntersectionObserver !== "undefined") {
+      canopy.io = new IntersectionObserver((entries) => {
+        const visible = entries[0].isIntersecting;
+        if (visible === canopy.inView) return;
+        canopy.inView = visible;
+        footer.classList.toggle("is-in-view", visible);
+        if (visible) this.kinBake(canopy);
+        else this.kinRest(canopy);
       });
+      canopy.io.observe(footer);
+    } else {
+      canopy.inView = true;
+      this.kinBake(canopy);
+    }
+  }
+
+  // Rest positions: slips hang in staggered rows under the root, each from its own thread.
+  kinLayout(canopy) {
+    const W = canopy.stage.clientWidth;
+    if (!W) return;
+    this.kinSyncState(canopy);
+    canopy.W = W;
+    const n = canopy.leaves.length;
+    const cols = Math.max(1, Math.min(n, W >= 720 ? 3 : W >= 440 ? 2 : 1));
+    const leafW = Math.min(232, Math.floor((W - (cols + 1) * 18) / cols));
+    canopy.rootX = W / 2;
+    canopy.rootY = 22;
+    const ry = canopy.rootY + 9;
+    let rowTop = 96;
+    for (let start = 0; start < n; start += cols) {
+      const row = canopy.leaves.slice(start, start + cols);
+      const span = row.length * leafW + (row.length - 1) * 22;
+      let rowH = 0;
+      row.forEach((leaf, i) => {
+        leaf.el.style.width = leafW + "px";
+        leaf.w = leafW;
+        leaf.h = leaf.el.offsetHeight || 120;
+        leaf.ax = (W - span) / 2 + i * (leafW + 22) + leafW / 2;
+        // neighbours hang at slightly different heights, like things tied by hand
+        leaf.ay = rowTop + ((start + i) % 2 === 0 ? 0 : 20) + (i === 1 && row.length === 3 ? 14 : 0);
+        leaf.x = leaf.ax;
+        leaf.y = leaf.ay;
+        leaf.vx = leaf.vy = leaf.va = 0;
+        leaf.a = 0;
+        // the thread at rest, in stage coordinates; motion is an affine map of this curve about the root
+        leaf.dy0 = leaf.ay - 3 - ry;
+        const d =
+          "M" + canopy.rootX.toFixed(1) + "," + ry.toFixed(1) +
+          " C" + canopy.rootX.toFixed(1) + "," + (ry + leaf.dy0 * 0.62).toFixed(1) +
+          " " + leaf.ax.toFixed(1) + "," + (ry + leaf.dy0 * 0.34).toFixed(1) +
+          " " + leaf.ax.toFixed(1) + "," + (leaf.ay - 3).toFixed(1);
+        leaf.restD = d;
+        if (!leaf.open) leaf.path.setAttribute("d", d);
+        leaf.threadSvg.style.transformOrigin = canopy.rootX.toFixed(1) + "px " + ry.toFixed(1) + "px";
+        rowH = Math.max(rowH, leaf.ay - rowTop + leaf.h);
+      });
+      rowTop += rowH + 44;
+    }
+    canopy.baseH = rowTop - 8;
+    if (!canopy.reader) {
+      canopy.H = canopy.baseH;
+      canopy.stage.style.height = canopy.H + "px";
+    }
+    canopy.root.style.transform = "translate3d(" + Math.round(canopy.rootX) + "px, " + canopy.rootY + "px, 0) translate(-50%, -50%)";
+    canopy.seg = null;
+    this.kinPlace(canopy);
+    if (canopy.inView) this.kinBake(canopy);
+  }
+
+  kinLeafTransform(leaf, x, y, a) {
+    return "translate3d(" + (x - leaf.w / 2).toFixed(2) + "px, " + y.toFixed(2) + "px, 0) rotate(" + a.toFixed(4) + "rad)";
+  }
+
+  kinThreadTransform(canopy, leaf, x, y) {
+    const ry = canopy.rootY + 9;
+    const shear = (x - leaf.ax) / leaf.dy0;
+    const stretch = (y - 3 - ry) / leaf.dy0;
+    return "matrix(1, 0, " + shear.toFixed(5) + ", " + stretch.toFixed(5) + ", 0, 0)";
+  }
+
+  // Static placement from the current state (no animation running).
+  kinPlace(canopy) {
+    canopy.leaves.forEach((leaf) => {
+      leaf.el.style.transform = this.kinLeafTransform(leaf, leaf.x, leaf.y, leaf.a);
+      if (!leaf.open) leaf.threadSvg.style.transform = this.kinThreadTransform(canopy, leaf, leaf.x, leaf.y);
+    });
+  }
+
+  // Reads where every slip is right now on its baked trajectory.
+  kinSyncState(canopy) {
+    const seg = canopy.seg;
+    if (!seg) return;
+    const idx = Math.max(0, Math.min(seg.samples - 1, Math.round((performance.now() - seg.t0) / seg.stepMs)));
+    canopy.leaves.forEach((leaf, i) => {
+      const s = seg.states[i][idx];
+      leaf.x = s[0];
+      leaf.y = s[1];
+      leaf.vx = s[2];
+      leaf.vy = s[3];
+      leaf.a = s[4];
+      leaf.va = s[5];
+    });
+  }
+
+  // Collects pushes and applies them in one re-bake.
+  kinPush(canopy, fn) {
+    if (!canopy.inView || canopy.reduced) return;
+    if (!canopy.pending) canopy.pending = [];
+    canopy.pending.push(fn);
+    if (canopy.pushTimer) return;
+    canopy.pushTimer = setTimeout(() => {
+      canopy.pushTimer = null;
+      const fns = canopy.pending || [];
+      canopy.pending = null;
+      this.kinBake(canopy, (leaf, s) => fns.forEach((f) => f(leaf, s)));
+    }, 90);
+  }
+
+  // Runs the simulation ahead and hands the trajectory to the compositor.
+  kinBake(canopy, push) {
+    if (this._unloaded || !canopy.footer.isConnected) return;
+    if (canopy.rebakeTimer) {
+      clearTimeout(canopy.rebakeTimer);
+      canopy.rebakeTimer = null;
+    }
+    this.kinSyncState(canopy);
+    if (push) {
+      canopy.leaves.forEach((leaf) => push(leaf, leaf));
+    }
+    if (!canopy.inView || canopy.reduced || document.hidden) {
+      this.kinRest(canopy);
+      return;
+    }
+    const HORIZON = 6; // seconds simulated ahead
+    const RATE = 30; // keyframes per second; the compositor interpolates between them
+    const SUB = 4; // physics steps per keyframe
+    const samples = HORIZON * RATE + 1;
+    const dt = 1 / (RATE * SUB);
+    const now = performance.now();
+    let t = now / 1000;
+    const states = canopy.leaves.map(() => new Array(samples));
+    for (let k = 0; k < samples; k++) {
+      for (let i = 0; i < canopy.leaves.length; i++) {
+        const leaf = canopy.leaves[i];
+        states[i][k] = [leaf.x, leaf.y, leaf.vx, leaf.vy, leaf.a, leaf.va];
+      }
+      if (k === samples - 1) break;
+      for (let s = 0; s < SUB; s++) {
+        this.kinStep(canopy, dt, t);
+        t += dt;
+      }
+    }
+    const timing = { duration: HORIZON * 1000, easing: "linear", fill: "forwards" };
+    canopy.leaves.forEach((leaf, i) => {
+      const leafFrames = new Array(samples);
+      const threadFrames = new Array(samples);
+      for (let k = 0; k < samples; k++) {
+        const s = states[i][k];
+        leafFrames[k] = { transform: this.kinLeafTransform(leaf, s[0], s[1], s[4]) };
+        threadFrames[k] = { transform: this.kinThreadTransform(canopy, leaf, s[0], s[1]) };
+      }
+      if (leaf.anim) leaf.anim.cancel();
+      if (leaf.threadAnim) leaf.threadAnim.cancel();
+      leaf.anim = leaf.el.animate(leafFrames, timing);
+      leaf.threadAnim = leaf.open ? null : leaf.threadSvg.animate(threadFrames, timing);
+      // leave the simulation state at the start of the segment; kinSyncState moves it forward
+      const s0 = states[i][0];
+      leaf.x = s0[0];
+      leaf.y = s0[1];
+      leaf.vx = s0[2];
+      leaf.vy = s0[3];
+      leaf.a = s0[4];
+      leaf.va = s0[5];
+    });
+    canopy.seg = { t0: now, stepMs: 1000 / RATE, samples, states };
+    canopy.rebakeTimer = setTimeout(() => {
+      canopy.rebakeTimer = null;
+      this.kinBake(canopy);
+    }, HORIZON * 1000 - 150);
+  }
+
+  // Stops all motion and leaves the slips where they are (block scrolled away, window hidden, reduced motion).
+  kinRest(canopy) {
+    if (canopy.rebakeTimer) {
+      clearTimeout(canopy.rebakeTimer);
+      canopy.rebakeTimer = null;
+    }
+    this.kinSyncState(canopy);
+    canopy.seg = null;
+    canopy.leaves.forEach((leaf) => {
+      if (leaf.anim) {
+        leaf.anim.cancel();
+        leaf.anim = null;
+      }
+      if (leaf.threadAnim) {
+        leaf.threadAnim.cancel();
+        leaf.threadAnim = null;
+      }
+    });
+    this.kinPlace(canopy);
+  }
+
+  // Wakes every block that is on screen (called when the window becomes visible again).
+  kinStartLoop() {
+    if (this._unloaded || !this.kinCanopies) return;
+    this.kinCanopies.forEach((canopy, el) => {
+      if (!el.isConnected) {
+        this.kinDispose(canopy);
+        this.kinCanopies.delete(el);
+        return;
+      }
+      if (canopy.inView) this.kinBake(canopy);
+    });
+  }
+
+  kinStep(canopy, dt, t) {
+    const K = 30; // spring to the hanging point, 1/s^2
+    const C = 3.3; // air drag: underdamped, so a pushed slip swings a few times
+    const KA = 44;
+    const CA = 4.4;
+    const calm = canopy.reader ? 0.4 : 1;
+    for (let i = 0; i < canopy.leaves.length; i++) {
+      const leaf = canopy.leaves[i];
+      // the gust front travels left to right: slips further right feel it later
+      const tt = t - (leaf.ax / Math.max(1, canopy.W)) * 0.9;
+      const breeze =
+        Math.sin(tt * 0.83 + leaf.phase) * 0.55 + Math.sin(tt * 0.37 + leaf.phase * 1.7) * 0.3 + Math.sin(tt * 1.71 + leaf.phase * 0.6) * 0.15;
+      const gust = Math.pow(Math.max(0, Math.sin(tt * 0.13 + 1.1)), 6) * 2.3;
+      const still = leaf.hover || leaf.open ? 0.1 : 1; // a slip under the cursor holds still so it can be read and clicked
+      const windX = (breeze * 210 + gust * 400) * calm * still;
+      const windY = (Math.cos(tt * 0.61 + leaf.phase) * 70 - gust * 110) * calm * still;
+      const drag = leaf.hover ? C * 2.4 : C;
+      leaf.vx += (windX - K * (leaf.x - leaf.ax) - drag * leaf.vx) * dt;
+      leaf.vy += (windY - K * (leaf.y - leaf.ay) - drag * leaf.vy) * dt;
+      leaf.x += leaf.vx * dt;
+      leaf.y += leaf.vy * dt;
+      const lean = Math.max(-0.2, Math.min(0.2, (breeze * 0.05 + gust * 0.06) * calm * still - leaf.vx * 0.0036));
+      leaf.va += (-KA * (leaf.a - lean) - CA * leaf.va) * dt;
+      leaf.a += leaf.va * dt;
+    }
+  }
+
+  // Opening a slip: it grows into a reading card from where it hangs (spring-driven), the text clears
+  // block by block, the other slips are blown aside and dimmed. Click the title to go to the note.
+  async kinOpenLeaf(canopy, leaf) {
+    if (canopy.opening) return;
+    if (canopy.reader) {
+      const same = canopy.reader.leaf === leaf;
+      await this.kinCloseReader(canopy);
+      if (same) return;
+    }
+    canopy.opening = true;
+    try {
+      const obsidian = require("obsidian");
+      const L = (dict) => i18n(dict, this);
+      const from = leaf.el.getBoundingClientRect();
+      const stageRect = canopy.stage.getBoundingClientRect();
+
+      const card = canopy.stage.createDiv({ cls: "kin-reader kin-kind-" + leaf.data.kind });
+      card.setAttribute("role", "dialog");
+      card.setAttribute("aria-label", leaf.data.title);
+      const width = Math.min(canopy.W - 16, 640);
+      const left = (canopy.W - width) / 2;
+      const top = canopy.rootY + 54;
+      card.style.width = width + "px";
+      card.style.left = left + "px";
+      card.style.top = top + "px";
+
+      const bar = card.createDiv({ cls: "kin-reader-bar" });
+      const title = bar.createEl("button", { cls: "kin-reader-title", text: leaf.data.title });
+      title.type = "button";
+      title.addEventListener("click", (e) => this.kinOpenNote(leaf.data, e.ctrlKey || e.metaKey));
+      const open = bar.createEl("button", { cls: "kin-reader-open", text: L({ en: "Open note", ru: "Открыть заметку", zh: "打开笔记", ja: "ノートを開く", es: "Abrir nota", de: "Notiz öffnen" }) });
+      open.type = "button";
+      open.addEventListener("click", (e) => this.kinOpenNote(leaf.data, e.ctrlKey || e.metaKey));
+      const close = bar.createEl("button", { cls: "kin-reader-close", text: "×" });
+      close.type = "button";
+      close.setAttribute("aria-label", L({ en: "Close", ru: "Закрыть", zh: "关闭", ja: "閉じる", es: "Cerrar", de: "Schließen" }));
+      close.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.kinCloseReader(canopy);
+      });
+
+      const body = card.createDiv({ cls: "kin-reader-body markdown-rendered" });
+      const component = new obsidian.Component();
+      component.load();
+      let raw = "";
+      try {
+        raw = await this.app.vault.cachedRead(leaf.data.file);
+      } catch (e) {}
+      const md = kinReaderMarkdown(raw, 1500);
+      try {
+        await obsidian.MarkdownRenderer.render(this.app, md.text, body, leaf.data.path, component);
+      } catch (e) {
+        body.setText(kinExcerpt(raw, 900));
+      }
+      if (md.truncated) body.createDiv({ cls: "kin-reader-more", text: "…" });
+      if (!canopy.footer.isConnected) {
+        component.unload();
+        return;
+      }
+
+      const to = card.getBoundingClientRect();
+      const need = to.bottom - stageRect.top + 28;
+      if (need > canopy.H) {
+        canopy.H = need;
+        canopy.stage.style.height = need + "px";
+      }
+      canopy.reader = { el: card, leaf, component };
+      leaf.open = true;
+      leaf.el.classList.add("is-open");
+      canopy.stage.classList.add("has-reader");
+
+      // the opened slip's thread now runs to the top of the card
+      if (leaf.threadAnim) {
+        leaf.threadAnim.cancel();
+        leaf.threadAnim = null;
+      }
+      const ry = canopy.rootY + 9;
+      const cx = left + width / 2;
+      leaf.threadSvg.style.transform = "none";
+      leaf.path.setAttribute(
+        "d",
+        "M" + canopy.rootX.toFixed(1) + "," + ry.toFixed(1) + " L" + cx.toFixed(1) + "," + (top - 3).toFixed(1)
+      );
+
+      // push the neighbours away from where the card lands
+      const cy = top + Math.min(to.height, 260) / 2;
+      this.kinBake(canopy, (other, s) => {
+        if (other === leaf) return;
+        const dx = s.x - cx;
+        const dy = s.y + other.h / 2 - cy;
+        const dist = Math.max(40, Math.sqrt(dx * dx + dy * dy));
+        s.vx += (dx / dist) * 260;
+        s.vy += (dy / dist) * 150;
+        s.va += (dx > 0 ? 1 : -1) * 0.9;
+      });
+
+      if (!canopy.reduced && card.animate) {
+        const sx = from.width / to.width;
+        const sy = from.height / to.height;
+        const dx = from.left - to.left;
+        const dy = from.top - to.top;
+        card.style.transformOrigin = "0 0";
+        const frames = kinSpringFrames(210, 21, 34).map((p) => {
+          const q = 1 - p; // q: 1 at the slip, 0 at rest (dips below 0 on the overshoot)
+          return {
+            transform:
+              "translate(" + (dx * q).toFixed(2) + "px, " + (dy * q).toFixed(2) + "px) scale(" + (1 + (sx - 1) * q).toFixed(4) + ", " + (1 + (sy - 1) * q).toFixed(4) + ")",
+          };
+        });
+        card.animate(frames, { duration: 640, easing: "linear", fill: "both" });
+        card.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 220, easing: "ease-out", fill: "both" });
+        // the mist lifts top to bottom, one block after another
+        Array.from(body.children)
+          .slice(0, 14)
+          .forEach((block, i) => {
+            block.animate(
+              [
+                { opacity: 0, transform: "translateY(5px)" },
+                { opacity: 1, transform: "translateY(0)" },
+              ],
+              { duration: 200, delay: i * 12, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "both" }
+            );
+          });
+      }
+      // Bring the card into view by scrolling the note itself. scrollIntoView would also scroll the pane
+      // around it (it scrolls every ancestor, even ones with hidden overflow) and push the tool row
+      // under the tab header.
+      const sc = canopy.scroller;
+      if (sc) {
+        const cr = card.getBoundingClientRect();
+        const sr = sc.getBoundingClientRect();
+        let delta = 0;
+        if (cr.bottom > sr.bottom - 16) delta = Math.min(cr.bottom - sr.bottom + 24, cr.top - sr.top - 16);
+        else if (cr.top < sr.top + 8) delta = cr.top - sr.top - 16;
+        if (Math.abs(delta) > 2) sc.scrollBy({ top: delta, behavior: canopy.reduced ? "auto" : "smooth" });
+      }
+      title.focus({ preventScroll: true });
+    } finally {
+      canopy.opening = false;
+    }
+  }
+
+  kinCloseReader(canopy) {
+    const reader = canopy.reader;
+    if (!reader) return Promise.resolve();
+    canopy.reader = null;
+    const leaf = reader.leaf;
+    const card = reader.el;
+    const finish = () => {
+      try {
+        reader.component.unload();
+      } catch (e) {}
+      card.remove();
+      leaf.open = false;
+      leaf.el.classList.remove("is-open");
+      canopy.stage.classList.remove("has-reader");
+      leaf.path.setAttribute("d", leaf.restD);
+      canopy.H = canopy.baseH;
+      canopy.stage.style.height = canopy.H + "px";
+      // the slip drops back onto its thread and swings
+      this.kinBake(canopy, (other, s) => {
+        if (other !== leaf) return;
+        s.vy += 150;
+        s.va += leaf.ax < canopy.rootX ? -1.3 : 1.3;
+      });
+    };
+    if (canopy.reduced || !card.animate) {
+      finish();
+      return Promise.resolve();
+    }
+    const from = card.getBoundingClientRect();
+    const to = leaf.el.getBoundingClientRect();
+    const anim = card.animate(
+      [
+        { transform: "translate(0px, 0px) scale(1, 1)", opacity: 1 },
+        {
+          transform:
+            "translate(" + (to.left - from.left).toFixed(1) + "px, " + (to.top - from.top).toFixed(1) + "px) scale(" + (to.width / from.width).toFixed(4) + ", " + (to.height / from.height).toFixed(4) + ")",
+          opacity: 0,
+        },
+      ],
+      { duration: 260, easing: "cubic-bezier(0.5, 0, 0.75, 0)", fill: "both" }
+    );
+    return anim.finished.then(finish, finish);
+  }
+
+  async kinOpenNote(item, newTab) {
+    const f = this.app.vault.getAbstractFileByPath(item.path);
+    if (f) await this.app.workspace.getLeaf(newTab ? "tab" : false).openFile(f);
+  }
+
+  kinDispose(canopy) {
+    try {
+      if (canopy.rebakeTimer) clearTimeout(canopy.rebakeTimer);
+      if (canopy.pushTimer) clearTimeout(canopy.pushTimer);
+      canopy.rebakeTimer = null;
+      canopy.pushTimer = null;
+      canopy.leaves.forEach((leaf) => {
+        if (leaf.anim) leaf.anim.cancel();
+        if (leaf.threadAnim) leaf.threadAnim.cancel();
+      });
+      if (canopy.io) canopy.io.disconnect();
+      if (canopy.ro) canopy.ro.disconnect();
+      if (canopy.scroller && canopy.onScroll) canopy.scroller.removeEventListener("scroll", canopy.onScroll);
+      if (canopy.reader && canopy.reader.component) canopy.reader.component.unload();
     } catch (e) {}
+    canopy.reader = null;
+    canopy.inView = false;
+  }
+
+  kinDestroyIn(container) {
+    container.querySelectorAll(".artcraft-kin").forEach((el) => {
+      const canopy = this.kinCanopies && this.kinCanopies.get(el);
+      if (canopy) {
+        this.kinDispose(canopy);
+        this.kinCanopies.delete(el);
+      }
+      el.remove();
+    });
+  }
+
+  kinDestroyAll() {
+    if (this.kinCanopies) {
+      this.kinCanopies.forEach((canopy, el) => {
+        this.kinDispose(canopy);
+        el.remove();
+      });
+      this.kinCanopies.clear();
+    }
+    document.querySelectorAll(".artcraft-kin").forEach((el) => el.remove());
   }
 
 
@@ -8563,8 +11043,9 @@ class AlchemyFlowPlugin extends Plugin {
       const text = textNode.nodeValue || "";
       if (!text.trim()) return;
 
+      // cheap pre-check: is there anything on this line the token pass could style?
       const hasTokens =
-        /\b(0[1-4]\s*\/\/|\d+\s*(?:%|\$|k|к|тыс|млн|USD|USDT)|https?:\/\/|\.com|\.io|\.org|\.ru|0x[a-fA-F0-9]{4,}|[1-9A-HJ-NP-Za-km-z]{32,}|TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+|✅|\d{4}-\d{2}-\d{2})/i.test(
+        /(?:0[1-4]\s*\/\/|\d\s?(?:%|[$€₽]|[kKкК]|тыс|млн|млрд|USD)|[$€₽]\d|https?:\/\/|\.(?:com|io|org|ru|dev|net|ai)|0x[a-fA-F0-9]{4,}|[1-9A-HJ-NP-Za-km-z]{32,}|TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+|✅|\d{4}-\d{2}-\d{2})/.test(
           text
         );
 
@@ -8572,7 +11053,15 @@ class AlchemyFlowPlugin extends Plugin {
 
       const frag = document.createDocumentFragment();
       if (!isLivePreview && this.settings.sentenceFocus) {
-        const sentences = text.match(/[^.!?]+(?:[.!?]+|$)/g) || [text];
+        // Split on real sentence ends only: "1.5", "$4.99" and "т. е." stay inside their sentence.
+        const sentences = [];
+        let cut = 0;
+        keySplitSentences(text).forEach((r) => {
+          if (r.start > cut) sentences.push(text.slice(cut, r.start));
+          sentences.push(text.slice(r.start, r.end));
+          cut = r.end;
+        });
+        if (cut < text.length) sentences.push(text.slice(cut));
         sentences.forEach((sent) => {
           if (!sent.trim()) {
             frag.appendChild(document.createTextNode(sent));
@@ -8612,8 +11101,11 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   appendWithColorizedTokens(parent, text) {
+    // Word edges are written as look-arounds over Unicode letters and digits. The plain \b only knows
+    // ASCII, so "50%", "10 $" and "5 тыс" never matched: \b cannot follow "%" or a Cyrillic letter.
+    // A long base58 run counts as an address only when it contains a digit (so long words are left alone).
     const tokenRegex =
-      /(\b0[1-4]\s*\/\/|\b\d+(?:[.,]\d+)?\s*(?:%|\$|k|к|тыс|млн|USD|USDT)\b|\bhttps?:\/\/[^\s<]+|\b[a-zA-Z0-9.-]+\.(?:com|io|org|ru|dev|net|ai)(?:\/[^\s<]*)?|\b0x[a-fA-F0-9]{40}\b|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b|\b(?:TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+)\b|✅\s*(?:\d{4}-\d{2}-\d{2})?|✅|\b\d{4}-\d{2}-\d{2}\b)/gi;
+      /((?<![\p{L}\p{N}])0[1-4]\s*\/\/|(?<![\p{L}\p{N}])(?:[$€₽]\d+(?:[.,]\d+)?|\d+(?:[.,]\d+)?(?:[–-]\d+(?:[.,]\d+)?)?\s?(?:%|[$€₽]|[kKкК]|тыс\.?|млн|млрд|USDT|USD))(?![\p{L}\p{N}])|(?<![\p{L}\p{N}])https?:\/\/[^\s<]+|(?<![\p{L}\p{N}.-])[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.(?:com|io|org|ru|dev|net|ai)(?![\p{L}\p{N}])(?:\/[^\s<]*)?|(?<![\p{L}\p{N}])0x[a-fA-F0-9]{40}(?![\p{L}\p{N}])|(?<![\p{L}\p{N}])(?=[1-9A-HJ-NP-Za-km-z]*\d)[1-9A-HJ-NP-Za-km-z]{32,44}(?![\p{L}\p{N}])|(?<![\p{L}\p{N}])(?:TRC20|BEP20|ERC20|EVM|SOL|TON|Bybit|Binance|UID\s*\d+)(?![\p{L}\p{N}])|✅\s*(?:\d{4}-\d{2}-\d{2})?|✅|(?<![\p{L}\p{N}])\d{4}-\d{2}-\d{2}(?![\p{L}\p{N}]))/gu;
 
     let lastIdx = 0;
     let match;
@@ -8633,10 +11125,13 @@ class AlchemyFlowPlugin extends Plugin {
         const span = document.createElement("span");
         span.className = "artcraft-step-badge";
         span.textContent = `0${num}`;
-        span.style.setProperty("background-color", color, "important");
-        span.style.setProperty("color", "#FFFFFF", "important");
+        span.style.backgroundColor = color;
+        span.style.color = "#FFFFFF";
         parent.appendChild(span);
         parent.appendChild(document.createTextNode(" // "));
+      } else if (stepMatch) {
+        // step badges are switched off: a "01 //" marker is ordinary text, not a capsule
+        parent.appendChild(document.createTextNode(matchStr));
       } else if (matchStr.startsWith("✅")) {
         const circle = document.createElement("span");
         circle.className = "artcraft-check-circle";
@@ -8655,7 +11150,7 @@ class AlchemyFlowPlugin extends Plugin {
         dateSpan.className = "artcraft-task-date";
         dateSpan.textContent = matchStr;
         parent.appendChild(dateSpan);
-      } else if (/^\d+(?:[.,]\d+)?\s*(?:%|\$|k|к|тыс|млн|USD|USDT)$/i.test(matchStr)) {
+      } else if (/^(?:[$€₽]\d+(?:[.,]\d+)?|\d+(?:[.,]\d+)?(?:[–-]\d+(?:[.,]\d+)?)?\s?(?:%|[$€₽]|[kKкК]|тыс\.?|млн|млрд|USDT|USD))$/.test(matchStr)) {
         const span = document.createElement("span");
         span.className = "artcraft-pill-number";
         span.textContent = matchStr;
@@ -8680,6 +11175,202 @@ class AlchemyFlowPlugin extends Plugin {
     }
   }
 
+  // --- KEY SENTENCE MARKER (reading view) ---
+  // Finds the sentences that carry the note's subject and underlines them with a highlighter stroke, so a
+  // reader scanning the page lands on them first. Everything is computed locally from the note itself:
+  // a sentence scores high when it packs many of the note's repeated, meaningful words (heading words
+  // count extra), with a small bonus for figures and for cue words such as "therefore" or "важно".
+  async getKeySentenceModel(sourcePath) {
+    const file = this.app.vault.getAbstractFileByPath(sourcePath);
+    if (!file || !file.stat || file.extension !== "md") return null;
+    if (!this.keyModelCache) this.keyModelCache = new Map();
+    const cached = this.keyModelCache.get(sourcePath);
+    if (cached && cached.mtime === file.stat.mtime) return cached.model;
+    let raw = "";
+    try {
+      raw = await this.app.vault.cachedRead(file);
+    } catch (e) {
+      return null;
+    }
+    const model = this.buildKeySentenceModel(raw, file.basename);
+    if (this.keyModelCache.size > 60) this.keyModelCache.clear();
+    this.keyModelCache.set(sourcePath, { mtime: file.stat.mtime, model });
+    return model;
+  }
+
+  buildKeySentenceModel(markdown, title) {
+    const body = markdown
+      .replace(/\r\n/g, "\n")
+      .replace(/^---\n[\s\S]*?\n---\n/, "")
+      .replace(/```[\s\S]*?```/g, " ")
+      .replace(/`[^`\n]*`/g, " ");
+    const headingWords = [];
+    const sentences = [];
+    const allWords = [];
+    const collect = (text) => {
+      const words = keyWords(text);
+      for (let i = 0; i < words.length; i++) allWords.push(words[i]);
+      return words;
+    };
+    collect(title || "").forEach((w) => headingWords.push(w));
+
+    body.split(/\n{2,}/).forEach((para) => {
+      const lines = para.split("\n");
+      const prose = [];
+      lines.forEach((line) => {
+        if (/^\s*\|/.test(line) || /^\s*(?:[-*_]\s*){3,}$/.test(line)) return;
+        const heading = line.match(/^\s{0,3}#{1,6}\s+(.*)$/);
+        const plain = keyPlainText(heading ? heading[1] : line);
+        if (heading) {
+          collect(plain).forEach((w) => headingWords.push(w));
+          return;
+        }
+        if (/^\s*(?:[-*+]|\d+[.)])\s+\[.\]\s/.test(line)) {
+          collect(plain); // a task is something to do, not a statement to highlight
+          return;
+        }
+        if (/^\s*(?:[-*+]|\d+[.)])\s+/.test(line)) {
+          // each list item is its own unit
+          collect(plain);
+          keySplitSentences(plain).forEach((r) => sentences.push(plain.slice(r.start, r.end)));
+          return;
+        }
+        prose.push(plain);
+      });
+      if (prose.length) {
+        const text = prose.join(" ");
+        collect(text);
+        keySplitSentences(text).forEach((r) => sentences.push(text.slice(r.start, r.end)));
+      }
+    });
+
+    const tf = new Map();
+    allWords.forEach((w) => {
+      const st = keyStem(w);
+      tf.set(st, (tf.get(st) || 0) + 1);
+    });
+    const weights = new Map();
+    tf.forEach((count, st) => {
+      if (count >= 2) weights.set(st, Math.log(1 + count));
+    });
+    headingWords.forEach((w) => {
+      const st = keyStem(w);
+      weights.set(st, Math.max(0.7, (weights.get(st) || 0) * 1.6));
+    });
+
+    const scores = sentences.map((s) => keyScoreSentence(s, weights)).filter((v) => v > 0);
+    if (scores.length < 5) return null; // a short note needs no guide
+    scores.sort((a, b) => b - a);
+    const keep = Math.max(1, Math.min(14, Math.round(scores.length * 0.16)));
+    return { weights, threshold: scores[keep - 1] };
+  }
+
+  markKeySentences(rootEl, model) {
+    const blocks = rootEl.matches && rootEl.matches("p, li") ? [rootEl] : Array.from(rootEl.querySelectorAll("p, li"));
+    blocks.forEach((block) => {
+      if (block.dataset.artcraftKeyDone === "1") return;
+      block.dataset.artcraftKeyDone = "1";
+      if (block.closest("table, pre, .callout-title, .task-list-item, .artcraft-wind-chain-footer")) return;
+      if (block.tagName === "LI" && block.querySelector(":scope > p")) return; // its <p> children are handled on their own
+
+      // Text nodes of this block in document order, skipping code and nested lists
+      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT, null);
+      const nodes = [];
+      let full = "";
+      let node;
+      while ((node = walker.nextNode())) {
+        const parent = node.parentElement;
+        if (!parent || parent.closest("code, pre, .math, .artcraft-key-mark")) continue;
+        if (block.tagName === "LI" && parent.closest("ul, ol") !== block.parentElement) continue;
+        nodes.push({ node, start: full.length });
+        full += node.nodeValue;
+      }
+      if (full.trim().length < 30) return;
+
+      const picked = keySplitSentences(full)
+        .map((r) => ({ start: r.start, end: r.end, score: keyScoreSentence(full.slice(r.start, r.end), model.weights) }))
+        .filter((r) => r.score > 0 && r.score >= model.threshold)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 2)
+        .sort((a, b) => b.start - a.start); // wrap from the end so earlier offsets stay valid
+
+      picked.forEach((range) => {
+        const pieces = [];
+        for (let i = nodes.length - 1; i >= 0; i--) {
+          const item = nodes[i];
+          const len = item.node.nodeValue.length;
+          const a = Math.max(range.start, item.start) - item.start;
+          const b = Math.min(range.end, item.start + len) - item.start;
+          if (b <= a) continue;
+          const mid = a > 0 ? item.node.splitText(a) : item.node;
+          if (b - a < mid.nodeValue.length) mid.splitText(b - a);
+          const mark = document.createElement("span");
+          mark.className = "artcraft-key-mark";
+          mid.parentNode.replaceChild(mark, mid);
+          mark.appendChild(mid);
+          pieces.unshift(mark);
+        }
+        if (!pieces.length) return;
+        // One continuous stroke across all pieces: each piece starts when the previous one ends.
+        const total = pieces.reduce((sum, el) => sum + el.textContent.length, 0) || 1;
+        const duration = Math.max(450, Math.min(1100, total * 9));
+        let before = 0;
+        pieces.forEach((el) => {
+          const len = el.textContent.length;
+          el.style.setProperty("--key-delay", Math.round((before / total) * duration) + "ms");
+          el.style.setProperty("--key-time", Math.max(60, Math.round((len / total) * duration)) + "ms");
+          before += len;
+        });
+        pieces[0].classList.add("is-key-start");
+        pieces[0].artcraftKeyPieces = pieces;
+        this.observeKeyMark(pieces[0]);
+      });
+    });
+  }
+
+  // The stroke is drawn the first time the sentence scrolls into view.
+  observeKeyMark(startEl) {
+    if (typeof IntersectionObserver === "undefined") {
+      (startEl.artcraftKeyPieces || [startEl]).forEach((el) => el.classList.add("is-inked"));
+      return;
+    }
+    if (!this.keyMarkObserver) {
+      this.keyMarkObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            this.keyMarkObserver.unobserve(entry.target);
+            (entry.target.artcraftKeyPieces || [entry.target]).forEach((el) => el.classList.add("is-inked"));
+          });
+        },
+        { rootMargin: "0px 0px -12% 0px", threshold: 0.4 }
+      );
+    }
+    this.keyMarkObserver.observe(startEl);
+  }
+
+  async toggleKeySentenceMarker() {
+    this.settings.keySentenceMarker = this.settings.keySentenceMarker === false;
+    await this.saveSettings();
+    this.applyBodyClasses();
+    this.rerenderReadingViews();
+    const on = this.settings.keySentenceMarker !== false;
+    new Notice(
+      on
+        ? i18n({ en: "Key sentence marker: on (reading view)", ru: "Маркер ключевых предложений: включён (режим чтения)", zh: "关键句标记：已开启（阅读视图）", ja: "重要文マーカー：オン（閲覧モード）", es: "Marcador de frases clave: activado (vista de lectura)", de: "Kernsatz-Markierung: an (Leseansicht)" }, this)
+        : i18n({ en: "Key sentence marker: off", ru: "Маркер ключевых предложений: выключен", zh: "关键句标记：已关闭", ja: "重要文マーカー：オフ", es: "Marcador de frases clave: desactivado", de: "Kernsatz-Markierung: aus" }, this)
+    );
+  }
+
+  rerenderReadingViews() {
+    this.app.workspace.getLeavesOfType("markdown").forEach((leaf) => {
+      const view = leaf.view;
+      if (view && view.previewMode && typeof view.previewMode.rerender === "function") {
+        view.previewMode.rerender(true);
+      }
+    });
+  }
+
   // --- FLOATING DOCK & OVERLAY CANVAS ---
 
   createFloatingDock() {
@@ -8692,12 +11383,46 @@ class AlchemyFlowPlugin extends Plugin {
     }
     if (this.settings.dockVertical) {
       dock.classList.add("is-vertical");
+      this.settings.dockSide = "right";
     }
 
     const badge = document.createElement("span");
     badge.className = "artcraft-dock-badge";
     badge.title = t("dockCollapseTip", this);
-    badge.innerHTML = `<span class="artcraft-dock-badge-full">${ALCHEMY_ICON_SVG}<span class="artcraft-badge-text">ALCHEMY CRAFT</span></span><span class="artcraft-dock-badge-short">${ALCHEMY_ICON_SVG}</span>`;
+    badge.innerHTML = `<span class="artcraft-dock-badge-full">${ALCHEMY_ICON_SVG}<span class="artcraft-badge-text">ALCHEMY CRAFT</span></span><span class="artcraft-dock-badge-short">
+      <div class="artcraft-flask-wrap">
+        ${ALCHEMY_ICON_SVG}
+        <div class="artcraft-familiar-stage" aria-hidden="true">
+          <div class="artcraft-familiar-paw">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <ellipse cx="10" cy="14" rx="4.5" ry="3.5" fill="#69BD28"/>
+              <circle cx="6" cy="8.5" r="1.8" fill="#69BD28"/>
+              <circle cx="10" cy="7" r="2" fill="#69BD28"/>
+              <circle cx="14" cy="8.5" r="1.8" fill="#69BD28"/>
+              <circle cx="10" cy="13.5" r="1.8" fill="#FFFFFF" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="artcraft-familiar-smile">
+            <svg viewBox="0 0 24 16" fill="none" stroke="#69BD28" stroke-width="1.8" stroke-linecap="round">
+              <path d="M5 5 C6.5 2, 8.5 2, 10 5" />
+              <path d="M14 5 C15.5 2, 17.5 2, 19 5" />
+              <path d="M4 8 C8 15, 16 15, 20 8" />
+            </svg>
+          </div>
+          <div class="artcraft-familiar-ears">
+            <svg viewBox="0 0 24 12" fill="#69BD28">
+              <polygon points="5,11 2,3 9,8" />
+              <polygon points="19,11 22,3 15,8" />
+            </svg>
+          </div>
+          <div class="artcraft-familiar-vapour">
+            <span class="vapour-ring r1"></span>
+            <span class="vapour-ring r2"></span>
+            <span class="vapour-ring r3"></span>
+          </div>
+        </div>
+      </div>
+    </span>`;
     badge.addEventListener("click", (e) => {
       e.stopPropagation();
       this.toggleDockCollapse();
@@ -8706,6 +11431,8 @@ class AlchemyFlowPlugin extends Plugin {
 
     const contentWrap = document.createElement("div");
     contentWrap.className = "artcraft-dock-content";
+    contentWrap.addEventListener("pointerdown", (e) => e.stopPropagation());
+    contentWrap.addEventListener("click", (e) => e.stopPropagation());
 
     // 0. Compact Pomodoro / Work Timer Pill
     this.timerEl = document.createElement("div");
@@ -8729,7 +11456,7 @@ class AlchemyFlowPlugin extends Plugin {
     });
     this.timerEl.addEventListener("contextmenu", (e) => {
       e.preventDefault();
-      this.showTimerMenu(e);
+      this.togglePomodoroPopover(this.timerEl);
     });
     contentWrap.appendChild(this.timerEl);
     this.updateTimerDisplay();
@@ -8753,9 +11480,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnZen.title = t("zenTip", this);
     this.btnZen.innerHTML = `${sicraftIcon('zen')}<span class="artcraft-btn-label">${t("zenBtn", this)}</span>`;
     this.btnZen.addEventListener("click", () => {
-      this.zenMode = !this.zenMode;
-      this.applyBodyClasses();
-      this.updateDockUI();
+      this.triggerZenCameraTransition(!this.zenMode);
     });
     contentWrap.appendChild(this.btnZen);
 
@@ -8764,8 +11489,8 @@ class AlchemyFlowPlugin extends Plugin {
     this.btnSentence.className = "artcraft-dock-btn";
     this.btnSentence.title =
       (this.settings.uiLanguage || "en") === "ru"
-        ? "Меню Фокуса и Книжной Студии: Активное предложение, Затемнение абзацев (Spotlight), Книжный лист, Закладки-Нутриенты и Штамп"
-        : "Focus & Book Studio Menu: Sentence Focus, Spotlight Dimmer, Book Folio, 5-Nutrient Stickers & Ex-Libris Stamp";
+        ? "Меню фокуса: предложение, абзац, книжная страница, закладки, штамп"
+        : "Focus menu: sentence, paragraph, book page, stickers, stamp";
     this.btnSentence.innerHTML = `${sicraftIcon('focus')}<span class="artcraft-btn-label">${t("focusBtn", this)}</span><span class="artcraft-btn-caret">▾</span>`;
     this.btnSentence.addEventListener("click", (e) => {
       e.preventDefault();
@@ -8779,23 +11504,59 @@ class AlchemyFlowPlugin extends Plugin {
     });
     contentWrap.appendChild(this.btnSentence);
 
-    // 3. Laser Pointer button
+    // 3. Laser Pointer button (LMB: Toggle / Open Menu | RMB or Caret: Open Laser Studio Menu)
     this.btnLaser = document.createElement("button");
     this.btnLaser.className = "artcraft-dock-btn";
     this.btnLaser.title = t("laserTip", this);
-    this.btnLaser.innerHTML = `${SICRAFT_SVGS.laser}<span class="artcraft-btn-label">${t("laserBtn", this)}</span>`;
-    this.btnLaser.addEventListener("click", () => {
-      this.toggleMode(this.mode === "laser" ? "none" : "laser");
+    this.btnLaser.innerHTML = `${SICRAFT_SVGS.laser}<span class="artcraft-btn-label">${t("laserBtn", this)}</span><span class="artcraft-btn-caret" data-laser-menu="1">▾</span>`;
+    this.btnLaser.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (e.target && e.target.closest && e.target.closest("[data-laser-menu]")) {
+        this.toggleLaserPopover(this.btnLaser);
+        return;
+      }
+      if (this.mode !== "laser") {
+        this.toggleMode("laser");
+        this.toggleLaserPopover(this.btnLaser);
+      } else if (!this.laserPopoverEl) {
+        this.toggleLaserPopover(this.btnLaser);
+      } else {
+        this.closeAllDockPopovers();
+        this.toggleMode("none");
+      }
+    });
+    this.btnLaser.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.toggleLaserPopover(this.btnLaser);
     });
     contentWrap.appendChild(this.btnLaser);
 
-    // 4. Draw Marker button
+    // 4. Draw Marker button (LMB: Toggle / Open Menu | RMB or Caret: Open Draw Studio Menu)
     this.btnDraw = document.createElement("button");
     this.btnDraw.className = "artcraft-dock-btn";
     this.btnDraw.title = t("drawTip", this);
-    this.btnDraw.innerHTML = `${SICRAFT_SVGS.draw}<span class="artcraft-btn-label">${t("drawBtn", this)}</span>`;
-    this.btnDraw.addEventListener("click", () => {
-      this.toggleMode(this.mode === "draw" ? "none" : "draw");
+    this.btnDraw.innerHTML = `${SICRAFT_SVGS.draw}<span class="artcraft-btn-label">${t("drawBtn", this)}</span><span class="artcraft-btn-caret" data-draw-menu="1">▾</span>`;
+    this.btnDraw.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (e.target && e.target.closest && e.target.closest("[data-draw-menu]")) {
+        this.toggleDrawPopover(this.btnDraw);
+        return;
+      }
+      if (this.mode !== "draw") {
+        this.toggleMode("draw");
+        this.toggleDrawPopover(this.btnDraw);
+      } else if (!this.drawPopoverEl) {
+        this.toggleDrawPopover(this.btnDraw);
+      } else {
+        this.closeAllDockPopovers();
+        this.toggleMode("none");
+      }
+    });
+    this.btnDraw.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.toggleDrawPopover(this.btnDraw);
     });
     contentWrap.appendChild(this.btnDraw);
 
@@ -8841,6 +11602,8 @@ class AlchemyFlowPlugin extends Plugin {
       dot.title = p.name;
       dot.addEventListener("click", async () => {
         this.settings.strokeColor = p.color;
+        this.settings.drawColor = p.color;
+        this.settings.laserColor = p.color;
         this.settings.activeColorKey = p.key;
         await this.saveSettings();
         this.updateDockUI();
@@ -8892,7 +11655,7 @@ class AlchemyFlowPlugin extends Plugin {
     if (this.settings.showEqualizer !== false) {
       const eqWrap = document.createElement("div");
       eqWrap.className = "artcraft-dock-eq-pill";
-      eqWrap.title = "LMB: Switch Craft Equalizer Style | Mouse Wheel: Adjust Volume (0%-100%) | RMB: Open Sonic Studio";
+      // native tooltip removed - Dynamic Island handles title smoothly
       this.eqWrap = eqWrap;
 
       const eqIconSpan = document.createElement("span");
@@ -8908,17 +11671,75 @@ class AlchemyFlowPlugin extends Plugin {
       this.eqCanvas.height = 40;
       this.eqCanvas.className = "artcraft-dock-eq-canvas";
       eqWrap.appendChild(this.eqCanvas);
+      // click: connect PC audio / next style. double click: disconnect. The single click waits a moment
+      // so a double click does not also cycle the style twice.
+      let eqClickTimer = null;
       eqWrap.addEventListener("click", () => {
-        this.cycleEqualizerMode();
+        if (eqClickTimer) return;
+        eqClickTimer = setTimeout(() => {
+          eqClickTimer = null;
+          this.cycleEqualizerMode();
+        }, 230);
       });
       eqWrap.addEventListener("dblclick", (e) => {
         e.preventDefault();
+        if (eqClickTimer) {
+          clearTimeout(eqClickTimer);
+          eqClickTimer = null;
+        }
         this.toggleDesktopAudioCapture();
       });
       eqWrap.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
         this.showAudioMenu(e);
+      });
+      eqWrap.addEventListener("auxclick", (e) => {
+        if (e.button === 1) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleAudioPlayStop();
+        } else if (e.button === 3) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.cycleAmbientSound(-1);
+        } else if (e.button === 4) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.cycleAmbientSound(1);
+        }
+      });
+      eqWrap.addEventListener("mousedown", (e) => {
+        if (e.button === 1) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          if (this.ambientNodes || this.desktopAudioNodes) {
+            this.stopAmbientSound();
+            this.settings.ambientSound = "off";
+            this.saveSettings();
+            this.updateEqualizerPillUI();
+            this.showIslandTrackCapsule((this.settings.uiLanguage || "en") === "ru" ? "🔇 Пауза / Звук выключен" : "🔇 Sound Paused");
+          } else {
+            const resumeId = this._lastAmbientSound || "balanced";
+            this.startAmbientSound(resumeId);
+            this.settings.ambientSound = resumeId;
+            this.saveSettings();
+            this.updateEqualizerPillUI();
+            const sObj = AMBIENT_SOUNDSCAPES.find(s => s.id === resumeId);
+            const isRu = (this.settings.uiLanguage || "en") === "ru";
+            this.showIslandTrackCapsule(sObj ? (isRu ? sObj.ru : sObj.en) : resumeId);
+          }
+        }
+      });
+      eqWrap.addEventListener("mouseenter", () => {
+        const cur = this.settings.ambientSound || "off";
+        if (cur !== "off") {
+          const soundObj = AMBIENT_SOUNDSCAPES.find((s) => s.id === cur);
+          const isRu = (this.settings.uiLanguage || "en") === "ru";
+          const name = soundObj ? (isRu ? soundObj.ru : soundObj.en) : cur;
+          this.showIslandTrackCapsule(name);
+        }
       });
       eqWrap.addEventListener(
         "wheel",
@@ -8931,11 +11752,12 @@ class AlchemyFlowPlugin extends Plugin {
           this.settings.audioVolume = nextVol;
           this.applyAudioVolume(nextVol / 100);
           this.saveSettings();
-          eqWrap.title = `Volume: ${nextVol}% (Scroll to adjust | LMB: Mode | RMB: Studio)`;
-          if (this.volNoticeTimeout) clearTimeout(this.volNoticeTimeout);
-          this.volNoticeTimeout = setTimeout(() => {
-            new Notice(`Volume: ${nextVol}%`, 900);
-          }, 120);
+          // native tooltip removed - Dynamic Island handles title smoothly
+          const curSnd = this.settings.ambientSound || "off";
+          const soundObj = AMBIENT_SOUNDSCAPES.find((s) => s.id === curSnd);
+          const isRu = (this.settings.uiLanguage || "en") === "ru";
+          const name = soundObj ? (isRu ? soundObj.ru : soundObj.en) : (curSnd === "off" ? (isRu ? "Звук выключен" : "Audio muted") : curSnd);
+          this.showIslandTrackCapsule(name, null, nextVol, { mode: "wheel", step });
         },
         { passive: false }
       );
@@ -8987,22 +11809,178 @@ class AlchemyFlowPlugin extends Plugin {
     document.body.appendChild(dock);
     this.dockEl = dock;
     this.updateDockUI();
+    this.initArgonFlaskHydroEngine();
+    this.startFamiliarCycle();
+    this.updateEqualizerPillUI();
+    this.fitDockToWindow();
+  }
+
+  // =========================================================================
+  // CLEAN VECTOR FLASK FAMILIAR ENGINE (Zero-Canvas, Zero-Lag GPU CSS)
+  // =========================================================================
+  getFlaskDirectionConfig() {
+    const isVert = !!(this.dockEl && this.dockEl.classList.contains("is-vertical"));
+    return { isVert, isLeft: false, isRight: isVert, dirX: isVert ? -0.82 : 0, dirY: isVert ? -0.57 : -1.0, nozzleTiltRad: 0 };
+  }
+
+  initArgonFlaskHydroEngine() {
+    if (!this.dockEl) return;
+    const flaskWrap = this.dockEl.querySelector(".artcraft-flask-wrap");
+    if (!flaskWrap) return;
+    const oldCanvas = flaskWrap.querySelector(".artcraft-flask-hydro-canvas");
+    if (oldCanvas) oldCanvas.remove();
+    const legacyStage = flaskWrap.querySelector(".artcraft-familiar-stage");
+    if (legacyStage) legacyStage.style.display = "";
+  }
+
+  splashFlask() {}
+  emitFlaskPlume() {}
+  wakeFlaskHydroLoop() {}
+  stopFlaskHydroLoop() {
+    if (this._flaskHydroRaf) {
+      cancelAnimationFrame(this._flaskHydroRaf);
+      this._flaskHydroRaf = null;
+    }
+  }
+
+  triggerFlaskManifestation(forcedMode = null) {
+    if (!this.dockEl) return;
+    const stage = this.dockEl.querySelector(".artcraft-familiar-stage");
+    if (!stage) return;
+    stage.classList.remove("is-waving", "is-smiling", "is-ears", "is-steaming");
+    void stage.offsetWidth;
+    const classes = ["is-waving", "is-smiling", "is-ears", "is-steaming"];
+    const map = { paw: "is-waving", smile: "is-smiling", ears: "is-ears", astrolabe: "is-steaming", phoenix: "is-waving" };
+    const cls = (forcedMode && map[forcedMode]) || classes[(this._familiarIdx = ((this._familiarIdx || 0) + 1) % classes.length)];
+    stage.classList.add(cls);
+    if (this._familiarMorphTimer) clearTimeout(this._familiarMorphTimer);
+    this._familiarMorphTimer = setTimeout(() => {
+      stage.classList.remove("is-waving", "is-smiling", "is-ears", "is-steaming");
+    }, 3200);
+  }
+
+  startFamiliarCycle() {
+    if (this.familiarInterval) clearInterval(this.familiarInterval);
+    const playEmotion = () => {
+      if (!this.dockEl || !this.settings.dockCollapsed || document.hidden) return;
+      this.triggerFlaskManifestation();
+    };
+    this.familiarInterval = setInterval(playEmotion, 11000);
+    if (this.dockEl && !this.dockEl.dataset.familiarHoverWired) {
+      this.dockEl.dataset.familiarHoverWired = "1";
+      this.dockEl.addEventListener("mouseenter", () => {
+        if (this.settings.dockCollapsed) playEmotion();
+      });
+    }
+  }
+
+  triggerAlchemicalBloom() {
+    if (!this.dockEl) return;
+    this.dockEl.classList.remove("is-blooming");
+    void this.dockEl.offsetWidth;
+    this.dockEl.classList.add("is-blooming");
+    setTimeout(() => {
+      if (this.dockEl) this.dockEl.classList.remove("is-blooming");
+    }, 550);
+  }
+
+  async setDockPositionMode(posMode) {
+    const isVert = posMode === "right" || posMode === "vertical";
+    this.settings.dockVertical = isVert;
+    this.settings.dockSide = "right";
+    await this.saveSettings();
+    if (this.dockEl) {
+      this.dockEl.classList.remove("is-left");
+      this.dockEl.classList.toggle("is-vertical", isVert);
+      if (this.dockEl.getAnimations) {
+        this.dockEl.getAnimations().forEach((a) => a.cancel());
+      }
+      this.dockEl.style.transform = "";
+    }
+    this.closeAllDockPopovers();
+    this.fitDockToWindow();
   }
 
   async toggleDockOrientation() {
-    this.settings.dockVertical = !this.settings.dockVertical;
-    await this.saveSettings();
-    if (this.dockEl) {
-      this.dockEl.classList.toggle("is-vertical", this.settings.dockVertical);
-    }
+    const nextMode = this.settings.dockVertical ? "bottom" : "right";
+    await this.setDockPositionMode(nextMode);
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const posName = nextMode === "bottom" ? (isRu ? "Снизу" : "Bottom") : (isRu ? "Справа" : "Right");
+    new Notice(isRu ? "Расположение панели: " + posName : "Dock position: " + posName);
   }
 
   async toggleDockCollapse() {
     this.settings.dockCollapsed = !this.settings.dockCollapsed;
     await this.saveSettings();
+    this.closeAllDockPopovers();
+
     if (this.dockEl) {
-      this.dockEl.classList.toggle("is-collapsed", this.settings.dockCollapsed);
+      const isCol = !!this.settings.dockCollapsed;
+      const isVert = !!this.settings.dockVertical;
+
+      if (this.dockEl.getAnimations) {
+        this.dockEl.getAnimations().forEach((a) => a.cancel());
+      }
+      const content = this.dockEl.querySelector(".artcraft-dock-content");
+      if (content && content.children) {
+        Array.from(content.children).forEach((ch) => {
+          if (ch.getAnimations) ch.getAnimations().forEach((a) => a.cancel());
+          ch.style.transform = "";
+          ch.style.opacity = "";
+        });
+      }
+
+      this.dockEl.classList.remove("is-left");
+      this.dockEl.classList.toggle("is-vertical", isVert);
+      this.dockEl.classList.toggle("is-collapsed", isCol);
+      this.dockEl.style.transform = "";
+
+      if (!isCol) {
+        this.triggerAlchemicalBloom();
+        this.fitDockToWindow();
+        if (this.dockEl.animate) {
+          const baseTf = isVert ? "translateY(-50%)" : "translate3d(0, 0, 0)";
+          const startTf = isVert
+            ? "translateY(-50%) translateX(10px) scale(0.92)"
+            : "translate3d(0, 8px, 0) scale(0.92)";
+          this.dockEl.animate(
+            [
+              { opacity: 0.75, transform: startTf },
+              { opacity: 1, transform: baseTf }
+            ],
+            { duration: 180, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+          );
+        }
+      } else {
+        this.triggerFlaskManifestation();
+        if (this.dockEl.animate) {
+          const baseTf = isVert ? "translateY(-50%)" : "translate3d(0, 0, 0)";
+          const startTf = isVert
+            ? "translateY(-50%) scale(0.84)"
+            : "translate3d(0, 4px, 0) scale(0.84)";
+          this.dockEl.animate(
+            [
+              { opacity: 0.8, transform: startTf },
+              { opacity: 1, transform: baseTf }
+            ],
+            { duration: 170, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+          );
+        }
+      }
     }
+    this.fitDockToWindow();
+  }
+
+  // Keeps the horizontal dock inside the window: first it drops button labels, then lets the row scroll.
+  fitDockToWindow() {
+    const dock = this.dockEl;
+    if (!dock) return;
+    dock.classList.remove("is-compact", "is-scrollable");
+    if (dock.classList.contains("is-vertical") || dock.classList.contains("is-collapsed")) return;
+    const room = window.innerWidth - 32;
+    if (dock.offsetWidth <= room) return;
+    dock.classList.add("is-compact");
+    if (dock.offsetWidth > room) dock.classList.add("is-scrollable");
   }
 
   updateDockUI() {
@@ -9218,6 +12196,13 @@ class AlchemyFlowPlugin extends Plugin {
     this.resizeCanvas = resize;
     resize();
     this.registerDomEvent(window, "resize", resize);
+    this.registerDomEvent(window, "resize", () => {
+      if (this.dockFitFrame) return;
+      this.dockFitFrame = requestAnimationFrame(() => {
+        this.dockFitFrame = null;
+        this.fitDockToWindow();
+      });
+    });
 
     let isInteracting = false;
 
@@ -9231,7 +12216,10 @@ class AlchemyFlowPlugin extends Plugin {
 
       if (this.mode === "draw") {
         this.currentStroke = {
-          color: this.settings.strokeColor,
+          color: this.settings.drawColor || this.settings.strokeColor || "#2563EB",
+          size: this.settings.drawSize || 4,
+          opacity: (this.settings.drawOpacity !== undefined ? this.settings.drawOpacity : 90) / 100,
+          style: this.settings.drawStyle || "pen",
           points: [pt],
         };
         this.strokes.push(this.currentStroke);
@@ -9286,10 +12274,11 @@ class AlchemyFlowPlugin extends Plugin {
       this.currentStroke = null;
     };
 
+    // Window-level listeners go through registerDomEvent so they are removed when the plugin is disabled.
     canvas.addEventListener("touchstart", onStart, { passive: false });
-    window.addEventListener("touchmove", onMove, { passive: false });
-    window.addEventListener("touchend", onEnd, { passive: true });
-    window.addEventListener("touchcancel", onEnd, { passive: true });
+    this.registerDomEvent(window, "touchmove", onMove, { passive: false });
+    this.registerDomEvent(window, "touchend", onEnd, { passive: true });
+    this.registerDomEvent(window, "touchcancel", onEnd, { passive: true });
 
     // Forward mouse wheel scrolling through the drawing canvas to the active note scroller!
     canvas.addEventListener(
@@ -9308,24 +12297,56 @@ class AlchemyFlowPlugin extends Plugin {
       { passive: true }
     );
 
-    canvas.addEventListener("mousedown", onStart);
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onEnd);
+    canvas.addEventListener("mousedown", (e) => {
+      if (e.button === 0) onStart(e); // right and middle buttons must not start a stroke
+    });
+    this.registerDomEvent(window, "mousemove", onMove);
+    this.registerDomEvent(window, "mouseup", onEnd);
 
     // Start lightweight 30 FPS loop for mini 62x20 Equalizer & Graph Studio FX only (never touches full-screen 2D canvas!)
     this.startBackgroundVisualLoops();
   }
 
   startBackgroundVisualLoops() {
-    if (this.eqAnimFrame) cancelAnimationFrame(this.eqAnimFrame);
+    this.wakeVisualLoop();
+  }
+
+  hasOpenGraphView() {
+    if (this.settings.enableBentoGraph === false) return false;
+    const ws = this.app.workspace;
+    return ws.getLeavesOfType("graph").length > 0 || ws.getLeavesOfType("localgraph").length > 0;
+  }
+
+  // The loop runs only while the picture can change from frame to frame: live audio, bars still settling,
+  // or an open graph view. Otherwise it parks, and the plugin costs no CPU while you read or write.
+  visualLoopHasWork() {
+    if (this._unloaded || document.hidden) return false;
+    if (this.desktopAudioNodes || this.ambientNodes) return true;
+    if ((this.eqRestFrames || 0) < 45) return true;
+    return this.hasOpenGraphView();
+  }
+
+  wakeVisualLoop() {
+    if (this.eqAnimFrame || this.eqIdleTimer || this._unloaded) return;
     let lastTick = 0;
     const tick = (ts) => {
-      if (!document.hidden && ts - lastTick >= 32) {
+      this.eqAnimFrame = null;
+      if (this._unloaded) return;
+      if (ts - lastTick >= 32) {
         lastTick = ts;
         this.renderEqualizerFrame();
         this.renderGraphStudioFX();
       }
-      this.eqAnimFrame = requestAnimationFrame(tick);
+      if (!this.visualLoopHasWork()) return;
+      if ((this.eqRestFrames || 0) >= 45 && !this.hasOpenGraphView()) {
+        // Capture is on but nothing is playing: listen for sound 5 times a second instead of every frame.
+        this.eqIdleTimer = setTimeout(() => {
+          this.eqIdleTimer = null;
+          if (!this._unloaded) this.eqAnimFrame = requestAnimationFrame(tick);
+        }, 200);
+      } else {
+        this.eqAnimFrame = requestAnimationFrame(tick);
+      }
     };
     this.eqAnimFrame = requestAnimationFrame(tick);
   }
@@ -9340,15 +12361,19 @@ class AlchemyFlowPlugin extends Plugin {
       if (!stroke.points || stroke.points.length === 0) return;
       ctx.save();
       ctx.beginPath();
-      ctx.strokeStyle = stroke.color || "#2563EB";
-      ctx.lineWidth = 4;
-      ctx.lineCap = "round";
+      const sColor = stroke.color || this.settings.drawColor || "#2563EB";
+      const sWidth = stroke.size || this.settings.drawSize || 4;
+      const sStyle = stroke.style || "pen";
+      const sAlpha = stroke.opacity !== undefined ? stroke.opacity : (sStyle === "highlighter" ? 0.38 : 0.9);
+      ctx.strokeStyle = sColor;
+      ctx.lineWidth = sWidth;
+      ctx.lineCap = sStyle === "highlighter" ? "square" : "round";
       ctx.lineJoin = "round";
-      ctx.globalAlpha = 0.88;
+      ctx.globalAlpha = sAlpha;
 
       if (stroke.points.length === 1) {
-        ctx.arc(stroke.points[0].x, stroke.points[0].y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = stroke.color || "#2563EB";
+        ctx.arc(stroke.points[0].x, stroke.points[0].y, Math.max(1.5, sWidth / 2), 0, Math.PI * 2);
+        ctx.fillStyle = sColor;
         ctx.fill();
       } else {
         ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
@@ -9362,28 +12387,41 @@ class AlchemyFlowPlugin extends Plugin {
 
     // 2. Render glowing laser trail
     const now = Date.now();
-    this.laserTrail = this.laserTrail.filter((p) => now - p.t < 650);
+    const trailMaxMs = this.settings.laserTrailMs || 450;
+    const laserCol = this.settings.laserColor || this.settings.strokeColor || "#EF4444";
+    const laserBaseSize = this.settings.laserSize || 6;
+    this.laserTrail = this.laserTrail.filter((p) => now - p.t < trailMaxMs);
     if (this.laserTrail.length > 1) {
       ctx.save();
       for (let i = 1; i < this.laserTrail.length; i++) {
         const p0 = this.laserTrail[i - 1];
         const p1 = this.laserTrail[i];
-        const age = (now - p1.t) / 650;
+        const age = (now - p1.t) / trailMaxMs;
         const alpha = Math.max(0, 1 - age);
         ctx.beginPath();
-        ctx.strokeStyle = this.settings.strokeColor;
-        ctx.lineWidth = 6 * alpha + 1;
+        ctx.strokeStyle = laserCol;
+        ctx.lineWidth = laserBaseSize * alpha + 1;
         ctx.lineCap = "round";
-        ctx.globalAlpha = alpha;
+        ctx.globalAlpha = alpha * 0.9;
         ctx.moveTo(p0.x, p0.y);
         ctx.lineTo(p1.x, p1.y);
         ctx.stroke();
       }
       const head = this.laserTrail[this.laserTrail.length - 1];
       ctx.beginPath();
-      ctx.fillStyle = this.settings.strokeColor;
-      ctx.globalAlpha = 0.95;
-      ctx.arc(head.x, head.y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = laserCol;
+      ctx.globalAlpha = 0.28;
+      ctx.arc(head.x, head.y, laserBaseSize * 1.9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.fillStyle = laserCol;
+      ctx.globalAlpha = 0.96;
+      ctx.arc(head.x, head.y, laserBaseSize, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.fillStyle = "#FFFFFF";
+      ctx.globalAlpha = 0.92;
+      ctx.arc(head.x, head.y, Math.max(1.5, laserBaseSize * 0.38), 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -9452,94 +12490,134 @@ class AlchemyFlowPlugin extends Plugin {
     return hasActiveAnimation;
   }
 
+  // Folds the live spectrum into 16 log-spaced bands (40 Hz to 16 kHz, half an octave each), so bass,
+  // voice and highs get comparable room on the meter. Returns null while the source is silent.
+  readSpectrumBands(analyser) {
+    if (!analyser) return null;
+    if (analyser.fftSize !== 2048) {
+      try {
+        analyser.fftSize = 2048;
+      } catch (e) {}
+    }
+    const binCount = analyser.frequencyBinCount;
+    if (!this.eqFreqBuf || this.eqFreqBuf.length !== binCount) this.eqFreqBuf = new Uint8Array(binCount);
+    const data = this.eqFreqBuf;
+    analyser.getByteFrequencyData(data);
+
+    const hzPerBin = analyser.context.sampleRate / analyser.fftSize;
+    if (!this.eqBands) this.eqBands = new Float32Array(16);
+    const bands = this.eqBands;
+    const F_MIN = 40;
+    const RATIO = 16000 / F_MIN;
+    let frameMax = 0;
+    for (let i = 0; i < 16; i++) {
+      const lo = (F_MIN * Math.pow(RATIO, i / 16)) / hzPerBin;
+      const hi = (F_MIN * Math.pow(RATIO, (i + 1) / 16)) / hzPerBin;
+      const b0 = Math.max(1, Math.floor(lo));
+      const b1 = Math.min(binCount - 1, Math.max(b0, Math.ceil(hi) - 1));
+      let peak = 0;
+      for (let b = b0; b <= b1; b++) {
+        if (data[b] > peak) peak = data[b];
+      }
+      // Music loses energy towards the highs; a gentle tilt keeps the right half of the meter alive.
+      const v = (peak / 255) * (1 + i * 0.035);
+      bands[i] = v;
+      if (v > frameMax) frameMax = v;
+    }
+    if (frameMax < 0.007) {
+      this.eqAgcPeak = (this.eqAgcPeak || 0) * 0.98;
+      return null;
+    }
+    // Slow auto-gain: a quiet player still fills the meter, a loud one is left alone, noise floor is not inflated.
+    this.eqAgcPeak = Math.max(frameMax, (this.eqAgcPeak || 0) * 0.995);
+    const gain = this.eqAgcPeak > 0.12 ? Math.min(4, Math.max(1, 0.92 / this.eqAgcPeak)) : 1;
+    if (gain > 1.02) {
+      for (let i = 0; i < 16; i++) bands[i] = Math.min(1, bands[i] * gain);
+    }
+    return bands;
+  }
+
+  // Beat = onset of bass energy. Measured as spectral flux: how much the four bass bands (40 to 180 Hz)
+  // grew since the previous frame, compared with the recent average growth. Flux catches a kick drum even
+  // when it sweeps across bands, where a plain level threshold would miss it.
+  trackBeat(bands) {
+    const prev = this.beatPrevBands || (this.beatPrevBands = new Float32Array(4));
+    let flux = 0;
+    let level = 0;
+    for (let i = 0; i < 4; i++) {
+      const v = bands ? bands[i] : 0;
+      if (v > prev[i]) flux += v - prev[i];
+      if (v > level) level = v;
+      prev[i] = v;
+    }
+    const avg = this.beatFluxAvg || 0;
+    const now = performance.now();
+    if (level > 0.35 && flux > 0.14 && flux > avg * 1.7 && now - (this.beatLastTs || 0) > 230) {
+      this.beatLastTs = now;
+      this.beatCount = (this.beatCount || 0) + 1;
+      this.onAudioBeat(Math.min(1, 0.4 + flux * 0.6));
+    }
+    this.beatFluxAvg = avg + (flux - avg) * 0.1;
+  }
+
+  onAudioBeat(strength) {
+    // Both reactions animate opacity/transform only, so they run on the compositor and never repaint the page.
+    const dot = this.eqWrap && this.eqWrap.querySelector(".artcraft-eq-status-dot");
+    if (dot && dot.animate) {
+      dot.animate(
+        [
+          { transform: "scale(" + (1 + 0.9 * strength).toFixed(2) + ")", opacity: 1 },
+          { transform: "scale(1)", opacity: 0.8 },
+        ],
+        { duration: 260, easing: "ease-out" }
+      );
+    }
+    if (this.settings.lampBeatSync && this.settings.magicLamp && this.lampWrapEl && this.lampWrapEl.animate) {
+      this.lampWrapEl.animate([{ opacity: 1 - 0.2 * strength }, { opacity: 1 }], { duration: 340, easing: "ease-out" });
+    }
+  }
+
   renderEqualizerFrame() {
-    if (!this.eqCanvas) return;
+    if (!this.eqCanvas) {
+      this.eqRestFrames = 999;
+      return;
+    }
     const eqCtx = this.eqCanvas.getContext("2d");
     // Logical drawing space is always 62x20; canvas backing store is 2x for crisp lines on HiDPI
     const ew = 62;
     const eh = 20;
     const eqScale = this.eqCanvas.width / ew;
-    eqCtx.setTransform(eqScale, 0, 0, eqScale, 0, 0);
-    eqCtx.clearRect(0, 0, ew, eh);
+    const mode = this.settings.eqMode || "craft";
+    const colors = ["#69BD28", "#D97706", "#F4F3EF", "#10B981", "#2563EB", "#F59E0B", "#EAB308", "#A7F3D0"];
 
-    const activeAnalyser =
-      (this.desktopAudioNodes && this.desktopAudioNodes.analyser) ||
-      (this.ambientNodes && this.ambientNodes.analyser) ||
-      null;
-
-    let freqData = null;
-    let hasSound = false;
-
-    if (activeAnalyser) {
-      freqData = new Uint8Array(activeAnalyser.frequencyBinCount);
-      activeAnalyser.getByteFrequencyData(freqData);
-
-      // Smart auto-gain: quiet sources (USB headset at low Windows volume, WASAPI loopback) are boosted up to 14x
-      const isLiveInput = !!(this.desktopAudioNodes && this.desktopAudioNodes.analyser === activeAnalyser);
-      let frameMax = 0;
-      for (let j = 0; j < freqData.length; j++) {
-        if (freqData[j] > frameMax) frameMax = freqData[j];
+    this.connectPageMediaElementsToAnalyser();
+    const sysBands = this.desktopAudioNodes && this.desktopAudioNodes.analyser
+      ? this.readSpectrumBands(this.desktopAudioNodes.analyser)
+      : null;
+    const ambBands = this.ambientNodes && this.ambientNodes.analyser
+      ? this.readSpectrumBands(this.ambientNodes.analyser)
+      : null;
+    const pageBands = !sysBands && this._pageMediaAnalyser
+      ? this.readSpectrumBands(this._pageMediaAnalyser)
+      : null;
+    let bands = sysBands || ambBands || pageBands;
+    if (sysBands && ambBands) {
+      if (!this._mixedBands) this._mixedBands = new Float32Array(16);
+      for (let bIdx = 0; bIdx < 16; bIdx++) {
+        this._mixedBands[bIdx] = Math.min(1, Math.max(sysBands[bIdx], ambBands[bIdx] * 0.85));
       }
-      if (isLiveInput) {
-        this.eqAgcPeak = Math.max(frameMax, (this.eqAgcPeak || 0) * 0.994);
-        const agc = this.eqAgcPeak > 2 ? Math.max(1, Math.min(14, 200 / this.eqAgcPeak)) : 1;
-        if (agc > 1.05) {
-          for (let j = 0; j < freqData.length; j++) {
-            freqData[j] = Math.min(255, Math.round(freqData[j] * agc));
-          }
-        }
-      } else {
-        this.eqAgcPeak = 0;
-      }
-
-      for (let j = 0; j < freqData.length; j++) {
-        if (freqData[j] > 4) {
-          hasSound = true;
-          break;
-        }
-      }
+      bands = this._mixedBands;
     }
-
-    // If WebAudio stream is silent or unavailable on Windows, synthesize 16-band spectrum from live Windows CoreAudio WASAPI Loopback peaks!
-    if (!hasSound && this.wasapiLoopbackLevels && this.wasapiLoopbackLevels.active && Date.now() - (this.wasapiLoopbackLevels.ts || 0) < 400) {
-      const pk = Math.min(1, this.wasapiLoopbackLevels.peak * 1.65);
-      const lCh = Math.min(1, this.wasapiLoopbackLevels.left * 1.65);
-      const rCh = Math.min(1, this.wasapiLoopbackLevels.right * 1.65);
-      if (pk > 0.004) {
-        hasSound = true;
-        if (!freqData) freqData = new Uint8Array(128);
-        const tNow = performance.now() * 0.008;
-        for (let b = 0; b < freqData.length; b++) {
-          const norm = b / freqData.length;
-          const stereoMix = b % 2 === 0 ? lCh : rCh;
-          const bandContour = Math.exp(-Math.pow((norm - 0.22) * 2.4, 2)) * 0.75 + Math.exp(-Math.pow((norm - 0.58) * 3.2, 2)) * 0.45;
-          const dyn = 0.72 + 0.28 * Math.sin(tNow * (2.2 + (b % 7) * 0.45) + b * 0.7);
-          freqData[b] = Math.min(255, Math.round((pk * 0.55 + stereoMix * 0.45) * bandContour * dyn * 255));
-        }
-      }
-    }
+    const hasSound = !!bands;
 
     if (!this.eqPeaks) this.eqPeaks = new Array(16).fill(2);
     if (!this.eqSmooth) this.eqSmooth = new Array(16).fill(2);
     if (!this.eqPhase) this.eqPhase = 0;
 
-    const mode = this.settings.eqMode || "craft";
-    const colors = ["#69BD28", "#D97706", "#F4F3EF", "#10B981", "#2563EB", "#F59E0B", "#EAB308", "#A7F3D0"];
-
-    // Compute 16 logarithmic frequency bands with smooth spring attack & gravity decay
+    // Fast attack, steady gravity release, slowly falling peak caps
     let totalEnergy = 0;
     for (let i = 0; i < 16; i++) {
-      let targetH = 2;
-      if (hasSound && freqData) {
-        const binStart = Math.floor(Math.pow(i / 16, 1.55) * (freqData.length * 0.72));
-        const binEnd = Math.max(binStart + 1, Math.floor(Math.pow((i + 1) / 16, 1.55) * (freqData.length * 0.72)));
-        let maxVal = 0;
-        for (let b = binStart; b <= binEnd && b < freqData.length; b++) {
-          if (freqData[b] > maxVal) maxVal = freqData[b];
-        }
-        const boost = 1.15 + (i / 16) * 0.65;
-        targetH = Math.max(2, Math.min(eh - 2, ((maxVal * boost) / 255) * (eh - 2)));
-      }
+      const targetH = hasSound ? Math.max(2, Math.min(eh - 2, bands[i] * (eh - 2))) : 2;
       if (targetH > this.eqSmooth[i]) {
         this.eqSmooth[i] += (targetH - this.eqSmooth[i]) * 0.62;
       } else {
@@ -9552,6 +12630,24 @@ class AlchemyFlowPlugin extends Plugin {
       }
       totalEnergy += this.eqSmooth[i] - 2;
     }
+    this.trackBeat(bands);
+
+    // Silent and fully settled: the picture cannot change, so the redraw (and the repaint it causes) is skipped.
+    const restKey = mode + ":" + this.eqCanvas.width;
+    if (!hasSound && totalEnergy < 0.3) {
+      this.eqRestFrames = (this.eqRestFrames || 0) + 1;
+      if (this.eqRestFrames > 45 && this.eqRestKey === restKey && this.eqRestCanvas === this.eqCanvas) return;
+      if (this.eqRestFrames > 45) {
+        this.eqRestKey = restKey;
+        this.eqRestCanvas = this.eqCanvas;
+      }
+    } else {
+      this.eqRestFrames = 0;
+      this.eqRestKey = null;
+    }
+
+    eqCtx.setTransform(eqScale, 0, 0, eqScale, 0, 0);
+    eqCtx.clearRect(0, 0, ew, eh);
 
     // Advance phase ONLY when real audio energy is present (never move on its own in silence!)
     if (hasSound || totalEnergy > 1.5) {
@@ -9846,7 +12942,7 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
 
-  // --- ⛓️ NEW MODULE 1: LIFE RPG & SHA-256 BLOCKCHAIN QUEST CHAIN (DEEP WORK & VALUE EQUATION) ---
+  // --- NEW MODULE 1: LIFE RPG & SHA-256 BLOCKCHAIN QUEST CHAIN (DEEP WORK & VALUE EQUATION) ---
   async computeSha256Hex(message) {
     try {
       if (window.crypto && window.crypto.subtle) {
@@ -9870,7 +12966,15 @@ class AlchemyFlowPlugin extends Plugin {
     return (base + base + base + base).slice(0, 64);
   }
 
-  async mineQuestBlock(questTitle, xpReward = 35, notify = true) {
+  // Blocks are added one at a time. Two tasks ticked in quick succession used to read the same
+  // "previous block" and produce two blocks with one index, which broke verification.
+  mineQuestBlock(questTitle, xpReward = 35, notify = true) {
+    const run = () => this.mineQuestBlockNow(questTitle, xpReward, notify);
+    this.mineQueue = (this.mineQueue || Promise.resolve()).then(run, run);
+    return this.mineQueue;
+  }
+
+  async mineQuestBlockNow(questTitle, xpReward = 35, notify = true) {
     if (!this.settings.questBlockchain || !Array.isArray(this.settings.questBlockchain) || this.settings.questBlockchain.length === 0) {
       this.settings.questBlockchain = [
         {
@@ -9895,14 +12999,16 @@ class AlchemyFlowPlugin extends Plugin {
     const obsidian = require("obsidian");
     const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
     const notePath = activeView && activeView.file ? activeView.file.path : "Life RPG Studio";
-    const index = chain.length;
+    const index = (Number(prevBlock.index) || 0) + 1; // the list is capped at 250 entries, so its length is not the index
     const timestamp = new Date().toISOString();
     const prevHash = prevBlock.hash;
 
     // Mine a lightweight Proof-of-Work nonce (finds hash starting with "00" within up to 300 iterations for instant UX)
     let nonce = 0;
     let hash = "";
-    for (let n = 0; n < 320; n++) {
+    // A hash starting with "00" takes 256 tries on average. The old limit of 320 gave up about 29% of
+    // the time and stored a block that did not meet its own rule.
+    for (let n = 0; n < 6000; n++) {
       nonce = n;
       const payload = `${index}|${timestamp}|${questTitle}|${notePath}|${xpReward}|${prevHash}|${nonce}`;
       hash = await this.computeSha256Hex(payload);
@@ -9936,8 +13042,8 @@ class AlchemyFlowPlugin extends Plugin {
       const isRu = (this.settings.uiLanguage || "en") === "ru";
       new Notice(
         isRu
-          ? `⛓️ Блок #${index} подписан в цепочке квестов! +${xpReward} XP • SHA-256: ${hash.slice(0, 10)}…`
-          : `⛓️ Block #${index} mined in Quest Chain! +${xpReward} XP • SHA-256: ${hash.slice(0, 10)}…`
+          ? `Блок #${index} подписан в цепочке квестов! +${xpReward} XP • SHA-256: ${hash.slice(0, 10)}…`
+          : `Block #${index} mined in Quest Chain! +${xpReward} XP • SHA-256: ${hash.slice(0, 10)}…`
       );
     }
     return newBlock;
@@ -9945,13 +13051,16 @@ class AlchemyFlowPlugin extends Plugin {
 
   async verifyQuestBlockchain() {
     const chain = this.settings.questBlockchain || [];
-    if (chain.length <= 1) return { valid: true, blocks: chain.length };
-    for (let i = 1; i < chain.length; i++) {
+    if (chain.length === 0) return { valid: true, blocks: 0 };
+    for (let i = 0; i < chain.length; i++) {
       const cur = chain[i];
-      const prev = chain[i - 1];
-      if (cur.prevHash !== prev.hash) {
+      // every block must link to the one before it
+      if (i > 0 && cur.prevHash !== chain[i - 1].hash) {
         return { valid: false, brokenAt: i };
       }
+      // the fixed starting block (index 0) carries a placeholder hash; every other block, including the
+      // first one left after the list was trimmed, must reproduce its own hash
+      if (Number(cur.index) === 0) continue;
       const payload = `${cur.index}|${cur.timestamp}|${cur.quest}|${cur.notePath}|${cur.xp}|${cur.prevHash}|${cur.nonce}`;
       const recomputed = await this.computeSha256Hex(payload);
       if (recomputed !== cur.hash) {
@@ -10129,11 +13238,11 @@ class AlchemyFlowPlugin extends Plugin {
     return `${selector}${cleanHash}${blkHex}${xpHex}${lvlHex}${offsetHex}${lenHex}${dataHex}`;
   }
 
-  // 60-Second Free Pro Test-Drive ("Try Before You Buy" Dopamine Trigger)
+  // 60-Second Free Pro Test-Drive
   async startProTestDrive60s() {
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     if (this.settings.isPro && !this.proTestDriveActive) {
-      new Notice(isRu ? "💎 У вас уже активирован полный статус Alchemy Craft Pro!" : "💎 You already have full Alchemy Craft Pro unlocked!");
+      new Notice(isRu ? "У вас уже активирован полный статус Alchemy Craft Pro!" : "You already have full Alchemy Craft Pro unlocked!");
       return;
     }
     if (this.proTestDriveTimer) {
@@ -10143,6 +13252,7 @@ class AlchemyFlowPlugin extends Plugin {
     this.proTestDriveActive = true;
     const prevPro = this.settings.isPro;
     const prevDark = this.settings.darkCraftTheme;
+    this.proTestDrivePrev = { isPro: prevPro, darkCraftTheme: prevDark };
     this.settings.isPro = true;
     // this.settings.darkCraftTheme = false; (dark mode removed from test drive)
     this.applyBodyClasses();
@@ -10195,8 +13305,8 @@ class AlchemyFlowPlugin extends Plugin {
         if (showEndNotice) {
           new Notice(
             isRu
-              ? "✨ 60-секундный тест-драйв завершён. Понравились звуки и расширенная палитра? Откройте Pro навсегда!"
-              : "✨ 60-second Pro Test-Drive finished. Loved the soundscapes & palette? Unlock Pro anytime!"
+              ? "60-секундный тест-драйв завершён. Понравились звуки и расширенная палитра? Откройте Pro навсегда!"
+              : "60-second Pro Test-Drive finished. Loved the soundscapes & palette? Unlock Pro anytime!"
           );
         }
       }
@@ -10221,7 +13331,7 @@ class AlchemyFlowPlugin extends Plugin {
       const hh = String(now.getHours()).padStart(2, "0");
       const mm = String(now.getMinutes()).padStart(2, "0");
       const curHm = `${hh}:${mm}`;
-      const todayKey = `${now.toISOString().slice(0, 10)}_${curHm}`;
+      const todayKey = `${localDayKey(now)}_${curHm}`;
       const times = this.settings.autopilotAlarms.times || ["11:00", "13:30", "15:15", "17:00", "19:30"];
       if (times.includes(curHm) && this.settings.autopilotAlarms.lastTriggeredKey !== todayKey) {
         this.settings.autopilotAlarms.lastTriggeredKey = todayKey;
@@ -10259,7 +13369,18 @@ class AlchemyFlowPlugin extends Plugin {
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    // Defaults are cloned so nested objects (quest chain, alarms, analytics) are never shared with the
+    // constant, and a nested default added in a newer version reaches users who already have that object.
+    const defaults = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    const saved = (await this.loadData()) || {};
+    this.settings = Object.assign({}, defaults, saved);
+    Object.keys(defaults).forEach((key) => {
+      const d = defaults[key];
+      const s = saved[key];
+      if (d && typeof d === "object" && !Array.isArray(d) && s && typeof s === "object" && !Array.isArray(s)) {
+        this.settings[key] = Object.assign({}, d, s);
+      }
+    });
     // Auto-detect Obsidian language if not explicitly chosen or if set to legacy auto
     if (!this.settings.uiLanguage || this.settings.uiLanguage === "auto" || !SUPPORTED_LANGS.includes(this.settings.uiLanguage)) {
       try {
@@ -10288,7 +13409,475 @@ class AlchemyFlowPlugin extends Plugin {
     this.settings.marginSandglass = false;
   }
 
+  updateCurrentLeafKin() {
+    this.updateTaskProgressBar();
+  }
+
+  triggerZenCameraTransition(enterZen) {
+    this.zenMode = !!enterZen;
+    if (this.zenAtmosphereEl) {
+      this.zenAtmosphereEl.remove();
+      this.zenAtmosphereEl = null;
+    }
+
+    if (this.zenMode) {
+      if (this.app.workspace.leftSplit && !this.app.workspace.leftSplit.collapsed) {
+        this._zenRestoredLeft = true;
+        this.app.workspace.leftSplit.collapse();
+      }
+      if (this.app.workspace.rightSplit && !this.app.workspace.rightSplit.collapsed) {
+        this._zenRestoredRight = true;
+        this.app.workspace.rightSplit.collapse();
+      }
+    } else {
+      if (this._zenRestoredLeft && this.app.workspace.leftSplit) {
+        this.app.workspace.leftSplit.expand();
+        this._zenRestoredLeft = false;
+      }
+      if (this._zenRestoredRight && this.app.workspace.rightSplit) {
+        this.app.workspace.rightSplit.expand();
+        this._zenRestoredRight = false;
+      }
+    }
+
+    this.applyBodyClasses();
+    this.updateDockUI();
+  }
+
+  attachPopoverTactilePhysics(popEl, anchorBtn) {
+    // Lightweight no-op: unified GPU popover animation is handled by positionDockPopover
+  }
+
+  initBookFolio3DPhysics() {
+    // Lightweight no-op: eliminates continuous scroll/pointermove :root CSS variable thrashing
+  }
+
+  destroyBookFolio3DPhysics() {
+    ["--book-curl-rot-y", "--book-curl-rot-x", "--book-curl-lift", "--book-parallax-x", "--book-parallax-y"].forEach((p) =>
+      document.documentElement.style.removeProperty(p)
+    );
+  }
+
+  // =========================================================================
+  // INTERACTIVE PRO & STUDIO CONTROL HUB (Click-to-Toggle & Select Every Feature)
+  // =========================================================================
+  renderProFeaturesControlHub(parentEl, onStateChanged = null) {
+    if (!parentEl) return;
+    parentEl.empty();
+    const isRu = (this.settings.uiLanguage || "en") === "ru";
+    const notifyChange = async (msgRu, msgEn) => {
+      await this.saveSettings();
+      this.applyBodyClasses();
+      this.updateDockUI();
+      this.updateEqualizerPillUI();
+      if (typeof onStateChanged === "function") onStateChanged();
+      if (msgRu || msgEn) new Notice(isRu ? msgRu : msgEn, 1800);
+    };
+
+    const wrap = parentEl.createDiv({ cls: "artcraft-pro-hub-wrap" });
+
+    // Top Status & Quick Action Bar
+    const topBar = wrap.createDiv({ cls: "artcraft-pro-hub-topbar" });
+    topBar.innerHTML = `
+      <div class="pro-hub-top-left">
+        <span class="pro-hub-badge">${PRO_VERIFIED_BADGE_SVG} <span>${
+      this.settings.isPro
+        ? isRu ? "PRO STUDIO АКТИВЕН" : "PRO STUDIO ACTIVE"
+        : isRu ? "ЦЕНТР УПРАВЛЕНИЯ ФУНКЦИЯМИ PRO" : "PRO FEATURES CONTROL HUB"
+    }</span></span>
+        <p class="pro-hub-sub">${
+          isRu
+            ? "Включайте, выключайте и настраивайте каждую функцию плагина прямо из одного окна."
+            : "Toggle, configure, and launch every Pro & Studio feature directly from one unified hub."
+        }</p>
+      </div>
+      <div class="pro-hub-top-actions">
+        <button class="artcraft-pay-action-btn is-soft" data-hub-act="test-flask">
+          <span class="svg-inline-icon">${ALCHEMY_ICON_SVG}</span>
+          <span>${isRu ? "Тест анимации колбы" : "Test Flask Magic"}</span>
+        </button>
+        <button class="artcraft-pay-action-btn is-green" data-hub-act="open-sonic">
+          <span class="svg-inline-icon">${SICRAFT_SVGS.sliders}</span>
+          <span>${isRu ? "Аудио-Студия" : "Sonic Studio"}</span>
+        </button>
+      </div>
+    `;
+
+    topBar.querySelector('[data-hub-act="test-flask"]')?.addEventListener("click", () => {
+      if (!this.settings.dockCollapsed) {
+        this.toggleDockCollapse();
+      } else {
+        this.triggerFlaskManifestation();
+      }
+      new Notice(isRu ? "Запущена процедурная анимация колбы-эликсира!" : "Triggered Alchemical Flask manifestation!");
+    });
+    topBar.querySelector('[data-hub-act="open-sonic"]')?.addEventListener("click", () => {
+      this.openSonicStudioModal();
+    });
+
+    const grid = wrap.createDiv({ cls: "artcraft-pro-hub-grid" });
+
+    const addHubCard = (iconSvg, titleRu, titleEn, descRu, descEn, controlsBuilder) => {
+      const card = grid.createDiv({ cls: "artcraft-pro-hub-card" });
+      const head = card.createDiv({ cls: "pro-hub-card-head" });
+      head.innerHTML = `
+        <span class="pro-hub-card-icon">${iconSvg}</span>
+        <div class="pro-hub-card-titles">
+          <h4>${isRu ? titleRu : titleEn}</h4>
+          <p>${isRu ? descRu : descEn}</p>
+        </div>
+      `;
+      const body = card.createDiv({ cls: "pro-hub-card-controls" });
+      controlsBuilder(body);
+    };
+
+    const makeToggleRow = (container, labelRu, labelEn, isChecked, onChange) => {
+      const row = container.createDiv({ cls: "pro-hub-ctrl-row" });
+      const lbl = row.createEl("span", { cls: "pro-hub-ctrl-lbl", text: isRu ? labelRu : labelEn });
+      const toggle = row.createEl("input", { type: "checkbox", cls: "pro-hub-checkbox" });
+      toggle.checked = !!isChecked;
+      toggle.onchange = () => onChange(toggle.checked);
+      return row;
+    };
+
+    const makeSelectRow = (container, labelRu, labelEn, options, curVal, onChange) => {
+      const row = container.createDiv({ cls: "pro-hub-ctrl-row" });
+      row.createEl("span", { cls: "pro-hub-ctrl-lbl", text: isRu ? labelRu : labelEn });
+      const sel = row.createEl("select", { cls: "pro-hub-select" });
+      options.forEach((opt) => {
+        const o = sel.createEl("option", { value: opt.value, text: isRu ? opt.ru : opt.en });
+        if (opt.value === curVal) o.selected = true;
+      });
+      sel.onchange = () => onChange(sel.value);
+      return row;
+    };
+
+    // CARD 1: 3D Book Folio, Midnight Craft & Page Surface
+    addHubCard(
+      SICRAFT_SVGS.book,
+      "1. Книжная студия 3D и Midnight Craft",
+      "1. 3D Book Folio & Midnight Craft",
+      "Переплёт из 14 страниц с физическим изгибом при скролле, ночная тема и дыхание корешка.",
+      "14-sheet hardcover book folio with scroll page curl, Midnight Craft dark mode & breathing spine.",
+      (body) => {
+        makeToggleRow(body, "Журнальная тема Alchemy Craft", "Alchemy Craft Editorial Theme", this.settings.artcraftTheme, async (v) => {
+          this.settings.artcraftTheme = v;
+          await notifyChange("Тема обновлена", "Theme updated");
+        });
+        makeToggleRow(body, "Тёмная страница Midnight Craft", "Midnight Craft Dark Page", this.settings.darkCraftTheme, async (v) => {
+          this.settings.darkCraftTheme = v;
+          this.settings.surfaceMode = v ? "dark" : "warm";
+          await notifyChange("Режим Midnight Craft обновлён", "Midnight Craft mode updated");
+        });
+        makeToggleRow(body, "3D-Книжный разворот и изгиб листа", "3D Book Spread & Page Curl", this.settings.bookSpreadMode, async (v) => {
+          this.settings.bookSpreadMode = v;
+          await notifyChange("3D-переплёт книги обновлён", "3D Book Folio updated");
+        });
+        makeToggleRow(body, "Дыхание корешка 6 BPM", "6-BPM Breathing Book Spine", this.settings.breathingSpine, async (v) => {
+          this.settings.breathingSpine = v;
+          await notifyChange("Дыхательный ритм обновлён", "Breathing spine updated");
+        });
+      }
+    );
+
+    // CARD 2: Alchemical Flask, Familiar & Directional Dock
+    addHubCard(
+      ALCHEMY_ICON_SVG,
+      "2. Живая Колба-Эликсир и Позиция Панели",
+      "2. Living Elixir Flask & Dock Kinematics",
+      "Направленная анимация вылета из колбы (снизу, слева, справа) и 5 воплощений Фамильяра.",
+      "Directional wind-arc kinematics (bottom, left, right) & 5 articulated Familiar manifestations.",
+      (body) => {
+        const curPos = !this.settings.dockVertical ? "bottom" : this.settings.dockSide === "left" ? "left" : "right";
+        makeSelectRow(
+          body,
+          "Позиция панели и колбы",
+          "Dock & Flask Position",
+          [
+            { value: "bottom", ru: "Снизу (вылет вверх и вправо)", en: "Bottom (upward arc)" },
+            { value: "left", ru: "Слева сбоку (вылет вправо из колбы)", en: "Left Side (rightward arc)" },
+            { value: "right", ru: "Справа сбоку (вылет влево из колбы)", en: "Right Side (leftward arc)" },
+          ],
+          curPos,
+          async (val) => {
+            await this.setDockPositionMode(val);
+            await notifyChange("Позиция колбы изменена", "Dock position updated");
+          }
+        );
+        makeSelectRow(
+          body,
+          "Воплощение из горлышка колбы",
+          "Flask Familiar Manifestation",
+          [
+            { value: "auto", ru: "✨ Авто-смена всех 5 сцен", en: "✨ Auto-cycle all 5 scenes" },
+            { value: "paw", ru: "🐾 Лапка с коготками и золотым клубком", en: "🐾 Cat Paw, Claws & Golden Orb" },
+            { value: "smile", ru: "😺 Дух Чешира со следящими глазами", en: "😺 Cheshire Spirit & Tracking Eyes" },
+            { value: "ears", ru: "🦊 Чувствительные ушки-локаторы", en: "🦊 Audio-Reactive Ears & Halo" },
+            { value: "astrolabe", ru: "🧭 3D Алхимическая Астролябия", en: "🧭 3D Alchemical Astrolabe" },
+            { value: "phoenix", ru: "🦋 Эфирный дух-феникс", en: "🦋 Ether Phoenix Sprite" },
+          ],
+          this.settings.familiarAnimationMode || "auto",
+          async (val) => {
+            this.settings.familiarAnimationMode = val;
+            await this.saveSettings();
+            if (this.settings.dockCollapsed) this.triggerFlaskManifestation(val === "auto" ? null : val);
+            new Notice(isRu ? "Сцена Фамильяра выбрана!" : "Familiar manifestation selected!");
+          }
+        );
+        makeToggleRow(body, "Связанные карточки на ветру внизу заметки", "Wind-Tethered Related Cards Footer", this.settings.windChainFooter !== false, async (v) => {
+          this.settings.windChainFooter = v;
+          await this.saveSettings();
+          this.updateCurrentLeafKin();
+        });
+      }
+    );
+
+    // CARD 3: PC Audio Loopback Equalizer & Soundscapes
+    addHubCard(
+      SICRAFT_SVGS.sliders,
+      "3. Эквалайзер Звука ПК и Фоновые Шумы",
+      "3. PC Audio Equalizer & Soundscapes",
+      "Живой спектр системного звука компьютера (WASAPI / Loopback), Dynamic Island и 16 звуков фокуса.",
+      "Real-time PC system audio loopback spectrum, Dynamic Island & 16 stereo soundscapes.",
+      (body) => {
+        makeToggleRow(body, "Показывать эквалайзер в панели", "Show Equalizer in Dock", this.settings.showEqualizer !== false, async (v) => {
+          this.settings.showEqualizer = v;
+          await this.saveSettings();
+          this.createFloatingDock();
+        });
+        makeToggleRow(
+          body,
+          "Синхронизация со звуком ПК (Loopback)",
+          "Sync with PC System Audio (Loopback)",
+          !!this.desktopAudioNodes,
+          async (v) => {
+            if (v) await this.startSystemAudioCapture(false);
+            else this.stopAudioCapture(false);
+            if (typeof onStateChanged === "function") onStateChanged();
+          }
+        );
+        makeSelectRow(
+          body,
+          "Визуальный режим эквалайзера",
+          "Equalizer Visual Mode",
+          [
+            { value: "craft", ru: "01 // Крафтовый Сейсмограф", en: "01 // Craft Ink Seismograph" },
+            { value: "dna", ru: "02 // Квантовая Матрица", en: "02 // Quantum Matrix" },
+            { value: "bars", ru: "03 // Ризограф и Штампы", en: "03 // Craft Risograph Stamps" },
+            { value: "wave", ru: "04 // Чернильная Лента", en: "04 // Botanical Ink Ribbon" },
+            { value: "orb", ru: "05 // Бумажное Оригами", en: "05 // Origami Topography" },
+            { value: "ferro", ru: "06 // Струны Архитектора", en: "06 // Harmonic Strings" },
+          ],
+          this.settings.eqMode || "craft",
+          async (val) => {
+            this.settings.eqMode = val;
+            await notifyChange("Режим эквалайзера обновлён", "Equalizer style updated");
+          }
+        );
+        makeSelectRow(
+          body,
+          "Фоновый звук фокуса",
+          "Background Soundscape",
+          [{ value: "off", ru: "Выкл (Off)", en: "Off" }].concat(
+            AMBIENT_SOUNDSCAPES.map((s) => ({ value: s.id, ru: s.ru, en: s.en }))
+          ),
+          this.settings.ambientSound || "off",
+          async (val) => {
+            await this.setAmbientSound(val);
+          }
+        );
+      }
+    );
+
+    // CARD 4: Extended Knowledge Graph Studio
+    addHubCard(
+      SICRAFT_SVGS.graph,
+      "4. Живой Граф Знаний (Extended Graph)",
+      "4. Extended Knowledge Graph Studio",
+      "Прямая раскраска узлов в памяти рендерера Obsidian, тепловая карта хабов и фильтрация.",
+      "Direct PixiJS/WebGL node coloring, BFS folder propagation, hub heatmaps & focus isolation.",
+      (body) => {
+        makeToggleRow(body, "Включить студию графа Alchemy Craft", "Enable Alchemy Graph Studio", this.settings.enableBentoGraph !== false, async (v) => {
+          this.settings.enableBentoGraph = v;
+          await this.saveSettings();
+          this.applyBodyClasses();
+          this.injectGraphViewHUD();
+        });
+        makeSelectRow(
+          body,
+          "Алгоритм раскраски узлов",
+          "Node Coloring Algorithm",
+          [
+            { value: "folders", ru: "🎨 Папки + Поток цвета (BFS)", en: "🎨 Folders + BFS Color Spread" },
+            { value: "heatmap", ru: "🔥 Тепловая карта хабов (Связность)", en: "🔥 Hub Connectivity Heatmap" },
+            { value: "recency", ru: "⚡ Свежесть изменения заметок", en: "⚡ Note Recency Heatmap" },
+            { value: "nutrients", ru: "📚 Штампы книг и 5 Нутриентов", en: "📚 Book Stamps & 5 Nutrients" },
+          ],
+          this.settings.graphColorMode || "folders",
+          async (val) => {
+            this.settings.graphColorMode = val;
+            this._graphColorsDirty = true;
+            await this.saveSettings();
+            this.injectGraphViewHUD();
+            new Notice(isRu ? "Режим раскраски графа обновлён!" : "Graph coloring mode updated!");
+          }
+        );
+        makeSelectRow(
+          body,
+          "Пространственный режим графа",
+          "Graph Spatial Preset",
+          [
+            { value: "bento", ru: "Bento Grid (Сетка)", en: "Bento Grid" },
+            { value: "mindpalace", ru: "3D Mind-Palace (Чертоги разума)", en: "3D Mind-Palace" },
+            { value: "constellation", ru: "Созвездие хабов (Constellation)", en: "Hub Constellation" },
+            { value: "radar", ru: "Фокус-Радар (Radar Sweep)", en: "Focus Radar" },
+          ],
+          this.settings.graphPreset || "bento",
+          async (val) => {
+            this.settings.graphPreset = val;
+            this._graphColorsDirty = true;
+            await this.saveSettings();
+            this.injectGraphViewHUD();
+          }
+        );
+        makeSelectRow(
+          body,
+          "Фильтр изоляции узлов",
+          "Node Isolation Filter",
+          [
+            { value: "all", ru: "Все заметки", en: "All Notes" },
+            { value: "hubs", ru: "Только главные хабы (Топ 25%)", en: "Top 25% Knowledge Hubs" },
+            { value: "stamped", ru: "Только книги со штампом / закладками", en: "Stamped & Annotated Books Only" },
+            { value: "no_orphans", ru: "Скрыть заметки-одиночки", en: "Hide Orphan Notes" },
+          ],
+          this.settings.graphFilterMode || "all",
+          async (val) => {
+            this.settings.graphFilterMode = val;
+            this._graphColorsDirty = true;
+            await this.saveSettings();
+            this.injectGraphViewHUD();
+          }
+        );
+      }
+    );
+
+    // CARD 5: Smart LED Lamp, Bionic Reading & Focus
+    addHubCard(
+      SICRAFT_SVGS.lamp,
+      "5. Умная Лампа Lumina и Режимы Фокуса",
+      "5. Smart LED Lamp & Focus Modes",
+      "Настольный луч 2700K–6500K, световая линейка чтения, бионические корни слов и маркер.",
+      "2700K–6500K desk beam, reading ruler, Bionic word anchors, sentence focus & key markers.",
+      (body) => {
+        makeToggleRow(body, "Включить умную лампу Lumina", "Enable Smart LED Lamp", !!this.settings.magicLamp, async (v) => {
+          this.settings.magicLamp = v;
+          await this.saveSettings();
+          this.updateLampGpuStyle();
+          this.updateDockUI();
+        });
+        makeSelectRow(
+          body,
+          "Форма светового луча",
+          "Lamp Beam Shape",
+          [
+            { value: "radial", ru: "Круглый тёплый фокус", en: "Radial Warm Spotlight" },
+            { value: "ruler", ru: "Горизонтальная линейка чтения", en: "Horizontal Reading Ruler" },
+            { value: "deskbar", ru: "Широкая настольная лампа", en: "Wide Desk Bar" },
+          ],
+          this.settings.lampShape || "radial",
+          async (val) => {
+            this.settings.lampShape = val;
+            this.settings.magicLamp = true;
+            await this.saveSettings();
+            this.updateLampGpuStyle();
+            this.updateDockUI();
+          }
+        );
+        makeToggleRow(body, "Пульсация света в такт басам ПК", "Audio Beat Lamp Sync", !!this.settings.lampBeatSync, async (v) => {
+          this.settings.lampBeatSync = v;
+          await this.saveSettings();
+        });
+        makeToggleRow(body, "Бионическое чтение (Bionic Anchors)", "Bionic Reading Word Anchors", !!this.settings.bionicAnchors, async (v) => {
+          this.settings.bionicAnchors = v;
+          await notifyChange("Бионическое чтение обновлено", "Bionic reading updated");
+        });
+        makeToggleRow(body, "Фокус на предложении / абзаце", "Sentence & Spotlight Focus", !!(this.settings.sentenceFocus || this.settings.spotlightFocus), async (v) => {
+          this.settings.sentenceFocus = v;
+          this.settings.spotlightFocus = v;
+          await notifyChange("Режим фокуса обновлён", "Focus mode updated");
+        });
+        makeSelectRow(
+          body,
+          "Цвет маркера ключевых мыслей",
+          "Key Sentence Marker Color",
+          [
+            { value: "lime", ru: "Изумрудно-лаймовый", en: "Alchemical Lime" },
+            { value: "amber", ru: "Тёплый янтарь", en: "Warm Amber" },
+            { value: "rose", ru: "Крафтовый розовый", en: "Archival Rose" },
+            { value: "sky", ru: "Небесный лазурит", en: "Sky Lapis" },
+            { value: "lavender", ru: "Мягкая лаванда", en: "Soft Lavender" },
+          ],
+          this.settings.keyMarkerColor || "lime",
+          async (val) => {
+            this.settings.keyMarkerColor = val;
+            await notifyChange("Цвет маркера обновлён", "Marker color updated");
+          }
+        );
+      }
+    );
+
+    // CARD 6: Book Shelf, 5-Nutrients, Tactile Typing & AI Cleaner
+    addHubCard(
+      SICRAFT_SVGS.shelf,
+      "6. Книжная Полка, Печать и Чистка ИИ",
+      "6. Classics Shelf, Typing Acoustics & AI",
+      "Механический звук клавиш, чистка текста от ИИ-мусора, полка изученных книг и дайджест.",
+      "Mechanical switch acoustics, AI watermark cleaner, Classics bookshelf & nutrient digest.",
+      (body) => {
+        makeSelectRow(
+          body,
+          "Звук механической клавиатуры",
+          "Tactile Mechanical Keystrokes",
+          [
+            { value: "off", ru: "Выкл (Off)", en: "Off" },
+            { value: "creamy_pom", ru: "Сливочный POM (Creamy Linear)", en: "Creamy POM Linear" },
+            { value: "thock", ru: "Глубокий PBT Thock", en: "Deep PBT Thock" },
+            { value: "matcha_lubed", ru: "Мягкий Matcha Yellow", en: "Smooth Matcha Yellow" },
+            { value: "raindrop_wood", ru: "Древесный Орех (Walnut)", en: "Warm Walnut Tactile" },
+            { value: "velvet_felt", ru: "Тихий Бархат (Silent Velvet)", en: "Silent Velvet" },
+            { value: "paper_brush", ru: "Перо по пергаменту", en: "Quill on Parchment" },
+          ],
+          this.settings.tactileTypingSound || "off",
+          async (val) => {
+            this.settings.tactileTypingSound = val;
+            await this.saveSettings();
+            if (val !== "off") this.playTactileKeySound("a");
+          }
+        );
+        makeToggleRow(body, "Кнопка чистки ИИ-символов в доке", "AI Text Cleaner Button in Dock", !!this.settings.enableAiCleaner, async (v) => {
+          this.settings.enableAiCleaner = v;
+          await this.saveSettings();
+          this.createFloatingDock();
+        });
+        const btnRow = body.createDiv({ cls: "pro-hub-btn-row" });
+        const btnShelf = btnRow.createEl("button", { cls: "artcraft-pay-action-btn is-soft" });
+        btnShelf.innerHTML = `<span class="svg-inline-icon">${sicraftIcon('shelf')}</span><span>${isRu ? "Открыть Полку Классики" : "Open Classics Shelf"}</span>`;
+        btnShelf.onclick = () => new ClassicsBookshelfModal(this.app, this).open();
+
+        const btnTour = btnRow.createEl("button", { cls: "artcraft-pay-action-btn is-soft" });
+        btnTour.innerHTML = `<span class="svg-inline-icon">${sicraftIcon('spark')}</span><span>${isRu ? "Открыть Тур-Песочницу" : "Open Interactive Tour"}</span>`;
+        btnTour.onclick = () => this.openInteractiveTourNote();
+      }
+    );
+  }
+
   async saveSettings() {
+    // During the 60-second test-drive isPro is switched on in memory only. Anything saved in that
+    // minute must keep the real value, otherwise the preview would become a permanent unlock.
+    if (this.proTestDriveActive && this.proTestDrivePrev && !this.settings.proTxHash) {
+      await this.saveData({ ...this.settings, ...this.proTestDrivePrev });
+      return;
+    }
     await this.saveData(this.settings);
   }
 }
@@ -10297,8 +13886,8 @@ class AlchemyCraftProModal extends Modal {
   constructor(app, plugin, initialMethod = "evm") {
     super(app);
     this.plugin = plugin;
-    this.selectedNetwork = initialMethod === "promo" ? "evm" : initialMethod;
-    this.activeTab = initialMethod === "promo" ? "promo" : "support";
+    this.selectedNetwork = initialMethod === "promo" || initialMethod === "hub" ? "evm" : initialMethod;
+    this.activeTab = initialMethod === "hub" ? "hub" : initialMethod === "promo" ? "promo" : (plugin.settings.isPro ? "hub" : "support");
     this.selectedTier = "silver";
     this.customAmount = "5";
   }
@@ -10317,7 +13906,7 @@ class AlchemyCraftProModal extends Modal {
       <div class="artcraft-soft-pro-badge"><span class="svg-inline-icon">${SICRAFT_SVGS.coffee}</span> ${
       isRu ? "ALCHEMIST ROASTERY • ПОДДЕРЖКА И PRO ДОСТУП" : "ALCHEMIST ROASTERY • SUPPORT & PRO PASS"
     }</div>
-      <h2 class="artcraft-soft-pro-title">${isRu ? "Угостить Капучино и открыть Alchemy Craft Pro" : "Treat a Cappuccino & Unlock Alchemy Craft Pro"}</h2>
+      <h2 class="artcraft-soft-pro-title">${isRu ? "Угостить Капучино и открыть Alchemy Craft Pro" : "Treat a Cappuccino & Unlock Alchemy Craft Pro"} ${PRO_VERIFIED_BADGE_SVG}</h2>
       <p class="artcraft-soft-pro-sub">${
         isRu
           ? "Этот плагин создаётся с любовью за чашкой тёплого капучино. Выберите комфортный кофейный уровень поддержки или активируйте промокод в один клик."
@@ -10341,6 +13930,13 @@ class AlchemyCraftProModal extends Modal {
       isRu ? "У меня есть промокод / ключ" : "Redeem Promo / VIP Key"
     }</span>`;
 
+    const tabHub = tabBar.createEl("button", {
+      cls: "artcraft-ko-tab" + (this.activeTab === "hub" ? " is-active" : ""),
+    });
+    tabHub.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.sliders}</span><span>${
+      isRu ? "★ Все функции Pro (Вкл / Выкл)" : "★ Pro Features Hub (On / Off)"
+    }</span>`;
+
     const bodyContainer = contentEl.createDiv({ cls: "artcraft-soft-pro-body" });
 
     const tiers = {
@@ -10360,7 +13956,7 @@ class AlchemyCraftProModal extends Modal {
         name: isRu ? "Двойной Капучино и Кемекс" : "Double Cappuccino & Chemex",
         amount: "9.99",
         period: isRu ? "$9.99 • Навсегда (Lifetime)" : "$9.99 • Lifetime Pass",
-        badge: isRu ? "ЛЮБИМЫЙ БЛЕНД" : "FAVORITE BLEND",
+        badge: isRu ? "ЛЮБИМЫЙ БЛЕНД • PRO" : "FAVORITE BLEND • PRO",
         svg: TIER_SILVER_SVG,
         planKey: "lifetime",
         desc: isRu
@@ -10464,23 +14060,33 @@ class AlchemyCraftProModal extends Modal {
         statusMsg.setText(t("checkingBtn", this.plugin));
         statusMsg.style.color = "#2563EB";
 
-        const verified = await this.verifyOnChain(val, isPromoView ? "promo" : this.selectedNetwork);
+        const expectedAmount = isPromoView ? 0 : parseFloat(tiers[this.selectedTier] && tiers[this.selectedTier].amount) || 0;
+        const verified = await this.verifyOnChain(val, isPromoView ? "promo" : this.selectedNetwork, expectedAmount);
         if (verified) {
           const uniqueLicenseKey = isValidSiCraftLicenseKey(val) ? val.toUpperCase() : generateSiCraftLicenseKey(val);
+          const chosenPlan = this.verifiedPlan || tiers[this.selectedTier]?.planKey || "1_year";
           this.plugin.settings.isPro = true;
           this.plugin.settings.proTxHash = uniqueLicenseKey;
           this.plugin.settings.proActivatedAt = Date.now();
-          this.plugin.settings.proPlan = tiers[this.selectedTier]?.planKey || "1_year";
+          this.plugin.settings.proPlan = chosenPlan;
+          if (chosenPlan === "patron_lifetime") {
+            this.plugin.settings.patronGiftKeys = [
+              generateSiCraftLicenseKey(uniqueLicenseKey + "-GIFT1"),
+              generateSiCraftLicenseKey(uniqueLicenseKey + "-GIFT2"),
+              generateSiCraftLicenseKey(uniqueLicenseKey + "-GIFT3"),
+            ];
+          }
           await this.plugin.saveSettings();
           this.plugin.applyBodyClasses();
           this.plugin.createFloatingDock();
+          this.triggerProKeyMintingForge(verifyBox, uniqueLicenseKey, this.plugin.settings.patronGiftKeys);
           this.plugin.burstParticles(window.innerWidth / 2, window.innerHeight / 2, 75);
 
           statusMsg.setText(t("successMsg", this.plugin));
           statusMsg.style.color = "#16A34A";
           new Notice(t("successMsg", this.plugin));
 
-          setTimeout(() => this.close(), 1400);
+          setTimeout(() => this.close(), chosenPlan === "patron_lifetime" ? 3200 : 1850);
         } else {
           actBtn.disabled = false;
           actBtn.setText(
@@ -10502,6 +14108,13 @@ class AlchemyCraftProModal extends Modal {
       bodyContainer.empty();
       tabSupport.toggleClass("is-active", this.activeTab === "support");
       tabPromo.toggleClass("is-active", this.activeTab === "promo");
+      tabHub.toggleClass("is-active", this.activeTab === "hub");
+
+      // TAB 3: INTERACTIVE PRO FEATURES CONTROL HUB
+      if (this.activeTab === "hub") {
+        this.plugin.renderProFeaturesControlHub(bodyContainer);
+        return;
+      }
 
       // TAB 2: DEDICATED ZERO-CLUTTER PROMO CODE & VIP KEY VIEW
       if (this.activeTab === "promo") {
@@ -10512,7 +14125,7 @@ class AlchemyCraftProModal extends Modal {
           <div class="soft-support-left">
             <span class="svg-inline-icon">${SICRAFT_SVGS.chat}</span>
             <span>${isRu ? "Хотите получить промокод или оплатить картой напрямую?" : "Need a promo key or direct card link?"}</span>
-            <strong>@StratAlchemy</strong>
+            <strong class="pro-tg-author-link" style="cursor: pointer; text-decoration: underline;" title="${isRu ? "Написать в Telegram" : "Contact in Telegram"}">@StratAlchemy</strong>
           </div>
           <button class="soft-tg-link-btn" id="pro-promo-tg-btn">
             <span>${isRu ? "Написать в Telegram" : "Open Telegram"}</span>
@@ -10534,17 +14147,21 @@ class AlchemyCraftProModal extends Modal {
             cls: "artcraft-ko-tier-card" + (this.selectedTier === tObj.id ? " is-selected" : ""),
           });
           card.innerHTML = `
-          ${tObj.badge ? `<div class="ko-tier-popular">${tObj.badge}</div>` : ""}
+          ${tObj.badge ? `<div class="ko-tier-popular">${PRO_VERIFIED_BADGE_SVG} <span>${tObj.badge}</span></div>` : ""}
           <div class="ko-tier-art">${tObj.svg}</div>
           <div class="ko-tier-name">${tObj.name}</div>
           <div class="ko-tier-price">${tObj.period}</div>
           <p class="ko-tier-desc">${tObj.desc}</p>
         `;
+          card.dataset.tierId = tObj.id;
           card.onclick = () => {
             this.selectedTier = tObj.id;
+            this.plugin.playTactileMicroFeedback("tap");
             renderView();
+            this.triggerTierPourAnimation(tObj.id);
           };
         });
+      this.mountRoasteryInteractiveSteam(tierGrid);
 
       // Free-form amount row: pay what you want (chips + custom input)
       const customRow = bodyContainer.createDiv({
@@ -10562,7 +14179,7 @@ class AlchemyCraftProModal extends Modal {
           <div class="ko-custom-chips"></div>
           <label class="ko-custom-input-wrap">
             <span>$</span>
-            <input type="text" inputmode="decimal" class="ko-custom-input" placeholder="5.00" value="${this.customAmount}" />
+            <input type="text" inputmode="decimal" class="ko-custom-input" placeholder="5.00" value="${escHtml(this.customAmount)}" />
           </label>
         </div>
       `;
@@ -10576,6 +14193,7 @@ class AlchemyCraftProModal extends Modal {
           ev.stopPropagation();
           this.customAmount = v;
           this.selectedTier = "custom";
+          syncCustomTier(); // the invoice and the summary must use the amount on the chip
           renderView();
         };
         chipsWrap.appendChild(chip);
@@ -10603,13 +14221,13 @@ class AlchemyCraftProModal extends Modal {
 
       // Clean Horizontal Payment Method Pills with Vector SVG Icons
       const methodsLabel = bodyContainer.createDiv({ cls: "artcraft-soft-section-lbl" });
-      methodsLabel.setText(isRu ? "Способ оплаты (0% комиссия):" : "Select Payment Method (0% Fee):");
+      methodsLabel.setText(isRu ? "Способ оплаты:" : "Select Payment Method:");
 
       const methodPills = bodyContainer.createDiv({ cls: "artcraft-soft-method-pills" });
       const methods = [
         { id: "cryptobot", icon: SICRAFT_SVGS.send, label: "@CryptoBot (Telegram)" },
         { id: "evm", icon: SICRAFT_SVGS.globe, label: "Universal EVM (0x...)" },
-        { id: "bybit", icon: SICRAFT_SVGS.zap, label: "Bybit UID (0% Fee)" },
+        { id: "bybit", icon: SICRAFT_SVGS.zap, label: "Bybit UID" },
         { id: "solana", icon: SICRAFT_SVGS.sun, label: "Solana (USDT/USDC)" },
         { id: "trc20", icon: SICRAFT_SVGS.shield, label: "TRON (TRC-20)" },
       ];
@@ -10634,7 +14252,7 @@ class AlchemyCraftProModal extends Modal {
               <span class="soft-pay-direct-badge">${isRu ? "В 1 клик через Telegram" : "Instant Telegram Checkout"}</span>
             </div>
             <div class="artcraft-pay-cta-row">
-              <button class="artcraft-pay-action-btn is-green" id="pro-create-api-invoice">
+              <button class="artcraft-pay-action-btn is-sapphire" id="pro-create-api-invoice">
                 <span class="svg-inline-icon">${SICRAFT_SVGS.send}</span>
                 <span>${isRu ? `Оплатить $${curAmount} в @CryptoBot` : `Pay $${curAmount} via @CryptoBot`}</span>
                 <span class="svg-inline-icon">${SICRAFT_SVGS.external}</span>
@@ -10660,6 +14278,9 @@ class AlchemyCraftProModal extends Modal {
                 new Notice(isRu ? "Введите сумму от $1 для оплаты через @CryptoBot." : "Enter an amount of $1 or more to pay via @CryptoBot.");
                 return;
               }
+              if (this.invoicePending) return;
+              this.invoicePending = true;
+              setTimeout(() => (this.invoicePending = false), 15000);
               btnApiCb.disabled = true;
               btnApiCb.textContent = isRu ? "Создаём счёт в @CryptoBot..." : "Creating @CryptoBot invoice...";
               try {
@@ -10668,7 +14289,7 @@ class AlchemyCraftProModal extends Modal {
                 const tierName = activeTierObj ? activeTierObj.name : "Pro";
                 const customDesc = `Alchemy Craft — ${tierName} (${cleanAmount})`;
                 const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
-                const supabaseEndpoint = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
+                const supabaseEndpoint = "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
                 const res = await obsidianApi.requestUrl({
                   url: supabaseEndpoint,
                   method: "POST",
@@ -10700,7 +14321,15 @@ class AlchemyCraftProModal extends Modal {
                       : `Invoice #${invId || ""} for $${cleanAmount} created! Opening @CryptoBot...`,
                     5000
                   );
-                  openExternalUrl(payUrl);
+                  this.invoicePending = false;
+                  let safePayUrl = false;
+                  try {
+                    safePayUrl = new URL(payUrl).protocol === "https:";
+                  } catch (e) {
+                    safePayUrl = false;
+                  }
+                  if (safePayUrl) openExternalUrl(payUrl);
+                  else new Notice(isRu ? "Сервер вернул некорректную ссылку на оплату." : "The server returned an invalid payment link.");
                   return;
                 }
                 const errDetail = d && (d.error?.name || d.error || d.message)
@@ -10757,7 +14386,7 @@ class AlchemyCraftProModal extends Modal {
         paymentDetailBox.innerHTML = `
           <div class="soft-pay-summary-row">
             <span class="soft-pay-tier-tag">${labelText}</span>
-            <button class="soft-amount-copy-pill" id="pro-copy-amount-btn" title="Click to copy exact amount">
+            <button class="soft-amount-copy-pill" id="pro-copy-amount-btn" title="${isRu ? "Скопировать сумму" : "Copy the amount"}">
               <span>${isRu ? "Сумма:" : "Amount:"} <strong>$${curAmount} USDT</strong></span>
               <span class="svg-inline-icon">${SICRAFT_SVGS.copy}</span>
             </button>
@@ -10833,141 +14462,554 @@ class AlchemyCraftProModal extends Modal {
       this.activeTab = "promo";
       renderView();
     };
+    tabHub.onclick = () => {
+      this.activeTab = "hub";
+      renderView();
+    };
 
     renderView();
   }
 
-  async verifyOnChain(txHash, network) {
-    const rawCode = (txHash || "").trim().toUpperCase();
+  // Checks a payment or a code. It returns true only when something was actually verified:
+  //   1. a code redeemed on the server (promo codes and licences issued by the author);
+  //   2. an offline licence key, or a built-in promo code (kept as SHA-256 hashes, not as text);
+  //   3. a paid @CryptoBot invoice confirmed by the server, for at least the price of the chosen tier;
+  //   4. a confirmed transfer to the author's wallet: USDT on TRON (token and amount checked),
+  //      BNB Chain and Solana (recipient checked).
+  // A network error is not a payment: it returns false and asks to try again.
+  // What only a server can close: a public transaction can be reused by another person, and an offline
+  // key or a promo code can be shared. See CHANGES-5.5.0.md.
+  async verifyOnChain(txHash, network, expectedAmount = 0) {
+    const input = (txHash || "").trim();
+    const rawCode = input.toUpperCase();
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+    const say = (ru, en) => new Notice(isRu ? ru : en, 8000);
+    const obsidianApi = require("obsidian");
+    this.verifiedPlan = null;
 
-    // 1. Live Supabase Database Verification (Validates dynamic promo codes & commercial licenses)
+    const SB = "https://tsnnckbvxokjmbgfeqdj.supabase.co";
+    const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
+    const sbHeaders = { "Content-Type": "application/json", apikey: sbKey, Authorization: `Bearer ${sbKey}` };
+    let serverReached = true;
+
+    // 1. A code known to the server
     try {
-      const sbUrl = "https://tsnnckbvxokjmbgfeqdj.supabase.co/rest/v1/rpc/redeem_code";
-      const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
-      const resp = await fetch(sbUrl, {
+      const resp = await fetch(SB + "/rest/v1/rpc/redeem_code", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": sbKey,
-          "Authorization": `Bearer ${sbKey}`,
-        },
+        headers: sbHeaders,
         body: JSON.stringify({ p_code: rawCode }),
       });
       if (resp.ok) {
         const data = await resp.json();
         if (data && data.success) {
-          new Notice(`Успешно! Активирован тариф: ${data.plan || "1_year"}`);
+          this.verifiedPlan = data.plan || null;
+          say(`Код принят. Тариф: ${data.plan || "1_year"}`, `Code accepted. Plan: ${data.plan || "1_year"}`);
           return true;
         }
       }
     } catch (err) {
-      console.warn("Supabase network check skipped, using local fallback:", err);
+      serverReached = false;
     }
 
-    // 1.5. Cryptographic SiCraft License Key Verification (Format: ACPRO-XXXX-XXXX-XXXX-XXXX)
+    // 2. Offline licence key or built-in promo code
     if (isValidSiCraftLicenseKey(rawCode)) {
-      new Notice("Cryptographic License Key Verified! Activating Alchemy Craft Pro...");
+      say("Лицензионный ключ принят.", "Licence key accepted.");
       return true;
     }
+    const PROMO_HASHES = [
+      "25efc118fbc4dac7aae21864249094bb99d2942f575ff162e6ad72bf87106eef",
+      "0de7565a69da8c0c6aed023bb8b9b8f3e418d03d44b963c02d0cb64713a3c7c1",
+      "22306f6e255cb2807aaa0d68d2f714aba08a629f2a88767fe2767211611550b5",
+      "0cad3ff0ea6fd68e518ea0fc5d5a55a626f7579070ae8e6cc01559216a168a61",
+      "a5a70ac00df223736198e44660f7e8c73a031012f11b6c5321787127f088aba3",
+      "a4411ed59391293bbc3275d234a27fa297ab631cdf289f05185abe9b92f63918",
+      "226d23c0b1eef43ef2de7df4a7fb1720742d1b77605a011b5f228e790b4f6e9b",
+      "7da3d70d12af442640d11af70d44977fb4b025f8a400b82c7b17cb307fbeaf1a",
+      "6367381d4a5b0256a41e1937160cf7cd8cc23e547f51fd5550285f91cd421f8d",
+      "0a26d836004baa341c3fc05a6a24d90bf15f55a38d6ee6c2687c2a48d59f6a69",
+      "c12812d6be95180d2249b5304d6bac673f317b3116b41dbe1e48bd2147adafb4",
+    ];
+    const promoHash = await this.plugin.computeSha256Hex("alchemy-craft-promo:" + rawCode);
+    if (PROMO_HASHES.includes(promoHash)) {
+      say("Промокод принят.", "Promo code accepted.");
+      return true;
+    }
+    if (network === "promo") {
+      if (serverReached) say("Такого кода нет.", "This code is not known.");
+      else say("Нет связи с сервером: код проверить не удалось. Повторите позже.", "The server could not be reached, so the code was not checked. Try again later.");
+      return false;
+    }
 
-    // 1.6. Direct CryptoBot Invoice Check via Official Crypto Pay API
-    try {
-      const cleanId = rawCode.replace(/[^0-9]/g, "");
-      if (cleanId.length >= 5) {
-        const obsidianApi = require("obsidian");
-        const sbKey = "sb_publishable_bmw71GhgQ24MoXaWq4fhSg_WU7YBmlG";
-        const supabaseEndpoint = this.plugin.settings.supabaseFunctionUrl || "https://tsnnckbvxokjmbgfeqdj.supabase.co/functions/v1/cryptobot-pay";
+    // 3. A @CryptoBot invoice number (short and numeric; a transaction hash is never treated as one)
+    const digits = rawCode.replace(/[^0-9]/g, "");
+    const looksLikeInvoice = network === "cryptobot" || /^#?IV[0-9]{5,12}$/.test(rawCode);
+    if (looksLikeInvoice) {
+      if (digits.length < 5) {
+        say("Введите номер счёта @CryptoBot.", "Enter the @CryptoBot invoice number.");
+        return false;
+      }
+      let d = null;
+      try {
         const cbRes = await obsidianApi.requestUrl({
-          url: supabaseEndpoint,
+          url: SB + "/functions/v1/cryptobot-pay",
           method: "POST",
           contentType: "application/json",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": sbKey,
-            "Authorization": `Bearer ${sbKey}`,
-          },
-          body: JSON.stringify({
-            action: "check_invoice",
-            invoice_id: cleanId,
-          }),
+          headers: sbHeaders,
+          body: JSON.stringify({ action: "check_invoice", invoice_id: digits }),
           throw: false,
         });
-        const d = cbRes && cbRes.json ? cbRes.json : null;
-        const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
-        if (d && d.ok && d.paid) {
-          new Notice(
-            isRu
-              ? `🎉 Счёт @CryptoBot #${cleanId} оплачен ($${d.amount || ""})! Alchemy Craft Pro успешно активирован!`
-              : `🎉 @CryptoBot Invoice #${cleanId} paid ($${d.amount || ""})! Alchemy Craft Pro activated!`,
-            10000
-          );
-          return true;
+        try {
+          d = cbRes.json;
+        } catch (e) {
+          d = null;
         }
-        const items = d?.result?.items || [];
-        const paidInv = items.find((inv) => inv.status === "paid");
-        if (paidInv) {
-          new Notice(
-            isRu
-              ? `🎉 Счёт @CryptoBot #${cleanId} оплачен ($${paidInv.amount})! Alchemy Craft Pro успешно активирован!`
-              : `🎉 @CryptoBot Invoice #${cleanId} paid ($${paidInv.amount})! Alchemy Craft Pro activated!`,
-            10000
-          );
-          return true;
-        } else if (items.length > 0 || (d && d.ok && d.paid === false)) {
-          const invStatus = items[0]?.status || "pending";
-          const invAmt = items[0]?.amount || d?.amount || "";
-          new Notice(
-            isRu
-              ? `Счёт @CryptoBot #${cleanId} ещё не оплачен${invAmt ? ` ($${invAmt})` : ""}. Оплатите его в Telegram и нажмите проверку ещё раз.`
-              : `Invoice #${cleanId} is pending payment${invAmt ? ` ($${invAmt})` : ""}. Please complete payment in Telegram and verify again.`,
-            8000
+      } catch (e) {
+        say("Нет связи: счёт проверить не удалось. Повторите позже.", "No connection: the invoice was not checked. Try again later.");
+        return false;
+      }
+      const items = (d && d.result && d.result.items) || [];
+      const mine = items.filter((inv) => inv && (inv.invoice_id === undefined || String(inv.invoice_id) === digits));
+      const paidItem = mine.find((inv) => inv.status === "paid");
+      const paid = !!((d && d.ok && d.paid) || paidItem);
+      const amount = parseFloat((paidItem && paidItem.amount) || (d && d.amount) || "0") || 0;
+      if (paid) {
+        if (expectedAmount && amount && amount + 0.01 < expectedAmount) {
+          say(
+            `Счёт #${digits} оплачен на $${amount}, а выбранный тариф стоит $${expectedAmount}. Выберите тариф по сумме оплаты.`,
+            `Invoice #${digits} was paid for $${amount}, the selected tier costs $${expectedAmount}. Pick the tier that matches the payment.`
           );
           return false;
         }
+        say(`Счёт @CryptoBot #${digits} оплачен.`, `@CryptoBot invoice #${digits} is paid.`);
+        return true;
       }
-    } catch (e) {
-      console.warn("Direct CryptoBot verification check error:", e);
+      if (mine.length > 0 || (d && d.ok && d.paid === false)) {
+        say("Счёт ещё не оплачен. Оплатите его в Telegram и нажмите проверку ещё раз.", "The invoice is not paid yet. Pay it in Telegram and verify again.");
+      } else {
+        say("Счёт с таким номером не найден.", "No invoice with this number was found.");
+      }
+      return false;
     }
 
-    const MASTER_PROMOS = ["STRATALCHEMY", "ACPRO-PRO-2026", "SICRAFT", "VIP2026", "ALCHEMIST", "NAILYA", "MIYAZAKI", "BARAKA2026", "ELYAZ", "FOUNDER", "ACPRO-FOUNDER-PASS-2026"];
-    if (MASTER_PROMOS.includes(rawCode) || rawCode.startsWith("AC-PRO-") || rawCode.startsWith("VIP-")) {
-      new Notice("Промокод успешно подтвержден! Активация Pro Pass...");
-      return true;
-    }
-
-    // 3. CryptoBot Invoice ID check (e.g. IVdNOM8aeE7t or #IV69485245)
-    if (rawCode.includes("IVDNOM") || rawCode.includes("69485245") || rawCode.startsWith("IV")) {
-      new Notice("Чек CryptoBot принят к верификации!");
-      return true;
-    }
-
+    // 4. A transfer to the author's wallet
+    const TRON_WALLET = ["TLR1QhncMJghep", "CyPPNDZodUxWtEjs8Qjy"].join("");
+    const TRON_USDT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+    const EVM_WALLET = ["0x5df707dda914", "77fc7c7563f683", "030da9d6cde7e2"].join("").toLowerCase();
+    const SOL_WALLET = ["7vffsVxUZbBj3iLhagyaP8q", "CE7pKybYrxmnHX9xdCKCs"].join("");
+    const notToAuthor = () =>
+      say(
+        "В этой транзакции нет подтверждённого перевода на кошелёк автора.",
+        "This transaction has no confirmed transfer to the author's wallet."
+      );
     try {
       if (network === "trc20") {
-        const res = await fetch(`https://apilist.tronscanapi.com/api/transaction-info?hash=${txHash}`);
-        if (res.ok) {
-          const d = await res.json();
-          if (d.confirmed) {
-            const transfers = d.trc20TransferInfo || [];
-            if (transfers.some((tr) => tr.to_address === ["TLR1QhncMJghep", "CyPPNDZodUxWtEjs8Qjy"].join(""))) return true;
-          }
+        if (!/^[0-9a-fA-F]{64}$/.test(input)) {
+          say("Хеш транзакции TRON состоит из 64 знаков (0-9, a-f).", "A TRON transaction hash has 64 characters (0-9, a-f).");
+          return false;
         }
+        // TronGrid lists the token events of a confirmed transaction without an API key. requestUrl goes
+        // through Obsidian itself, so a CORS policy cannot block the check.
+        const res = await obsidianApi.requestUrl({
+          url: "https://api.trongrid.io/v1/transactions/" + input.toLowerCase() + "/events?only_confirmed=true",
+          method: "GET",
+          throw: false,
+        });
+        if (res.status >= 400) throw new Error("trongrid " + res.status);
+        let events = null;
+        try {
+          events = res.json && res.json.data;
+        } catch (e) {
+          events = null;
+        }
+        if (!Array.isArray(events)) throw new Error("trongrid: unreadable answer");
+        // the author's address in the hex form the events use
+        const TRON_WALLET_HEX = "0x72926563fda0715b99c923c6dfabee7cf2afae69";
+        const transfer = events.find(
+          (ev) =>
+            ev &&
+            ev.event_name === "Transfer" &&
+            ev.contract_address === TRON_USDT &&
+            ev.result &&
+            String(ev.result.to || "").toLowerCase() === TRON_WALLET_HEX
+        );
+        if (!transfer) {
+          notToAuthor();
+          return false;
+        }
+        const paid = Number(transfer.result.value || 0) / 1e6; // USDT on TRON has 6 decimals
+        if (expectedAmount && paid + 0.01 < expectedAmount) {
+          say(
+            `Переведено ${paid} USDT, а выбранный тариф стоит $${expectedAmount}. Выберите тариф по сумме оплаты.`,
+            `${paid} USDT was sent, the selected tier costs $${expectedAmount}. Pick the tier that matches the payment.`
+          );
+          return false;
+        }
+        return true;
       }
       if (network === "evm") {
-        const res = await fetch(`https://api.bscscan.com/api?module=proxy&action=eth_getTransactionReceipt&txhash=${txHash}`);
-        if (res.ok) {
-          const d = await res.json();
-          if (d && d.result && d.result.status === "0x1") return true;
+        if (!/^0x[0-9a-fA-F]{64}$/.test(input)) {
+          say("Хеш транзакции начинается с 0x и содержит 64 знака после него.", "A transaction hash starts with 0x followed by 64 characters.");
+          return false;
         }
+        // BNB Chain public node. Other EVM networks are not checked automatically.
+        const rpc = await obsidianApi.requestUrl({
+          url: "https://bsc-dataseed.binance.org",
+          method: "POST",
+          contentType: "application/json",
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_getTransactionReceipt", params: [input] }),
+          throw: false,
+        });
+        let r = null;
+        try {
+          r = rpc.json && rpc.json.result;
+        } catch (e) {
+          r = null;
+        }
+        if (rpc.status >= 400) throw new Error("bsc rpc " + rpc.status);
+        if (!r) {
+          say(
+            "Транзакция не найдена в BNB Chain. Автоматически проверяется только эта сеть; если платили в другой, напишите автору.",
+            "The transaction was not found on BNB Chain. Only this network is checked automatically; for another one, contact the author."
+          );
+          return false;
+        }
+        const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+        const walletTail = EVM_WALLET.slice(2);
+        const toAuthor =
+          String(r.to || "").toLowerCase() === EVM_WALLET ||
+          (r.logs || []).some((log) => log && log.topics && log.topics[0] === TRANSFER_TOPIC && String(log.topics[2] || "").toLowerCase().endsWith(walletTail));
+        if (r.status !== "0x1" || !toAuthor) {
+          notToAuthor();
+          return false;
+        }
+        return true;
       }
-      if (txHash.length >= 6) return true;
-      return false;
+      if (network === "solana") {
+        if (!/^[1-9A-HJ-NP-Za-km-z]{64,90}$/.test(input)) {
+          say("Это не похоже на подпись транзакции Solana.", "This does not look like a Solana transaction signature.");
+          return false;
+        }
+        const rpc = await obsidianApi.requestUrl({
+          url: "https://api.mainnet-beta.solana.com",
+          method: "POST",
+          contentType: "application/json",
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "getTransaction", params: [input, { encoding: "json", maxSupportedTransactionVersion: 0 }] }),
+          throw: false,
+        });
+        let tx = null;
+        try {
+          tx = rpc.json && rpc.json.result;
+        } catch (e) {
+          tx = null;
+        }
+        if (rpc.status >= 400) throw new Error("solana rpc " + rpc.status);
+        const keys = (tx && tx.transaction && tx.transaction.message && tx.transaction.message.accountKeys) || [];
+        const tokenOwners = ((tx && tx.meta && tx.meta.postTokenBalances) || []).map((b) => b && b.owner);
+        if (!tx || !tx.meta || tx.meta.err !== null || !(keys.includes(SOL_WALLET) || tokenOwners.includes(SOL_WALLET))) {
+          notToAuthor();
+          return false;
+        }
+        return true;
+      }
     } catch (e) {
-      if (txHash.length >= 6) return true;
+      console.warn("[Alchemy Craft] payment check failed", e);
+      say("Сеть проверки недоступна. Платёж не проверен, повторите позже.", "The verification network is unavailable. The payment was not checked, try again later.");
       return false;
+    }
+
+    // Bybit transfers by UID have no public record to check.
+    say(
+      "Перевод по Bybit UID автоматически не проверяется. Напишите автору в Telegram (@StratAlchemy), он пришлёт код активации.",
+      "A Bybit UID transfer cannot be checked automatically. Message the author on Telegram (@StratAlchemy) to receive an activation code."
+    );
+    return false;
+  }
+
+  // =========================================================================
+  // ARGON BRIEF #6: INTERACTIVE CAPPUCCINO STEAM, COFFEE POUR / CRYPTO COIN
+  // DROP & HOT-METAL PRO KEY MINTING FORGE
+  // =========================================================================
+  mountRoasteryInteractiveSteam(tierGrid) {
+    if (this._roasteryRaf) {
+      cancelAnimationFrame(this._roasteryRaf);
+      this._roasteryRaf = null;
+    }
+    if (!tierGrid) return;
+    tierGrid.style.position = "relative";
+
+    let cv = tierGrid.querySelector(".artcraft-roastery-fx-canvas");
+    if (!cv) {
+      cv = document.createElement("canvas");
+      cv.className = "artcraft-roastery-fx-canvas";
+      cv.width = 640;
+      cv.height = 175;
+      tierGrid.appendChild(cv);
+    }
+    this._roasteryCanvas = cv;
+
+    if (!this._roasteryState) {
+      this._roasteryState = {
+        vx: 0,
+        vy: 0,
+        mx: -999,
+        my: -999,
+        steam: Array.from({ length: 27 }, (_, i) => ({
+          tierIdx: i % 3,
+          xOff: ((i * 7) % 26) - 13,
+          y: 22 + ((i * 13) % 52),
+          r: 3.5 + (i % 4) * 1.8,
+          vy: 0.36 + (i % 3) * 0.14,
+          vx: 0,
+          phase: i * 0.8,
+          alpha: 0.18 + (i % 3) * 0.12,
+        })),
+        drops: [],
+        coins: [],
+        ripples: [],
+      };
+    }
+
+    let lastMx = 0;
+    let lastMy = 0;
+    tierGrid.addEventListener("pointermove", (e) => {
+      const r = cv.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / Math.max(1, r.width)) * cv.width;
+      const y = ((e.clientY - r.top) / Math.max(1, r.height)) * cv.height;
+      const st = this._roasteryState;
+      if (st) {
+        st.vx = Math.max(-18, Math.min(18, x - lastMx));
+        st.vy = Math.max(-18, Math.min(18, y - lastMy));
+        st.mx = x;
+        st.my = y;
+      }
+      lastMx = x;
+      lastMy = y;
+    });
+
+    const stepRoastery = () => {
+      this._roasteryRaf = null;
+      if (!cv.isConnected || document.hidden) return;
+      const ctx = cv.getContext("2d");
+      const W = cv.width;
+      const H = cv.height;
+      ctx.clearRect(0, 0, W, H);
+
+      const st = this._roasteryState;
+      st.vx *= 0.9;
+      st.vy *= 0.9;
+      const centers = [W * 0.166, W * 0.5, W * 0.833];
+
+      // 1. Procedural Cappuccino & Chemex Steam reacting to cursor wind
+      st.steam.forEach((p) => {
+        p.phase += 0.05;
+        p.y -= p.vy;
+        const baseCx = centers[p.tierIdx] + p.xOff;
+        const dx = baseCx + p.vx - st.mx;
+        const dy = p.y - st.my;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < 3600) {
+          const push = (1 - Math.sqrt(distSq) / 60) * 0.42;
+          p.vx += st.vx * push;
+        }
+        p.vx *= 0.94;
+        if (p.y < 6) {
+          p.y = 62;
+          p.vx = 0;
+        }
+        const prog = 1 - (p.y - 6) / 56;
+        const curX = baseCx + Math.sin(p.phase) * 4.5 + p.vx;
+        const curR = p.r + prog * 6.5;
+        const curA = Math.sin(prog * Math.PI) * (this.selectedTier === ["bronze", "silver", "gold"][p.tierIdx] ? 0.46 : 0.26);
+
+        const g = ctx.createRadialGradient(curX, p.y, 0.5, curX, p.y, curR);
+        g.addColorStop(0, `rgba(196, 148, 102, ${curA.toFixed(3)})`);
+        g.addColorStop(1, "rgba(196, 148, 102, 0)");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(curX, p.y, curR, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 2. Coffee Pour Stream & Foam Droplets on Tier Selection
+      for (let i = st.drops.length - 1; i >= 0; i--) {
+        const d = st.drops[i];
+        d.x += d.vx;
+        d.y += d.vy;
+        d.vy += 0.28;
+        d.life++;
+        if (d.y >= 64 || d.life >= d.maxLife) {
+          if (d.y >= 64) {
+            st.ripples.push({ x: d.x, y: 64, r: 2, maxR: 16, alpha: 0.75, color: d.color });
+          }
+          st.drops.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = d.color;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 3. Golden Crypto Coin Drop into Cup/Flask
+      for (let i = st.coins.length - 1; i >= 0; i--) {
+        const c = st.coins[i];
+        c.y += c.vy;
+        c.vy += 0.36;
+        c.rot += 0.22;
+        if (c.y >= 62) {
+          st.ripples.push({ x: c.x, y: 62, r: 3, maxR: 22, alpha: 0.9, color: "#F59E0B" });
+          for (let s = 0; s < 8; s++) {
+            const ang = -Math.PI * 0.15 - Math.random() * Math.PI * 0.7;
+            st.drops.push({
+              x: c.x,
+              y: 60,
+              vx: Math.cos(ang) * (1.2 + Math.random() * 2.2),
+              vy: Math.sin(ang) * (1.8 + Math.random() * 2.2),
+              r: 1.8,
+              color: "#FBBF24",
+              life: 0,
+              maxLife: 24,
+            });
+          }
+          st.coins.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.scale(Math.cos(c.rot), 1);
+        ctx.fillStyle = "#F59E0B";
+        ctx.strokeStyle = "#FEF08A";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 4. Cup Surface Ripples
+      for (let i = st.ripples.length - 1; i >= 0; i--) {
+        const rp = st.ripples[i];
+        rp.r += 0.85;
+        rp.alpha -= 0.045;
+        if (rp.alpha <= 0) {
+          st.ripples.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.strokeStyle = rp.color;
+        ctx.globalAlpha = Math.max(0, rp.alpha);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(rp.x, rp.y, rp.r, rp.r * 0.35, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      this._roasteryRaf = requestAnimationFrame(stepRoastery);
+    };
+    this._roasteryRaf = requestAnimationFrame(stepRoastery);
+  }
+
+  triggerTierPourAnimation(tierId) {
+    const st = this._roasteryState;
+    const cv = this._roasteryCanvas;
+    if (!st || !cv) return;
+    const idx = tierId === "bronze" ? 0 : tierId === "silver" ? 1 : 2;
+    const cx = cv.width * [0.166, 0.5, 0.833][idx];
+
+    // Pour warm espresso & crema droplets
+    for (let i = 0; i < 18; i++) {
+      st.drops.push({
+        x: cx + (Math.random() - 0.5) * 6,
+        y: 4 + i * 1.8,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: 1.5 + Math.random() * 1.6,
+        r: i % 3 === 0 ? 2.4 : 1.9,
+        color: i % 3 === 0 ? "#FDE68A" : "#A45A2A",
+        life: 0,
+        maxLife: 36,
+      });
+    }
+    // Drop a spinning golden alchemical coin
+    st.coins.push({ x: cx, y: 6, vy: 1.4, rot: 0 });
+  }
+
+  playKeyMintingAcousticSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!this.plugin.keyAudioCtx) this.plugin.keyAudioCtx = new AudioCtx();
+      const ctx = this.plugin.keyAudioCtx;
+      if (ctx.state === "suspended") ctx.resume();
+      const now = ctx.currentTime;
+
+      // 1. Crisp tactile anvil micro-click impact
+      const impactOsc = ctx.createOscillator();
+      const impactGain = ctx.createGain();
+      impactOsc.type = "triangle";
+      impactOsc.frequency.setValueAtTime(280, now);
+      impactOsc.frequency.exponentialRampToValueAtTime(58, now + 0.065);
+      impactGain.gain.setValueAtTime(0.24, now);
+      impactGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+      impactOsc.connect(impactGain);
+      impactGain.connect(ctx.destination);
+      impactOsc.start(now);
+      impactOsc.stop(now + 0.075);
+
+      // 2. Golden alchemical minting harmonic bell resonance
+      [528, 792, 1056, 1584].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + 0.03 + i * 0.025);
+        g.gain.setValueAtTime(0.0001, now + 0.03 + i * 0.025);
+        g.gain.linearRampToValueAtTime(0.11 / (i + 1), now + 0.05 + i * 0.025);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 1.45);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(now + 0.03 + i * 0.025);
+        osc.stop(now + 1.5);
+      });
+    } catch (e) {}
+  }
+
+  triggerProKeyMintingForge(verifyBox, mintedKey, giftKeys) {
+    this.playKeyMintingAcousticSound();
+    if (!verifyBox) return;
+    verifyBox.classList.add("is-minting-gold");
+    const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
+
+    const stampOverlay = document.createElement("div");
+    stampOverlay.className = "artcraft-minted-key-seal";
+    const giftHtml =
+      Array.isArray(giftKeys) && giftKeys.length > 0
+        ? `<div class="minted-gift-keys">${isRu ? "Ваши 3 подарочных ключа для друзей:" : "Your 3 Patron Gift Keys for friends:"} <code>${giftKeys.join("</code> · <code>")}</code></div>`
+        : "";
+    stampOverlay.innerHTML = `
+      <div class="minted-seal-badge">★ ${isRu ? "ВЫЧЕКАНЕНО В ЗОЛОТЕ АЛХИМИКА" : "MINTED IN ALCHEMICAL GOLD"} ★</div>
+      <div class="minted-seal-code">${escHtml(mintedKey)}</div>
+      ${giftHtml}
+    `;
+    verifyBox.appendChild(stampOverlay);
+
+    if (stampOverlay.animate) {
+      stampOverlay.animate(
+        [
+          { opacity: 0, transform: "scale(1.65) rotate(-6deg)", filter: "brightness(2.2) blur(4px)" },
+          { opacity: 1, transform: "scale(0.95) rotate(1deg)", filter: "brightness(1.3) blur(0px)", offset: 0.45 },
+          { opacity: 1, transform: "scale(1) rotate(0deg)", filter: "brightness(1) blur(0px)" }
+        ],
+        { duration: 520, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "both" }
+      );
     }
   }
 
   onClose() {
+    if (this._roasteryRaf) {
+      cancelAnimationFrame(this._roasteryRaf);
+      this._roasteryRaf = null;
+    }
     if (this.plugin.activeProModal === this) {
       this.plugin.activeProModal = null;
     }
@@ -10995,7 +15037,6 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         resolvedSub = typeof subOrTitleEn === "object" ? i18n(subOrTitleEn, this.plugin) : subOrTitleEn;
         finalIcon = iconOrSubRu;
       } else {
-        // Legacy 6 arguments: (num, titleRu, titleEn, subRu, subEn, iconSvg)
         resolvedTitle = isRu ? title : subOrTitleEn;
         resolvedSub = isRu ? iconOrSubRu : subEn;
         finalIcon = iconSvg;
@@ -11013,26 +15054,26 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       return groupWrap.createDiv({ cls: "artcraft-settings-group-items" });
     };
 
-    // Top Swiss Bento Studio Banner inside Settings
+    // Clean Header Card
     const heroBanner = containerEl.createDiv({ cls: "artcraft-settings-bento-hero" });
     heroBanner.innerHTML = `
       <div class="artcraft-settings-hero-left">
         <div class="artcraft-settings-flask-box">${ALCHEMY_ICON_SVG}</div>
         <div>
           <div class="artcraft-settings-hero-title">
-            ${t("settingsTitle", this.plugin)}
+            Alchemy Craft
             <span class="artcraft-hero-version-pill">v${this.plugin.manifest.version}</span>
           </div>
-          <div class="artcraft-settings-hero-sub">Author: Elyaz Aliverdiyev (@StratAlchemy) • Swiss Bento Craft System</div>
+          <div class="artcraft-settings-hero-sub">By Elyaz Aliverdiyev (@StratAlchemy)</div>
         </div>
       </div>
       <div class="artcraft-settings-hero-actions">
-        <button class="artcraft-hero-soft-btn is-primary-soft" id="artcraft-open-site-btn" title="${isRu ? "Открыть официальный сайт и руководство Alchemy Craft" : "Open official Alchemy Craft website & docs"}">
+        <button class="artcraft-hero-soft-btn is-primary-soft" id="artcraft-open-site-btn">
           <span class="svg-inline-icon">${sicraftIcon('globe')}</span>
-          <span>${isRu ? "Официальный сайт" : "Official Website"}</span>
+          <span>${isRu ? "Сайт" : "Website"}</span>
           <span class="svg-inline-icon">${sicraftIcon('external')}</span>
         </button>
-        <button class="artcraft-hero-soft-btn" id="artcraft-check-rel-btn" title="${isRu ? "Проверить обновления в каталоге плагинов" : "Check updates in plugin directory"}">
+        <button class="artcraft-hero-soft-btn" id="artcraft-check-rel-btn">
           <span class="svg-inline-icon">${sicraftIcon('spark')}</span>
           <span>${t("checkUpdatesBtn", this.plugin)}</span>
         </button>
@@ -11046,32 +15087,18 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
     });
 
     // =========================================================================
-    // SECTION 01: ТИПОГРАФИКА, ЧИТАЕМОСТЬ И ШАПКА ЗАМЕТКИ
+    // SECTION 01: READING & TYPOGRAPHY
     // =========================================================================
     const secReadability = createSectionGroup(
       "01",
-      {
-        en: "Readability, Typography & Note Header",
-        ru: "Читаемость, Типографика и Шапка заметки",
-        zh: "排版可读性、字体与笔记顶栏",
-        ja: "可読性・タイポグラフィ・ノートヘッダー",
-        es: "Legibilidad, tipografía y cabecera de nota",
-        de: "Lesbarkeit, Typografie & Notiz-Kopfzeile",
-      },
-      {
-        en: "Core typography, interface language, Swiss Bento styling, and reading progress indicators.",
-        ru: "Главные настройки журнальной вёрстки Swiss Bento, языка интерфейса и индикаторов прогресса.",
-        zh: "核心排版样式、界面语言、Swiss Bento杂志排版以及阅读进度指示器。",
-        ja: "主要なタイポグラフィ、UI言語、スイスベントー組版、読書進捗インジケーター。",
-        es: "Tipografía principal, idioma de la interfaz, diseño Swiss Bento e indicadores de progreso.",
-        de: "Typografie, UI-Sprache, Swiss-Bento-Satz und Lese-Fortschrittsanzeige.",
-      },
+      { en: "Reading & Typography", ru: "Чтение и Типографика" },
+      { en: "Interface language, book layout, and note header.", ru: "Язык интерфейса, книжная вёрстка и шапка заметки." },
       SICRAFT_SVGS.book
     );
 
     new Setting(secReadability)
       .setName(t("langName", this.plugin))
-      .setDesc(t("langDesc", this.plugin))
+      .setDesc(isRu ? "Язык меню и панели инструментов." : "Language for menus and dock controls.")
       .addDropdown((drop) =>
         drop
           .addOption("en", "EN — English")
@@ -11093,7 +15120,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     new Setting(secReadability)
       .setName(t("themeName", this.plugin))
-      .setDesc(t("uiTip", this.plugin))
+      .setDesc(isRu ? "Включить книжную вёрстку и оформление заголовков." : "Enable book typography and structured headings.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.artcraftTheme).onChange(async (value) => {
           this.plugin.settings.artcraftTheme = value;
@@ -11104,8 +15131,21 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     new Setting(secReadability)
+      .setName(isRu ? "Расположение нижней панели" : "Floating Dock Position")
+      .setDesc(isRu ? "Снизу по центру или вертикально справа." : "Bottom horizontal bar or right vertical bar.")
+      .addDropdown((drop) =>
+        drop
+          .addOption("bottom", isRu ? "Снизу (Bottom)" : "Bottom")
+          .addOption("right", isRu ? "Справа (Right)" : "Right Side")
+          .setValue(this.plugin.settings.dockVertical ? "right" : "bottom")
+          .onChange(async (val) => {
+            await this.plugin.setDockPositionMode(val);
+          })
+      );
+
+    new Setting(secReadability)
       .setName(t("taskBarName", this.plugin))
-      .setDesc(t("taskBarDesc", this.plugin))
+      .setDesc(isRu ? "Полоса выполнения чек-боксов в шапке заметки." : "Checklist progress bar at the top of the note.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.showTaskProgress !== false).onChange(async (val) => {
           this.plugin.settings.showTaskProgress = val;
@@ -11115,12 +15155,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     new Setting(secReadability)
-      .setName(isRu ? "Капсула времени чтения и объёма слов" : "Live Reading Time & Word Count Capsule")
-      .setDesc(
-        isRu
-          ? "Показывает аккуратную крафтовую капсулу (~3 мин чтения • 640 слов) рядом с прогрессом задач в шапке заметки."
-          : "Displays a calm craft pill (~3 min read • 640 words) alongside the task progress bar in the note header."
-      )
+      .setName(isRu ? "Время чтения и счётчик слов" : "Reading Time & Word Count")
+      .setDesc(isRu ? "Компактная плашка статистики в шапке заметки." : "Compact reading stats pill in the note header.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.showReadingStats !== false).onChange(async (val) => {
           this.plugin.settings.showReadingStats = val;
@@ -11130,12 +15166,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     new Setting(secReadability)
-      .setName(isRu ? "Режим «Книжный разворот» (2 колонки)" : "Two-Column Book Spread Mode")
-      .setDesc(
-        isRu
-          ? "Превращает заметку на широких мониторах в разворот открытой книги из двух колонок с крафтовым корешком посередине."
-          : "Transforms wide notes into an open two-column book spread with a warm editorial spine divider."
-      )
+      .setName(isRu ? "Книжная страница (3D-переплёт)" : "Book Page Folio Mode")
+      .setDesc(isRu ? "Оформление заметки в виде книжного листа с корешком." : "Present notes as a physical book page with a spine.")
       .addToggle((toggle) =>
         toggle.setValue(!!this.plugin.settings.bookSpreadMode).onChange(async (val) => {
           this.plugin.settings.bookSpreadMode = val;
@@ -11146,26 +15178,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     new Setting(secReadability)
-      .setName(t("headerBadgeName", this.plugin))
-      .setDesc(t("headerBadgeDesc", this.plugin))
-      .addText((text) =>
-        text
-          .setPlaceholder("STRATALCHEMY // KNOWLEDGE BRIEF")
-          .setValue(
-            this.plugin.settings.headerTagText !== undefined
-              ? this.plugin.settings.headerTagText
-              : "STRATALCHEMY // KNOWLEDGE BRIEF"
-          )
-          .onChange(async (val) => {
-            this.plugin.settings.headerTagText = val;
-            await this.plugin.saveSettings();
-            this.plugin.applyBodyClasses();
-          })
-      );
-
-    new Setting(secReadability)
       .setName(t("numBadgeSetName", this.plugin))
-      .setDesc(t("numBadgeSetDesc", this.plugin))
+      .setDesc(isRu ? "Подсвечивать цифры, проценты и даты в режиме чтения." : "Highlight numbers, percentages, and dates in reading view.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.colorizeNumbers).onChange(async (value) => {
           this.plugin.settings.colorizeNumbers = value;
@@ -11174,32 +15188,18 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     // =========================================================================
-    // SECTION 02: КРАФТОВЫЙ ЭКВАЛАЙЗЕР И ФОНОВЫЕ ЗВУКИ
+    // SECTION 02: AUDIO & EQUALIZER
     // =========================================================================
     const secSonic = createSectionGroup(
       "02",
-      {
-        en: "Craft Equalizer & Ambient Soundscapes (Sonic Studio)",
-        ru: "Крафтовый Эквалайзер и Фоновые Звуки (Sonic Studio)",
-        zh: "手作律动均衡器与环境音效 (Sonic Studio)",
-        ja: "クラフトイコライザー＆環境音 (Sonic Studio)",
-        es: "Ecualizador artesanal y paisajes sonoros (Sonic Studio)",
-        de: "Craft-Equalizer & Ambient-Klangwelten (Sonic Studio)",
-      },
-      {
-        en: "6 craft equalizer visualizers, desktop audio loopback, volume scroll wheel, and 12 stereo soundscapes.",
-        ru: "6 крафтовых визуализаций эквалайзера, системный звук ПК, скролл громкости колёсиком мыши и 12 звуков фокуса.",
-        zh: "6种手作动效频谱仪、电脑系统音频环路同步、滚轮音量微调与12种立体声沉浸音效。",
-        ja: "6種のクラフト視覚効果、PC音声ループバック同期、ホイール音量調節、12種の環境音。",
-        es: "6 estilos visuales, captura de audio del PC, rueda de volumen y 12 paisajes sonoros.",
-        de: "6 Craft-Visualisierungen, PC-Audio-Loopback, Lautstärke-Scrollrad und 12 Stereo-Klangwelten.",
-      },
+      { en: "Audio & Equalizer", ru: "Звук и Эквалайзер" },
+      { en: "Equalizer visualizer, ambient soundscapes, and typing acoustics.", ru: "Визуализатор эквалайзера, фоновые звуки и озвучка клавиш." },
       SICRAFT_SVGS.sliders
     );
 
     new Setting(secSonic)
       .setName(t("eqSetName", this.plugin))
-      .setDesc(t("eqSetDesc", this.plugin))
+      .setDesc(isRu ? "Показывать живой эквалайзер в панели управления." : "Show the live audio equalizer pill in the dock.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.showEqualizer !== false).onChange(async (val) => {
           this.plugin.settings.showEqualizer = val;
@@ -11209,16 +15209,16 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     new Setting(secSonic)
-      .setName(isRu ? "Стиль эквалайзера" : "Equalizer style")
-      .setDesc(isRu ? "Выберите один из 6 крафтовых режимов или откройте Аудио-Пульт." : "Pick one of the 6 craft styles, or open the Sonic Studio.")
+      .setName(isRu ? "Стиль эквалайзера" : "Equalizer Style")
+      .setDesc(isRu ? "Режим отображения волн эквалайзера." : "Waveform visualization style.")
       .addDropdown((drop) =>
         drop
-          .addOption("craft", isRu ? "01 // Крафтовый Сейсмограф" : "01 // Craft Ink Seismograph")
-          .addOption("dna", isRu ? "02 // Квантовая Матрица" : "02 // Quantum Matrix")
-          .addOption("bars", isRu ? "03 // Ризограф-Штампы" : "03 // Craft Risograph Stamps")
-          .addOption("wave", isRu ? "04 // Шёлковая Лента" : "04 // Liquid Silk Ribbon")
-          .addOption("orb", isRu ? "05 // Бумажное Оригами" : "05 // Origami Topography")
-          .addOption("ferro", isRu ? "06 // Струны Архитектора" : "06 // Harmonic Strings")
+          .addOption("craft", isRu ? "01 // Сейсмограф" : "01 // Craft Seismograph")
+          .addOption("dna", isRu ? "02 // Световая Волна" : "02 // Harmonic Wave")
+          .addOption("bars", isRu ? "03 // Ризограф" : "03 // Risograph Bars")
+          .addOption("wave", isRu ? "04 // Шёлковая Лента" : "04 // Silk Ribbon")
+          .addOption("orb", isRu ? "05 // Оригами" : "05 // Origami")
+          .addOption("ferro", isRu ? "06 // Струны" : "06 // Strings")
           .setValue(this.plugin.settings.eqMode || "craft")
           .onChange(async (val) => {
             this.plugin.settings.eqMode = val;
@@ -11234,7 +15234,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     new Setting(secSonic)
       .setName(t("ambientName", this.plugin))
-      .setDesc(t("ambientDesc", this.plugin))
+      .setDesc(isRu ? "Фоновый звук для концентрации." : "Background ambient sound for focus.")
       .addDropdown((drop) => {
         drop.addOption("off", isRu ? "Выкл (Off)" : "Off");
         AMBIENT_SOUNDSCAPES.forEach((snd) => {
@@ -11247,16 +15247,16 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     new Setting(secSonic)
       .setName(t("keySoundSetName", this.plugin))
-      .setDesc(t("keySoundSetDesc", this.plugin))
+      .setDesc(isRu ? "Механический отклик при наборе текста." : "Mechanical keystroke sound while typing.")
       .addDropdown((drop) =>
         drop
           .addOption("off", isRu ? "Выкл (Off)" : "Off")
-          .addOption("creamy_pom", isRu ? "Reaper Creamy Linear (мягкий сливочно-мраморный свитч)" : "Reaper Creamy Linear (velvety marbly POM)")
-          .addOption("thock", isRu ? "Ice Vein Deep Thock (глубокий матовый PBT-отклик)" : "Ice Vein Deep Thock (deep matte PBT)")
-          .addOption("matcha_lubed", isRu ? "Milky Yellow Lubed (тёплый смазанный линейный свитч)" : "Milky Yellow Lubed (warm factory-lubed linear)")
-          .addOption("raindrop_wood", isRu ? "Matcha Latte Tactile (деликатная кремовая тактильность)" : "Matcha Latte Tactile (soft cushioned bump)")
-          .addOption("velvet_felt", isRu ? "Honey Peach Silent (бесшумный подушечный свитч)" : "Honey Peach Silent (silicone dampened whisper)")
-          .addOption("paper_brush", isRu ? "Rosewood Cocoa Linear (тёплый древесно-ореховый тон)" : "Rosewood Cocoa Linear (warm wooden pitch)")
+          .addOption("creamy_pom", isRu ? "Creamy POM" : "Creamy POM")
+          .addOption("thock", isRu ? "Deep PBT Thock" : "Deep PBT Thock")
+          .addOption("matcha_lubed", isRu ? "Smooth Yellow" : "Smooth Yellow")
+          .addOption("raindrop_wood", isRu ? "Warm Walnut" : "Warm Walnut")
+          .addOption("velvet_felt", isRu ? "Silent Velvet" : "Silent Velvet")
+          .addOption("paper_brush", isRu ? "Шорох бумаги" : "Paper Whisper")
           .setValue(this.plugin.settings.tactileTypingSound || "off")
           .onChange(async (val) => {
             this.plugin.settings.tactileTypingSound = val;
@@ -11266,32 +15266,18 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     // =========================================================================
-    // SECTION 03: ФОКУС, ПОМОДОРО И УМНАЯ ЛАМПА
+    // SECTION 03: FOCUS, POMODORO & LAMP
     // =========================================================================
     const secFocus = createSectionGroup(
       "03",
-      {
-        en: "Focus Studio, Pomodoro & Smart LED Lamp",
-        ru: "Фокус, Помодоро и Умная Лампа",
-        zh: "专注工坊、番茄钟与智能护眼台灯",
-        ja: "フォーカススタジオ・ポモドーロ・スマートランプ",
-        es: "Estudio de foco, Pomodoro y lámpara Lumina",
-        de: "Fokus-Studio, Pomodoro & Smarte Lumina-Lampe",
-      },
-      {
-        en: "Deep work sprint timer, automatic audio fade on break, warm desk lamp, and AI watermark cleaner.",
-        ru: "Таймер глубокой работы, авто-затухание звука на перерыве, тёплая настольная лампа и чистка ИИ-символов.",
-        zh: "深度工作冲刺计时、休息期音乐渐隐、2700K–6500K色温护眼光带与AI标记清洗。",
-        ja: "ディープワーク用タイマー、休憩時フェードアウト、2700K–6500Kデスクライト、AI記号クリーンアップ。",
-        es: "Temporizador de trabajo profundo, atenuación en pausas, lámpara 2700K–6500K y limpieza de IA.",
-        de: "Fokus-Timer, Musik-Fadeout in Pausen, 2700K–6500K Schreibtischlampe und KI-Bereinigung.",
-      },
+      { en: "Focus, Pomodoro & Lamp", ru: "Фокус, Помодоро и Лампа" },
+      { en: "Work timer, reading focus modes, and warm desk lamp.", ru: "Таймер спринтов, фокус на тексте и настольная лампа." },
       SICRAFT_SVGS.lamp
     );
 
     new Setting(secFocus)
       .setName(t("pomoDurName", this.plugin))
-      .setDesc(t("pomoDurDesc", this.plugin))
+      .setDesc(isRu ? "Длительность рабочего спринта Помодоро." : "Duration of a single Pomodoro focus sprint.")
       .addDropdown((drop) =>
         drop
           .addOption("15", "15 min")
@@ -11308,12 +15294,8 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
       );
 
     new Setting(secFocus)
-      .setName(isRu ? "Аудио-линковка с таймером Помодоро" : "Pomodoro Audio Link (Auto-Fade on Break)")
-      .setDesc(
-        isRu
-          ? "Плавно приглушает фоновый шум или музыку, когда начинается 5-минутный перерыв, и возвращает громкость при старте нового спринта."
-          : "Smoothly fades down background soundscapes or music during 5-minute breaks and restores volume when a new focus sprint begins."
-      )
+      .setName(isRu ? "Приглушать звук на перерыве" : "Auto-Fade Audio on Break")
+      .setDesc(isRu ? "Плавно снижает громкость во время отдыха Помодоро." : "Lowers ambient volume automatically during Pomodoro breaks.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.pomoAudioLink !== false).onChange(async (val) => {
           this.plugin.settings.pomoAudioLink = val;
@@ -11323,7 +15305,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     new Setting(secFocus)
       .setName(t("lampSetName", this.plugin))
-      .setDesc(t("lampSetDesc", this.plugin))
+      .setDesc(isRu ? "Мягкая настольная подсветка (2700K–6500K)." : "Warm adjustable reading light (2700K–6500K).")
       .addButton((btn) =>
         btn.setButtonText(t("lampConfigBtn", this.plugin)).onClick(() => {
           if (this.plugin.activeLampModal) {
@@ -11344,7 +15326,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     new Setting(secFocus)
       .setName(t("sentFocusSetName", this.plugin))
-      .setDesc(t("focusTip", this.plugin))
+      .setDesc(isRu ? "Выделять предложение под курсором при чтении." : "Highlight the active sentence under the cursor.")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.sentenceFocus).onChange(async (value) => {
           this.plugin.settings.sentenceFocus = value;
@@ -11356,7 +15338,7 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
 
     new Setting(secFocus)
       .setName(t("spotlightSetName", this.plugin))
-      .setDesc(t("spotlightSetDesc", this.plugin))
+      .setDesc(isRu ? "Приглушать соседние абзацы для концентрации." : "Dim surrounding paragraphs to keep focus on the active block.")
       .addToggle((toggle) =>
         toggle.setValue(!!this.plugin.settings.spotlightFocus).onChange(async (val) => {
           this.plugin.settings.spotlightFocus = val;
@@ -11365,44 +15347,19 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    new Setting(secFocus)
-      .setName(t("aiCleanSetName", this.plugin))
-      .setDesc(t("aiCleanTip", this.plugin))
-      .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.enableAiCleaner).onChange(async (val) => {
-          this.plugin.settings.enableAiCleaner = val;
-          await this.plugin.saveSettings();
-          this.plugin.createFloatingDock();
-        })
-      );
-
     // =========================================================================
-    // SECTION 04: SWISS BENTO ГРАФ ЗНАНИЙ
+    // SECTION 04: KNOWLEDGE GRAPH
     // =========================================================================
     const secGraph = createSectionGroup(
       "04",
-      {
-        en: "Swiss Bento Knowledge Graph & 1-Click PNG Export",
-        ru: "Swiss Bento Граф Знаний и PNG-Экспорт",
-        zh: "Swiss Bento 知识图谱与 1-Click PNG 导出",
-        ja: "Swiss Bento 知識グラフ＆1クリックPNGエクスポート",
-        es: "Grafo de conocimiento Swiss Bento y exportación PNG",
-        de: "Swiss Bento Wissensgraph & 1-Klick PNG-Export",
-      },
-      {
-        en: "8-color folder palette, focus radar, and 1-click high-DPI PNG graph snapshot.",
-        ru: "8-цветная палитра папок, радар фокуса и сохранение снимка графа в PNG в 1 клик.",
-        zh: "8色文件夹莫兰迪调色板、焦点雷达与一键高分辨率PNG图谱快照。",
-        ja: "8色フォルダパレット、フォーカスレーダー、1クリック高解像度PNGスナップショット。",
-        es: "Paleta de 8 colores para carpetas, radar de foco y captura PNG en 1 clic.",
-        de: "8-Farben-Ordnerpalette, Fokus-Radar und 1-Klick-PNG-Graph-Schnappschuss.",
-      },
-      SICRAFT_SVGS.camera
+      { en: "Knowledge Graph", ru: "Граф Знаний" },
+      { en: "Folder color palette and graph controls.", ru: "Цветовая палитра папок и управление графом." },
+      SICRAFT_SVGS.graph
     );
 
     new Setting(secGraph)
       .setName(t("bentoGraphName", this.plugin))
-      .setDesc(t("bentoGraphDesc", this.plugin))
+      .setDesc(isRu ? "Автоматическая раскраска папок графа в 8 цветов." : "Colorize graph folders with an 8-color palette.")
       .addButton((btn) =>
         btn.setButtonText(t("graphColorizeBtn", this.plugin)).onClick(() => {
           this.plugin.applyBentoGraphColorGroups(false);
@@ -11417,121 +15374,88 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
         })
       );
 
-    // --- FOCUS ANALYTICS BENTO SCORECARD ---
-    const fa = this.plugin.settings.focusAnalytics || { completedSprints: 0, totalFocusMinutes: 0, tasksCompleted100: 0, currentStreak: 0 };
-    const analyticsCard = containerEl.createDiv({ cls: "artcraft-analytics-bento-card" });
-    analyticsCard.innerHTML = `
-      <div class="artcraft-analytics-head">${t("analyticsTitle", this.plugin)}</div>
-      <div class="artcraft-analytics-grid">
-        <div class="artcraft-stat-box">
-          <span class="stat-val">${fa.completedSprints || 0}</span>
-          <span class="stat-lbl">${t("statSprints", this.plugin)}</span>
+    // =========================================================================
+    // SECTION 05: PRO LICENSE & SUPPORT
+    // =========================================================================
+    const secPro = createSectionGroup(
+      "05",
+      { en: "Pro License & Support", ru: "Pro-Лицензия и Поддержка" },
+      { en: "Manage Pro features, support the creator, or activate a license key.", ru: "Управление функциями Pro, поддержка автора и активация ключа." },
+      SICRAFT_SVGS.coffee
+    );
+
+    const statusCard = secPro.createDiv({ cls: "artcraft-pro-status-banner" });
+    statusCard.innerHTML = `
+      <div class="pro-status-left">
+        <div class="pro-status-badge-row">
+          <span class="pro-verified-tag">${PRO_VERIFIED_BADGE_SVG} <span>${this.plugin.settings.isPro ? (isRu ? "PRO АКТИВЕН" : "PRO ACTIVE") : (isRu ? "БАЗОВАЯ ВЕРСИЯ" : "STANDARD")}</span></span>
+          <span class="pro-plan-name">${this.plugin.settings.isPro ? (isRu ? "Lifetime License" : "Lifetime License") : (isRu ? "Доступно обновление" : "Upgrade Available")}</span>
         </div>
-        <div class="artcraft-stat-box">
-          <span class="stat-val">${fa.totalFocusMinutes || 0}m</span>
-          <span class="stat-lbl">${t("statDeepWork", this.plugin)}</span>
-        </div>
-        <div class="artcraft-stat-box">
-          <span class="stat-val">${fa.tasksCompleted100 || 0}</span>
-          <span class="stat-lbl">${t("statChecklists", this.plugin)}</span>
-        </div>
-        <div class="artcraft-stat-box">
-          <span class="stat-val">${fa.currentStreak || 0}</span>
-          <span class="stat-lbl">${t("statStreak", this.plugin)}</span>
-        </div>
+        <div class="pro-status-sub">${
+          this.plugin.settings.isPro
+            ? (isRu ? "Все Pro-функции разблокированы и доступны." : "All Pro features are unlocked and active.")
+            : (isRu ? "Поддержите проект, чтобы разблокировать все функции Pro." : "Support the project to unlock all Pro features.")
+        }</div>
+      </div>
+      <div class="pro-status-right">
+        <button class="artcraft-pay-action-btn is-sapphire" id="pro-open-roastery-btn">
+          <span class="svg-inline-icon">${SICRAFT_SVGS.coffee}</span>
+          <span>${isRu ? "Кофейня / Ключ Pro" : "Support / License Key"}</span>
+        </button>
       </div>
     `;
+    statusCard.querySelector("#pro-open-roastery-btn")?.addEventListener("click", () => {
+      if (this.plugin.activeProModal) this.plugin.activeProModal.close();
+      new AlchemyCraftProModal(this.app, this.plugin, "support").open();
+    });
 
-    // --- PRO SECTION ---
-    containerEl.createEl("h3", { text: "Alchemy Craft Pro", cls: "artcraft-settings-pro-heading" });
+    new Setting(secPro)
+      .setName(isRu ? "Тёмная тема Midnight Craft" : "Midnight Craft Dark Mode")
+      .setDesc(isRu ? "Глубокий тёмный режим для чтения ночью." : "Deep dark mode for night reading.")
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.darkCraftTheme).onChange(async (val) => {
+          this.plugin.settings.darkCraftTheme = val;
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
+        })
+      );
 
-    if (this.plugin.settings.isPro) {
-      const activeCard = containerEl.createDiv({ cls: "artcraft-pro-active-box" });
-      const expDate = new Date(
-        (this.plugin.settings.proActivatedAt || Date.now()) + 365 * 24 * 3600 * 1000
-      ).toLocaleDateString();
-      activeCard.innerHTML = `
-        <div class="pro-head">
-          <span class="pro-tag">${t("proActiveTitle", this.plugin)}</span>
-          <strong>${t("proExpiresOn", this.plugin)} ${expDate}</strong>
-        </div>
-        <div class="pro-tx">License / TXID: <code>${this.plugin.settings.proTxHash || "Verified"}</code></div>
-      `;
+    new Setting(secPro)
+      .setName(isRu ? "Дыхание корешка книги (6 BPM)" : "Breathing Book Spine (6 BPM)")
+      .setDesc(isRu ? "Плавное свечение вдоль корешка для спокойного ритма чтения." : "Subtle rhythmic glow along the book spine.")
+      .addToggle((toggle) =>
+        toggle.setValue(!!this.plugin.settings.breathingSpine).onChange(async (val) => {
+          this.plugin.settings.breathingSpine = val;
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
+        })
+      );
 
-      new Setting(containerEl)
-        .setName(t("proMidnightName", this.plugin))
-        .setDesc(t("proMidnightDesc", this.plugin))
-        .addToggle((toggle) =>
-          toggle.setValue(this.plugin.settings.darkCraftTheme).onChange(async (val) => {
-            this.plugin.settings.darkCraftTheme = val;
-            await this.plugin.saveSettings();
-            this.plugin.applyBodyClasses();
-          })
-        );
-    } else {
-      const buyCard = containerEl.createDiv({ cls: "artcraft-pro-buy-card artcraft-holo-shimmer" });
-      buyCard.innerHTML = `
-        <div class="buy-head">
-          <span class="buy-badge">${t("proBuyCardBadge", this.plugin)}</span>
-          <span class="buy-price">$4.99 / yr • $9.99 Lifetime</span>
-        </div>
-        <h4>${t("proBuyCardTitle", this.plugin)}</h4>
-        <ul class="buy-perks">
-          <li>${t("proPerk1", this.plugin)}</li>
-          <li>${t("proPerk2", this.plugin)}</li>
-          <li>${t("proPerk3", this.plugin)}</li>
-          <li>${t("proPerk4", this.plugin)}</li>
-        </ul>
-      `;
+    new Setting(secPro)
+      .setName(isRu ? "Карточки связанных заметок внизу страницы" : "Related Note Cards Footer")
+      .setDesc(isRu ? "Показывать аккуратную схему связанных заметок под текстом." : "Show linked note cards at the bottom of the page.")
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.windChainFooter !== false).onChange(async (val) => {
+          this.plugin.settings.windChainFooter = val;
+          await this.plugin.saveSettings();
+          this.plugin.updateCurrentLeafKin();
+        })
+      );
 
-      const btnRow = buyCard.createDiv({ cls: "artcraft-buy-btn-row" });
-      const buyBtn = btnRow.createEl("button", {
-        cls: "artcraft-open-modal-btn",
-      });
-      buyBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.coffee}</span><span>${
-        isRu ? "Угостить Капучино / Открыть Pro" : "Treat a Cappuccino / Get Pro"
-      }</span>`;
-      buyBtn.onclick = () => {
-        if (this.plugin.activeProModal) this.plugin.activeProModal.close();
-        new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
-      };
-      const promoQuickBtn = btnRow.createEl("button", {
-        cls: "artcraft-open-promo-btn",
-      });
-      promoQuickBtn.innerHTML = `<span class="svg-inline-icon">${SICRAFT_SVGS.ticket}</span><span>${
-        isRu ? "Ввести Промокод / Ключ" : "Redeem Promo / Key"
-      }</span>`;
-      promoQuickBtn.onclick = () => {
-        if (this.plugin.activeProModal) this.plugin.activeProModal.close();
-        new AlchemyCraftProModal(this.app, this.plugin, "promo").open();
-      };
-    }
+    new Setting(secPro)
+      .setName(isRu ? "Бионическое чтение (Bionic Reading)" : "Bionic Reading Word Anchors")
+      .setDesc(isRu ? "Выделять начало слов для быстрого чтения." : "Emphasize word beginnings for faster scanning.")
+      .addToggle((toggle) =>
+        toggle.setValue(!!this.plugin.settings.bionicAnchors).onChange(async (val) => {
+          this.plugin.settings.bionicAnchors = val;
+          await this.plugin.saveSettings();
+          this.plugin.applyBodyClasses();
+        })
+      );
 
-    // --- GLOBAL SUPPORT & CHECKOUT ---
-    const supportSetting = new Setting(containerEl)
-      .setName(t("supportSetName", this.plugin))
-      .setDesc(t("supportSetDesc", this.plugin))
-      .addButton((btn) => {
-        btn
-          .setButtonText("0% Fee EVM / Bybit UID")
-          .setCta()
-          .onClick(() => {
-            if (this.plugin.activeProModal) this.plugin.activeProModal.close();
-            new AlchemyCraftProModal(this.app, this.plugin, "evm").open();
-          });
-      })
-      .addButton((btn) => {
-        btn.setButtonText("Promo / VIP Key").onClick(() => {
-          if (this.plugin.activeProModal) this.plugin.activeProModal.close();
-          new AlchemyCraftProModal(this.app, this.plugin, "promo").open();
-        });
-      })
-      .addButton((btn) => {
-        btn.setButtonText("@CryptoBot (USDT/TON)").onClick(() => {
-          if (this.plugin.activeProModal) this.plugin.activeProModal.close();
-          new AlchemyCraftProModal(this.app, this.plugin, "cryptobot").open();
-        });
-      })
+    new Setting(secPro)
+      .setName(isRu ? "Связь с автором и сообщество" : "Community & Contact")
+      .setDesc(isRu ? "Telegram-канал автора и страница проекта на GitHub." : "Official Telegram channel and GitHub repository.")
       .addButton((btn) => {
         btn.setButtonText("Telegram (@StratAlchemy)").onClick(() => {
           openExternalUrl("https://t.me/StratAlchemy");
@@ -11542,13 +15466,12 @@ class AlchemyFlowSettingTab extends PluginSettingTab {
           openExternalUrl("https://github.com/elyazaliverdiyev/alchemy-craft");
         });
       });
-    supportSetting.settingEl.classList.add("artcraft-settings-full-width");
   }
 }
 
-// --- ✨ INTERACTIVE TOUR NOTE CONTENT (RU / EN) ---
+// --- INTERACTIVE TOUR NOTE CONTENT (RU / EN) ---
 function getAlchemyTourMarkdown(isRu, version) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDayKey();
   if (isRu) {
     return `---
 title: "Alchemy Craft — Интерактивный тур"
@@ -11557,7 +15480,7 @@ created: ${today}
 plugin-version: "${version}"
 ---
 
-# ⚗️ Alchemy Craft — Интерактивный тур
+# Alchemy Craft — Интерактивный тур
 
 > [!abstract] Зачем этот плагин
 > Alchemy Craft превращает обычную заметку в **тёплую книжную страницу**: ясная иерархия глав, цветные номера, живой прогресс задач, фокус-режимы и звук. Эта заметка — живая песочница: всё, что вы видите ниже, отрисовано самим плагином. Меняйте, кликайте, проверяйте.
@@ -11605,7 +15528,7 @@ plugin-version: "${version}"
 - [ ] Включить «Книжный лист» (кнопка **Книжный лист** над заметкой)
 - [ ] Прикрепить закладку-нутриент (кнопка **+ Закладка**)
 - [ ] Запустить Помодоро в нижней панели
-- [ ] Отметить последний пункт и услышать аккорд 🎻
+- [ ] Отметить последний пункт и услышать аккорд 
 
 ---
 
@@ -11661,7 +15584,7 @@ plugin-version: "${version}"
 1. **Focus ▾ → «Капсула времени»** (или команда *Time Capsule: seal / open current note*).
 2. Выберите срок (1 день — 1 месяц) и напишите вопрос себе: *«Какие 3 главные идеи этой главы?»*.
 3. Заметка скроется под печатью с обратным отсчётом. Файл **не изменяется** и не шифруется — это режим активного припоминания.
-4. Пока срок не наступил, вспоминайте ответ по памяти. Досрочно — удерживайте печать 2 секунды.
+4. Пока срок не наступил, вспоминайте ответ по памяти. Досрочно — удерживайте печать 1,5 секунды.
 5. В день вскрытия Obsidian пришлёт уведомление, печать засияет золотом — нажмите и сравните ответ с текстом.
 
 ---
@@ -11687,7 +15610,7 @@ created: ${today}
 plugin-version: "${version}"
 ---
 
-# ⚗️ Alchemy Craft — Interactive Tour
+# Alchemy Craft — Interactive Tour
 
 > [!abstract] Why this plugin exists
 > Alchemy Craft turns a plain note into a **warm book page**: a clear chapter hierarchy, colour-coded numbers, live task progress, focus modes and sound. This note is a live sandbox — everything below is rendered by the plugin itself. Edit it, click it, try it.
@@ -11735,7 +15658,7 @@ Tick items — the **"Tasks: x/y"** bar above the note updates live. At 100% a c
 - [ ] Turn on "Book Page" (the **Book Page** button above the note)
 - [ ] Attach a nutrient sticker (the **+ Sticker** button)
 - [ ] Start a Pomodoro in the bottom dock
-- [ ] Tick the last item and hear the chord 🎻
+- [ ] Tick the last item and hear the chord 
 
 ---
 
@@ -11791,7 +15714,7 @@ How it works:
 1. **Focus ▾ → "Time Capsule"** (or the command *Time Capsule: seal / open current note*).
 2. Pick a period (1 day — 1 month) and write a question to yourself: *"What are the 3 key ideas of this chapter?"*.
 3. The note hides under a seal with a countdown. The file is **not modified** or encrypted — this is an active-recall mode.
-4. Until the date, recall the answer from memory. To open early, press & hold the seal for 2 seconds.
+4. Until the date, recall the answer from memory. To open early, press & hold the seal for 1.5 seconds.
 5. On the unlock day Obsidian shows a notice and the seal turns gold — click it and compare your answer with the text.
 
 ---
@@ -11810,7 +15733,7 @@ How it works:
 `;
 }
 
-// --- 🕯️ TIME CAPSULE SEAL MODAL (EXPLAINS THE FEATURE, PICKS DATE + RECALL QUESTION) ---
+// --- TIME CAPSULE SEAL MODAL (EXPLAINS THE FEATURE, PICKS DATE + RECALL QUESTION) ---
 class TimeCapsuleSealModal extends Modal {
   constructor(app, plugin, file) {
     super(app);
@@ -11830,13 +15753,13 @@ class TimeCapsuleSealModal extends Modal {
     contentEl.empty();
 
     const presets = I18N_CAPSULE.presets;
-    const minDate = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    const minDate = localDayKey(new Date(Date.now() + 86400000));
 
     contentEl.innerHTML = `
       <div class="capsule-head">
         <span class="capsule-badge">${i18n(I18N_CAPSULE.badge, this.plugin)}</span>
         <h2 class="capsule-title">${i18n(I18N_CAPSULE.title, this.plugin)}</h2>
-        <div class="capsule-file">📄 ${this.file.basename}</div>
+        <div class="capsule-file">${escHtml(this.file.basename)}</div>
       </div>
       <ol class="capsule-steps">
         <li><span>01</span><div><strong>${i18n(I18N_CAPSULE.step1Title, this.plugin)}</strong><small>${
@@ -11953,8 +15876,8 @@ class LifeRpgQuestChainModal extends Modal {
         <div class="artcraft-rpg-hero-top">
           <div>
             <div class="artcraft-rpg-badge">${sicraftIcon('chain')} <span>${i18n({
-              en: "LIFE RPG · SHA-256 PROOF-OF-WORK LEDGER",
-              ru: "СИСТЕМА КВЕСТОВ · РЕЕСТР SHA-256",
+              en: "QUEST JOURNAL · SHA-256 TASK LEDGER",
+              ru: "ЖУРНАЛ ЗАДАЧ · РЕЕСТР SHA-256",
               zh: "人生 RPG · SHA-256 工作量证明账本",
               ja: "ライフRPG · SHA-256 プルーフ・オブ・ワーク台帳",
               es: "LIFE RPG · REGISTRO SHA-256",
@@ -11992,7 +15915,7 @@ class LifeRpgQuestChainModal extends Modal {
       [
         { id: "rpg", icon: "focus", label: i18n({ en: "Quests (6-OS)", ru: "Квесты (6-OS)", zh: "任务矩阵", ja: "クエスト", es: "Misiones", de: "Quests" }, this.plugin) },
         { id: "heatmap", icon: "eqMatrix", label: i18n({ en: "365 Heatmap", ru: "365-Карта", zh: "365热力图", ja: "365日マップ", es: "Mapa 365", de: "365-Heatmap" }, this.plugin) },
-        { id: "onchain", icon: "globe", label: i18n({ en: "Smart Contract ($0)", ru: "Смарт-Контракт ($0)", zh: "智能合约 ($0)", ja: "コントラクト ($0)", es: "Contrato ($0)", de: "Smart Contract ($0)" }, this.plugin) },
+        { id: "onchain", icon: "globe", label: i18n({ en: "Testnet Record ($0)", ru: "Запись в сети ($0)", zh: "智能合约 ($0)", ja: "コントラクト ($0)", es: "Contrato ($0)", de: "Smart Contract ($0)" }, this.plugin) },
         { id: "ledger", icon: "chain", label: `${i18n({ en: "SHA-256 Blocks", ru: "Блоки SHA-256", zh: "SHA-256 区块", ja: "SHA-256 ブロック", es: "Bloques SHA-256", de: "SHA-256 Blöcke" }, this.plugin)} (${chain.length})` },
         { id: "value-formula", icon: "zap", label: i18n({ en: "Value Formula", ru: "Формула ценности", zh: "价值公式", ja: "価値方程式", es: "Fórmula de Valor", de: "Wertformel" }, this.plugin) }
       ].forEach((tObj) => {
@@ -12014,19 +15937,19 @@ class LifeRpgQuestChainModal extends Modal {
           <div class="artcraft-rpg-grid-2">
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">01 · ${i18n({ en: "ANTI-VISION (AVOID)", ru: "АНТИ-ВИДЕНИЕ (ЧЕГО ИЗБЕГАЕМ)", zh: "反愿景 (避免的状态)", ja: "アンチビジョン (避けるべき状態)", es: "ANTI-VISIÓN", de: "ANTI-VISION" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-field="antiVision" rows="2">${rpg.antiVision || ""}</textarea>
+              <textarea class="rpg-input-area" data-field="antiVision" rows="2">${escHtml(rpg.antiVision || "")}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">02 · ${i18n({ en: "VISION MVP (IDEAL DAY)", ru: "ВИДЕНИЕ (ИДЕАЛЬНЫЙ ДЕНЬ)", zh: "理想愿景 MVP", ja: "理想の1日 (Vision MVP)", es: "VISIÓN MVP", de: "VISION MVP" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-field="visionMvp" rows="2">${rpg.visionMvp || ""}</textarea>
+              <textarea class="rpg-input-area" data-field="visionMvp" rows="2">${escHtml(rpg.visionMvp || "")}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">03 · ${i18n({ en: "1-YEAR MISSION", ru: "МИССИЯ НА 1 ГОД", zh: "1年核心使命", ja: "1年間のミッション", es: "MISIÓN A 1 AÑO", de: "1-JAHRES-MISSION" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-field="oneYearMission" rows="2">${rpg.oneYearMission || ""}</textarea>
+              <textarea class="rpg-input-area" data-field="oneYearMission" rows="2">${escHtml(rpg.oneYearMission || "")}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">04 · ${i18n({ en: "1-MONTH BOSS FIGHT", ru: "ГЛАВНЫЙ ПРОЕКТ МЕСЯЦА", zh: "本月核心攻坚 (Boss Fight)", ja: "今月の最重要課題", es: "PROYECTO DEL MES", de: "MONATS-PROJEKT" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-field="oneMonthBoss" rows="2">${rpg.oneMonthBoss || ""}</textarea>
+              <textarea class="rpg-input-area" data-field="oneMonthBoss" rows="2">${escHtml(rpg.oneMonthBoss || "")}</textarea>
             </div>
           </div>
 
@@ -12038,7 +15961,7 @@ class LifeRpgQuestChainModal extends Modal {
                   (lv, idx) => `
                 <div class="rpg-lever-row ${lv.done ? "is-done" : ""}" data-idx="${idx}">
                   <button class="rpg-lever-check" data-toggle="${idx}">${lv.done ? "✓" : ""}</button>
-                  <span class="rpg-lever-title">${lv.title}</span>
+                  <span class="rpg-lever-title">${escHtml(lv.title)}</span>
                   <span class="rpg-lever-xp">+${lv.xp || 35} XP</span>
                   <button class="rpg-lever-del" data-del="${idx}">×</button>
                 </div>
@@ -12125,24 +16048,25 @@ class LifeRpgQuestChainModal extends Modal {
       } else if (this.activeTab === "heatmap") {
         const dayMap = {};
         chain.forEach((b) => {
-          const dKey = String(b.timestamp || "").slice(0, 10);
-          if (!dKey) return;
+          // the day in the user's time zone; the fixed starting block is not an activity
+          const when = new Date(b.timestamp || "");
+          if (Number.isNaN(when.getTime()) || Number(b.index) === 0) return;
+          const dKey = localDayKey(when);
           if (!dayMap[dKey]) dayMap[dKey] = { xp: 0, count: 0, quests: [] };
-          dayMap[dKey].xp += Number(b.xp || 25);
+          dayMap[dKey].xp += Number(b.xp) || 25;
           dayMap[dKey].count += 1;
           dayMap[dKey].quests.push(b.quest);
         });
         const today = new Date();
-        const todayIso = today.toISOString().slice(0, 10);
-        if (!dayMap[todayIso]) {
-          dayMap[todayIso] = { xp: rpg.xp || 100, count: chain.length, quests: [latestBlock.quest || "Genesis"] };
-        }
+        // A day without activity stays empty. It used to be filled with the lifetime totals.
+        const todayIso = localDayKey(today);
+        const todayRec = dayMap[todayIso] || { xp: 0, count: 0, quests: [] };
 
         const cells = [];
         let activeDaysCount = 0;
-        for (let d = 363; d >= 0; d--) {
-          const dt = new Date(today.getTime() - d * 86400000);
-          const iso = dt.toISOString().slice(0, 10);
+        for (let d = 364; d >= 0; d--) {
+          const dt = new Date(today.getFullYear(), today.getMonth(), today.getDate() - d);
+          const iso = localDayKey(dt);
           const rec = dayMap[iso] || { xp: 0, count: 0, quests: [] };
           if (rec.count > 0) activeDaysCount++;
           const lvl = rec.xp >= 120 ? 4 : rec.xp >= 70 ? 3 : rec.xp >= 35 ? 2 : rec.xp > 0 ? 1 : 0;
@@ -12185,7 +16109,7 @@ class LifeRpgQuestChainModal extends Modal {
                 .join("")}
             </div>
             <div class="artcraft-hm-hover-inspector">
-              <strong>${todayIso}</strong> — <strong>${dayMap[todayIso].xp} XP</strong> (${dayMap[todayIso].count} SHA-256)
+              <strong>${todayIso}</strong> — <strong>${todayRec.xp} XP</strong> (${todayRec.count})
             </div>
           </div>
           <div class="artcraft-rpg-footer-actions">
@@ -12244,7 +16168,7 @@ class LifeRpgQuestChainModal extends Modal {
                 <div class="rpg-card-kicker">AlchemyProofOfWorkRegistry.sol · Chain ID ${netInfo.chainId}</div>
                 <strong>${
                   oc.lastAnchorTx
-                    ? `★ ON-CHAIN VERIFIED · TX: ${oc.lastAnchorTx.slice(0, 18)}…`
+                    ? `★ TX SAVED (not checked by the plugin): ${escHtml(String(oc.lastAnchorTx).slice(0, 18))}…`
                     : i18n({
                         en: "Zero-cost anchoring on Base Sepolia Testnet ($0.00 gas)",
                         ru: "Бесплатная фиксация цепочки квестов в сети Base Sepolia ($0.00 газ)",
@@ -12271,7 +16195,7 @@ class LifeRpgQuestChainModal extends Modal {
               </div>
               <div class="artcraft-rpg-card">
                 <div class="rpg-card-kicker">02 · ${i18n({ en: "CONTRACT ADDRESS", ru: "АДРЕС КОНТРАКТА", zh: "合约地址", ja: "コントラクトアドレス", es: "DIRECCIÓN DEL CONTRATO", de: "VERTRAGSADRESSE" }, this.plugin)}</div>
-                <input type="text" class="onchain-contract-input" value="${oc.contractAddress || ""}" placeholder="0x..." />
+                <input type="text" class="onchain-contract-input" value="${escHtml(oc.contractAddress || "")}" placeholder="0x..." />
                 <div class="onchain-meta-lines">
                   <div>Root: <code>${rootHashHex.slice(0, 22)}…</code></div>
                 </div>
@@ -12280,7 +16204,7 @@ class LifeRpgQuestChainModal extends Modal {
 
             <div class="artcraft-calldata-box">
               <div class="rpg-card-kicker">03 · ABI CALLDATA (anchorQuestChainRoot)</div>
-              <div class="calldata-params-line"><code>["${rootHashHex}", ${chain.length}, ${rpg.xp || 100}, ${rpg.level || 1}, "${vaultTag}"]</code></div>
+              <div class="calldata-params-line"><code>["${escHtml(rootHashHex)}", ${chain.length}, ${rpg.xp || 100}, ${rpg.level || 1}, "${escHtml(vaultTag)}"]</code></div>
               <div class="calldata-btn-row">
                 <button class="sketch-tool-btn" data-act="copy-params">${sicraftIcon('copy')} <span>${i18n({ en: "Copy Args", ru: "Скопировать аргументы", zh: "复制参数", ja: "引数をコピー", es: "Copiar argumentos", de: "Argumente kopieren" }, this.plugin)}</span></button>
                 <button class="sketch-tool-btn" data-act="copy-calldata">${sicraftIcon('copy')} <span>${i18n({ en: "Copy Calldata", ru: "Скопировать HEX Calldata", zh: "复制 Calldata", ja: "Calldataをコピー", es: "Copiar Calldata", de: "Calldata kopieren" }, this.plugin)}</span></button>
@@ -12290,7 +16214,7 @@ class LifeRpgQuestChainModal extends Modal {
             </div>
 
             <div class="rpg-add-row">
-              <input type="text" class="onchain-tx-input" value="${oc.lastAnchorTx || ""}" placeholder="${i18n({ en: "Paste transaction hash (0x...)...", ru: "Вставьте хеш транзакции (0x...)...", zh: "粘贴交易哈希 (0x...)...", ja: "トランザクションハッシュ (0x...)...", es: "Pegar hash de transacción (0x...)...", de: "Transaktions-Hash einfügen (0x...)..." }, this.plugin)}" />
+              <input type="text" class="onchain-tx-input" value="${escHtml(oc.lastAnchorTx || "")}" placeholder="${i18n({ en: "Paste transaction hash (0x...)...", ru: "Вставьте хеш транзакции (0x...)...", zh: "粘贴交易哈希 (0x...)...", ja: "トランザクションハッシュ (0x...)...", es: "Pegar hash de transacción (0x...)...", de: "Transaktions-Hash einfügen (0x...)..." }, this.plugin)}" />
               <button class="rpg-add-quest-btn mod-cta" data-act="save-tx">${i18n({ en: "Verify On-Chain", ru: "Подтвердить хеш", zh: "确认上链", ja: "オンチェーン確認", es: "Verificar", de: "Bestätigen" }, this.plugin)}</button>
             </div>
           </div>
@@ -12306,7 +16230,7 @@ class LifeRpgQuestChainModal extends Modal {
           await this.plugin.saveSettings();
         });
         body.querySelector('[data-act="copy-params"]')?.addEventListener("click", () => {
-          navigator.clipboard?.writeText(`["${rootHashHex}", ${chain.length}, ${rpg.xp || 100}, ${rpg.level || 1}, "${vaultTag}"]`);
+          navigator.clipboard?.writeText(`["${rootHashHex}", ${chain.length}, ${rpg.xp || 100}, ${rpg.level || 1}, ${JSON.stringify(vaultTag)}]`);
           this.plugin.playTactileMicroFeedback("tap");
           new Notice("Copied!");
         });
@@ -12319,7 +16243,17 @@ class LifeRpgQuestChainModal extends Modal {
         body.querySelector('[data-act="open-explorer"]')?.addEventListener("click", () => openExternalUrl(netInfo.explorer));
         body.querySelector('[data-act="save-tx"]')?.addEventListener("click", async () => {
           const txVal = (body.querySelector(".onchain-tx-input")?.value || "").trim();
-          const finalTx = txVal || ("0x" + rootHashHex.slice(2, 66));
+          // The plugin does not query the chain here. It stores the hash the user pasted, and only a
+          // well-formed one; an empty field used to be filled with a made-up hash and shown as verified.
+          if (!/^0x[0-9a-fA-F]{64}$/.test(txVal)) {
+            new Notice(
+              (this.plugin.settings.uiLanguage || "en") === "ru"
+                ? "Вставьте хеш транзакции: 0x и 64 знака."
+                : "Paste the transaction hash: 0x followed by 64 characters."
+            );
+            return;
+          }
+          const finalTx = txVal;
           oc.lastAnchorTx = finalTx;
           oc.lastAnchoredTx = finalTx;
           oc.lastAnchoredHash = rootHashHex;
@@ -12339,13 +16273,13 @@ class LifeRpgQuestChainModal extends Modal {
                 (blk) => `
               <div class="artcraft-ledger-block">
                 <div class="ledger-block-head">
-                  <span>#${blk.index}</span>
+                  <span>#${escHtml(blk.index)}</span>
                   <span>${new Date(blk.timestamp).toLocaleString()}</span>
-                  <span>+${blk.xp} XP · Nonce ${blk.nonce}</span>
+                  <span>+${escHtml(blk.xp)} XP · Nonce ${escHtml(blk.nonce)}</span>
                 </div>
-                <div class="ledger-block-quest">${blk.quest}</div>
+                <div class="ledger-block-quest">${escHtml(blk.quest)}</div>
                 <div class="ledger-block-hashes">
-                  <code>${blk.hash}</code>
+                  <code>${escHtml(blk.hash)}</code>
                 </div>
               </div>
             `
@@ -12410,6 +16344,10 @@ class LifeRpgQuestChainModal extends Modal {
 
       body.querySelector('[data-act="insert-cert"]')?.addEventListener("click", async () => {
         const obsidian = require("obsidian");
+        if (!chain.some((b) => Number(b.index) > 0)) {
+          new Notice((this.plugin.settings.uiLanguage || "en") === "ru" ? "В журнале пока нет записей." : "The log has no entries yet.");
+          return;
+        }
         const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
         if (!view || !view.file) return;
         const blk = chain[chain.length - 1];
@@ -12534,19 +16472,19 @@ class BioRhythmFlowModal extends Modal {
           ${[
             {
               id: "low",
-              kicker: "01 · LOW ENTROPY",
+              kicker: "01",
               title: i18n({ en: "Morning Deep Work", ru: "Утро: Чистый Фокус", zh: "清晨：低熵深度创造", ja: "朝：ディープワーク", es: "Mañana: Foco Profundo", de: "Morgen: Deep Work" }, this.plugin),
               sub: i18n({ en: "Architecture, writing & complex code", ru: "Архитектура, сложный код и ключевые идеи", zh: "核心架构、写作与复杂代码", ja: "設計・執筆・複雑なコード", es: "Arquitectura, escritura y código", de: "Architektur, Schreiben & Code" }, this.plugin)
             },
             {
               id: "mid",
-              kicker: "02 · MID ENTROPY",
+              kicker: "02",
               title: i18n({ en: "Afternoon Execution", ru: "День: Исполнение", zh: "午后：中熵推进", ja: "午後：タスク実行", es: "Tarde: Ejecución", de: "Nachmittag: Umsetzung" }, this.plugin),
               sub: i18n({ en: "Distribution, reviews & linear tasks", ru: "Дистрибуция, ревью и линейные задачи", zh: "内容分发、审阅与常规任务", ja: "配信・レビュー・定型作業", es: "Distribución y tareas lineales", de: "Verteilung & lineare Aufgaben" }, this.plugin)
             },
             {
               id: "high",
-              kicker: "03 · RECOVERY",
+              kicker: "03",
               title: i18n({ en: "Evening Synthesis", ru: "Вечер: Спокойное Чтение", zh: "夜晚：阅读与复盘", ja: "夜：読書と内省", es: "Noche: Lectura y Calma", de: "Abend: Ruhiges Lesen" }, this.plugin),
               sub: i18n({ en: "Book reading, sketching & reflection", ru: "Чтение книг, скетчинг и подведение итогов", zh: "深度阅读、手绘草图与总结", ja: "読書・スケッチ・振り返り", es: "Lectura, bocetos y reflexión", de: "Lesen, Skizzieren & Reflexion" }, this.plugin)
             }
@@ -12616,9 +16554,13 @@ class BioRhythmFlowModal extends Modal {
       });
 
       contentEl.querySelectorAll("input[data-bio]").forEach((inp) => {
-        inp.addEventListener("input", async () => {
-          const k = inp.getAttribute("data-bio");
-          bf[k] = Number(inp.value);
+        // "input" fires on every pixel of a drag. Redrawing the window there destroyed the slider under
+        // the pointer, so the value is kept while dragging and the redraw waits for the release.
+        inp.addEventListener("input", () => {
+          bf[inp.getAttribute("data-bio")] = Number(inp.value);
+        });
+        inp.addEventListener("change", async () => {
+          bf[inp.getAttribute("data-bio")] = Number(inp.value);
           await this.plugin.saveSettings();
           this.plugin.updateTaskProgressBar();
           render();
@@ -12708,9 +16650,9 @@ class CreativeMarginSketchModal extends Modal {
             .join("")}
         </div>
         <div class="sketch-sizes">
-          <button class="sketch-tool-btn" data-size="2">Fine</button>
-          <button class="sketch-tool-btn is-active" data-size="3.5">Medium</button>
-          <button class="sketch-tool-btn" data-size="7">Bold</button>
+          <button class="sketch-tool-btn" data-size="2">${(this.plugin.settings.uiLanguage || "en") === "ru" ? "Тонкая" : "Fine"}</button>
+          <button class="sketch-tool-btn is-active" data-size="3.5">${(this.plugin.settings.uiLanguage || "en") === "ru" ? "Средняя" : "Medium"}</button>
+          <button class="sketch-tool-btn" data-size="7">${(this.plugin.settings.uiLanguage || "en") === "ru" ? "Толстая" : "Bold"}</button>
         </div>
         <div class="sketch-bgs">
           <button class="sketch-tool-btn is-active" data-bg="grid">${i18n({ en: "Dot Grid", ru: "Точки", zh: "点阵", ja: "ドット", es: "Puntos", de: "Punktraster" }, this.plugin)}</button>
@@ -12885,15 +16827,56 @@ class CreativeMarginSketchModal extends Modal {
       const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
       if (!view || !view.file) return;
       const caption = (contentEl.querySelector(".sketch-caption-input")?.value || "").trim() || "Sketch";
-      const dataUrl = cv.toDataURL("image/png");
-      const mdBlock = [
-        "",
-        `> [!abstract] ${caption} (${new Date().toLocaleDateString()})`,
-        `> <img src="${dataUrl}" alt="${caption}" style="max-width:100%; border-radius:10px; border:1px solid rgba(148,163,184,0.28);" />`,
-        ""
-      ].join("\n");
-      const cur = await this.app.vault.read(view.file);
-      await this.app.vault.modify(view.file, cur + "\n" + mdBlock);
+      // The drawing is saved as a PNG next to the note's other attachments and the note gets a link to it.
+      // It used to be written into the note itself as base64: hundreds of kilobytes in a single line.
+      const failed = () =>
+        new Notice(i18n({ en: "Could not save the sketch.", ru: "Не удалось сохранить скетч." }, this.plugin));
+      const blob = await new Promise((resolve) => cv.toBlob(resolve, "image/png"));
+      if (!blob) {
+        failed();
+        return;
+      }
+      const stamp = new Date().toISOString().replace(/[-:.]/g, "").replace("T", "-").slice(0, 17);
+      const fileName = `sketch-${stamp}.png`;
+      let imgPath = null;
+      try {
+        if (typeof this.app.fileManager.getAvailablePathForAttachment === "function") {
+          imgPath = await this.app.fileManager.getAvailablePathForAttachment(fileName, view.file.path);
+        }
+      } catch (e) {
+        imgPath = null;
+      }
+      if (!imgPath) {
+        const parent = view.file.parent;
+        const dir = parent && parent.path && parent.path !== "/" ? parent.path + "/" : "";
+        imgPath = obsidian.normalizePath(dir + fileName);
+      }
+      let imgFile = null;
+      const buf = await blob.arrayBuffer();
+      try {
+        const existing = this.app.vault.getAbstractFileByPath(imgPath);
+        if (existing) {
+          imgPath = imgPath.replace(/\.png$/i, `-${Date.now().toString().slice(-4)}.png`);
+        }
+        imgFile = await this.app.vault.createBinary(imgPath, buf);
+      } catch (e) {
+        try {
+          const fallbackPath = obsidian.normalizePath(`sketch-${Date.now()}.png`);
+          imgFile = await this.app.vault.createBinary(fallbackPath, buf);
+        } catch (e2) {
+          failed();
+          return;
+        }
+      }
+      let link = `![[${imgFile.path}]]`;
+      try {
+        const gen = this.app.fileManager.generateMarkdownLink(imgFile, view.file.path);
+        if (gen && gen.length < 260) {
+          link = gen.startsWith("!") ? gen : "!" + gen;
+        }
+      } catch (e) {}
+      const mdBlock = ["", `> [!abstract] ${caption} (${new Date().toLocaleDateString()})`, `> ${link}`, ""].join("\n");
+      await this.plugin.editNote(view.file, (cur) => cur + "\n" + mdBlock);
       await this.plugin.mineQuestBlock(`Sketch: ${caption}`, 30, true);
       this.close();
     });
@@ -12908,10 +16891,10 @@ class CreativeMarginSketchModal extends Modal {
 // 4. CREATOR OS STUDIO MODAL (AIRY SWISS EDITORIAL TYPOGRAPHY, ZERO CLIPPED TABS, 6 LANGUAGES)
 // =========================================================================
 class CreatorOsStudioModal extends Modal {
-  constructor(app, plugin) {
+  constructor(app, plugin, initialTab = "brand") {
     super(app);
     this.plugin = plugin;
-    this.activeTab = "brand";
+    this.activeTab = initialTab;
     const isRu = (this.plugin.settings.uiLanguage || "en") === "ru";
     this.apag = {
       hook: isRu
@@ -12954,7 +16937,9 @@ class CreatorOsStudioModal extends Modal {
               es: "ESTUDIO CREADOR · CONTEXTO Y KANBAN",
               de: "CREATOR STUDIO · KONTEXT, INHALT & KANBAN"
             }, this.plugin)}</span></div>
-            <h2 class="artcraft-rpg-title">${i18n({
+            <h2 class="artcraft-rpg-title">${this.activeTab === "kanban" 
+              ? (isRu ? "🎯 ДОСКА ЗАДАЧ КАНБАН (NOTE KANBAN STUDIO)" : "🎯 NOTE KANBAN STUDIO")
+              : i18n({
               en: "Turn Notes into AI Context, Posts & Actionable Tasks",
               ru: "Превращение Заметок в Контекст для ИИ, Посты и Задачи",
               zh: "将笔记转化为 AI 上下文、高转化帖文与看板任务",
@@ -13003,36 +16988,36 @@ class CreatorOsStudioModal extends Modal {
 
         const compiledPrompt = [
           "# @brand_context.md",
-          `- **Mission:** ${rpg.oneYearMission}`,
-          `- **Current Focus:** ${rpg.oneMonthBoss}`,
-          `- **Voice & Style:** ${cos.brandVoice}`,
-          `- **Audience:** ${cos.coreAudience}`,
-          `- **Core Offer:** ${cos.flagshipOffer}`,
-          `- **Key Vault Insights:**\n${sampleInsights}`
+          `- **${isRu ? "Миссия" : "Mission"}:** ${rpg.oneYearMission || (isRu ? "Превратить хаос заметок в произведение издательского искусства" : "Transform notes into editorial craft")}`,
+          `- **${isRu ? "Текущий фокус" : "Current Focus"}:** ${rpg.oneMonthBoss || (isRu ? "Релиз флагманского набора тактильных карточек и крипто-реестра" : "Ship tactile editorial cards")}`,
+          `- **${isRu ? "Голос и стиль" : "Voice & Style"}:** ${cos.brandVoice || (isRu ? "Прямой, структурный, без воды — синтез глубокой работы и швейцарской чистоты" : "Direct, structural, concise")}`,
+          `- **${isRu ? "Целевая аудитория" : "Audience"}:** ${cos.coreAudience || (isRu ? "Авторы, исследователи и создатели баз знаний, уставшие от серых стен текста" : "Creators and researchers")}`,
+          `- **${isRu ? "Главный продукт" : "Core Offer"}:** ${cos.flagshipOffer || (isRu ? "Alchemy Craft Pro — тактильное книжное фолио, SHA-256 квест-чейн и студия автора" : "Alchemy Craft Pro")}`,
+          `- **${isRu ? "Ключевые инсайты хранилища" : "Key Vault Insights"}:**\n${sampleInsights}`
         ].join("\n");
 
         body.innerHTML = `
           <div class="artcraft-rpg-grid-2">
-            <div class="artcraft-rpg-card">
-              <div class="rpg-card-kicker">01 · ${i18n({ en: "VOICE & STYLE", ru: "СТИЛЬ И ПОДАЧА", zh: "品牌语调", ja: "トーン＆スタイル", es: "ESTILO Y VOZ", de: "STIL & TONFALL" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="brandVoice" rows="4">${cos.brandVoice || ""}</textarea>
+            <div class="artcraft-rpg-card is-voice">
+              <div class="rpg-card-kicker-pill is-voice">${sicraftIcon('spark')} 01 · ${isRu ? "ГОЛОС И СТИЛЬ" : "VOICE & STYLE"}</div>
+              <textarea class="rpg-input-area" data-cos="brandVoice" rows="4" placeholder="${isRu ? 'Прямой, структурный, без воды — синтез глубокой работы и швейцарской эстетики...' : 'Direct, concise, structural tone...'}">${escHtml(cos.brandVoice || "")}</textarea>
             </div>
-            <div class="artcraft-rpg-card">
-              <div class="rpg-card-kicker">02 · ${i18n({ en: "AUDIENCE & PAIN", ru: "АУДИТОРИЯ И ЗАПРОС", zh: "受众与痛点", ja: "対象読者と悩み", es: "AUDIENCIA", de: "ZIELGRUPPE" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="coreAudience" rows="4">${cos.coreAudience || ""}</textarea>
+            <div class="artcraft-rpg-card is-audience">
+              <div class="rpg-card-kicker-pill is-audience">${sicraftIcon('target')} 02 · ${isRu ? "АУДИТОРИЯ И БОЛИ" : "AUDIENCE & PAIN"}</div>
+              <textarea class="rpg-input-area" data-cos="coreAudience" rows="4" placeholder="${isRu ? 'Авторы, исследователи, создатели систем знаний, ценящие тактильную эстетику...' : 'Creators, researchers, and thinkers...'}">${escHtml(cos.coreAudience || "")}</textarea>
             </div>
-            <div class="artcraft-rpg-card">
-              <div class="rpg-card-kicker">03 · ${i18n({ en: "CORE PRODUCT / OFFER", ru: "КЛЮЧЕВОЙ ПРОДУКТ", zh: "核心产品", ja: "主力プロダクト", es: "PRODUCTO CLAVE", de: "KERNPRODUKT" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="flagshipOffer" rows="4">${cos.flagshipOffer || ""}</textarea>
+            <div class="artcraft-rpg-card is-offer">
+              <div class="rpg-card-kicker-pill is-offer">${sicraftIcon('bookmark')} 03 · ${isRu ? "ПРОДУКТ И ПРЕДЛОЖЕНИЕ" : "CORE OFFER"}</div>
+              <textarea class="rpg-input-area" data-cos="flagshipOffer" rows="4" placeholder="${isRu ? 'Alchemy Craft — тактильное книжное фолио, криптографический трекер и студия контента...' : 'Alchemy Craft Pro — tactile book folio & creator studio...'}">${escHtml(cos.flagshipOffer || "")}</textarea>
             </div>
-            <div class="artcraft-rpg-card">
-              <div class="rpg-card-kicker">04 · ${i18n({ en: "MAIN TOPIC PILLAR", ru: "ГЛАВНАЯ ТЕМА БЛОГА", zh: "内容支柱", ja: "メインテーマ", es: "PILAR DE CONTENIDO", de: "HAUPTTHEMA" }, this.plugin)}</div>
-              <textarea class="rpg-input-area" data-cos="contentPillar" rows="4">${cos.contentPillar || ""}</textarea>
+            <div class="artcraft-rpg-card is-pillar">
+              <div class="rpg-card-kicker-pill is-pillar">${sicraftIcon('compass')} 04 · ${isRu ? "ГЛАВНАЯ ТЕМА И СМЫСЛЫ" : "MAIN TOPIC PILLAR"}</div>
+              <textarea class="rpg-input-area" data-cos="contentPillar" rows="4" placeholder="${isRu ? 'Когнитивная архитектура, глубокая концентрация и визуальное мышление...' : 'Cognitive architecture, focus, and visual thinking...'}">${escHtml(cos.contentPillar || "")}</textarea>
             </div>
           </div>
           <div class="artcraft-rpg-levers-box">
             <div class="rpg-card-kicker">${i18n({ en: "COMPILED @brand_context.md FOR AI", ru: "СВОДНЫЙ КОНТЕКСТ @brand_context.md ДЛЯ ИИ", zh: "生成的 AI 品牌上下文", ja: "AI用 @brand_context.md プレビュー", es: "CONTEXTO @brand_context.md", de: "KOMPILIERTER KI-KONTEXT" }, this.plugin)}</div>
-            <textarea class="rpg-input-area is-mono-preview" rows="8" readonly>${compiledPrompt}</textarea>
+            <textarea class="rpg-input-area is-mono-preview" rows="8" readonly>${escHtml(compiledPrompt)}</textarea>
           </div>
           <div class="artcraft-rpg-footer-actions">
             <button class="sketch-tool-btn" data-act="copy-brand">${sicraftIcon('copy')} <span>${i18n({ en: "Copy Context", ru: "Скопировать", zh: "复制", ja: "コピー", es: "Copiar", de: "Kopieren" }, this.plugin)}</span></button>
@@ -13067,19 +17052,19 @@ class CreatorOsStudioModal extends Modal {
           <div class="artcraft-rpg-grid-2">
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">01 · ATTENTION (${i18n({ en: "HOOK & CONTRAST", ru: "ХУК И КОНТРАСТ", zh: "吸引注意", ja: "フック", es: "GANCHO", de: "HOOK" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="hook" rows="4">${this.apag.hook}</textarea>
+              <textarea class="rpg-input-area" data-apag="hook" rows="4">${escHtml(this.apag.hook)}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">02 · PERSPECTIVE (${i18n({ en: "ROOT CAUSE", ru: "СУТЬ ПРОБЛЕМЫ", zh: "视角转换", ja: "視点の転換", es: "PERSPECTIVA", de: "PERSPEKTIVE" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="perspective" rows="4">${this.apag.perspective}</textarea>
+              <textarea class="rpg-input-area" data-apag="perspective" rows="4">${escHtml(this.apag.perspective)}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">03 · ADVANTAGE (${i18n({ en: "YOUR MECHANISM", ru: "НОВОЕ РЕШЕНИЕ", zh: "核心优势", ja: "解決メカニズム", es: "SOLUCIÓN", de: "LÖSUNG" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="advantage" rows="4">${this.apag.advantage}</textarea>
+              <textarea class="rpg-input-area" data-apag="advantage" rows="4">${escHtml(this.apag.advantage)}</textarea>
             </div>
             <div class="artcraft-rpg-card">
               <div class="rpg-card-kicker">04 · GAMIFY (${i18n({ en: "ACTION STEPS 01–03", ru: "ШАГИ 01–03", zh: "行动步骤", ja: "実践ステップ", es: "PASOS 01–03", de: "SCHRITTE 01–03" }, this.plugin)})</div>
-              <textarea class="rpg-input-area" data-apag="gamify" rows="4">${this.apag.gamify}</textarea>
+              <textarea class="rpg-input-area" data-apag="gamify" rows="4">${escHtml(this.apag.gamify)}</textarea>
             </div>
           </div>
           <div class="artcraft-rpg-footer-actions">
@@ -13121,7 +17106,7 @@ class CreatorOsStudioModal extends Modal {
           <div class="artcraft-airy-angles-wrap">
             <div class="airy-topic-header">
               <span class="rpg-card-kicker">${i18n({ en: "ACTIVE TOPIC", ru: "ТЕМА РАЗБОРА", zh: "当前主题", ja: "対象テーマ", es: "TEMA ACTIVO", de: "AKTIVES THEMA" }, this.plugin)}</span>
-              <strong>${shortTopic}</strong>
+              <strong>${escHtml(shortTopic)}</strong>
             </div>
             <div class="artcraft-rpg-grid-2">
               <div class="artcraft-rpg-card">
@@ -13203,19 +17188,29 @@ class CreatorOsStudioModal extends Modal {
         const tasks = [];
         if (view && view.file) {
           rawContent = view.editor ? view.editor.getValue() : (view.data || "");
-          lines = rawContent.split("\n");
+          lines = rawContent.replace(/\r\n/g, "\n").split("\n");
+          let inFence = false;
           lines.forEach((ln, idx) => {
+            if (/^\s*(```|~~~)/.test(ln)) {
+              inFence = !inFence;
+              return;
+            }
+            if (inFence) return; // a "- [ ]" inside a code block is code, not a task
             const m = ln.match(/^\s*[-*+]\s+\[([ xX/\->])\]\s+(.+)$/);
             if (m) {
               const ch = m[1];
               const col = (ch === "x" || ch === "X") ? "done" : ch === "/" ? "flow" : ch === "-" || ch === ">" ? "review" : "todo";
               const rawTxt = m[2].trim();
+              // priority comes from a tag in the task; without a tag the task is "normal"
               const prioMatch = rawTxt.match(/#(high|med|low|срочно|важно)/i);
-              const prio = prioMatch ? prioMatch[1].toLowerCase() : (idx % 3 === 0 ? "high" : idx % 3 === 1 ? "med" : "low");
+              const prio = prioMatch ? prioMatch[1].toLowerCase() : "low";
               tasks.push({ lineIdx: idx, col, text: rawTxt, prio });
             }
           });
         }
+        const taskLineRe = /^(\s*[-*+]\s+\[)[ xX/\->](\]\s+)/;
+        // The note as it is right now, never the copy taken when the board was drawn.
+        const readCurrent = async () => (view.editor ? view.editor.getValue() : await this.app.vault.read(view.file));
 
         const todoList = tasks.filter((t) => t.col === "todo");
         const flowList = tasks.filter((t) => t.col === "flow");
@@ -13232,12 +17227,27 @@ class CreatorOsStudioModal extends Modal {
           const charMap = { todo: " ", flow: "/", review: "-", done: "x" };
           const newChar = charMap[targetCol] || " ";
           const taskObj = tasks.find((x) => x.lineIdx === lineIdx);
-          if (!taskObj) return;
-          lines[lineIdx] = lines[lineIdx].replace(/^(\s*[-*+]\s+\[)[ xX/\->](\]\s+)/, `$1${newChar}$2`);
-          const updatedContent = lines.join("\n");
-          if (view.editor) view.editor.setValue(updatedContent);
-          else await this.app.vault.modify(view.file, updatedContent);
-          if (targetCol === "done") {
+          if (!taskObj || taskObj.col === targetCol) return;
+          // The note may have changed since the board was drawn (typing, sync, another plugin). Touch the
+          // line only if it is still the same task, and change that one line instead of the whole note.
+          const current = (await readCurrent()).replace(/\r\n/g, "\n").split("\n");
+          if (current[lineIdx] !== lines[lineIdx] || !taskLineRe.test(current[lineIdx] || "")) {
+            new Notice(isRu ? "Заметка изменилась. Доска обновлена, повторите действие." : "The note has changed. The board was refreshed, please repeat.");
+            render();
+            return;
+          }
+          const newLine = current[lineIdx].replace(taskLineRe, `$1${newChar}$2`);
+          if (view.editor) {
+            view.editor.replaceRange(newLine, { line: lineIdx, ch: 0 }, { line: lineIdx, ch: current[lineIdx].length });
+          } else {
+            current[lineIdx] = newLine;
+            await this.app.vault.modify(view.file, current.join("\n"));
+          }
+          // XP is given once per task, for the first move into "done" (moving it back and forth earns nothing).
+          const rewardKey = view.file.path + "::" + taskObj.text;
+          if (!this.rewardedTasks) this.rewardedTasks = new Set();
+          if (targetCol === "done" && !this.rewardedTasks.has(rewardKey)) {
+            this.rewardedTasks.add(rewardKey);
             await this.plugin.mineQuestBlock(taskObj.text.slice(0, 110), 30, true);
           } else {
             this.plugin.playTactileMicroFeedback("tap");
@@ -13256,10 +17266,10 @@ class CreatorOsStudioModal extends Modal {
 
           return items.map((t) => {
             const prioLabel = t.prio === "high" || t.prio === "срочно"
-              ? (isRu ? "🔥 Высокий" : "🔥 High")
+              ? (isRu ? "Высокий" : "High")
               : t.prio === "med" || t.prio === "важно"
-              ? (isRu ? "⚡ Средний" : "⚡ Med")
-              : (isRu ? "🌱 Обычный" : "🌱 Normal");
+              ? (isRu ? "Средний" : "Med")
+              : (isRu ? "Обычный" : "Normal");
             const prioCls = (t.prio === "high" || t.prio === "срочно") ? "is-high" : (t.prio === "med" || t.prio === "важно") ? "is-med" : "is-low";
             const shortHash = this.plugin.wasmFastHashHex(t.text).slice(0, 6);
             return `
@@ -13272,7 +17282,7 @@ class CreatorOsStudioModal extends Modal {
                 <div class="artcraft-kanban-card-acts">
                   ${prevCol ? `<button class="k-move-btn" data-kline="${t.lineIdx}" data-kto="${prevCol}" title="${isRu ? "Шаг назад" : "Move left"}">←</button>` : `<span></span>`}
                   <span class="kcard-line-badge">L${t.lineIdx + 1}</span>
-                  ${nextCol ? `<button class="k-move-btn is-forward" data-kline="${t.lineIdx}" data-kto="${nextCol}" title="${isRu ? "Дальше по потоку" : "Advance"}">${nextCol === "done" ? "✓ Done +30 XP" : "→"}</button>` : `<span class="k-done-chip">⛓️ SHA-256</span>`}
+                  ${nextCol ? `<button class="k-move-btn is-forward" data-kline="${t.lineIdx}" data-kto="${nextCol}" title="${isRu ? "Дальше по потоку" : "Advance"}">${nextCol === "done" ? "✓ Done +30 XP" : "→"}</button>` : `<span class="k-done-chip">SHA-256</span>`}
                 </div>
               </div>
             `;
@@ -13283,15 +17293,15 @@ class CreatorOsStudioModal extends Modal {
           <div class="clipy-kanban-dashboard">
             <div class="clipy-kpi-strip">
               <div class="clipy-kpi-card is-amber">
-                <span class="clipy-kpi-lbl">${isRu ? "📥 ИДЕИ / БЭКЛОГ" : "📥 BACKLOG"}</span>
+                <span class="clipy-kpi-lbl">${isRu ? "ИДЕИ / БЭКЛОГ" : "BACKLOG"}</span>
                 <div class="clipy-kpi-row"><strong>${todoList.length}</strong><span class="clipy-delta">${pctTodo}%</span></div>
               </div>
               <div class="clipy-kpi-card is-blue">
-                <span class="clipy-kpi-lbl">${isRu ? "⚡ В РАБОТЕ (WIP)" : "⚡ IN PROGRESS"}</span>
+                <span class="clipy-kpi-lbl">${isRu ? "В РАБОТЕ (WIP)" : "IN PROGRESS"}</span>
                 <div class="clipy-kpi-row"><strong>${flowList.length}</strong><span class="clipy-delta">${pctFlow}%</span></div>
               </div>
               <div class="clipy-kpi-card is-purple">
-                <span class="clipy-kpi-lbl">${isRu ? "🔍 ПРОВЕРКА / РЕВЬЮ" : "🔍 IN REVIEW"}</span>
+                <span class="clipy-kpi-lbl">${isRu ? "ПРОВЕРКА / РЕВЬЮ" : "IN REVIEW"}</span>
                 <div class="clipy-kpi-row"><strong>${revList.length}</strong><span class="clipy-delta">${pctRev}%</span></div>
               </div>
               <div class="clipy-kpi-card is-lime">
@@ -13359,10 +17369,20 @@ class CreatorOsStudioModal extends Modal {
         const addNewTask = async () => {
           const inp = body.querySelector(".clipy-new-task-input");
           const val = (inp && inp.value || "").trim();
-          if (!val || !view || !view.file) return;
-          const updated = rawContent.trimEnd() + `\n- [ ] ${val}\n`;
-          if (view.editor) view.editor.setValue(updated);
-          else await this.app.vault.modify(view.file, updated);
+          if (!val) return;
+          if (!view || !view.file) {
+            new Notice(isRu ? "Откройте заметку, в которую добавить задачу." : "Open the note the task should go into.");
+            return;
+          }
+          // Appended at the end of the note as it is now; nothing else in the note is rewritten.
+          const cur = await readCurrent();
+          const addition = (cur.length === 0 || cur.endsWith("\n") ? "" : "\n") + `- [ ] ${val}\n`;
+          if (view.editor) {
+            const last = view.editor.lastLine();
+            view.editor.replaceRange(addition, { line: last, ch: view.editor.getLine(last).length });
+          } else {
+            await this.app.vault.modify(view.file, cur + addition);
+          }
           this.plugin.playTactileMicroFeedback("tap");
           render();
         };
@@ -13391,6 +17411,7 @@ class CreatorOsStudioModal extends Modal {
           });
           card.addEventListener("dragend", () => {
             card.classList.remove("is-dragging");
+            draggedLineIdx = null;
           });
         });
 
@@ -13406,8 +17427,10 @@ class CreatorOsStudioModal extends Modal {
             e.preventDefault();
             colEl.classList.remove("is-drag-over");
             const targetCol = colEl.getAttribute("data-kcol");
-            const lineIdx = draggedLineIdx !== null ? draggedLineIdx : parseInt(e.dataTransfer?.getData("text/plain") || "-1", 10);
-            if (lineIdx >= 0 && targetCol) {
+            // only a card dragged from this board counts; text dropped from elsewhere is ignored
+            const lineIdx = draggedLineIdx;
+            draggedLineIdx = null;
+            if (lineIdx !== null && lineIdx >= 0 && targetCol) {
               await updateTaskState(lineIdx, targetCol);
             }
           });
@@ -13472,7 +17495,7 @@ class AutopilotInterruptModal extends Modal {
         <h2 class="artcraft-rpg-title">${chosenPrompt}</h2>
       </div>
       <div class="artcraft-rpg-levers-box">
-        <div class="rpg-card-kicker">${rpg.oneMonthBoss}</div>
+        <div class="rpg-card-kicker">${escHtml(rpg.oneMonthBoss)}</div>
         <textarea class="rpg-input-area autopilot-ans" rows="3" placeholder="${i18n({
           en: "Write one brief sentence to lock in your focus (+30 XP)...",
           ru: "Напишите одну короткую фразу для фиксации внимания (+30 XP)...",
@@ -13482,13 +17505,25 @@ class AutopilotInterruptModal extends Modal {
           de: "Schreibe einen kurzen Satz zur Fokus-Kalibrierung (+30 XP)..."
         }, this.plugin)}"></textarea>
       </div>
-      <div class="artcraft-rpg-footer-actions">
-        <button class="sketch-tool-btn" data-act="close">${i18n({ en: "Later", ru: "Позже", zh: "稍后", ja: "後で", es: "Luego", de: "Später" }, this.plugin)}</button>
-        <button class="artcraft-rpg-stamp-note-btn mod-cta" data-act="commit">
-          ${sicraftIcon('chain')} <span>${i18n({ en: "Sign in SHA-256 (+30 XP)", ru: "Подписать в SHA-256 (+30 XP)", zh: "SHA-256 签名记录 (+30 XP)", ja: "SHA-256 に署名 (+30 XP)", es: "Firmar en SHA-256 (+30 XP)", de: "In SHA-256 signieren (+30 XP)" }, this.plugin)}</span>
-        </button>
+      <div class="artcraft-rpg-footer-actions" style="justify-content: space-between; align-items: center;">
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer;">
+          <input type="checkbox" class="autopilot-schedule-toggle" ${this.plugin.settings.autopilotAlarms?.enabled ? "checked" : ""} />
+          <span>${i18n({ en: "Auto-prompt on schedule", ru: "Авто-вопросы по расписанию" }, this.plugin)}</span>
+        </label>
+        <div style="display:inline-flex;gap:8px;">
+          <button class="sketch-tool-btn" data-act="close">${i18n({ en: "Later", ru: "Позже", zh: "稍后", ja: "後で", es: "Luego", de: "Später" }, this.plugin)}</button>
+          <button class="artcraft-rpg-stamp-note-btn mod-cta" data-act="commit">
+            ${sicraftIcon('chain')} <span>${i18n({ en: "Sign in SHA-256 (+30 XP)", ru: "Подписать в SHA-256 (+30 XP)", zh: "SHA-256 签名记录 (+30 XP)", ja: "SHA-256 に署名 (+30 XP)", es: "Firmar en SHA-256 (+30 XP)", de: "In SHA-256 signieren (+30 XP)" }, this.plugin)}</span>
+          </button>
+        </div>
       </div>
     `;
+
+    contentEl.querySelector(".autopilot-schedule-toggle")?.addEventListener("change", async (e) => {
+      if (!this.plugin.settings.autopilotAlarms) this.plugin.settings.autopilotAlarms = { enabled: false, times: ["11:00", "13:30", "15:15", "17:00", "19:30"], lastTriggeredKey: "", reflections: [] };
+      this.plugin.settings.autopilotAlarms.enabled = !!e.target.checked;
+      await this.plugin.saveSettings();
+    });
 
     contentEl.querySelector('[data-act="close"]')?.addEventListener("click", () => this.close());
     contentEl.querySelector('[data-act="commit"]')?.addEventListener("click", async () => {
@@ -13505,7 +17540,7 @@ class AutopilotInterruptModal extends Modal {
 
 
 // ============================================================================
-// 🧠 v5.2.0 MODAL: HUMAN × AI DUAL-COGNITION STUDIO, llms.txt & WASM RADAR
+// v5.2.0 MODAL: HUMAN × AI DUAL-COGNITION STUDIO, llms.txt & WASM RADAR
 // ============================================================================
 class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
   constructor(app, plugin, initialTab = "human") {
@@ -13549,40 +17584,42 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
     const a = this.analysis;
     const capsuleText = this.plugin.buildAiSemanticCapsule(a, this.aiFormat);
     const capsuleTokens = Math.max(1, Math.ceil(capsuleText.length / 3.8));
-    const savedPct = a.rawTokens > capsuleTokens ? Math.min(88, Math.max(18, Math.round((1 - capsuleTokens / a.rawTokens) * 100))) : 58;
+    // Estimated size change of the capsule against the note (3.8 characters per token), unclamped.
+    const savedPct = a.rawTokens > 0 ? Math.round((1 - capsuleTokens / a.rawTokens) * 100) : 0;
+    const savedLabel = (savedPct >= 0 ? "−" : "+") + Math.abs(savedPct) + "%";
 
     const stampedCount = Object.keys(this.plugin.settings.stampedNotes || {}).length;
-    const questBlocks = (this.plugin.settings.questChain && Array.isArray(this.plugin.settings.questChain.blocks))
-      ? this.plugin.settings.questChain.blocks.length
+    const questBlocks = Array.isArray(this.plugin.settings.questBlockchain)
+      ? this.plugin.settings.questBlockchain.length
       : 0;
 
     contentEl.innerHTML = `
       <div class="dc-studio-shell">
         <div class="dc-studio-header">
           <div>
-            <div class="dc-eyebrow">ALCHEMY CRAFT v5.3.1 // HUMAN × AI DUAL-COGNITION ENGINE</div>
+            <div class="dc-eyebrow">${isRu ? "Сводка заметки" : "Note summary"} · Alchemy Craft ${this.plugin.manifest.version}</div>
             <h2 class="dc-title">${
               isRu
-                ? "🧠 Двухрежимное Чтение: Человек × ИИ-Агент"
-                : "🧠 Human × AI Dual-Cognition Knowledge Studio"
+                ? "Сводка заметки, капсула для ИИ и похожие заметки"
+                : "Note Summary, AI Capsule & Similar Notes Studio"
             }</h2>
             <p class="dc-subtitle">${
               isRu
-                ? `Активная заметка: <strong>${a.title}</strong> · Кристальная структура без «стены текста» для глаз человека и сжатая семантическая капсула для ИИ-агентов.`
-                : `Active note: <strong>${a.title}</strong> · High-anchor visual architecture for human eyes and token-compressed semantic capsules for AI agents.`
+                ? `Активная заметка: <strong>${escHtml(a.title)}</strong> · Кристальная структура без «стены текста» для глаз человека и сжатая семантическая капсула для ИИ-агентов.`
+                : `Active note: <strong>${escHtml(a.title)}</strong> · High-anchor visual architecture for human eyes and token-compressed semantic capsules for AI agents.`
             }</p>
           </div>
           <div class="dc-kpi-strip">
             <div class="dc-kpi-pill is-emerald">
-              <span class="dc-kpi-lbl">${isRu ? "ЯСНОСТЬ ЧТЕНИЯ" : "HUMAN CLARITY"}</span>
+              <span class="dc-kpi-lbl">${isRu ? "СТРУКТУРА" : "STRUCTURE"}</span>
               <strong class="dc-kpi-val">${a.structureScore}%</strong>
             </div>
             <div class="dc-kpi-pill is-indigo">
               <span class="dc-kpi-lbl">${isRu ? "ЭКОНОМИЯ ТОКЕНОВ ИИ" : "AI TOKEN SAVINGS"}</span>
-              <strong class="dc-kpi-val">-${savedPct}%</strong>
+              <strong class="dc-kpi-val">${savedLabel}</strong>
             </div>
             <div class="dc-kpi-pill is-amber">
-              <span class="dc-kpi-lbl">WASM HASH</span>
+              <span class="dc-kpi-lbl">HASH</span>
               <strong class="dc-kpi-val">0x${a.hashHex}</strong>
             </div>
           </div>
@@ -13590,16 +17627,16 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
         <div class="dc-tab-bar">
           <button class="dc-tab-btn ${this.activeTab === "human" ? "is-active" : ""}" data-tab="human">
-            <span>👁️ ${isRu ? "1. Выжимка для Человека (TL;DR)" : "1. Human Executive Brief"}</span>
+            <span>${isRu ? "1. Выжимка для Человека (TL;DR)" : "1. Human Executive Brief"}</span>
           </button>
           <button class="dc-tab-btn ${this.activeTab === "ai" ? "is-active" : ""}" data-tab="ai">
-            <span>🤖 ${isRu ? "2. Капсула для ИИ (llms.txt / MCP)" : "2. AI Agent Capsule (llms.txt / MCP)"}</span>
+            <span>${isRu ? "2. Капсула для ИИ (llms.txt / MCP)" : "2. AI Agent Capsule (llms.txt / MCP)"}</span>
           </button>
           <button class="dc-tab-btn ${this.activeTab === "radar" ? "is-active" : ""}" data-tab="radar">
-            <span>⚡ ${isRu ? "3. WASM-Радар Смысловых Связей" : "3. WASM SimHash Semantic Radar"}</span>
+            <span>${isRu ? "3. Похожие заметки" : "3. Similar notes"}</span>
           </button>
           <button class="dc-tab-btn ${this.activeTab === "seals" ? "is-active" : ""}" data-tab="seals">
-            <span>🏛️ ${isRu ? "4. Векторные 3D-Печати Мастерства" : "4. Vector SVG Ex-Libris Seals"}</span>
+            <span>${isRu ? "4. Векторные 3D-Печати Мастерства" : "4. Vector SVG Ex-Libris Seals"}</span>
           </button>
         </div>
 
@@ -13622,7 +17659,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
         <div class="dc-bento-grid">
           <div class="dc-card dc-card-wide">
             <div class="dc-card-head">
-              <span class="dc-badge is-blue">01 // CORE THESIS</span>
+              <span class="dc-badge is-blue">${isRu ? "01 · Главные мысли" : "01 · Key points"}</span>
               <h3>${isRu ? "Ключевые смысловые опоры заметки (без воды)" : "High-Signal Executive Thesis Anchors"}</h3>
             </div>
             <ul class="dc-thesis-list">
@@ -13631,7 +17668,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
                   ? a.thesisList
                       .map(
                         (t, idx) =>
-                          `<li><span class="dc-step-chip">0${idx + 1}</span><span>${t}</span></li>`
+                          `<li><span class="dc-step-chip">0${idx + 1}</span><span>${escHtml(t)}</span></li>`
                       )
                       .join("")
                   : `<li class="dc-empty">${
@@ -13643,14 +17680,14 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
             </ul>
             <div class="dc-action-row">
               <button class="dc-primary-btn" data-act="insert-brief">
-                ✨ ${
+                ${
                   isRu
                     ? "Вставить этот Нейро-Бриф (Callout) в шапку заметки"
                     : "Insert Executive Brief Callout at Top of Note"
                 }
               </button>
               <button class="dc-secondary-btn" data-act="toggle-bionic">
-                ⚡ ${
+                ${
                   isRu
                     ? `Бионический фокус корней слов: ${this.plugin.settings.bionicAnchors ? "ВКЛ" : "ВЫКЛ"}`
                     : `Bionic Word-Root Anchors: ${this.plugin.settings.bionicAnchors ? "ON" : "OFF"}`
@@ -13661,7 +17698,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
           <div class="dc-card">
             <div class="dc-card-head">
-              <span class="dc-badge is-emerald">02 // METRICS & NUMBERS</span>
+              <span class="dc-badge is-emerald">${isRu ? "02 · Числа и даты" : "02 · Figures and dates"}</span>
               <h3>${isRu ? "Матрица цифр, дат и метрик" : "Extracted Numbers, Dates & KPIs"}</h3>
             </div>
             <div class="dc-metrics-pills">
@@ -13671,8 +17708,8 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
                       .map(
                         (m) => `
                         <div class="dc-metric-chip" title="${m.context.replace(/"/g, "&quot;")}">
-                          <strong>${m.value}</strong>
-                          <span>${m.context.slice(0, 48)}${m.context.length > 48 ? "…" : ""}</span>
+                          <strong>${escHtml(m.value)}</strong>
+                          <span>${escHtml(m.context.slice(0, 48))}${m.context.length > 48 ? "…" : ""}</span>
                         </div>`
                       )
                       .join("")
@@ -13685,7 +17722,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
           <div class="dc-card">
             <div class="dc-card-head">
-              <span class="dc-badge is-amber">03 // ARCHITECTURE & ACTIONS</span>
+              <span class="dc-badge is-amber">${isRu ? "03 · Структура и задачи" : "03 · Structure and tasks"}</span>
               <h3>${isRu ? `Карта глав (${a.headings.length}) и шагов (${a.tasks.length + a.steps.length})` : `Section Map (${a.headings.length}) & Action Levers (${a.tasks.length + a.steps.length})`}</h3>
             </div>
             <div class="dc-outline-list">
@@ -13694,7 +17731,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
                   (h) => `
                   <div class="dc-outline-row" style="padding-left:${Math.max(0, h.level - 1) * 10}px">
                     <span class="dc-h-tag">H${h.level}</span>
-                    <span class="dc-h-txt">${h.text}</span>
+                    <span class="dc-h-txt">${escHtml(h.text)}</span>
                     <span class="dc-h-line">L${h.line}</span>
                   </div>`
                 ).join("") || `<div class="dc-empty">${isRu ? "Заголовки H1–H4 не найдены" : "No H1–H4 headings yet"}</div>`
@@ -13726,7 +17763,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
               <button class="dc-fmt-btn ${this.aiFormat === "jsonld" ? "is-active" : ""}" data-fmt="jsonld">JSON-LD Graph Node</button>
             </div>
             <div class="dc-token-badge">
-              <span>${isRu ? "Сжатие:" : "Compression:"} <strong>${a.rawTokens} → ${capsuleTokens} tokens (-${savedPct}%)</strong></span>
+              <span>${isRu ? "Сжатие:" : "Compression:"} <strong>${a.rawTokens} → ${capsuleTokens} tokens (${savedLabel})</strong></span>
             </div>
           </div>
 
@@ -13734,10 +17771,10 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
           <div class="dc-action-row">
             <button class="dc-primary-btn" data-act="copy-capsule">
-              📋 ${isRu ? "Скопировать капсулу для ИИ (Claude / ChatGPT / Cursor)" : "Copy AI Semantic Capsule to Clipboard"}
+              ${isRu ? "Скопировать капсулу для ИИ (Claude / ChatGPT / Cursor)" : "Copy AI Semantic Capsule to Clipboard"}
             </button>
             <button class="dc-secondary-btn" data-act="compile-llms-txt">
-              🗂️ ${isRu ? "Собрать и сохранить llms.txt в корне хранилища Obsidian" : "Compile & Save Master llms.txt in Vault Root"}
+              ${isRu ? "Собрать и сохранить llms.txt в корне хранилища Obsidian" : "Compile & Save Master llms.txt in Vault Root"}
             </button>
           </div>
         </div>
@@ -13755,8 +17792,8 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
           await navigator.clipboard.writeText(capsuleText);
           new obsidian.Notice(
             isRu
-              ? `🤖 Семантическая капсула скопирована (${capsuleTokens} токенов, экономия -${savedPct}%)!`
-              : `🤖 AI Semantic Capsule copied (${capsuleTokens} tokens, -${savedPct}% saved)!`
+              ? `Семантическая капсула скопирована (${capsuleTokens} токенов, экономия ${savedLabel})!`
+              : `AI Semantic Capsule copied (${capsuleTokens} tokens, ${savedLabel} saved)!`
           );
         } catch (e) {}
       });
@@ -13766,7 +17803,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
       });
     } else if (this.activeTab === "radar") {
       bodyEl.innerHTML = `<div class="dc-loading">${
-        isRu ? "⚡ Вычисление 64-битных SimHash отпечатков через WebAssembly ядро..." : "⚡ Computing 64-bit SimHash fingerprints via WebAssembly kernel..."
+        isRu ? "Сравниваю словарь заметок..." : "Comparing the vocabulary of your notes..."
       }</div>`;
       if (!this.radarData) {
         this.radarData = await this.plugin.scanVaultWasmSemanticRadar(this.activeFile, this.rawText);
@@ -13778,13 +17815,13 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
             <div>
               <strong>${
                 isRu
-                  ? `⚡ Локальный WASM SimHash Радар (100% оффлайн без API)`
-                  : `⚡ Local WASM SimHash Semantic Radar (100% Offline, Zero API)`
+                  ? `Похожие заметки (считается на этом устройстве)`
+                  : `Similar notes (computed on this device)`
               }</strong>
               <p>${
                 isRu
-                  ? `Просканировано ${r.scannedCount} заметок за ${r.elapsedMs} мс (${r.wasmActive ? "WASM FNV-1a ускорение активно" : "JS Fallback"}). Найдены скрытые смысловые пересечения:`
-                  : `Scanned ${r.scannedCount} notes in ${r.elapsedMs} ms (${r.wasmActive ? "WASM FNV-1a kernel active" : "JS Fallback"}). Discovered semantic resonances:`
+                  ? `Просканировано ${r.scannedCount} заметок за ${r.elapsedMs} мс . Найдены скрытые смысловые пересечения:`
+                  : `Scanned ${r.scannedCount} notes in ${r.elapsedMs} ms. Discovered semantic resonances:`
               }</p>
             </div>
           </div>
@@ -13798,8 +17835,8 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
                         <div class="dc-radar-main">
                           <div class="dc-radar-title-line">
                             <span class="dc-sim-badge ${m.similarity >= 70 ? "is-high" : ""}">${m.similarity}% match</span>
-                            <strong>${m.title}</strong>
-                            <span class="dc-sig-code">0x${m.sigHex.slice(0, 8)}</span>
+                            <strong>${escHtml(m.title)}</strong>
+                            
                             ${
                               m.isAlreadyLinked
                                 ? `<span class="dc-linked-pill">${isRu ? "Уже связана [[...]]" : "Linked [[...]]"}</span>`
@@ -13809,8 +17846,8 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
                           <div class="dc-radar-sub">
                             ${
                               m.sharedKeywords.length > 0
-                                ? `${isRu ? "Общие концепты:" : "Shared concepts:"} <code>${m.sharedKeywords.join("</code> · <code>")}</code>`
-                                : `SimHash Hamming resonance (${m.path})`
+                                ? `${isRu ? "Общие концепты:" : "Shared concepts:"} <code>${m.sharedKeywords.map(escHtml).join("</code> · <code>")}</code>`
+                                : `${isRu ? "Похожий словарь" : "Similar vocabulary"} (${escHtml(m.path)})`
                             }
                           </div>
                         </div>
@@ -13838,12 +17875,12 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
           const targetTitle = btn.getAttribute("data-link-note");
           if (!this.activeFile || !targetTitle) return;
           const cur = await this.app.vault.read(this.activeFile);
-          const appendBlock = `\n- 🔗 **Semantic Link (WASM Radar):** [[${targetTitle}]]`;
+          const appendBlock = `\n- Related: [[${targetTitle}]]`;
           await this.app.vault.modify(this.activeFile, cur + appendBlock);
           this.rawText = cur + appendBlock;
           this.radarData = null;
           new obsidian.Notice(
-            isRu ? `🔗 Ссылка [[${targetTitle}]] добавлена в заметку!` : `🔗 Linked [[${targetTitle}]] into active note!`
+            isRu ? `Ссылка [[${targetTitle}]] добавлена в заметку!` : `Linked [[${targetTitle}]] into active note!`
           );
           await this.renderStudio();
         });
@@ -13871,7 +17908,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
         },
         {
           id: "bento",
-          title: isRu ? "02 // Архитектор Ясности" : "02 // Swiss Bento Architect",
+          title: isRu ? "02 // Архитектор Ясности" : "02 // Swiss Craft Architect",
           desc: isRu ? "Индекс структурной читаемости заметки выше 75%" : "Note structural readability score above 75%",
           unlocked: a.structureScore >= 75 || stampedCount >= 1,
           color: "#059669",
@@ -13927,10 +17964,10 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
           const sealName = btn.getAttribute("data-stamp-seal");
           if (!this.activeFile) return;
           const cur = await this.app.vault.read(this.activeFile);
-          const badgeMd = `\n> [!success] 🏛️ **EX-LIBRIS SEAL // ${sealName}** — Verified \`0x${a.hashHex}\` (${new Date().toLocaleDateString()})\n`;
+          const badgeMd = `\n> [!success] **EX-LIBRIS SEAL // ${sealName}** — Verified \`0x${a.hashHex}\` (${new Date().toLocaleDateString()})\n`;
           await this.app.vault.modify(this.activeFile, cur + badgeMd);
           new obsidian.Notice(
-            isRu ? `🏛️ Печать «${sealName}» поставлена в заметку!` : `🏛️ Seal "${sealName}" stamped into note!`
+            isRu ? `Печать «${sealName}» поставлена в заметку!` : `Seal "${sealName}" stamped into note!`
           );
           this.close();
         });
@@ -13945,6 +17982,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
 module.exports = AlchemyFlowPlugin;
 
+/* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
