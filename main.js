@@ -284,9 +284,9 @@ function openExternalUrl(url) {
   }
 }
 
-// Verified Pro Badge (8-Point Certified Rosette with White Checkmark)
+// Verified Pro Badge (8-Point Certified Rosette in Roastery Gold with White Checkmark)
 const PRO_VERIFIED_BADGE_SVG = `<svg class="artcraft-pro-verified-badge" viewBox="0 0 22 22" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: -2.5px; display: inline-block; flex-shrink: 0; margin-left: 3px;">
-  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.887-1.687-.47-.47-1.054-.775-1.688-.905-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.275.213-1.816.568-.54.355-.972.852-1.246 1.44-.608-.223-1.267-.27-1.902-.14-.635.13-1.22.436-1.69.887-.47.47-.775 1.054-.905 1.688-.13.633-.083 1.29.14 1.897-.587.274-1.086.705-1.44 1.246-.355.54-.551 1.17-.569 1.816.018.646.214 1.275.569 1.816.354.54.853.972 1.44 1.246-.224.608-.27 1.264-.14 1.897.13.634.435 1.218.887 1.688.47.47 1.054.775 1.688.905.633.13 1.29.083 1.897-.14.274.587.705 1.086 1.246 1.44.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816z" fill="#1D9BF0"/>
+  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.887-1.687-.47-.47-1.054-.775-1.688-.905-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.275.213-1.816.568-.54.355-.972.852-1.246 1.44-.608-.223-1.267-.27-1.902-.14-.635.13-1.22.436-1.69.887-.47.47-.775 1.054-.905 1.688-.13.633-.083 1.29.14 1.897-.587.274-1.086.705-1.44 1.246-.355.54-.551 1.17-.569 1.816.018.646.214 1.275.569 1.816.354.54.853.972 1.44 1.246-.224.608-.27 1.264-.14 1.897.13.634.435 1.218.887 1.688.47.47 1.054.775 1.688.905.633.13 1.29.083 1.897-.14.274.587.705 1.086 1.246 1.44.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816z" fill="#D97706"/>
   <path d="M9.684 15.5l-3.39-3.39 1.414-1.414 1.976 1.975 6.22-6.22 1.414 1.414-7.634 7.635z" fill="#FFFFFF"/>
 </svg>`;
 
@@ -9727,7 +9727,7 @@ class AlchemyFlowPlugin extends Plugin {
 
     const isRu = (this.settings.uiLanguage || "en") === "ru";
     const header = [
-      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.3)`,
+      `# Obsidian Knowledge Vault — llms.txt (Compiled by Alchemy Craft v5.6.4)`,
       `> Dual-Cognition Knowledge Index for Human Readers & AI Agents (Cursor, Claude Code, MCP, Windsurf).`,
       `> Generated: ${new Date().toISOString()} | Indexed Notes: ${files.length}`,
       ``,
@@ -14005,16 +14005,24 @@ class AlchemyFlowPlugin extends Plugin {
     };
 
     const makeToggleRow = (container, labelRu, labelEn, isChecked, onChange) => {
-      const row = container.createDiv({ cls: "pro-hub-ctrl-row" });
-      const lbl = row.createEl("span", { cls: "pro-hub-ctrl-lbl", text: isRu ? labelRu : labelEn });
-      const toggle = row.createEl("input", { type: "checkbox", cls: "pro-hub-checkbox" });
+      const row = container.createEl("label", { cls: "pro-hub-ctrl-row is-toggle-row" });
+      row.createEl("span", { cls: "pro-hub-ctrl-lbl", text: isRu ? labelRu : labelEn });
+      const switchWrap = row.createEl("span", { cls: "pro-hub-switch" });
+      const toggle = switchWrap.createEl("input", { type: "checkbox", cls: "pro-hub-checkbox" });
+      const track = switchWrap.createEl("span", { cls: "pro-hub-switch-track" });
+      track.setAttribute("aria-hidden", "true");
+      track.createEl("span", { cls: "pro-hub-switch-thumb" });
       toggle.checked = !!isChecked;
-      toggle.onchange = () => onChange(toggle.checked);
+      switchWrap.toggleClass("is-on", !!isChecked);
+      toggle.onchange = () => {
+        switchWrap.toggleClass("is-on", !!toggle.checked);
+        onChange(toggle.checked);
+      };
       return row;
     };
 
     const makeSelectRow = (container, labelRu, labelEn, options, curVal, onChange) => {
-      const row = container.createDiv({ cls: "pro-hub-ctrl-row" });
+      const row = container.createDiv({ cls: "pro-hub-ctrl-row is-select-row" });
       row.createEl("span", { cls: "pro-hub-ctrl-lbl", text: isRu ? labelRu : labelEn });
       const sel = row.createEl("select", { cls: "pro-hub-select" });
       options.forEach((opt) => {
@@ -14367,7 +14375,7 @@ class AlchemyCraftProModal extends Modal {
 
   onOpen() {
     this.plugin.activeProModal = this;
-    if (this.modalEl) this.modalEl.addClass("artcraft-wide-craft-modal");
+    if (this.modalEl) this.modalEl.addClass("artcraft-wide-craft-modal", "artcraft-pro-wide-modal");
     const { contentEl } = this;
     contentEl.empty();
     contentEl.addClass("artcraft-pro-modal-root");
@@ -14579,6 +14587,9 @@ class AlchemyCraftProModal extends Modal {
 
     const renderView = () => {
       bodyContainer.empty();
+      bodyContainer.removeClass("artcraft-pro-tab-pane");
+      void bodyContainer.offsetWidth;
+      bodyContainer.addClass("artcraft-pro-tab-pane");
       tabSupport.toggleClass("is-active", this.activeTab === "support");
       tabPromo.toggleClass("is-active", this.activeTab === "promo");
       tabHub.toggleClass("is-active", this.activeTab === "hub");
@@ -14613,6 +14624,22 @@ class AlchemyCraftProModal extends Modal {
 
       // TAB 1: KO-FI / ZSOLT-INSPIRED 3 CAPPUCCINO TIER CARDS + CLEAN PAYMENT BAR
       const tierGrid = bodyContainer.createDiv({ cls: "artcraft-ko-tier-grid" });
+      let renderMethodDetail = null;
+      const syncTierSelectionUi = () => {
+        tierGrid.querySelectorAll(".artcraft-ko-tier-card").forEach((c) => {
+          c.toggleClass("is-selected", c.dataset.tierId === this.selectedTier);
+        });
+        if (customRow) {
+          customRow.toggleClass("is-selected", this.selectedTier === "custom");
+          customRow.querySelectorAll(".ko-custom-chip").forEach((ch) => {
+            ch.toggleClass("is-active-chip", this.selectedTier === "custom" && ch.dataset.amount === String(this.customAmount).trim());
+          });
+        }
+        if (typeof renderMethodDetail === "function") {
+          renderMethodDetail(this.selectedNetwork);
+        }
+      };
+
       Object.values(tiers)
         .filter((tObj) => tObj.id !== "custom")
         .forEach((tObj) => {
@@ -14630,7 +14657,7 @@ class AlchemyCraftProModal extends Modal {
           card.onclick = () => {
             this.selectedTier = tObj.id;
             this.plugin.playTactileMicroFeedback("tap");
-            renderView();
+            syncTierSelectionUi();
             this.triggerTierPourAnimation(tObj.id);
           };
         });
@@ -14660,31 +14687,32 @@ class AlchemyCraftProModal extends Modal {
       const chipsWrap = customRow.querySelector(".ko-custom-chips");
       ["3", "5", "10", "25"].forEach((v) => {
         const chip = document.createElement("button");
-        chip.className = "ko-custom-chip";
+        chip.className = "ko-custom-chip" + (this.selectedTier === "custom" && String(this.customAmount).trim() === v ? " is-active-chip" : "");
+        chip.dataset.amount = v;
         chip.textContent = `$${v}`;
         chip.onclick = (ev) => {
           ev.stopPropagation();
           this.customAmount = v;
           this.selectedTier = "custom";
+          if (customInput) customInput.value = v;
+          this.plugin.playTactileMicroFeedback("tap");
           syncCustomTier(); // the invoice and the summary must use the amount on the chip
-          renderView();
+          syncTierSelectionUi();
         };
         chipsWrap.appendChild(chip);
       });
       customInput.addEventListener("focus", () => {
         if (this.selectedTier !== "custom") {
           this.selectedTier = "custom";
-          customRow.addClass("is-selected");
-          tierGrid.querySelectorAll(".artcraft-ko-tier-card").forEach((c) => c.removeClass("is-selected"));
           syncCustomTier();
-          renderMethodDetail(this.selectedNetwork);
+          syncTierSelectionUi();
         }
       });
       customInput.addEventListener("input", () => {
         this.customAmount = customInput.value;
         this.selectedTier = "custom";
         syncCustomTier();
-        renderMethodDetail(this.selectedNetwork);
+        syncTierSelectionUi();
       });
       customRow.onclick = () => {
         if (this.selectedTier !== "custom") customInput.focus();
@@ -14707,7 +14735,7 @@ class AlchemyCraftProModal extends Modal {
 
       const paymentDetailBox = bodyContainer.createDiv({ cls: "artcraft-soft-pay-detail" });
 
-      const renderMethodDetail = (netId) => {
+      renderMethodDetail = (netId) => {
         this.selectedNetwork = netId;
         paymentDetailBox.empty();
         methodPills.querySelectorAll(".artcraft-soft-method-pill").forEach((el) => {
@@ -15262,6 +15290,12 @@ class AlchemyCraftProModal extends Modal {
     const stepRoastery = () => {
       this._roasteryRaf = null;
       if (!cv.isConnected || document.hidden) return;
+      const gw = tierGrid.clientWidth || 640;
+      const gh = tierGrid.clientHeight || 175;
+      if (Math.abs(cv.width - gw) > 2 || Math.abs(cv.height - gh) > 2) {
+        cv.width = Math.max(1, Math.round(gw));
+        cv.height = Math.max(1, Math.round(gh));
+      }
       const ctx = cv.getContext("2d");
       const W = cv.width;
       const H = cv.height;
@@ -15270,36 +15304,52 @@ class AlchemyCraftProModal extends Modal {
       const st = this._roasteryState;
       st.vx *= 0.9;
       st.vy *= 0.9;
-      const centers = [W * 0.166, W * 0.5, W * 0.833];
+      const cards = tierGrid.querySelectorAll(".artcraft-ko-tier-card");
+      const anchors = [];
+      for (let i = 0; i < 3; i++) {
+        const card = cards[i];
+        const art = card && card.querySelector(".ko-tier-art");
+        if (card && art) {
+          anchors.push({
+            cx: card.offsetLeft + card.offsetWidth * 0.5,
+            rimY: card.offsetTop + art.offsetTop + art.offsetHeight * 0.62,
+          });
+        } else {
+          anchors.push({ cx: W * [0.166, 0.5, 0.833][i], rimY: 56 });
+        }
+      }
+      st.anchors = anchors;
 
       // 1. Procedural Cappuccino & Chemex Steam reacting to cursor wind
       st.steam.forEach((p) => {
         p.phase += 0.05;
         p.y -= p.vy;
-        const baseCx = centers[p.tierIdx] + p.xOff;
+        const anch = anchors[p.tierIdx] || anchors[0];
+        const baseCx = anch.cx + p.xOff;
         const dx = baseCx + p.vx - st.mx;
-        const dy = p.y - st.my;
+        const dy = (anch.rimY - 52 + p.y) - st.my;
         const distSq = dx * dx + dy * dy;
         if (distSq < 3600) {
           const push = (1 - Math.sqrt(distSq) / 60) * 0.42;
           p.vx += st.vx * push;
         }
         p.vx *= 0.94;
-        if (p.y < 6) {
-          p.y = 62;
+        if (p.y < 4) {
+          p.y = 48;
           p.vx = 0;
         }
-        const prog = 1 - (p.y - 6) / 56;
+        const prog = 1 - (p.y - 4) / 44;
+        const drawY = Math.max(4, anch.rimY - 50 + p.y);
         const curX = baseCx + Math.sin(p.phase) * 4.5 + p.vx;
         const curR = p.r + prog * 6.5;
-        const curA = Math.sin(prog * Math.PI) * (this.selectedTier === ["bronze", "silver", "gold"][p.tierIdx] ? 0.46 : 0.26);
+        const curA = Math.sin(prog * Math.PI) * (this.selectedTier === ["bronze", "silver", "gold"][p.tierIdx] ? 0.44 : 0.24);
 
-        const g = ctx.createRadialGradient(curX, p.y, 0.5, curX, p.y, curR);
+        const g = ctx.createRadialGradient(curX, drawY, 0.5, curX, drawY, curR);
         g.addColorStop(0, `rgba(196, 148, 102, ${curA.toFixed(3)})`);
         g.addColorStop(1, "rgba(196, 148, 102, 0)");
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(curX, p.y, curR, 0, Math.PI * 2);
+        ctx.arc(curX, drawY, curR, 0, Math.PI * 2);
         ctx.fill();
       });
 
@@ -15310,9 +15360,10 @@ class AlchemyCraftProModal extends Modal {
         d.y += d.vy;
         d.vy += 0.28;
         d.life++;
-        if (d.y >= 64 || d.life >= d.maxLife) {
-          if (d.y >= 64) {
-            st.ripples.push({ x: d.x, y: 64, r: 2, maxR: 16, alpha: 0.75, color: d.color });
+        const rimTarget = d.rimY || 62;
+        if (d.y >= rimTarget || d.life >= d.maxLife) {
+          if (d.y >= rimTarget) {
+            st.ripples.push({ x: d.x, y: rimTarget, r: 2, maxR: 16, alpha: 0.75, color: d.color });
           }
           st.drops.splice(i, 1);
           continue;
@@ -15329,13 +15380,15 @@ class AlchemyCraftProModal extends Modal {
         c.y += c.vy;
         c.vy += 0.36;
         c.rot += 0.22;
-        if (c.y >= 62) {
-          st.ripples.push({ x: c.x, y: 62, r: 3, maxR: 22, alpha: 0.9, color: "#F59E0B" });
+        const rimTarget = c.rimY || 60;
+        if (c.y >= rimTarget) {
+          st.ripples.push({ x: c.x, y: rimTarget, r: 3, maxR: 22, alpha: 0.9, color: "#F59E0B" });
           for (let s = 0; s < 8; s++) {
             const ang = -Math.PI * 0.15 - Math.random() * Math.PI * 0.7;
             st.drops.push({
               x: c.x,
-              y: 60,
+              y: rimTarget - 2,
+              rimY: rimTarget + 2,
               vx: Math.cos(ang) * (1.2 + Math.random() * 2.2),
               vy: Math.sin(ang) * (1.8 + Math.random() * 2.2),
               r: 1.8,
@@ -15389,13 +15442,17 @@ class AlchemyCraftProModal extends Modal {
     const cv = this._roasteryCanvas;
     if (!st || !cv) return;
     const idx = tierId === "bronze" ? 0 : tierId === "silver" ? 1 : 2;
-    const cx = cv.width * [0.166, 0.5, 0.833][idx];
+    const anch = (st.anchors && st.anchors[idx]) || { cx: cv.width * [0.166, 0.5, 0.833][idx], rimY: 60 };
+    const cx = anch.cx;
+    const rimY = anch.rimY;
+    const startY = Math.max(4, rimY - 52);
 
     // Pour warm espresso & crema droplets
     for (let i = 0; i < 18; i++) {
       st.drops.push({
         x: cx + (Math.random() - 0.5) * 6,
-        y: 4 + i * 1.8,
+        y: startY + i * 1.5,
+        rimY: rimY + 2,
         vx: (Math.random() - 0.5) * 0.6,
         vy: 1.5 + Math.random() * 1.6,
         r: i % 3 === 0 ? 2.4 : 1.9,
@@ -15405,7 +15462,7 @@ class AlchemyCraftProModal extends Modal {
       });
     }
     // Drop a spinning golden alchemical coin
-    st.coins.push({ x: cx, y: 6, vy: 1.4, rot: 0 });
+    st.coins.push({ x: cx, y: Math.max(4, startY), rimY, vy: 1.4, rot: 0 });
   }
 
   playKeyMintingAcousticSound() {
@@ -18486,6 +18543,7 @@ class DualCognitionNeuralStudioModal extends require("obsidian").Modal {
 
 module.exports = AlchemyFlowPlugin;
 
+/* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
 /* nosourcemap */
